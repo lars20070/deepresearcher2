@@ -1,0 +1,94 @@
+{
+  "python.defaultInterpreterPath": ".venv/bin/python",
+  "editor.formatOnSave": true,
+  "editor.inlineSuggest.enabled": true,
+  "python.languageServer": "Pylance",
+  "python.testing.unittestEnabled": false,
+  "python.testing.pytestEnabled": true,
+  "python.testing.cwd": "${workspaceFolder}",
+  "python.testing.autoTestDiscoverOnSaveEnabled": false,
+  "python.testing.pytestArgs": [
+    "-n",
+    "auto",
+  ],
+  "autoDocstring.docstringFormat": "google",
+  "[python]": {
+    "editor.tabSize": 4,
+    "editor.defaultFormatter": "charliermarsh.ruff",
+  },
+  "github.copilot.enable": {
+    "*": true,
+    "bash": true,
+    "yaml": true,
+    "toml": true,
+    "python": true,
+    "markdown": true,
+    "plaintext": false,
+  },
+  "r.lsp.promptToInstall": false,
+  "cSpell.enabled": true,
+  "cSpell.allowCompoundWords": true,
+  "cSpell.language": "en",
+  "cSpell.words": [
+    "iloc",
+    "logit",
+    "pytest",
+    "ollama",
+    "codestral",
+    "pylint",
+    "Nilse",
+    "isort",
+    "pycodestyle",
+    "pyflakes",
+    "pyupgrade",
+    "numpy",
+    "xgboost",
+    "scipy",
+    "dotenv",
+    "kwargs",
+    "virtualenv",
+    "venv",
+    "texw",
+    "pycache",
+    "TAVILY",
+    "pyproject",
+    "xdist",
+    "pydocstyle",
+    "duckduckgo",
+    "groq",
+    "pydantic",
+    "asyncio",
+    "xetex",
+    "xelatex",
+    "pypandoc",
+    "isinstance",
+    "Tpng",
+    "Grankdir",
+  ],
+  "cSpell.languageSettings": [
+    {
+      "languageId": "python",
+      "enabled": true,
+      "includeRegExpList": [
+        "Python Docstrings"
+      ],
+      "patterns": [
+        {
+          "name": "Python Docstrings",
+          "pattern": "^\\s*(\"\"\")[^\"\"\"]*(\"\"\")"
+        }
+      ]
+    }
+  ],
+  "shellcheck.ignorePatterns": {
+    "**/.env.example": true,
+    "**/.env": true,
+  },
+  "logViewer.watch": [
+    {
+      "title": "deepresearcher2",
+      "pattern": "deepresearcher2.log"
+    },
+  ],
+  "codeQL.createQuery.qlPackLocation": "${workspaceFolder}"
+}

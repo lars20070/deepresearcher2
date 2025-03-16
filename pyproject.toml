@@ -1,0 +1,73 @@
+[project]
+name = "deepresearcher2"
+version = "0.1.0"
+description = "fully local web research and report writing assistant"
+readme = "README.md"
+authors = [{ name = "Lars Nilse", email = "l.nilse@dunelm.org.uk" }]
+requires-python = ">=3.11"
+dependencies = [
+  "loguru>=0.7.3",
+  "pytest>=8.3.4",
+  "ruff>=0.9.5",
+  "pylint>=3.3.4",
+  "pytest-xdist>=3.6.1",
+  "tavily-python>=0.5.1",
+  "pytest-cov>=6.0.0",
+  "pydantic>=2.10.6",
+  "pytest-asyncio>=0.25.3",
+  "pypandoc>=1.15",
+]
+
+[project.scripts]
+minimalexample = "deepresearcher2.helloworld:main"
+uml = "deepresearcher2.cli:uml"
+
+[tool.ruff]
+line-length = 150
+lint.select = [
+  "E",   # pycodestyle
+  "F",   # pyflakes
+  "I",   # isort
+  "TID", # tidy imports
+  "UP",  # pyupgrade
+  "C4",  # comprehensions
+  "SIM", # simplifications
+  "PD",  # pandas-specific rules
+  "NPY", # numpy-specific rules
+  "PL",  # pylint
+  "B",   # bugbear
+  "ANN", # type annotations
+  "TC",  # type checking
+]
+lint.ignore = [
+  "SIM108",  # Ignore ternary operators rule i.e. allow if-else blocks
+  "PD901",   # Allow variable name `df` for dataframes
+  "PLR2004", # Allow magic values
+  "PLR0915", # Allow long functions
+  "PLR0912", # Allow many branches
+  "PLR0913", # Allow many arguments
+]
+lint.pydocstyle.convention = "google"
+
+[tool.pytest.ini_options]
+addopts = ["-m", "not paid"] # Skip tests that require a paid API key
+asyncio_default_fixture_loop_scope = "session" # Use a single event loop for all tests. Switch to "function" for a new event loop for every test (more isolation).
+
+[tool.coverage.run]
+branch = true
+source = ["deepresearcher2"]
+parallel = true
+disable_warnings = ["module-not-measured"]
+omit = ["tests/*", "src/deepresearcher2/cli.py"]
+
+[tool.coverage.report]
+show_missing = true  # Show line numbers of missing coverage in terminal
+skip_covered = false # Show all files, including those with full coverage
+skip_empty = true    # Skip files with no statements
+
+[tool.coverage.html]
+directory = "coverage"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
