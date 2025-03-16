@@ -16,6 +16,7 @@ dependencies = [
   "pydantic>=2.10.6",
   "pytest-asyncio>=0.25.3",
   "pypandoc>=1.15",
+  "pydantic-ai>=0.0.40",
 ]
 
 [project.scripts]
