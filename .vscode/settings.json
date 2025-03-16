@@ -62,6 +62,8 @@
     "xelatex",
     "pypandoc",
     "isinstance",
+    "Tpng",
+    "Grankdir",
   ],
   "cSpell.languageSettings": [
     {
