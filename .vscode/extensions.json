@@ -1,0 +1,34 @@
+{
+  "recommendations": [
+    // Python
+    "nicohlr.pycharm",
+    "ms-python.python",
+    "charliermarsh.ruff",
+    "njpwerner.autodocstring",
+    // yaml + toml
+    "redhat.vscode-yaml",
+    "tamasfe.even-better-toml",
+    // Bash
+    "timonwong.shellcheck",
+    "mkhl.shfmt",
+    // LaTeX
+    "mathematic.vscode-latex",
+    "lgarcin.vscode-pweave",
+    // git + GitHub Actions
+    "ivanhofer.git-assistant",
+    "GitHub.vscode-github-actions",
+    "me-dutour-mathieu.vscode-github-actions",
+    "GitHub.vscode-pull-request-github",
+    // Copilot
+    "GitHub.copilot",
+    "GitHub.copilot-chat",
+    "ms-vscode.vscode-copilot-data-analysis",
+    // spell checker
+    "streetsidesoftware.code-spell-checker",
+    // logging
+    "berublan.vscode-log-viewer",
+  ],
+  "unwantedRecommendations": [
+    "mechatroner.rainbow-csv",
+  ]
+}

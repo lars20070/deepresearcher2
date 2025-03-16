@@ -1,0 +1,84 @@
+{
+  "python.defaultInterpreterPath": ".venv/bin/python",
+  "editor.formatOnSave": true,
+  "editor.inlineSuggest.enabled": true,
+  "python.languageServer": "Pylance",
+  "python.testing.unittestEnabled": false,
+  "python.testing.pytestEnabled": true,
+  "python.testing.cwd": ".",
+  "python.testing.pytestArgs": [
+    "-n",
+    "auto",
+  ],
+  "autoDocstring.docstringFormat": "google",
+  "[python]": {
+    "editor.tabSize": 4,
+    "editor.defaultFormatter": "charliermarsh.ruff",
+  },
+  "github.copilot.enable": {
+    "*": true,
+    "bash": true,
+    "yaml": true,
+    "toml": true,
+    "python": true,
+    "markdown": true,
+    "plaintext": false,
+  },
+  "r.lsp.promptToInstall": false,
+  "cSpell.enabled": true,
+  "cSpell.allowCompoundWords": true,
+  "cSpell.language": "en",
+  "cSpell.words": [
+    "iloc",
+    "logit",
+    "pytest",
+    "ollama",
+    "codestral",
+    "openai",
+    "nomic",
+    "pylint",
+    "Nilse",
+    "isort",
+    "pycodestyle",
+    "pyflakes",
+    "pyupgrade",
+    "numpy",
+    "xgboost",
+    "scipy",
+    "dotenv",
+    "pycoingecko",
+    "pyarrow",
+    "cosmpy",
+    "kwargs",
+    "virtualenv",
+    "venv",
+    "texw",
+    "pycache",
+    "TAVILY",
+    "xdist",
+  ],
+  "cSpell.languageSettings": [
+    {
+      "languageId": "python",
+      "enabled": true,
+      "includeRegExpList": [
+        "Python Docstrings"
+      ],
+      "patterns": [
+        {
+          "name": "Python Docstrings",
+          "pattern": "^\\s*(\"\"\")[^\"\"\"]*(\"\"\")"
+        }
+      ]
+    }
+  ],
+  "shellcheck.ignorePatterns": {
+    "**/.env-example": true,
+  },
+  "logViewer.watch": [
+    {
+      "title": "deepresearcher2",
+      "pattern": "deepresearcher2.log"
+    },
+  ]
+}
