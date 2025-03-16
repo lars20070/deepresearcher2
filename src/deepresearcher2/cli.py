@@ -25,7 +25,7 @@ def uml() -> None:
         #        "-k",
         "-d",
         "./uml",
-        "./src/deepresearcher",
+        "./src/deepresearcher2",
     ]
     result = subprocess.call(cmd)
     if result != 0:

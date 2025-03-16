@@ -5,7 +5,8 @@
   "python.languageServer": "Pylance",
   "python.testing.unittestEnabled": false,
   "python.testing.pytestEnabled": true,
-  "python.testing.cwd": ".",
+  "python.testing.cwd": "${workspaceFolder}",
+  "python.testing.autoTestDiscoverOnSaveEnabled": false,
   "python.testing.pytestArgs": [
     "-n",
     "auto",
@@ -34,8 +35,6 @@
     "pytest",
     "ollama",
     "codestral",
-    "openai",
-    "nomic",
     "pylint",
     "Nilse",
     "isort",
@@ -46,16 +45,23 @@
     "xgboost",
     "scipy",
     "dotenv",
-    "pycoingecko",
-    "pyarrow",
-    "cosmpy",
     "kwargs",
     "virtualenv",
     "venv",
     "texw",
     "pycache",
     "TAVILY",
+    "pyproject",
     "xdist",
+    "pydocstyle",
+    "duckduckgo",
+    "groq",
+    "pydantic",
+    "asyncio",
+    "xetex",
+    "xelatex",
+    "pypandoc",
+    "isinstance",
   ],
   "cSpell.languageSettings": [
     {
@@ -73,12 +79,14 @@
     }
   ],
   "shellcheck.ignorePatterns": {
-    "**/.env-example": true,
+    "**/.env.example": true,
+    "**/.env": true,
   },
   "logViewer.watch": [
     {
       "title": "deepresearcher2",
       "pattern": "deepresearcher2.log"
     },
-  ]
+  ],
+  "codeQL.createQuery.qlPackLocation": "${workspaceFolder}"
 }

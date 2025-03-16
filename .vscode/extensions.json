@@ -19,6 +19,7 @@
     "GitHub.vscode-github-actions",
     "me-dutour-mathieu.vscode-github-actions",
     "GitHub.vscode-pull-request-github",
+    "github.vscode-codeql",
     // Copilot
     "GitHub.copilot",
     "GitHub.copilot-chat",
