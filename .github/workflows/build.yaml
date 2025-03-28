@@ -27,7 +27,8 @@ jobs:
     - name: Create .env file
       # Define in GitHub repository: Settings -> Secrets and variables -> Actions -> New repository secret
       run: |
-        echo API_KEY_TAVILY=${{ secrets.API_KEY_TAVILY }} > .env
+        echo TAVILY_API_KEY=${{ secrets.TAVILY_API_KEY }} >> .env
+        echo GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }} >> .env
     - name: Install uv package manager
       uses: astral-sh/setup-uv@v5.2.2
       with:
