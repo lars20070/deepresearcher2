@@ -64,6 +64,7 @@
     "isinstance",
     "Tpng",
     "Grankdir",
+    "pydanticai",
   ],
   "cSpell.languageSettings": [
     {
@@ -90,5 +91,6 @@
       "pattern": "deepresearcher2.log"
     },
   ],
-  "codeQL.createQuery.qlPackLocation": "${workspaceFolder}"
+  "codeQL.createQuery.qlPackLocation": "${workspaceFolder}",
+  "codeQL.githubDatabase.download": "never"
 }
