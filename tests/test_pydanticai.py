@@ -42,8 +42,11 @@ async def test_pydanticai_ollama() -> None:
         city: str
         country: str
 
+    model = "llama3.3"
+    # model = "qwq:32b"
+    # model = "qwen2.5:72b"
     ollama_model = OpenAIModel(
-        model_name="llama3.3",
+        model_name=model,
         provider=OpenAIProvider(
             base_url="http://localhost:11434/v1",
         ),
