@@ -48,9 +48,10 @@ jobs:
       run: uvx ruff check .
     - name: Run unit tests
       # -v                verbose
-      # -m "not slow"     skip slow tests
+      # -m "not paid"     skip tests requiring paid API keys
       # -p no:warnings    ignore warnings
-      run: uv run pytest -v -m "not slow" -p no:warnings -n auto
+      # -n auto           run tests in parallel
+      run: uv run pytest -v -m "not paid" -p no:warnings -n auto
     - name: Upload logs
       uses: actions/upload-artifact@v4
       if: always()
