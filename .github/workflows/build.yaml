@@ -29,6 +29,7 @@ jobs:
       run: |
         echo TAVILY_API_KEY=${{ secrets.TAVILY_API_KEY }} >> .env
         echo GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }} >> .env
+        echo LOGFIRE_TOKEN=${{ secrets.LOGFIRE_TOKEN }} >> .env
     - name: Install uv package manager
       uses: astral-sh/setup-uv@v5.2.2
       with:
