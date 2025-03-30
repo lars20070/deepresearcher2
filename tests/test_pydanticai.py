@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 import os
+import random
+from datetime import date
 
 import logfire
 import pytest
@@ -76,7 +78,7 @@ def test_pydanticai_logfire(load_env: None) -> None:
     Test the basic Logfire functionality
     https://ai.pydantic.dev/logfire/#using-logfire
 
-    Note by default Logfire is disabled inside pytest. (send_to_logfire=False)
+    Note by default Logfire is disabled inside pytest (send_to_logfire=False)
     https://logfire.pydantic.dev/docs/reference/advanced/testing/
     """
     logfire.configure(
@@ -85,3 +87,11 @@ def test_pydanticai_logfire(load_env: None) -> None:
     )
 
     logfire.info("Hello, {place}!", place="World")
+
+    with logfire.span("Asking the user their {question}", question="age"):
+        # Simulate user input for testing
+        user_input = str(random.randint(1900, 2000)) + "-04-16"
+        dob = date.fromisoformat(user_input)
+        logfire.debug("{dob=} {age=!r}", dob=dob, age=date.today() - dob)
+
+    # Check the logfire output at https://logfire-eu.pydantic.dev/lars20070/deepresearcher2
