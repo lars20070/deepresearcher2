@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 
+import os
+
+import logfire
 import pytest
 from pydantic import BaseModel
 from pydantic_ai import Agent
@@ -65,3 +68,20 @@ async def test_pydanticai_ollama() -> None:
     logger.debug(f"Usage statistics: {usage}")
     assert usage.requests == 1
     assert usage.total_tokens > 0
+
+
+@pytest.mark.example
+def test_pydanticai_logfire(load_env: None) -> None:
+    """
+    Test the basic Logfire functionality
+    https://ai.pydantic.dev/logfire/#using-logfire
+
+    Note by default Logfire is disabled inside pytest. (send_to_logfire=False)
+    https://logfire.pydantic.dev/docs/reference/advanced/testing/
+    """
+    logfire.configure(
+        token=os.environ.get("LOGFIRE_TOKEN"),
+        send_to_logfire=True,
+    )
+
+    logfire.info("Hello, {place}!", place="World")
