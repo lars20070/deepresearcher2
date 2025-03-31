@@ -21,4 +21,4 @@ logger.add(
 
 # Logfire as sink for Loguru
 # i.e. emit a Logfire log for every Loguru log
-logger.configure(handlers=[logfire.loguru_handler()])
+# logger.configure(handlers=[logfire.loguru_handler()])
