@@ -35,7 +35,13 @@ def riza_example() -> None:
     user_message = "What is the capital of France?"
     result = agent.run_sync(user_message)
 
-    logger.info(f"Result: {result.data}")
+    while user_message != "quit":
+        print(f"Result: {result.data}")
+        user_message = input("> ")
+        result = agent.run_sync(
+            user_message,
+            message_history=result.all_messages(),
+        )
 
 
 def main() -> None:
