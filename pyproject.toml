@@ -19,6 +19,7 @@ dependencies = [
   "pydantic-ai>=0.0.40",
   "logfire>=3.10.0",
   "python-dotenv>=1.1.0",
+  "rizaio>=0.10.0",
 ]
 
 [project.scripts]

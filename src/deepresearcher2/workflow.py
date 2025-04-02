@@ -1,11 +1,24 @@
 #!/usr/bin/env python3
 
 import logfire
+import rizaio
+from dotenv import load_dotenv
 from pydantic_ai import Agent
 from pydantic_ai.models.openai import OpenAIModel
 from pydantic_ai.providers.openai import OpenAIProvider
 
 from deepresearcher2 import logger
+
+
+# Simulate code execution
+def execute_code(code: str) -> str:
+    load_dotenv()
+
+    print(f"Executing code: {code}")
+    riza = rizaio.Riza()
+    result = riza.command.exec(language="PYTHON", code=code)
+
+    return result.stdout
 
 
 def riza_example() -> None:
@@ -55,7 +68,8 @@ def main() -> None:
     logger.info("Starting main function.")
     logfire.info("Starting main function.")
 
-    riza_example()
+    # riza_example()
+    print(execute_code("print('Hello, world!')"))
 
 
 if __name__ == "__main__":
