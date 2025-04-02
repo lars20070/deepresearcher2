@@ -20,7 +20,7 @@ def riza_example() -> None:
         None
     """
 
-    logfire.info("Starting Rizza example.")
+    logfire.info("Starting Riza example.")
 
     model = "llama3.3"
     # model = "qwen2.5:72b"
@@ -35,6 +35,7 @@ def riza_example() -> None:
     agent = Agent(
         ollama_model,
         system_prompt="You are a helpful assistant.",
+        retries=5,
     )
 
     @agent.tool_plain
