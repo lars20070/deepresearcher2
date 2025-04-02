@@ -24,6 +24,7 @@ dependencies = [
 [project.scripts]
 minimalexample = "deepresearcher2.helloworld:main"
 uml = "deepresearcher2.cli:uml"
+workflow = "deepresearcher2.workflow:main"
 
 [tool.ruff]
 line-length = 150
