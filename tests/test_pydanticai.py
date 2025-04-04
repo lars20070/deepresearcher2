@@ -3,6 +3,8 @@
 import os
 import random
 from datetime import date
+from io import StringIO
+from unittest.mock import patch
 
 import logfire
 import pytest
@@ -11,7 +13,7 @@ from pydantic_ai import Agent
 from pydantic_ai.models.openai import OpenAIModel
 from pydantic_ai.providers.openai import OpenAIProvider
 
-from deepresearcher2 import logger
+from deepresearcher2 import basic_chat, logger
 
 
 @pytest.mark.example
@@ -95,3 +97,31 @@ def test_pydanticai_logfire(load_env: None) -> None:
         logfire.debug("{dob=} {age=!r}", dob=dob, age=date.today() - dob)
 
     # Check the logfire output at https://logfire-eu.pydantic.dev/lars20070/deepresearcher2
+
+
+@pytest.mark.ollama
+def test_basic_chat() -> None:
+    """
+    Test the basic chat interface
+    Note that we mock the user input but not the agent.
+    """
+    stdout_buffer = StringIO()
+
+    with (
+        patch(
+            "builtins.input",
+            side_effect=[
+                "What is the capital of France?",
+                "What is the capital of Germany?",
+                "exit",
+            ],
+        ),
+        patch("sys.stdout", new=stdout_buffer),
+    ):
+        basic_chat()
+
+        output = stdout_buffer.getvalue()
+        logger.debug(f"Complete output from basic chat: {output}")
+
+        assert "Paris" in output
+        assert "Berlin" in output

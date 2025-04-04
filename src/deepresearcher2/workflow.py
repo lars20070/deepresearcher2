@@ -15,9 +15,6 @@ def riza_example() -> None:
     """
     Example by Riza team. https://riza.io
     https://youtu.be/2FsN4f4z2CY
-
-    Returns:
-        None
     """
 
     logfire.info("Starting Riza example.")
