@@ -140,6 +140,7 @@ def test_chat_with_python() -> None:
             "builtins.input",
             side_effect=[
                 "What is the largest gap between two successive prime numbers under 10000?",
+                "Please determine the prime factorisation of 889966.",
                 "exit",
             ],
         ),
@@ -151,3 +152,4 @@ def test_chat_with_python() -> None:
         logger.debug(f"Complete output from basic chat: {output}")
 
         assert "36" in output
+        assert "5779" in output
