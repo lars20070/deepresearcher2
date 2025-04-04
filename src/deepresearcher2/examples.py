@@ -47,13 +47,13 @@ def basic_chat() -> None:
 
 def chat_with_python() -> None:
     """
+    Chat interface with access to Python code execution tool.
     Example by Riza team. https://riza.io
-    Chat with Python code execution tool.
 
     https://youtu.be/2FsN4f4z2CY
     """
 
-    logfire.info("Starting Riza example.")
+    logfire.info("Starting chat with Python.")
 
     model = "llama3.3"
     # model = "qwen2.5:72b"
@@ -89,7 +89,7 @@ def chat_with_python() -> None:
         """
         load_dotenv()
 
-        print(f"+++ CODE +++\n{code}")
+        logfire.debug(f"Executing code:\n{code}")
         riza = rizaio.Riza()
         result = riza.command.exec(
             language="PYTHON",
@@ -101,16 +101,17 @@ def chat_with_python() -> None:
         if result.stdout == "":
             raise ModelRetry("Code executed successfully, but no output was returned. Ensure your code includes print statements for output.")
 
-        print(f"+++ CODE OUTPUT +++\n{result.stdout}")
+        logfire.debug(f"Execution output:\n{result.stdout}")
         return result.stdout
 
-    user_message = "What is the capital of France?"
-    result = agent.run_sync(user_message)
-
-    while user_message not in {"exit", "quit", "bye", "stop"}:
-        print(result.data)
+    result = None
+    while True:
         user_message = input(">>> ")
+        if user_message.lower() in {"exit", "quit", "bye", "stop"}:
+            break
+
         result = agent.run_sync(
             user_message,
-            message_history=result.all_messages(),
+            message_history=result.all_messages() if result else None,
         )
+        print(result.data)

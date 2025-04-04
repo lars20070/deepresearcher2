@@ -13,7 +13,7 @@ from pydantic_ai import Agent
 from pydantic_ai.models.openai import OpenAIModel
 from pydantic_ai.providers.openai import OpenAIProvider
 
-from deepresearcher2 import basic_chat, logger
+from deepresearcher2 import basic_chat, chat_with_python, logger
 
 
 @pytest.mark.example
@@ -125,3 +125,29 @@ def test_basic_chat() -> None:
 
         assert "Paris" in output
         assert "Berlin" in output
+
+
+@pytest.mark.paid
+@pytest.mark.ollama
+def test_chat_with_python() -> None:
+    """
+    Test the chat interface with access to Python code execution tool
+    """
+    stdout_buffer = StringIO()
+
+    with (
+        patch(
+            "builtins.input",
+            side_effect=[
+                "What is the largest gap between two successive prime numbers under 10000?",
+                "exit",
+            ],
+        ),
+        patch("sys.stdout", new=stdout_buffer),
+    ):
+        chat_with_python()
+
+        output = stdout_buffer.getvalue()
+        logger.debug(f"Complete output from basic chat: {output}")
+
+        assert "36" in output
