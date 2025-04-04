@@ -25,8 +25,8 @@ dependencies = [
 [project.scripts]
 minimalexample = "deepresearcher2.helloworld:main"
 uml = "deepresearcher2.cli:uml"
-workflow = "deepresearcher2.workflow:main"
 chat = "deepresearcher2.examples:basic_chat"
+chatpython = "deepresearcher2.examples:chat_with_python"
 
 [tool.ruff]
 line-length = 150
