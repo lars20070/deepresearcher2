@@ -31,6 +31,9 @@ def basic_chat() -> None:
         ollama_model,
         system_prompt="You are a helpful assistant.",
     )
+    # Instrument the agent with Logfire
+    # i.e. this will log the most important events automatically
+    logfire.instrument_pydantic_ai(agent)
 
     result = None
     while True:
