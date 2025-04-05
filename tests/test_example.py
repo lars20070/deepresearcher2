@@ -176,6 +176,8 @@ async def test_weather_agent(load_env: None) -> None:
         geo_api_key: str | None
 
     # TODO: Replace GPT-4o by any Ollama model
+    # Model response is <|python_tag|>get_lat_lng(args=["Zurich"])
+    # Maybe look into this issue. https://github.com/pydantic/pydantic-ai/issues/437
     # ollama_model = OpenAIModel(
     #     model_name="llama3.3",
     #     provider=OpenAIProvider(base_url="http://localhost:11434/v1"),
