@@ -159,7 +159,7 @@ def test_chat_with_python() -> None:
 
 
 @pytest.mark.example
-@pytest.mark.ollama
+# @pytest.mark.paid
 @pytest.mark.asyncio
 async def test_weather_agent(load_env: None) -> None:
     """
@@ -175,14 +175,15 @@ async def test_weather_agent(load_env: None) -> None:
         weather_api_key: str | None
         geo_api_key: str | None
 
-    model = "llama3.3"
-    ollama_model = OpenAIModel(
-        model_name=model,
-        provider=OpenAIProvider(base_url="http://localhost:11434/v1"),
-    )
+    # TODO: Replace GPT-4o by any Ollama model
+    # ollama_model = OpenAIModel(
+    #     model_name="llama3.3",
+    #     provider=OpenAIProvider(base_url="http://localhost:11434/v1"),
+    # )
 
     weather_agent = Agent(
-        model=ollama_model,
+        # model=ollama_model,
+        model="openai:gpt-4o",
         system_prompt=(
             "Be concise, reply with one sentence. "
             "Use the `get_lat_lng` tool to get the latitude and longitude of the locations, "
@@ -285,16 +286,15 @@ async def test_weather_agent(load_env: None) -> None:
     async with AsyncClient() as client:
         # Create a free API key at https://www.tomorrow.io/weather-api/
         weather_api_key = os.getenv("WEATHER_API_KEY")
-        logger.debug(f"Weather API key: {weather_api_key}")
         # Create a free API key at https://geocode.maps.co/
         geo_api_key = os.getenv("GEO_API_KEY")
-        logger.debug(f"Geo API key: {geo_api_key}")
         deps = Deps(
             client=client,
             weather_api_key=weather_api_key,
             geo_api_key=geo_api_key,
         )
         result = await weather_agent.run("What is the weather like in Zurich and in Wiltshire?", deps=deps)
-        logger.debug("Response from weather agent:", result.data)
+        logger.debug(f"Response from weather agent: {result.data}")
 
-    assert weather_agent.model.model_name == "llama3.3"
+    assert weather_agent.model.model_name == "gpt-4o"
+    assert "Zurich" in result.data
