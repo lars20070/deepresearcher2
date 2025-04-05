@@ -159,7 +159,7 @@ def test_chat_with_python() -> None:
 
 
 @pytest.mark.example
-@pytest.mark.paid
+# @pytest.mark.paid
 @pytest.mark.asyncio
 async def test_weather_agent(load_env: None) -> None:
     """
