@@ -303,7 +303,6 @@ async def test_weather_agent(load_env: None) -> None:
 
 
 @pytest.mark.paid
-# @pytest.mark.ollama
 @pytest.mark.example
 @pytest.mark.asyncio
 async def test_agent_delegation(load_env: None) -> None:
@@ -314,21 +313,20 @@ async def test_agent_delegation(load_env: None) -> None:
     https://ai.pydantic.dev/multi-agent-applications/#agent-delegation-and-dependencies
     """
 
-    model = "llama3.3"
-    # model = "qwq:32b"
-    # model = "qwen2.5:72b"
-    ollama_model = OpenAIModel(
-        model_name=model,
-        provider=OpenAIProvider(
-            base_url="http://localhost:11434/v1",
-        ),
-    )
+    # model = "llama3.3"
+    # ollama_model = OpenAIModel(
+    #     model_name=model,
+    #     provider=OpenAIProvider(
+    #         base_url="http://localhost:11434/v1",
+    #     ),
+    # )
 
     @dataclass
     class ClientAndKey:
         http_client: AsyncClient
         api_key: str
 
+    # TODO: The agents cannot use the Ollama Llama3.3 model. Why?
     joke_selection_agent = Agent(
         model="openai:gpt-4o",
         # model=ollama_model,
@@ -339,7 +337,6 @@ async def test_agent_delegation(load_env: None) -> None:
         instrument=True,
     )
 
-    # TODO: The joke_selection_agent can be ollama_model. But the joke_generation_agent cannot. Why?
     joke_generation_agent = Agent(
         model="openai:gpt-4o",
         # model=ollama_model,
