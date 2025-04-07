@@ -303,6 +303,7 @@ async def test_weather_agent(load_env: None) -> None:
 
 
 @pytest.mark.paid
+# @pytest.mark.ollama
 @pytest.mark.example
 @pytest.mark.asyncio
 async def test_agent_delegation(load_env: None) -> None:
@@ -313,21 +314,35 @@ async def test_agent_delegation(load_env: None) -> None:
     https://ai.pydantic.dev/multi-agent-applications/#agent-delegation-and-dependencies
     """
 
+    model = "llama3.3"
+    # model = "qwq:32b"
+    # model = "qwen2.5:72b"
+    ollama_model = OpenAIModel(
+        model_name=model,
+        provider=OpenAIProvider(
+            base_url="http://localhost:11434/v1",
+        ),
+    )
+
     @dataclass
     class ClientAndKey:
         http_client: AsyncClient
         api_key: str
 
     joke_selection_agent = Agent(
-        "openai:gpt-4o",
+        model="openai:gpt-4o",
+        # model=ollama_model,
         deps_type=ClientAndKey,
         system_prompt=(
             "Use the `joke_factory` tool to generate some jokes on the given subject, then choose the best. You must return just a single joke."
         ),
         instrument=True,
     )
+
+    # TODO: The joke_selection_agent can be ollama_model. But the joke_generation_agent cannot. Why?
     joke_generation_agent = Agent(
-        "openai:gpt-4o",
+        model="openai:gpt-4o",
+        # model=ollama_model,
         deps_type=ClientAndKey,
         result_type=list[str],
         system_prompt=('Use the "get_jokes" tool to get some jokes on the given subject, then extract each joke into a list.'),
