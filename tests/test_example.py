@@ -300,3 +300,64 @@ async def test_weather_agent(load_env: None) -> None:
 
     assert weather_agent.model.model_name == "gpt-4o"
     assert "Zurich" in result.data
+
+
+@pytest.mark.paid
+@pytest.mark.example
+@pytest.mark.asyncio
+async def test_agent_delegation(load_env: None) -> None:
+    """
+    Test the agent delegation functionality
+
+    Example from the Pydantic documentation.
+    https://ai.pydantic.dev/multi-agent-applications/#agent-delegation-and-dependencies
+    """
+
+    @dataclass
+    class ClientAndKey:
+        http_client: AsyncClient
+        api_key: str
+
+    joke_selection_agent = Agent(
+        "openai:gpt-4o",
+        deps_type=ClientAndKey,
+        system_prompt=(
+            "Use the `joke_factory` tool to generate some jokes on the given subject, then choose the best. You must return just a single joke."
+        ),
+        instrument=True,
+    )
+    joke_generation_agent = Agent(
+        "openai:gpt-4o",
+        deps_type=ClientAndKey,
+        result_type=list[str],
+        system_prompt=('Use the "get_jokes" tool to get some jokes on the given subject, then extract each joke into a list.'),
+        instrument=True,
+    )
+
+    @joke_selection_agent.tool
+    async def joke_factory(ctx: RunContext[ClientAndKey], count: int) -> list[str]:
+        r = await joke_generation_agent.run(
+            f"Please generate {count} jokes.",
+            deps=ctx.deps,
+            usage=ctx.usage,
+        )
+        return r.data[:5]
+
+    @joke_generation_agent.tool
+    async def get_jokes(ctx: RunContext[ClientAndKey], count: int) -> str:
+        response = await ctx.deps.http_client.get(
+            "https://example.com",
+            params={"count": count},
+            headers={"Authorization": f"Bearer {ctx.deps.api_key}"},
+        )
+        response.raise_for_status()
+        return response.text
+
+    async with AsyncClient() as client:
+        deps = ClientAndKey(client, "foobar")
+        result = await joke_selection_agent.run("Tell me a joke.", deps=deps)
+        logger.debug(result.data)
+        logger.debug(result.usage())
+
+        assert isinstance(result.data, str)
+        assert result.usage().requests > 0
