@@ -28,6 +28,8 @@
     "streetsidesoftware.code-spell-checker",
     // logging
     "berublan.vscode-log-viewer",
+    // mermaid 
+    "bierner.markdown-mermaid",
   ],
   "unwantedRecommendations": [
     "mechatroner.rainbow-csv",
