@@ -20,6 +20,7 @@ dependencies = [
   "logfire>=3.10.0",
   "python-dotenv>=1.1.0",
   "rizaio>=0.10.0",
+  "pydantic-evals[logfire]>=0.0.51",
 ]
 
 [project.scripts]

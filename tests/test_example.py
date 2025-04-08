@@ -15,6 +15,7 @@ from pydantic import BaseModel
 from pydantic_ai import Agent, ModelRetry, RunContext
 from pydantic_ai.models.openai import OpenAIModel
 from pydantic_ai.providers.openai import OpenAIProvider
+from pydantic_evals import Case, Dataset
 
 from deepresearcher2 import basic_chat, chat_with_python, logger
 
@@ -373,3 +374,37 @@ async def test_agent_delegation(load_env: None) -> None:
 
         assert isinstance(result.data, str)
         assert result.usage().requests > 0
+
+
+@pytest.mark.example
+def test_pydantic_evals() -> None:
+    """
+    Test the functionality of pydantic-evals.
+    https://ai.pydantic.dev/evals
+    """
+
+    case_1 = Case(
+        name="simple_case",
+        inputs="What is the capital of France?",
+        expected_output="Paris",
+        metadata={"difficulty": "easy"},
+    )
+
+    dataset = Dataset(cases=[case_1])
+    logger.debug(f"Complete evals dataset: {dataset}")
+
+    assert dataset.cases[0].inputs == "What is the capital of France?"
+    assert dataset.cases[0].expected_output == "Paris"
+
+    # @dataclass
+    # class MyEvaluator(Evaluator):
+    #     async def evaluate(self, ctx: EvaluatorContext[str, str]) -> float:
+    #         if ctx.output == ctx.expected_output:
+    #             return 1.0
+    #         elif isinstance(ctx.output, str) and ctx.expected_output.lower() in ctx.output.lower():
+    #             return 0.8
+    #         else:
+    #             return 0.0
+
+    # dataset.add_evaluator(IsInstance(type_name="str"))
+    # dataset.add_evaluator(MyEvaluator())

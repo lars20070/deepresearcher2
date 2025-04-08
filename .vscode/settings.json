@@ -67,6 +67,7 @@
     "pydanticai",
     "Riza",
     "rizaio",
+    "evals",
   ],
   "cSpell.languageSettings": [
     {

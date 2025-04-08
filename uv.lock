@@ -366,6 +366,7 @@ dependencies = [
     { name = "loguru" },
     { name = "pydantic" },
     { name = "pydantic-ai", extra = ["examples"] },
+    { name = "pydantic-evals", extra = ["logfire"] },
     { name = "pylint" },
     { name = "pypandoc" },
     { name = "pytest" },
@@ -384,6 +385,7 @@ requires-dist = [
     { name = "loguru", specifier = ">=0.7.3" },
     { name = "pydantic", specifier = ">=2.10.6" },
     { name = "pydantic-ai", extras = ["examples"], specifier = ">=0.0.40" },
+    { name = "pydantic-evals", extras = ["logfire"], specifier = ">=0.0.51" },
     { name = "pylint", specifier = ">=3.3.4" },
     { name = "pypandoc", specifier = ">=1.15" },
     { name = "pytest", specifier = ">=8.3.4" },
@@ -1600,6 +1602,26 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/a4/99/bddde3ddde76c03b65dfd5a66ab436c4e58ffc42927d4ff1198ffbf96f5f/pydantic_core-2.27.2-cp313-cp313-win32.whl", hash = "sha256:1ebaf1d0481914d004a573394f4be3a7616334be70261007e47c2a6fe7e50130", size = 1834387 },
     { url = "https://files.pythonhosted.org/packages/71/47/82b5e846e01b26ac6f1893d3c5f9f3a2eb6ba79be26eef0b759b4fe72946/pydantic_core-2.27.2-cp313-cp313-win_amd64.whl", hash = "sha256:953101387ecf2f5652883208769a79e48db18c6df442568a0b5ccd8c2723abee", size = 1990453 },
     { url = "https://files.pythonhosted.org/packages/51/b2/b2b50d5ecf21acf870190ae5d093602d95f66c9c31f9d5de6062eb329ad1/pydantic_core-2.27.2-cp313-cp313-win_arm64.whl", hash = "sha256:ac4dbfd1691affb8f48c2c13241a2e3b60ff23247cbcf981759c768b6633cf8b", size = 1885186 },
+]
+
+[[package]]
+name = "pydantic-evals"
+version = "0.0.51"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "anyio" },
+    { name = "logfire-api" },
+    { name = "pydantic" },
+    { name = "rich" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/8c/1b/d7c8348f210df502a2e7f0d0914d2085ee01b14b69cedf8ad516e9a1c871/pydantic_evals-0.0.51.tar.gz", hash = "sha256:cba4d9cf05e3127264a6872f14f66db04887a2685572e19e9dbe99221e2307c4", size = 40081 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/f7/4a/14dbb9732f18ebaa73fa45a388a9c2e401b0e67874147c8e5ecfe399f388/pydantic_evals-0.0.51-py3-none-any.whl", hash = "sha256:89aebb6449f4adb2099703f76654fe8b28808b2ddf3041bff20ed24c4c7056bd", size = 48586 },
+]
+
+[package.optional-dependencies]
+logfire = [
+    { name = "logfire" },
 ]
 
 [[package]]
