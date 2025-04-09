@@ -16,6 +16,7 @@ from pydantic_ai import Agent, ModelRetry, RunContext
 from pydantic_ai.models.openai import OpenAIModel
 from pydantic_ai.providers.openai import OpenAIProvider
 from pydantic_evals import Case, Dataset
+from pydantic_evals.evaluators import Evaluator, EvaluatorContext, IsInstance
 
 from deepresearcher2 import basic_chat, chat_with_python, logger
 
@@ -377,9 +378,11 @@ async def test_agent_delegation(load_env: None) -> None:
 
 
 @pytest.mark.example
-def test_pydantic_evals() -> None:
+@pytest.mark.asyncio
+async def test_pydantic_evals() -> None:
     """
     Test the functionality of pydantic-evals.
+    We evaluate and score the response of the model, see evaluate() method.
     https://ai.pydantic.dev/evals
     """
 
@@ -390,21 +393,49 @@ def test_pydantic_evals() -> None:
         metadata={"difficulty": "easy"},
     )
 
-    dataset = Dataset(cases=[case_1])
+    case_2 = Case(
+        name="another_simple_case",
+        inputs="What is the capital of Germany?",
+        expected_output="Berlin",
+        metadata={"difficulty": "easy"},
+    )
+
+    class MyEvaluator(Evaluator[str, str]):
+        def evaluate(self, ctx: EvaluatorContext[str, str]) -> float:
+            # Score the string output
+            if ctx.output == ctx.expected_output:
+                # Exact match
+                return 1.0
+            elif isinstance(ctx.output, str) and ctx.expected_output.lower() in ctx.output.lower():
+                # Expected output is a substring of the output
+                return 0.8
+            else:
+                # Total failure
+                return 0.0
+
+    dataset = Dataset(
+        cases=[case_1, case_2],
+        evaluators=[
+            IsInstance(type_name="str"),  # Vanilla evaluator
+            MyEvaluator(),  # Custom evaluator
+        ],
+    )
     logger.debug(f"Complete evals dataset: {dataset}")
 
+    # Check structure of test dataset
     assert dataset.cases[0].inputs == "What is the capital of France?"
     assert dataset.cases[0].expected_output == "Paris"
+    assert dataset.cases[1].inputs == "What is the capital of Germany?"
+    assert dataset.cases[1].expected_output == "Berlin"
 
-    # @dataclass
-    # class MyEvaluator(Evaluator):
-    #     async def evaluate(self, ctx: EvaluatorContext[str, str]) -> float:
-    #         if ctx.output == ctx.expected_output:
-    #             return 1.0
-    #         elif isinstance(ctx.output, str) and ctx.expected_output.lower() in ctx.output.lower():
-    #             return 0.8
-    #         else:
-    #             return 0.0
+    async def guess_city(question: str) -> str:
+        # Simulate a model response
+        return "Paris"
 
-    # dataset.add_evaluator(IsInstance(type_name="str"))
-    # dataset.add_evaluator(MyEvaluator())
+    report = await dataset.evaluate(guess_city)
+    report.print(
+        include_input=True,
+        include_output=True,
+        include_durations=False,
+    )
+    logger.debug(f"Complete evaluation report: {report}")
