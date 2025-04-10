@@ -13,6 +13,7 @@ import pytest
 from httpx import AsyncClient
 from pydantic import BaseModel
 from pydantic_ai import Agent, ModelRetry, RunContext
+from pydantic_ai.mcp import MCPServerHTTP
 from pydantic_ai.models.openai import OpenAIModel
 from pydantic_ai.providers.openai import OpenAIProvider
 from pydantic_evals import Case, Dataset
@@ -439,3 +440,25 @@ async def test_pydantic_evals() -> None:
         include_durations=False,
     )
     logger.debug(f"Complete evaluation report: {report}")
+
+
+@pytest.mark.paid
+@pytest.mark.example
+@pytest.mark.asyncio
+async def test_mcp_sse_client(load_env: None) -> None:
+    """
+    Test the Pydantic MCP SSE client.
+    https://ai.pydantic.dev/mcp/client/#sse-client
+
+    Please start the MCP server first.
+    deno run -N -R=node_modules -W=node_modules --node-modules-dir=auto jsr:@pydantic/mcp-run-python sse
+    """
+
+    server = MCPServerHTTP(url="http://localhost:3001/sse")
+    agent = Agent("openai:gpt-4o", mcp_servers=[server])
+
+    async with agent.run_mcp_servers():
+        result = await agent.run("How many days between 2000-01-01 and 2025-03-18?")
+        logger.debug(f"Result: {result.data}")
+
+        assert "9,208 days" in result.data
