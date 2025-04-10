@@ -24,6 +24,7 @@
     "GitHub.copilot",
     "GitHub.copilot-chat",
     "ms-vscode.vscode-copilot-data-analysis",
+    "AutomataLabs.copilot-mcp",
     // spell checker
     "streetsidesoftware.code-spell-checker",
     // logging
