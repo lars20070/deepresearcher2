@@ -29,6 +29,7 @@ minimalexample = "deepresearcher2.helloworld:main"
 uml = "deepresearcher2.cli:uml"
 chat = "deepresearcher2.examples:basic_chat"
 chatpython = "deepresearcher2.examples:chat_with_python"
+mcpserver = "deepresearcher2.examples:mcp_server"
 
 [tool.ruff]
 line-length = 150

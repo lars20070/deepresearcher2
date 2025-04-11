@@ -3,6 +3,7 @@
 import logfire
 import rizaio
 from dotenv import load_dotenv
+from mcp.server.fastmcp import FastMCP
 from pydantic_ai import Agent
 from pydantic_ai.exceptions import ModelRetry
 from pydantic_ai.models.openai import OpenAIModel
@@ -118,3 +119,29 @@ def chat_with_python() -> None:
             message_history=result.all_messages() if result else None,
         )
         print(result.data)
+
+
+def mcp_server() -> None:
+    """
+    Start the MCP server.
+
+    Creates and runs an MCP server with a Claude 3.5 agent inside.
+    https://ai.pydantic.dev/mcp/server/
+
+    Test the response of the server with test_mcp_server()
+    """
+    load_dotenv()
+
+    server = FastMCP("PydanticAI Server")
+    server_agent = Agent(
+        "anthropic:claude-3-5-haiku-latest",
+        system_prompt="Always reply in rhyme.",
+    )
+
+    @server.tool()
+    async def poet(theme: str) -> str:
+        """Poem generator"""
+        r = await server_agent.run(f"Write a poem about {theme}.")
+        return r.data
+
+    server.run()

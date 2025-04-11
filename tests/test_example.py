@@ -11,6 +11,8 @@ from unittest.mock import patch
 import logfire
 import pytest
 from httpx import AsyncClient
+from mcp import ClientSession, StdioServerParameters
+from mcp.client.stdio import stdio_client
 from pydantic import BaseModel
 from pydantic_ai import Agent, ModelRetry, RunContext
 from pydantic_ai.mcp import MCPServerHTTP, MCPServerStdio
@@ -520,3 +522,26 @@ async def test_mcp_stdio_client(load_env: None) -> None:
 
         # 9,208 days is the correct answer.
         assert "9,208 days" in result.data
+
+
+@pytest.mark.paid
+@pytest.mark.example
+@pytest.mark.asyncio
+async def test_mcp_server(load_env: None) -> None:
+    """
+    Test the MCP server functionality defined in deepresearcher2.examples.mcp_server()
+
+    The MCP server wraps a Claude 3.5 agent which generates poems.
+    The MCP server ist started automatically.
+    """
+    server_params = StdioServerParameters(
+        command="uv",
+        args=["run", "mcpserver"],
+        env=os.environ,
+    )
+
+    async with stdio_client(server_params) as (read, write), ClientSession(read, write) as session:
+        await session.initialize()
+        result = await session.call_tool("poet", {"theme": "socks"})
+        logger.debug(f"Complete poem:\n{result.content[0].text}")
+        assert "socks" in result.content[0].text
