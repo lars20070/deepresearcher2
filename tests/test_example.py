@@ -442,7 +442,7 @@ async def test_pydantic_evals() -> None:
     logger.debug(f"Complete evaluation report: {report}")
 
 
-@pytest.mark.ollama
+@pytest.mark.paid
 @pytest.mark.example
 @pytest.mark.asyncio
 async def test_mcp_sse_client(load_env: None) -> None:
@@ -454,17 +454,18 @@ async def test_mcp_sse_client(load_env: None) -> None:
     deno run -N -R=node_modules -W=node_modules --node-modules-dir=auto jsr:@pydantic/mcp-run-python sse
     """
 
-    model = "llama3.3"
-    ollama_model = OpenAIModel(
-        model_name=model,
-        provider=OpenAIProvider(base_url="http://localhost:11434/v1"),
-    )
+    # model = "llama3.3"
+    # ollama_model = OpenAIModel(
+    #     model_name=model,
+    #     provider=OpenAIProvider(base_url="http://localhost:11434/v1"),
+    # )
 
-    server = MCPServerHTTP(url="http://localhost:3001/sse")
+    # MCP server providing run_python_code tool
+    mcp_server = MCPServerHTTP(url="http://localhost:3001/sse")
     agent = Agent(
-        # model="openai:gpt-4o",
-        model=ollama_model,
-        mcp_servers=[server],
+        model="openai:gpt-4o",
+        # model=ollama_model,
+        mcp_servers=[mcp_server],
         instrument=True,
     )
 
@@ -473,5 +474,4 @@ async def test_mcp_sse_client(load_env: None) -> None:
         logger.debug(f"Result: {result.data}")
 
         # 9,208 days is the correct answer.
-        # Some models get number wrong. So here we just test that we get some answer.
-        assert "days" in result.data
+        assert "9,208 days" in result.data
