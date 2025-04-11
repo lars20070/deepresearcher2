@@ -13,7 +13,7 @@ import pytest
 from httpx import AsyncClient
 from pydantic import BaseModel
 from pydantic_ai import Agent, ModelRetry, RunContext
-from pydantic_ai.mcp import MCPServerHTTP
+from pydantic_ai.mcp import MCPServerHTTP, MCPServerStdio
 from pydantic_ai.models.openai import OpenAIModel
 from pydantic_ai.providers.openai import OpenAIProvider
 from pydantic_evals import Case, Dataset
@@ -462,6 +462,51 @@ async def test_mcp_sse_client(load_env: None) -> None:
 
     # MCP server providing run_python_code tool
     mcp_server = MCPServerHTTP(url="http://localhost:3001/sse")
+    agent = Agent(
+        model="openai:gpt-4o",
+        # model=ollama_model,
+        mcp_servers=[mcp_server],
+        instrument=True,
+    )
+
+    async with agent.run_mcp_servers():
+        result = await agent.run("How many days between 2000-01-01 and 2025-03-18?")
+        logger.debug(f"Result: {result.data}")
+
+        # 9,208 days is the correct answer.
+        assert "9,208 days" in result.data
+
+
+@pytest.mark.paid
+@pytest.mark.example
+@pytest.mark.asyncio
+async def test_mcp_stdio_client(load_env: None) -> None:
+    """
+    Test the Pydantic MCP SSE client.
+    https://ai.pydantic.dev/mcp/client/#sse-client
+
+    Note that unlike in the SSE mode, the MCP server starts up automatically.
+    """
+
+    # model = "llama3.3"
+    # ollama_model = OpenAIModel(
+    #     model_name=model,
+    #     provider=OpenAIProvider(base_url="http://localhost:11434/v1"),
+    # )
+
+    # MCP server providing run_python_code tool
+    mcp_server = MCPServerStdio(
+        "deno",
+        args=[
+            "run",
+            "-N",
+            "-R=node_modules",
+            "-W=node_modules",
+            "--node-modules-dir=auto",
+            "jsr:@pydantic/mcp-run-python",
+            "stdio",
+        ],
+    )
     agent = Agent(
         model="openai:gpt-4o",
         # model=ollama_model,
