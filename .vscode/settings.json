@@ -25,6 +25,7 @@
     "markdown": true,
     "plaintext": false,
   },
+  "chat.agent.enabled": true,
   "r.lsp.promptToInstall": false,
   "cSpell.enabled": true,
   "cSpell.allowCompoundWords": true,
@@ -95,6 +96,5 @@
       "pattern": "deepresearcher2.log"
     },
   ],
-  "codeQL.createQuery.qlPackLocation": "${workspaceFolder}",
-  "codeQL.githubDatabase.download": "never"
+  "nextflow.telemetry.enabled": false,
 }

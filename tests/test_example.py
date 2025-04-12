@@ -163,13 +163,13 @@ def test_chat_with_python() -> None:
         assert "5779" in output
 
 
-@pytest.mark.skip(reason="429 Too Many Requests from geocode.maps.co")
 @pytest.mark.example
 @pytest.mark.paid
 @pytest.mark.asyncio
 async def test_weather_agent(load_env: None) -> None:
     """
     Test Ollama agent with two tools.
+    Note that geocode.maps.co has strict request limits. '429 Too Many Requests' is likely.
 
     Slightly modified example from the Pydantic documentation.
     https://ai.pydantic.dev/examples/weather-agent/
@@ -308,8 +308,6 @@ async def test_weather_agent(load_env: None) -> None:
     assert "Zurich" in result.data
 
 
-# TODO: Why is the joke_generation_agent now stuck in an infinte loop? This example test passed alright in the past.
-@pytest.mark.skip(reason="joke_generation_agent in infinite loop. Not sure why.")
 @pytest.mark.paid
 @pytest.mark.example
 @pytest.mark.asyncio
