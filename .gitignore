@@ -13,6 +13,10 @@ __pycache__/
 *.dot
 codeql-custom-queries-python/
 
+# PydanticAI
+examples/
+node_modules/
+
 # reports
 reports/*.md
 reports/*.pdf

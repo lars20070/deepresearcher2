@@ -25,6 +25,7 @@
     "markdown": true,
     "plaintext": false,
   },
+  "chat.agent.enabled": true,
   "r.lsp.promptToInstall": false,
   "cSpell.enabled": true,
   "cSpell.allowCompoundWords": true,
@@ -64,6 +65,11 @@
     "isinstance",
     "Tpng",
     "Grankdir",
+    "pydanticai",
+    "Riza",
+    "rizaio",
+    "evals",
+    "mcpserver",
   ],
   "cSpell.languageSettings": [
     {
@@ -90,5 +96,5 @@
       "pattern": "deepresearcher2.log"
     },
   ],
-  "codeQL.createQuery.qlPackLocation": "${workspaceFolder}"
+  "nextflow.telemetry.enabled": false,
 }

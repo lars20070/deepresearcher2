@@ -16,11 +16,20 @@ dependencies = [
   "pydantic>=2.10.6",
   "pytest-asyncio>=0.25.3",
   "pypandoc>=1.15",
+  "pydantic-ai[cli,examples,mcp]>=0.0.40",
+  "logfire>=3.10.0",
+  "python-dotenv>=1.1.0",
+  "rizaio>=0.10.0",
+  "pydantic-evals[logfire]>=0.0.51",
+  "pydantic-ai-slim[mcp]>=0.0.40",
 ]
 
 [project.scripts]
 minimalexample = "deepresearcher2.helloworld:main"
 uml = "deepresearcher2.cli:uml"
+chat = "deepresearcher2.examples:basic_chat"
+chatpython = "deepresearcher2.examples:chat_with_python"
+mcpserver = "deepresearcher2.examples:mcp_server"
 
 [tool.ruff]
 line-length = 150
@@ -51,7 +60,12 @@ lint.pydocstyle.convention = "google"
 
 [tool.pytest.ini_options]
 addopts = ["-m", "not paid"] # Skip tests that require a paid API key
-asyncio_default_fixture_loop_scope = "session" # Use a single event loop for all tests. Switch to "function" for a new event loop for every test (more isolation).
+asyncio_default_fixture_loop_scope = "function" # Use "session" for a single event loop for all tests or "function" for a new event loop for every test (more isolation).
+markers = [
+  "paid: tests requiring paid APIs",
+  "ollama: tests requiring a local Ollama instance",
+  "example: examples which are not testing deepresearcher2 functionality",
+]
 
 [tool.coverage.run]
 branch = true

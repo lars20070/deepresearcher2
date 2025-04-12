@@ -27,7 +27,13 @@ jobs:
     - name: Create .env file
       # Define in GitHub repository: Settings -> Secrets and variables -> Actions -> New repository secret
       run: |
-        echo API_KEY_TAVILY=${{ secrets.API_KEY_TAVILY }} > .env
+        echo TAVILY_API_KEY=${{ secrets.TAVILY_API_KEY }} >> .env
+        echo GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }} >> .env
+        echo LOGFIRE_TOKEN=${{ secrets.LOGFIRE_TOKEN }} >> .env
+        echo RIZA_API_KEY=${{ secrets.RIZA_API_KEY }} >> .env
+        echo OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} >> .env
+        echo WEATHER_API_KEY=${{ secrets.WEATHER_API_KEY }} >> .env
+        echo GEO_API_KEY=${{ secrets.GEO_API_KEY }} >> .env
     - name: Install uv package manager
       uses: astral-sh/setup-uv@v5.2.2
       with:
@@ -47,9 +53,10 @@ jobs:
       run: uvx ruff check .
     - name: Run unit tests
       # -v                verbose
-      # -m "not slow"     skip slow tests
+      # -m "not paid"     skip tests requiring paid API keys
       # -p no:warnings    ignore warnings
-      run: uv run pytest -v -m "not slow" -p no:warnings -n auto
+      # -n auto           run tests in parallel
+      run: uv run pytest -v -m "not paid" -p no:warnings -n auto
     - name: Upload logs
       uses: actions/upload-artifact@v4
       if: always()
