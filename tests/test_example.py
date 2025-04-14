@@ -20,6 +20,7 @@ from pydantic_ai.models.openai import OpenAIModel
 from pydantic_ai.providers.openai import OpenAIProvider
 from pydantic_evals import Case, Dataset
 from pydantic_evals.evaluators import Evaluator, EvaluatorContext, IsInstance
+from pydantic_graph import BaseNode, End, Graph, GraphRunContext
 
 from deepresearcher2 import basic_chat, chat_with_python, logger
 
@@ -547,3 +548,73 @@ async def test_mcp_server(load_env: None) -> None:
         result = await session.call_tool("poet", {"theme": "socks"})
         logger.debug(f"Complete poem:\n{result.content[0].text}")
         assert "socks" in result.content[0].text
+
+
+@pytest.mark.example
+@pytest.mark.asyncio
+async def test_pydantic_graph() -> None:
+    """
+    Define a simple graph and test its traversal.
+    See flow chart in tests/README.md
+    https://youtu.be/WFvugLf_760
+
+    Node A simply passes the track number on to the next node.
+    Node B decides whether to continue to node C or stop.
+    Node C passes the track number to the final result.
+
+    track number <= 5: nodes A, B and C executed
+    track number > 5: nodes A and B executed, but not C
+    """
+
+    @dataclass
+    class NodeA(BaseNode[int]):
+        """
+        Pass track number on.
+        """
+
+        track_number: int = 0
+
+        async def run(self, ctx: GraphRunContext) -> BaseNode:
+            logger.debug("Running Node A.")
+            return NodeB(self.track_number)
+
+    @dataclass
+    class NodeB(BaseNode[int]):
+        """
+        Decision node.
+        """
+
+        track_number: int = 0
+
+        async def run(self, ctx: GraphRunContext) -> BaseNode | End:
+            logger.debug("Running Node B.")
+            if self.track_number > 5:
+                return End(f"Stop at Node B with track number {self.track_number}")
+            else:
+                return NodeC(self.track_number)
+
+    @dataclass
+    class NodeC(BaseNode[int]):
+        """
+        Not always executed.
+        """
+
+        track_number: int = 0
+
+        async def run(self, ctx: GraphRunContext) -> End:
+            logger.info("Running Node C.")
+            return End(f"Stop at Node C with track number {self.track_number}")
+
+    logger.info("Testing Pydantic Graph")
+
+    # Define the agent graph
+    graph = Graph(nodes=[NodeA, NodeB, NodeC])
+
+    # Run the agent graph
+    result_1 = await graph.run(start_node=NodeA(track_number=1))
+    logger.debug(f"Result: {result_1.output}")
+    assert "Node C" in result_1.output
+
+    result_2 = await graph.run(start_node=NodeA(track_number=6))
+    logger.debug(f"Result: {result_2.output}")
+    assert "Node B" in result_2.output
