@@ -1,6 +1,6 @@
 [project]
 name = "deepresearcher2"
-version = "0.1.0"
+version = "0.1.1"
 description = "fully local web research and report writing assistant"
 readme = "README.md"
 authors = [{ name = "Lars Nilse", email = "l.nilse@dunelm.org.uk" }]
@@ -30,6 +30,7 @@ uml = "deepresearcher2.cli:uml"
 chat = "deepresearcher2.examples:basic_chat"
 chatpython = "deepresearcher2.examples:chat_with_python"
 mcpserver = "deepresearcher2.examples:mcp_server"
+research = "deepresearcher2.workflow:main"
 
 [tool.ruff]
 line-length = 150
