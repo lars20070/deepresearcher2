@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
+from __future__ import annotations as _annotations
 
 import os
 import random
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import date
 from io import StringIO
-from typing import Any
+from typing import TYPE_CHECKING, Any
 from unittest.mock import patch
 
 import logfire
@@ -13,9 +14,13 @@ import pytest
 from httpx import AsyncClient
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 from pydantic_ai import Agent, ModelRetry, RunContext
+from pydantic_ai.format_as_xml import format_as_xml
 from pydantic_ai.mcp import MCPServerHTTP, MCPServerStdio
+
+if TYPE_CHECKING:
+    from pydantic_ai.messages import ModelMessage
 from pydantic_ai.models.openai import OpenAIModel
 from pydantic_ai.providers.openai import OpenAIProvider
 from pydantic_evals import Case, Dataset
@@ -618,3 +623,118 @@ async def test_pydantic_graph() -> None:
     result_2 = await graph.run(start_node=NodeA(track_number=6))
     logger.debug(f"Result: {result_2.output}")
     assert "Node B" in result_2.output
+
+
+@pytest.mark.example
+@pytest.mark.ollama
+@pytest.mark.asyncio
+async def test_email() -> None:
+    """
+    Define a graph with agents and test its execution.
+    See flow chart in tests/README.md
+    https://ai.pydantic.dev/graph/#genai-example
+    https://www.youtube.com/watch?v=WFvugLf_760&list=WL&index=31&t=563s
+
+    Node WriteEmail generates an email.
+    Node Feedback evaluates the email and provides feedback. Crucially, the email must mention user's interests.
+
+    In the first pass, the email does not mention the user's interests.
+    In the second pass, the email does mention the user's interests based on the feedback.
+    """
+
+    # Data classes
+    @dataclass
+    class User:
+        name: str
+        email: EmailStr
+        interests: list[str]
+
+    @dataclass
+    class Email:
+        subject: str
+        body: str
+
+    @dataclass
+    class State:
+        user: User
+        write_agent_messages: list[ModelMessage] = field(default_factory=list)
+
+    class EmailRequiresWrite(BaseModel):
+        feedback: str
+
+    class EmailOk(BaseModel):
+        pass
+
+    # Agents
+    ollama_model = OpenAIModel(
+        model_name="llama3.3",
+        provider=OpenAIProvider(base_url="http://localhost:11434/v1"),
+    )
+
+    email_writer_agent = Agent(
+        model=ollama_model,
+        result_type=Email,
+        system_prompt="Write a welcome email to our tech blog.",
+    )
+
+    feedback_agent = Agent(
+        model=ollama_model,
+        result_type=EmailRequiresWrite | EmailOk,
+        system_prompt="Review the email and provide feedback. Email must reference the users specific interests.",
+    )
+
+    # Nodes
+    @dataclass
+    class WriteEmail(BaseNode[State]):
+        email_feedback: str | None = None
+
+        async def run(self, ctx: GraphRunContext[State]) -> Feedback:
+            # Generate prompt
+            if self.email_feedback:
+                # Second or later pass
+                prompt = f"Rewrite the email for the user:\n{format_as_xml(ctx.state.user)}\nFeedback: {self.email_feedback}"
+            else:
+                # First pass
+                prompt = f"Write a welcome email for the user:\n{format_as_xml(ctx.state.user)}"
+
+            # Generate email
+            result = await email_writer_agent.run(
+                prompt,
+                message_history=ctx.state.write_agent_messages,
+            )
+
+            ctx.state.write_agent_messages += result.all_messages()
+            return Feedback(result.data)
+
+    @dataclass
+    class Feedback(BaseNode[State, None, Email]):
+        email: Email
+
+        async def run(
+            self,
+            ctx: GraphRunContext[State],
+        ) -> WriteEmail | End[Email]:
+            prompt = format_as_xml({"user": ctx.state.user, "email": self.email})
+            result = await feedback_agent.run(prompt)
+            if isinstance(result.data, EmailRequiresWrite):
+                return WriteEmail(email_feedback=result.data.feedback)
+            else:
+                return End(self.email)
+
+    # Graph
+    feedback_graph = Graph(nodes=(WriteEmail, Feedback))
+
+    # Test run
+    user = User(
+        name="John Doe",
+        email="john.joe@example.com",
+        interests=["Haskel", "Lisp", "Fortran"],
+    )
+    state = State(user)
+
+    result = await feedback_graph.run(WriteEmail(), state=state)
+    logger.debug(f"Final email: {result.output.body}")
+
+    # Both name and interests should be in the email.
+    assert user.name in result.output.body
+    assert user.interests[0] in result.output.body

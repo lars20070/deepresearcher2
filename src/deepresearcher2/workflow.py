@@ -230,7 +230,8 @@ async def deepresearch_3() -> None:
     state = State(user)
     feedback_graph = Graph(nodes=(WriteEmail, Feedback))
     result = await feedback_graph.run(WriteEmail(), state=state)
-    logger.debug(f"Result: {result.output}")
+    # logger.debug(f"Result: {result.output}")
+    logger.debug(f"Result: {result.output.body}")
 
 
 def main() -> None:
