@@ -24,3 +24,22 @@ flowchart LR
     CoordinatorModel --> ReasoningMCP
 ```
 <br>*Deep Researcher 2 design*
+
+``` mermaid
+classDiagram
+    DeepState: string topic
+    DeepState: string search_query
+    DeepState: list search_results
+    DeepState: int loop_count
+    DeepState: string running_summary
+```
+<br>*state class*
+
+## Models and MCPs
+
+* coordinator models for tool/MCP use
+  * Llama 3.3 `llama3.3` (Meta)
+  * Mistral Nemo `mistral-nemo` (Mistral + Nvidia)
+  * Firefunction v2 `firefunction-v2` (Fireworks AI)
+* search MCP
+  * [DuckDuckGo MCP](https://github.com/nickclyde/duckduckgo-mcp-server)
