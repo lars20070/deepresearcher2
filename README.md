@@ -39,7 +39,10 @@ classDiagram
 
 * coordinator models for tool/MCP use
   * Llama 3.3 `llama3.3` (Meta)
-  * Mistral Nemo `mistral-nemo` (Mistral + Nvidia)
   * Firefunction v2 `firefunction-v2` (Fireworks AI)
+  * Mistral Nemo `mistral-nemo` (Mistral + Nvidia)
+    * fails to make proper use of the Python execution MCP
 * search MCP
   * [DuckDuckGo MCP](https://github.com/nickclyde/duckduckgo-mcp-server)
+    * `search` tool
+    * `fetch_content` tool

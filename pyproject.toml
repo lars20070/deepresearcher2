@@ -22,6 +22,7 @@ dependencies = [
   "rizaio>=0.10.0",
   "pydantic-evals[logfire]>=0.0.51",
   "pydantic-ai-slim[mcp]>=0.0.40",
+  "duckduckgo-mcp-server>=0.1.1",
 ]
 
 [project.scripts]

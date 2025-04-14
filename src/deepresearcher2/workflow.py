@@ -25,8 +25,8 @@ async def deepresearch() -> None:
 
     # LLM setup
     model = "llama3.3"
-    # model = "mistral-nemo"
     # model = "firefunction-v2"
+    # model = "mistral-nemo"
     ollama_model = OpenAIModel(
         model_name=model,
         provider=OpenAIProvider(
@@ -35,7 +35,7 @@ async def deepresearch() -> None:
     )
 
     # MCP setup
-    mcp_server = MCPServerStdio(
+    mcp_server_python = MCPServerStdio(
         "deno",
         args=[
             "run",
@@ -48,17 +48,29 @@ async def deepresearch() -> None:
         ],
     )
 
+    mcp_server_duckduckgo = MCPServerStdio(
+        "uvx",
+        args=[
+            "duckduckgo-mcp-server",
+        ],
+    )
+
     agent = Agent(
         model=ollama_model,
         # model="openai:gpt-4o",
-        mcp_servers=[mcp_server],
+        mcp_servers=[
+            mcp_server_python,
+            mcp_server_duckduckgo,
+        ],
         result_type=str,
         instrument=True,
     )
     logger.debug(f"Agent: {agent}")
 
     async with agent.run_mcp_servers():
-        result = await agent.run("What is the capital of France?")
+        # prompt = "What is the capital of France?"
+        prompt = "What time is it in Zurich?"
+        result = await agent.run(prompt)
         logger.debug(f"Result: {result.data}")
 
 
