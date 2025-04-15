@@ -14,16 +14,36 @@ fully local web research and report writing assistant
 
 ``` mermaid
 flowchart LR
-    CoordinatorModel["coordinator model
-    (Llama 3.3)"]
-    SearchMCP["web search MCP
-    (DuckDuckGo)"]
-    ReasoningMCP["reasoning MCP
-    (DeepSeek R1)"]
+    WebSearch["Web Search"]
+    SummarizeSearchResults["Summarize Search Results"]
+    ReflectOnSummary["Reflect on Summary"]
+    FinalizeSummary["Finalize Summary"]
+    Start((Start)) --> WebSearch
+    WebSearch --> SummarizeSearchResults
+    SummarizeSearchResults --> ReflectOnSummary
+    ReflectOnSummary --> WebSearch
+    ReflectOnSummary --> FinalizeSummary
+    FinalizeSummary --> End((End))
+```
+<br>*Deep Researcher 2 design*
+<br>
+<br>
+<br>
+<br>
+
+``` mermaid
+flowchart LR
+    CoordinatorModel["coordinator model<br>Llama 3.3"]
+    SearchMCP["web search MCP<br>DuckDuckGo"]
+    ReasoningMCP["reasoning MCP<br>DeepSeek R1"]
     CoordinatorModel --> SearchMCP
     CoordinatorModel --> ReasoningMCP
 ```
-<br>*Deep Researcher 2 design*
+<br>*MCPs in Deep Researcher 2*
+<br>
+<br>
+<br>
+<br>
 
 ``` mermaid
 classDiagram
