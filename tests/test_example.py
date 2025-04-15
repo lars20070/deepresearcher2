@@ -581,7 +581,7 @@ async def test_pydantic_graph() -> None:
 
         track_number: int = 0
 
-        async def run(self, ctx: GraphRunContext) -> BaseNode:
+        async def run(self, ctx: GraphRunContext) -> NodeB:
             logger.debug("Running Node A.")
             return NodeB(self.track_number)
 
@@ -593,7 +593,7 @@ async def test_pydantic_graph() -> None:
 
         track_number: int = 0
 
-        async def run(self, ctx: GraphRunContext) -> BaseNode | End:
+        async def run(self, ctx: GraphRunContext) -> NodeC | End:
             logger.debug("Running Node B.")
             if self.track_number > 5:
                 return End(f"Stop at Node B with track number {self.track_number}")
@@ -627,7 +627,6 @@ async def test_pydantic_graph() -> None:
     assert "Node B" in result_2.output
 
     # Mermaid code
-    # TODO: The generated mermaid code is valid but incorrect.
     mermaid_code = graph.mermaid_code(start_node=NodeA())
     logger.debug(f"Mermaid graph:\n{mermaid_code}")
     assert "stateDiagram" in mermaid_code

@@ -15,12 +15,6 @@ from pydantic_graph import BaseNode, End, Graph, GraphRunContext
 from deepresearcher2 import logger
 
 
-@dataclass
-class DeepState:
-    topic: str | None = None
-    loop_count: int = 0
-
-
 async def deepresearch() -> None:
     """
     Deep research workflow.
@@ -79,6 +73,11 @@ async def deepresearch() -> None:
 
 
 @dataclass
+class DeepState:
+    count: int = 0
+
+
+@dataclass
 class WebSearch(BaseNode[int]):
     """
     Web Search node.
@@ -86,7 +85,7 @@ class WebSearch(BaseNode[int]):
 
     count: int = 0
 
-    async def run(self, ctx: GraphRunContext) -> BaseNode:
+    async def run(self, ctx: GraphRunContext) -> SummarizeSearchResults:
         logger.debug(f"Running Web Search with count number {self.count}.")
         return SummarizeSearchResults(self.count)
 
@@ -99,7 +98,7 @@ class SummarizeSearchResults(BaseNode[int]):
 
     count: int = 0
 
-    async def run(self, ctx: GraphRunContext) -> BaseNode:
+    async def run(self, ctx: GraphRunContext) -> ReflectOnSearch:
         logger.debug(f"Running Summarize Search Results with count number {self.count}.")
         return ReflectOnSearch(self.count)
 
@@ -112,7 +111,7 @@ class ReflectOnSearch(BaseNode[int]):
 
     count: int = 0
 
-    async def run(self, ctx: GraphRunContext) -> BaseNode:
+    async def run(self, ctx: GraphRunContext) -> WebSearch | FinalizeSummary:
         logger.debug(f"Running Reflect on Search with count number {self.count}.")
         if self.count < int(os.environ.get("MAX_RESEARCH_LOOPS", "10")):
             return WebSearch(self.count + 1)
@@ -149,9 +148,8 @@ async def deepresearch_2() -> None:
     logger.debug(f"Result: {result.output}")
 
     # Mermaid code
-    # TODO: Mermaid diagram is incorrect.
-    # mermaid_code = graph.mermaid_code(start_node=WebSearch())
-    # logger.debug(f"Mermaid graph:\n{mermaid_code}")
+    mermaid_code = graph.mermaid_code(start_node=WebSearch())
+    logger.debug(f"Mermaid graph:\n{mermaid_code}")
 
 
 def main() -> None:
