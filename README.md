@@ -13,17 +13,18 @@ fully local web research and report writing assistant
 <br>*Deep Researcher 2 class structure*
 
 ``` mermaid
-flowchart LR
-    WebSearch["Web Search"]
-    SummarizeSearchResults["Summarize Search Results"]
-    ReflectOnSummary["Reflect on Summary"]
-    FinalizeSummary["Finalize Summary"]
-    Start((Start)) --> WebSearch
+stateDiagram-v2
+    direction LR
+    WebSearch: Web Search
+    SummarizeSearchResults: Summarize Search Results
+    ReflectOnSummary: Reflect on Summary
+    FinalizeSummary: Finalize Summary
+    [*] --> WebSearch
     WebSearch --> SummarizeSearchResults
     SummarizeSearchResults --> ReflectOnSummary
     ReflectOnSummary --> WebSearch
     ReflectOnSummary --> FinalizeSummary
-    FinalizeSummary --> End((End))
+    FinalizeSummary --> [*]
 ```
 <br>*Deep Researcher 2 design*
 <br>
