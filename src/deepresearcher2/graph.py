@@ -2,6 +2,7 @@
 from __future__ import annotations as _annotations
 
 import asyncio
+import os
 from dataclasses import dataclass
 
 from dotenv import load_dotenv
@@ -113,10 +114,10 @@ class ReflectOnSearch(BaseNode[int]):
 
     async def run(self, ctx: GraphRunContext) -> BaseNode:
         logger.debug(f"Running Reflect on Search with count number {self.count}.")
-        if self.count >= 10:
-            return FinalizeSummary(self.count)
-        else:
+        if self.count < int(os.environ.get("MAX_RESEARCH_LOOPS", "10")):
             return WebSearch(self.count + 1)
+        else:
+            return FinalizeSummary(self.count)
 
 
 @dataclass
@@ -138,6 +139,8 @@ async def deepresearch_2() -> None:
     """
     logger.info("Starting deep research workflow.")
 
+    load_dotenv()
+
     # Define the agent graph
     graph = Graph(nodes=[WebSearch, SummarizeSearchResults, ReflectOnSearch, FinalizeSummary])
 
@@ -146,8 +149,9 @@ async def deepresearch_2() -> None:
     logger.debug(f"Result: {result.output}")
 
     # Mermaid code
-    mermaid_code = graph.mermaid_code(start_node=WebSearch())
-    logger.debug(f"Mermaid graph:\n{mermaid_code}")
+    # TODO: Mermaid diagram is incorrect.
+    # mermaid_code = graph.mermaid_code(start_node=WebSearch())
+    # logger.debug(f"Mermaid graph:\n{mermaid_code}")
 
 
 def main() -> None:
