@@ -78,56 +78,49 @@ class DeepState:
 
 
 @dataclass
-class WebSearch(BaseNode[int]):
+class WebSearch(BaseNode[DeepState]):
     """
     Web Search node.
     """
 
-    count: int = 0
-
-    async def run(self, ctx: GraphRunContext) -> SummarizeSearchResults:
-        logger.debug(f"Running Web Search with count number {self.count}.")
-        return SummarizeSearchResults(self.count)
+    async def run(self, ctx: GraphRunContext[DeepState]) -> SummarizeSearchResults:
+        logger.debug(f"Running Web Search with count number {ctx.state.count}.")
+        return SummarizeSearchResults()
 
 
 @dataclass
-class SummarizeSearchResults(BaseNode[int]):
+class SummarizeSearchResults(BaseNode[DeepState]):
     """
     Summarize Search Results node.
     """
 
-    count: int = 0
-
-    async def run(self, ctx: GraphRunContext) -> ReflectOnSearch:
-        logger.debug(f"Running Summarize Search Results with count number {self.count}.")
-        return ReflectOnSearch(self.count)
+    async def run(self, ctx: GraphRunContext[DeepState]) -> ReflectOnSearch:
+        logger.debug(f"Running Summarize Search Results with count number {ctx.state.count}.")
+        return ReflectOnSearch()
 
 
 @dataclass
-class ReflectOnSearch(BaseNode[int]):
+class ReflectOnSearch(BaseNode[DeepState]):
     """
     Reflect on Search node.
     """
 
-    count: int = 0
-
-    async def run(self, ctx: GraphRunContext) -> WebSearch | FinalizeSummary:
-        logger.debug(f"Running Reflect on Search with count number {self.count}.")
-        if self.count < int(os.environ.get("MAX_RESEARCH_LOOPS", "10")):
-            return WebSearch(self.count + 1)
+    async def run(self, ctx: GraphRunContext[DeepState]) -> WebSearch | FinalizeSummary:
+        logger.debug(f"Running Reflect on Search with count number {ctx.state.count}.")
+        if ctx.state.count < int(os.environ.get("MAX_RESEARCH_LOOPS", "10")):
+            ctx.state.count += 1
+            return WebSearch()
         else:
-            return FinalizeSummary(self.count)
+            return FinalizeSummary()
 
 
 @dataclass
-class FinalizeSummary(BaseNode[int]):
+class FinalizeSummary(BaseNode[DeepState]):
     """
     Finalize Summary node.
     """
 
-    count: int = 0
-
-    async def run(self, ctx: GraphRunContext) -> End:
+    async def run(self, ctx: GraphRunContext[DeepState]) -> End:
         logger.debug("Running Finalize Summary.")
         return End("End of deep research workflow.")
 
@@ -144,7 +137,8 @@ async def deepresearch_2() -> None:
     graph = Graph(nodes=[WebSearch, SummarizeSearchResults, ReflectOnSearch, FinalizeSummary])
 
     # Run the agent graph
-    result = await graph.run(start_node=WebSearch(count=1))
+    state = DeepState(count=1)
+    result = await graph.run(WebSearch(), state=state)
     logger.debug(f"Result: {result.output}")
 
     # Mermaid code
