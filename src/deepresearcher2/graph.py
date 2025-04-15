@@ -80,57 +80,74 @@ async def deepresearch() -> None:
 @dataclass
 class WebSearch(BaseNode[int]):
     """
-    Pass track number on.
+    Web Search node.
     """
 
     count: int = 0
 
     async def run(self, ctx: GraphRunContext) -> BaseNode:
-        logger.debug("Running Node A.")
-        return SummarizeSearch(self.count)
+        logger.debug(f"Running Web Search with count number {self.count}.")
+        return SummarizeSearchResults(self.count)
 
 
 @dataclass
-class SummarizeSearch(BaseNode[int]):
+class SummarizeSearchResults(BaseNode[int]):
     """
-    Decision node.
+    Summarize Search Results node.
     """
 
     count: int = 0
 
-    async def run(self, ctx: GraphRunContext) -> BaseNode | End:
-        logger.debug("Running Node B.")
-        if self.count > 5:
-            return End(f"Stop at Node B with track number {self.count}")
-        else:
-            return ReflectOnSearch(self.count)
+    async def run(self, ctx: GraphRunContext) -> BaseNode:
+        logger.debug(f"Running Summarize Search Results with count number {self.count}.")
+        return ReflectOnSearch(self.count)
 
 
 @dataclass
 class ReflectOnSearch(BaseNode[int]):
     """
-    Not always executed.
+    Reflect on Search node.
+    """
+
+    count: int = 0
+
+    async def run(self, ctx: GraphRunContext) -> BaseNode:
+        logger.debug(f"Running Reflect on Search with count number {self.count}.")
+        if self.count >= 10:
+            return FinalizeSummary(self.count)
+        else:
+            return WebSearch(self.count + 1)
+
+
+@dataclass
+class FinalizeSummary(BaseNode[int]):
+    """
+    Finalize Summary node.
     """
 
     count: int = 0
 
     async def run(self, ctx: GraphRunContext) -> End:
-        logger.info("Running Node C.")
-        return End(f"Stop at Node C with track number {self.count}")
+        logger.debug("Running Finalize Summary.")
+        return End("End of deep research workflow.")
 
 
 async def deepresearch_2() -> None:
     """
     Graph use
     """
-    logger.info("Starting deep research 2.")
+    logger.info("Starting deep research workflow.")
 
     # Define the agent graph
-    graph = Graph(nodes=[WebSearch, SummarizeSearch, ReflectOnSearch])
+    graph = Graph(nodes=[WebSearch, SummarizeSearchResults, ReflectOnSearch, FinalizeSummary])
 
     # Run the agent graph
     result = await graph.run(start_node=WebSearch(count=1))
     logger.debug(f"Result: {result.output}")
+
+    # Mermaid code
+    mermaid_code = graph.mermaid_code(start_node=WebSearch())
+    logger.debug(f"Mermaid graph:\n{mermaid_code}")
 
 
 def main() -> None:
