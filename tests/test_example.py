@@ -624,6 +624,12 @@ async def test_pydantic_graph() -> None:
     logger.debug(f"Result: {result_2.output}")
     assert "Node B" in result_2.output
 
+    # Mermaid code
+    # TODO: The generated mermaid code is valid but incorrect.
+    mermaid_code = graph.mermaid_code(start_node=NodeA())
+    logger.debug(f"Mermaid graph:\n{mermaid_code}")
+    assert "stateDiagram" in mermaid_code
+
 
 @pytest.mark.example
 @pytest.mark.ollama
@@ -722,7 +728,7 @@ async def test_email() -> None:
                 return End(self.email)
 
     # Graph
-    feedback_graph = Graph(nodes=(WriteEmail, Feedback))
+    graph = Graph(nodes=(WriteEmail, Feedback))
 
     # Test run
     user = User(
@@ -732,9 +738,14 @@ async def test_email() -> None:
     )
     state = State(user)
 
-    result = await feedback_graph.run(WriteEmail(), state=state)
+    result = await graph.run(WriteEmail(), state=state)
     logger.debug(f"Final email: {result.output.body}")
 
     # Both name and interests should be in the email.
     assert user.name in result.output.body
     assert user.interests[0] in result.output.body
+
+    # Mermaid code
+    mermaid_code = graph.mermaid_code(start_node=WriteEmail())
+    logger.debug(f"Mermaid graph:\n{mermaid_code}")
+    assert "stateDiagram" in mermaid_code

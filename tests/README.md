@@ -1,31 +1,29 @@
+## Examples
+
 ``` mermaid
-flowchart LR
-    Start(["start"])
-    NodeA["Node A"]
-    NodeB["Node B"]
-    NodeC["Node C"]
-    End(["end"])
-    Start --> NodeA
+stateDiagram-v2
+    direction LR
+    NodeA: Node A
+    NodeB: Node B
+    NodeC: Node C
+    [*] --> NodeA 
     NodeA --> NodeB
     NodeB --> NodeC
-    NodeB --> End
-    NodeC --> End
+    NodeB --> [*]
+    NodeC --> [*]
 ```
-<br>*flow chart for example `test_pydantic_graph`*
+<br>*state diagram for example `test_pydantic_graph`*
 <br>
 <br>
 <br>
 <br>
 
 ``` mermaid
-flowchart LR
-    Start(["start"])
-    WriteEmail
-    Feedback
-    End(["end"])
-    Start --> WriteEmail
+stateDiagram-v2
+    direction LR
+    [*] --> WriteEmail
     WriteEmail --> Feedback
     Feedback --> WriteEmail
-    Feedback --> End
+    Feedback --> [*]
 ```
-<br>*flow chart for example `test_email`*
+<br>*state diagram for example `test_email`*
