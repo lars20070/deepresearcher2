@@ -139,108 +139,13 @@ async def deepresearch_2() -> None:
     logger.debug(f"Result: {result.output}")
 
 
-# Data classes
-@dataclass
-class User:
-    name: str
-    email: EmailStr
-    interests: list[str]
-
-
-@dataclass
-class Email:
-    subject: str
-    body: str
-
-
-@dataclass
-class State:
-    user: User
-    write_agent_messages: list[ModelMessage] = field(default_factory=list)
-
-
-class EmailRequiresWrite(BaseModel):
-    feedback: str
-
-
-class EmailOk(BaseModel):
-    pass
-
-
-async def deepresearch_3() -> None:
-    ollama_model = OpenAIModel(
-        model_name="llama3.3",
-        provider=OpenAIProvider(base_url="http://localhost:11434/v1"),
-    )
-
-    email_writer_agent = Agent(
-        model=ollama_model,
-        result_type=Email,
-        system_prompt="Write a welcome email to our tech blog.",
-    )
-
-    feedback_agent = Agent(
-        model=ollama_model,
-        result_type=EmailRequiresWrite | EmailOk,
-        system_prompt="Review the email and provide feedback. Email must reference the users specific interests.",
-    )
-
-    @dataclass
-    class WriteEmail(BaseNode[State]):
-        email_feedback: str | None = None
-
-        async def run(self, ctx: GraphRunContext[State]) -> Feedback:
-            # Generate prompt
-            if self.email_feedback:
-                # Second or later pass
-                prompt = f"Rewrite the email for the user:\n{format_as_xml(ctx.state.user)}\nFeedback: {self.email_feedback}"
-            else:
-                # First pass
-                prompt = f"Write a welcome email for the user:\n{format_as_xml(ctx.state.user)}"
-
-            # Generate email
-            result = await email_writer_agent.run(
-                prompt,
-                message_history=ctx.state.write_agent_messages,
-            )
-
-            ctx.state.write_agent_messages += result.all_messages()
-            return Feedback(result.data)
-
-    @dataclass
-    class Feedback(BaseNode[State, None, Email]):
-        email: Email
-
-        async def run(
-            self,
-            ctx: GraphRunContext[State],
-        ) -> WriteEmail | End[Email]:
-            prompt = format_as_xml({"user": ctx.state.user, "email": self.email})
-            result = await feedback_agent.run(prompt)
-            if isinstance(result.data, EmailRequiresWrite):
-                return WriteEmail(email_feedback=result.data.feedback)
-            else:
-                return End(self.email)
-
-    user = User(
-        name="John Doe",
-        email="john.joe@example.com",
-        interests=["Haskel", "Lisp", "Fortran"],
-    )
-    state = State(user)
-    feedback_graph = Graph(nodes=(WriteEmail, Feedback))
-    result = await feedback_graph.run(WriteEmail(), state=state)
-    # logger.debug(f"Result: {result.output}")
-    logger.debug(f"Result: {result.output.body}")
-
-
 def main() -> None:
     """
     Main function containing the deep research workflow.
     """
 
     logger.info("Starting deep research.")
-    asyncio.run(deepresearch_3())
+    asyncio.run(deepresearch_2())
 
 
 if __name__ == "__main__":
