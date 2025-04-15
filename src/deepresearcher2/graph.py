@@ -78,45 +78,45 @@ async def deepresearch() -> None:
 
 
 @dataclass
-class NodeA(BaseNode[int]):
+class WebSearch(BaseNode[int]):
     """
     Pass track number on.
     """
 
-    track_number: int = 0
+    count: int = 0
 
     async def run(self, ctx: GraphRunContext) -> BaseNode:
         logger.debug("Running Node A.")
-        return NodeB(self.track_number)
+        return SummarizeSearch(self.count)
 
 
 @dataclass
-class NodeB(BaseNode[int]):
+class SummarizeSearch(BaseNode[int]):
     """
     Decision node.
     """
 
-    track_number: int = 0
+    count: int = 0
 
     async def run(self, ctx: GraphRunContext) -> BaseNode | End:
         logger.debug("Running Node B.")
-        if self.track_number > 5:
-            return End(f"Stop at Node B with track number {self.track_number}")
+        if self.count > 5:
+            return End(f"Stop at Node B with track number {self.count}")
         else:
-            return NodeC(self.track_number)
+            return ReflectOnSearch(self.count)
 
 
 @dataclass
-class NodeC(BaseNode[int]):
+class ReflectOnSearch(BaseNode[int]):
     """
     Not always executed.
     """
 
-    track_number: int = 0
+    count: int = 0
 
     async def run(self, ctx: GraphRunContext) -> End:
         logger.info("Running Node C.")
-        return End(f"Stop at Node C with track number {self.track_number}")
+        return End(f"Stop at Node C with track number {self.count}")
 
 
 async def deepresearch_2() -> None:
@@ -126,10 +126,10 @@ async def deepresearch_2() -> None:
     logger.info("Starting deep research 2.")
 
     # Define the agent graph
-    graph = Graph(nodes=[NodeA, NodeB, NodeC])
+    graph = Graph(nodes=[WebSearch, SummarizeSearch, ReflectOnSearch])
 
     # Run the agent graph
-    result = await graph.run(start_node=NodeA(track_number=6))
+    result = await graph.run(start_node=WebSearch(count=1))
     logger.debug(f"Result: {result.output}")
 
 
