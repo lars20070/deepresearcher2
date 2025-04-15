@@ -2,17 +2,11 @@
 from __future__ import annotations as _annotations
 
 import asyncio
-from dataclasses import dataclass, field
-from typing import TYPE_CHECKING
+from dataclasses import dataclass
 
 from dotenv import load_dotenv
-from pydantic import BaseModel, EmailStr
 from pydantic_ai import Agent
-from pydantic_ai.format_as_xml import format_as_xml
 from pydantic_ai.mcp import MCPServerStdio
-
-if TYPE_CHECKING:
-    from pydantic_ai.messages import ModelMessage
 from pydantic_ai.models.openai import OpenAIModel
 from pydantic_ai.providers.openai import OpenAIProvider
 from pydantic_graph import BaseNode, End, Graph, GraphRunContext
