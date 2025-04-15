@@ -169,6 +169,13 @@ def test_chat_with_python() -> None:
         assert "5779" in output
 
 
+@dataclass
+class Deps:
+    client: AsyncClient
+    weather_api_key: str | None
+    geo_api_key: str | None
+
+
 @pytest.mark.example
 @pytest.mark.paid
 @pytest.mark.asyncio
@@ -180,12 +187,6 @@ async def test_weather_agent(load_env: None) -> None:
     Slightly modified example from the Pydantic documentation.
     https://ai.pydantic.dev/examples/weather-agent/
     """
-
-    @dataclass
-    class Deps:
-        client: AsyncClient
-        weather_api_key: str | None
-        geo_api_key: str | None
 
     # TODO: Replace GPT-4o by any Ollama model
     # Model response is <|python_tag|>get_lat_lng(args=["Zurich"])
@@ -314,6 +315,12 @@ async def test_weather_agent(load_env: None) -> None:
     assert "Zurich" in result.data
 
 
+@dataclass
+class ClientAndKey:
+    http_client: AsyncClient
+    api_key: str
+
+
 @pytest.mark.paid
 @pytest.mark.example
 @pytest.mark.asyncio
@@ -332,11 +339,6 @@ async def test_agent_delegation(load_env: None) -> None:
     #         base_url="http://localhost:11434/v1",
     #     ),
     # )
-
-    @dataclass
-    class ClientAndKey:
-        http_client: AsyncClient
-        api_key: str
 
     # TODO: The agents cannot use the Ollama Llama3.3 model. Why?
     joke_selection_agent = Agent(
