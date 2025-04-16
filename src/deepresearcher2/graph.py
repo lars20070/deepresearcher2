@@ -13,6 +13,7 @@ from pydantic_ai.providers.openai import OpenAIProvider
 from pydantic_graph import BaseNode, End, Graph, GraphRunContext
 
 from deepresearcher2 import logger
+from deepresearcher2.prompts import query_writer_instructions
 
 
 async def deepresearch() -> None:
@@ -69,7 +70,7 @@ async def deepresearch() -> None:
         # prompt = "What is the capital of France?"
         prompt = "What time is it in Zurich?"
         result = await agent.run(prompt)
-        logger.debug(f"Result: {result.data}")
+        logger.debug(f"Result: {result.output}")
 
 
 # Data classes
@@ -88,7 +89,7 @@ ollama_model = OpenAIModel(
 agent = Agent(
     model=ollama_model,
     output_type=str,
-    system_prompt="Write a search prompt for 'Napolitan Pizza'.",
+    system_prompt=query_writer_instructions,
 )
 
 

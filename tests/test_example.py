@@ -15,8 +15,7 @@ from httpx import AsyncClient
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 from pydantic import BaseModel, EmailStr
-from pydantic_ai import Agent, ModelRetry, RunContext
-from pydantic_ai.format_as_xml import format_as_xml
+from pydantic_ai import Agent, ModelRetry, RunContext, format_as_xml
 from pydantic_ai.mcp import MCPServerHTTP, MCPServerStdio
 
 if TYPE_CHECKING:
@@ -46,7 +45,7 @@ async def test_pydanticai_agent(load_env: None) -> None:
     )
 
     result = await agent.run('Where does "hello world" come from?')
-    logger.debug(f"Result from agent: {result.data}")
+    logger.debug(f"Result from agent: {result.output}")
 
 
 @pytest.mark.example
@@ -79,8 +78,8 @@ async def test_pydanticai_ollama() -> None:
     )
 
     result = await agent.run("Where were the olympics held in 2012?")
-    logger.debug(f"Result from agent: {result.data}")
-    assert result.data.city == "London"
+    logger.debug(f"Result from agent: {result.output}")
+    assert result.output.city == "London"
 
     usage = result.usage()
     logger.debug(f"Usage statistics: {usage}")
@@ -309,10 +308,10 @@ async def test_weather_agent(load_env: None) -> None:
             geo_api_key=geo_api_key,
         )
         result = await weather_agent.run("What is the weather like in Zurich and in Wiltshire?", deps=deps)
-        logger.debug(f"Response from weather agent: {result.data}")
+        logger.debug(f"Response from weather agent: {result.output}")
 
     assert weather_agent.model.model_name == "gpt-4o"
-    assert "Zurich" in result.data
+    assert "Zurich" in result.output
 
 
 @dataclass
@@ -382,10 +381,10 @@ async def test_agent_delegation(load_env: None) -> None:
     async with AsyncClient() as client:
         deps = ClientAndKey(client, "foobar")
         result = await joke_selection_agent.run("Tell me a joke.", deps=deps)
-        logger.debug(result.data)
+        logger.debug(result.output)
         logger.debug(result.usage())
 
-        assert isinstance(result.data, str)
+        assert isinstance(result.output, str)
         assert result.usage().requests > 0
 
 
@@ -483,10 +482,10 @@ async def test_mcp_sse_client(load_env: None) -> None:
 
     async with agent.run_mcp_servers():
         result = await agent.run("How many days between 2000-01-01 and 2025-03-18?")
-        logger.debug(f"Result: {result.data}")
+        logger.debug(f"Result: {result.output}")
 
         # 9,208 days is the correct answer.
-        assert "9,208 days" in result.data
+        assert "9,208 days" in result.output
 
 
 @pytest.mark.paid
@@ -528,10 +527,10 @@ async def test_mcp_stdio_client(load_env: None) -> None:
 
     async with agent.run_mcp_servers():
         result = await agent.run("How many days between 2000-01-01 and 2025-03-18?")
-        logger.debug(f"Result: {result.data}")
+        logger.debug(f"Result: {result.output}")
 
         # 9,208 days is the correct answer.
-        assert "9,208 days" in result.data
+        assert "9,208 days" in result.output
 
 
 @pytest.mark.paid
@@ -711,7 +710,7 @@ async def test_email() -> None:
             )
 
             ctx.state.write_agent_messages += result.all_messages()
-            return Feedback(result.data)
+            return Feedback(result.output)
 
     @dataclass
     class Feedback(BaseNode[State, None, Email]):
@@ -723,8 +722,8 @@ async def test_email() -> None:
         ) -> WriteEmail | End[Email]:
             prompt = format_as_xml({"user": ctx.state.user, "email": self.email})
             result = await feedback_agent.run(prompt)
-            if isinstance(result.data, EmailRequiresWrite):
-                return WriteEmail(email_feedback=result.data.feedback)
+            if isinstance(result.output, EmailRequiresWrite):
+                return WriteEmail(email_feedback=result.output.feedback)
             else:
                 return End(self.email)
 

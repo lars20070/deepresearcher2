@@ -49,7 +49,7 @@ def basic_chat() -> None:
             user_message,
             message_history=result.all_messages() if result else None,
         )
-        print(result.data)
+        print(result.output)
 
 
 def chat_with_python() -> None:
@@ -121,7 +121,7 @@ def chat_with_python() -> None:
             user_message,
             message_history=result.all_messages() if result else None,
         )
-        print(result.data)
+        print(result.output)
 
 
 def mcp_server() -> None:
