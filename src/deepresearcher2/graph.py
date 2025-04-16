@@ -12,8 +12,7 @@ from pydantic_ai.models.openai import OpenAIModel
 from pydantic_ai.providers.openai import OpenAIProvider
 from pydantic_graph import BaseNode, End, Graph, GraphRunContext
 
-from deepresearcher2 import logger
-from deepresearcher2.prompts import query_writer_instructions
+from deepresearcher2 import instructions, logger
 
 
 async def deepresearch() -> None:
@@ -87,9 +86,10 @@ ollama_model = OpenAIModel(
 )
 
 agent = Agent(
-    model=ollama_model,
+    # model=ollama_model,
+    model="openai:gpt-4o",
     output_type=str,
-    system_prompt=query_writer_instructions,
+    system_prompt=instructions,
 )
 
 
@@ -102,6 +102,11 @@ class WebSearch(BaseNode[DeepState]):
 
     async def run(self, ctx: GraphRunContext[DeepState]) -> SummarizeSearchResults:
         logger.debug(f"Running Web Search with count number {ctx.state.count}.")
+
+        prompt = f"Research the topic {ctx.state.topic}."
+        result = await agent.run(user_prompt=prompt)
+        logger.debug(f"Web Search result:\n{result.output}")
+
         return SummarizeSearchResults()
 
 
