@@ -72,11 +72,26 @@ async def deepresearch() -> None:
         logger.debug(f"Result: {result.data}")
 
 
+# Data classes
 @dataclass
 class DeepState:
     count: int = 0
 
 
+# Agents
+ollama_model = OpenAIModel(
+    model_name="llama3.3",
+    provider=OpenAIProvider(base_url="http://localhost:11434/v1"),
+)
+
+agent = Agent(
+    model=ollama_model,
+    result_type=str,
+    system_prompt="Write a search prompt for 'Napolitan Pizza'.",
+)
+
+
+# Nodes
 @dataclass
 class WebSearch(BaseNode[DeepState]):
     """
