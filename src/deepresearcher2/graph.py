@@ -81,15 +81,20 @@ class DeepState:
 
 # Agents
 ollama_model = OpenAIModel(
-    model_name="llama3.3",
+    # model_name="llama3.3",
+    model_name="gemma3:4b",  # fast, for debugging purposes
+    # model_name="gemma3:27b",
+    # model_name="qwen2.5:7b",
+    # model_name="mistral:7b",
     provider=OpenAIProvider(base_url="http://localhost:11434/v1"),
 )
 
 agent = Agent(
-    # model=ollama_model,
-    model="openai:gpt-4o",
+    model=ollama_model,
+    # model="openai:gpt-4o",
     output_type=str,
     system_prompt=instructions,
+    instrument=True,
 )
 
 
