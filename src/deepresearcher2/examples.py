@@ -9,6 +9,9 @@ from pydantic_ai.exceptions import ModelRetry
 from pydantic_ai.models.openai import OpenAIModel
 from pydantic_ai.providers.openai import OpenAIProvider
 
+# Most code examples can be found in tests/test_example.py
+# The methods here are an exception. They can be executed as scripts via [project.scripts] in pyproject.toml
+
 
 def basic_chat() -> None:
     """

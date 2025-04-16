@@ -1,5 +1,15 @@
 ## Examples
 
+The repository contains many code examples which unrelated to the Deep Researcher 2 functionality. They can be found in `tests/test_example.py` and `src/deeprearcher2/examples.py`. The later can be executed as scripts. For example:
+```bash
+uv run chat
+uv run mcpserver
+```
+<br>
+<br>
+<br>
+<br>
+
 ``` mermaid
 stateDiagram-v2
     direction LR
