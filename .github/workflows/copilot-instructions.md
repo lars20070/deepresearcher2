@@ -47,7 +47,7 @@ Deep Researcher 2 is an AI agent that autonomously conducts deep research on arb
 agent = Agent(
     model="model_name",
     system_prompt="Your system prompt here",
-    result_type=YourResultType,  # If applicable
+    output_type=YourOutputType,  # If applicable
     retries=3,
     instrument=True,
 )
@@ -146,7 +146,7 @@ class ResearchAgent:
         self.agent = Agent(
             model="llama3.3",
             system_prompt="You are a research assistant focused on providing accurate information.",
-            result_type=ResultType,
+            output_type=OutputType,
         )
         
         # Register tools

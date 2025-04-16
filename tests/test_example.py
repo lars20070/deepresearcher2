@@ -75,7 +75,7 @@ async def test_pydanticai_ollama() -> None:
 
     agent = Agent(
         ollama_model,
-        result_type=CityLocation,
+        output_type=CityLocation,
     )
 
     result = await agent.run("Where were the olympics held in 2012?")
@@ -355,7 +355,7 @@ async def test_agent_delegation(load_env: None) -> None:
         model="openai:gpt-4o",
         # model=ollama_model,
         deps_type=ClientAndKey,
-        result_type=list[str],
+        output_type=list[str],
         system_prompt=('Use the "get_jokes" tool to get some jokes on the given subject, then extract each joke into a list.'),
         instrument=True,
     )
@@ -680,13 +680,13 @@ async def test_email() -> None:
 
     email_writer_agent = Agent(
         model=ollama_model,
-        result_type=Email,
+        output_type=Email,
         system_prompt="Write a welcome email to our tech blog.",
     )
 
     feedback_agent = Agent(
         model=ollama_model,
-        result_type=EmailRequiresWrite | EmailOk,
+        output_type=EmailRequiresWrite | EmailOk,
         system_prompt="Review the email and provide feedback. Email must reference the users specific interests.",
     )
 

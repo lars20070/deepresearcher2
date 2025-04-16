@@ -60,7 +60,7 @@ async def deepresearch() -> None:
             mcp_server_python,
             mcp_server_duckduckgo,
         ],
-        result_type=str,
+        output_type=str,
         instrument=True,
     )
     logger.debug(f"Agent: {agent}")
@@ -87,7 +87,7 @@ ollama_model = OpenAIModel(
 
 agent = Agent(
     model=ollama_model,
-    result_type=str,
+    output_type=str,
     system_prompt="Write a search prompt for 'Napolitan Pizza'.",
 )
 
