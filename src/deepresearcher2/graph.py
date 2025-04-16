@@ -75,6 +75,7 @@ async def deepresearch() -> None:
 # Data classes
 @dataclass
 class DeepState:
+    topic: str = "petrichor"
     count: int = 0
 
 
@@ -152,7 +153,10 @@ async def deepresearch_2() -> None:
     graph = Graph(nodes=[WebSearch, SummarizeSearchResults, ReflectOnSearch, FinalizeSummary])
 
     # Run the agent graph
-    state = DeepState(count=1)
+    state = DeepState(
+        topic=os.environ.get("TOPIC", "petrichor"),
+        count=1,
+    )
     result = await graph.run(WebSearch(), state=state)
     logger.debug(f"Result: {result.output}")
 
