@@ -76,7 +76,10 @@ async def deepresearch() -> None:
 @dataclass
 class DeepState:
     topic: str = "petrichor"
+    search_query: str = ""
+    search_results: list[str] = []
     count: int = 0
+    summary: str = ""
 
 
 # Agents
