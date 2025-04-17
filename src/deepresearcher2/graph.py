@@ -3,9 +3,10 @@ from __future__ import annotations as _annotations
 
 import asyncio
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from dotenv import load_dotenv
+from pydantic import BaseModel, Field, HttpUrl
 from pydantic_ai import Agent
 from pydantic_ai.mcp import MCPServerStdio
 from pydantic_ai.models.openai import OpenAIModel
@@ -15,36 +16,44 @@ from pydantic_graph import BaseNode, End, Graph, GraphRunContext
 from deepresearcher2 import instructions, logger
 
 
+class WebSearchResult(BaseModel):
+    title: str = Field(..., description="short descriptive title of the web search result")
+    url: HttpUrl = Field(..., description="URL of the web search result")
+    content: str = Field(..., description="main content of the web search result")
+
+
 async def deepresearch() -> None:
     """
     Deep research workflow.
     """
     load_dotenv()
 
+    topic = os.environ.get("TOPIC", "petrichor")
+
     # LLM setup
-    model = "llama3.3"
-    # model = "firefunction-v2"
-    # model = "mistral-nemo"
+    model_name = "llama3.3"
+    # model_name = "firefunction-v2"
+    # model_name = "mistral-nemo"
     ollama_model = OpenAIModel(
-        model_name=model,
+        model_name=model_name,
         provider=OpenAIProvider(
             base_url="http://localhost:11434/v1",
         ),
     )
 
     # MCP setup
-    mcp_server_python = MCPServerStdio(
-        "deno",
-        args=[
-            "run",
-            "-N",
-            "-R=node_modules",
-            "-W=node_modules",
-            "--node-modules-dir=auto",
-            "jsr:@pydantic/mcp-run-python",
-            "stdio",
-        ],
-    )
+    # mcp_server_python = MCPServerStdio(
+    #     "deno",
+    #     args=[
+    #         "run",
+    #         "-N",
+    #         "-R=node_modules",
+    #         "-W=node_modules",
+    #         "--node-modules-dir=auto",
+    #         "jsr:@pydantic/mcp-run-python",
+    #         "stdio",
+    #     ],
+    # )
 
     mcp_server_duckduckgo = MCPServerStdio(
         "uvx",
@@ -57,19 +66,19 @@ async def deepresearch() -> None:
         model=ollama_model,
         # model="openai:gpt-4o",
         mcp_servers=[
-            mcp_server_python,
+            # mcp_server_python,
             mcp_server_duckduckgo,
         ],
-        output_type=str,
+        output_type=WebSearchResult,
         instrument=True,
     )
     logger.debug(f"Agent: {agent}")
 
     async with agent.run_mcp_servers():
         # prompt = "What is the capital of France?"
-        prompt = "What time is it in Zurich?"
+        prompt = f"Please run a web search for the following topic: {topic}"
         result = await agent.run(prompt)
-        logger.debug(f"Result: {result.output}")
+        logger.debug(f"Result:\n{result.output}")
 
 
 # Data classes
@@ -77,7 +86,7 @@ async def deepresearch() -> None:
 class DeepState:
     topic: str = "petrichor"
     search_query: str = ""
-    search_results: list[str] = []
+    search_results: list[str] = field(default_factory=list)
     count: int = 0
     summary: str = ""
 
@@ -185,7 +194,7 @@ def main() -> None:
     """
 
     logger.info("Starting deep research.")
-    asyncio.run(deepresearch_2())
+    asyncio.run(deepresearch())
 
 
 if __name__ == "__main__":
