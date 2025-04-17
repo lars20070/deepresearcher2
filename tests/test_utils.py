@@ -3,6 +3,8 @@
 import json
 import os
 
+from pydantic import HttpUrl
+
 from deepresearcher2 import logger
 from deepresearcher2.utils import duckduckgo, duckduckgo_search
 
@@ -27,9 +29,22 @@ def test_duckduckgo_search(topic: str, load_env: None) -> None:
 
 
 def test_duckduckgoo(load_env: None) -> None:
+    """
+    Test the duckduckgo() search function
+    """
+
+    n = 3  # Number of results
     topic = os.environ.get("TOPIC", "petrichor")
     results = duckduckgo(
         topic,
-        max_results=2,
+        max_results=n,
     )
-    logger.debug(f"Entire search result:\n{results}")
+
+    assert len(results) <= n
+    for r in results:
+        logger.debug(f"search result title: {r.title}")
+        logger.debug(f"search result url: {r.url}")
+        assert r.title is not None
+        assert r.url is not None
+        assert r.content is not None
+        assert isinstance(r.url, HttpUrl)

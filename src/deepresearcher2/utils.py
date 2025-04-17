@@ -110,7 +110,23 @@ class WebSearchResult2(BaseModel):
     content: str = Field(..., description="main content of the web search result")
 
 
-def duckduckgo(query: str, max_results: int = 2) -> list[WebSearchResult2]:
+def duckduckgo(query: str, max_results: int = 2, max_content_length: int | None = None) -> list[WebSearchResult2]:
+    """
+    Perform a web search using DuckDuckGo and return a list of results.
+
+    Args:
+        query (str): The search query to execute.
+        max_results (int, optional): Maximum number of results to return. Defaults to 2.
+        max_content_length (int | None, optional): Maximum character length of the content. If none, the full content is returned. Defaults to None.
+
+    Returns:
+        list[WebSearchResult2]: list of search results
+
+    Example:
+        >>> results = duckduckgo("petrichor", max_results=10)
+        >>> for result in results:
+        ...     print(result.title, result.url)
+    """
     logger.info(f"DuckDuckGo web search for: {query}")
 
     # Run the search
@@ -132,11 +148,5 @@ def duckduckgo(query: str, max_results: int = 2) -> list[WebSearchResult2]:
             content=r.get("body"),
         )
         results.append(result)
-
-        logger.debug("+++++++++++++")
-        logger.debug(f"Title: {r.get('title')}")
-        logger.debug(f"URL: {r.get('href')}")
-        logger.debug(f"Content:\n{r.get('body')}")
-        logger.debug(f"length of content: {len(r.get('body'))}")
 
     return results
