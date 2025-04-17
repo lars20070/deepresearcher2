@@ -24,6 +24,8 @@ dependencies = [
   "pydantic-ai-slim[mcp]>=0.0.40",
   "duckduckgo-mcp-server>=0.1.1",
   "wordcloud>=1.9.4",
+  "duckduckgo-search>=8.0.1",
+  "tenacity>=9.1.2",
 ]
 
 [project.scripts]
