@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from duckduckgo_search import DDGS
+from pydantic import BaseModel, Field, HttpUrl
 from tenacity import retry, stop_after_attempt, wait_exponential
 
 from deepresearcher2 import logger
@@ -101,3 +102,41 @@ def duckduckgo_search(query: str, max_results: int = 3, fetch_full_page: bool = 
         logger.error(f"Error in DuckDuckGo search: {str(e)}")
         logger.error(f"Full error details: {type(e).__name__}")
         raise  # Will be retried by decorator
+
+
+class WebSearchResult2(BaseModel):
+    title: str = Field(..., description="short descriptive title of the web search result")
+    url: HttpUrl = Field(..., description="URL of the web search result")
+    content: str = Field(..., description="main content of the web search result")
+
+
+def duckduckgo(query: str, max_results: int = 2) -> list[WebSearchResult2]:
+    logger.info(f"DuckDuckGo web search for: {query}")
+
+    # Run the search
+    with DDGS() as ddgs:
+        try:
+            ddgs_results = list(ddgs.text(query, max_results=max_results))
+            if not ddgs_results:
+                logger.warning(f"DuckDuckGo returned no results for: {query}")
+                return []
+        except (ConnectionError, TimeoutError):
+            raise
+
+    # Convert to pydantic objects
+    results = []
+    for r in ddgs_results:
+        result = WebSearchResult2(
+            title=r.get("title"),
+            url=r.get("href"),
+            content=r.get("body"),
+        )
+        results.append(result)
+
+        logger.debug("+++++++++++++")
+        logger.debug(f"Title: {r.get('title')}")
+        logger.debug(f"URL: {r.get('href')}")
+        logger.debug(f"Content:\n{r.get('body')}")
+        logger.debug(f"length of content: {len(r.get('body'))}")
+
+    return results

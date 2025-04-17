@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 
 import json
+import os
 
 from deepresearcher2 import logger
-from deepresearcher2.utils import duckduckgo_search
+from deepresearcher2.utils import duckduckgo, duckduckgo_search
 
 
 def test_duckduckgo_search(topic: str, load_env: None) -> None:
@@ -23,3 +24,12 @@ def test_duckduckgo_search(topic: str, load_env: None) -> None:
 
     # Check if the number of results is correct
     assert len(result["results"]) == n
+
+
+def test_duckduckgoo(load_env: None) -> None:
+    topic = os.environ.get("TOPIC", "petrichor")
+    results = duckduckgo(
+        topic,
+        max_results=2,
+    )
+    logger.debug(f"Entire search result:\n{results}")
