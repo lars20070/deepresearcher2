@@ -7,13 +7,12 @@ from dataclasses import dataclass, field
 
 from dotenv import load_dotenv
 from pydantic_ai import Agent
-from pydantic_ai.mcp import MCPServerStdio
 from pydantic_ai.models.openai import OpenAIModel
 from pydantic_ai.providers.openai import OpenAIProvider
 from pydantic_graph import BaseNode, End, Graph, GraphRunContext
 
-from deepresearcher2 import logger
-from deepresearcher2.models import WebSearchQuery
+from deepresearcher2.agents import query_agent
+from deepresearcher2.logger import logger
 from deepresearcher2.prompts import query_instructions
 from deepresearcher2.utils import duckduckgo_search
 
@@ -25,31 +24,6 @@ async def deepresearch() -> None:
     load_dotenv()
 
     topic = os.environ.get("TOPIC", "petrichor")
-
-    # LLM setup
-    model_name = "llama3.3"
-    # model_name = "firefunction-v2"
-    # model_name = "mistral-nemo"
-    ollama_model = OpenAIModel(
-        model_name=model_name,
-        provider=OpenAIProvider(base_url="http://localhost:11434/v1"),
-    )
-
-    # MCP server setup
-    mcp_server_duckduckgo = MCPServerStdio("uvx", args=["duckduckgo-mcp-server"])
-
-    # Agent setup
-    # Note that we provide internet access to the query writing agent. This might be a bit circular.
-    # TODO: Check whether this improves the queries or is just a waste of time.
-    query_agent = Agent(
-        model=ollama_model,
-        # model="openai:gpt-4o",
-        mcp_servers=[mcp_server_duckduckgo],
-        output_type=WebSearchQuery,
-        system_prompt=query_instructions,
-        retries=5,
-        instrument=True,
-    )
 
     # Generate the query
     async with query_agent.run_mcp_servers():

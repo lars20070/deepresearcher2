@@ -11,7 +11,7 @@ from duckduckgo_search import DDGS
 from pydantic import HttpUrl
 from tenacity import retry, stop_after_attempt, wait_exponential
 
-from deepresearcher2 import logger
+from deepresearcher2.logger import logger
 from deepresearcher2.models import WebSearchResult
 
 
