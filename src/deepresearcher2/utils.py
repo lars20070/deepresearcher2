@@ -149,12 +149,16 @@ def fetch_full_page_content(url: HttpUrl, timeout: int = 10) -> str:
         encoding = response.headers.get("Content-Encoding")
 
         # Decompress the content if necessary
-        if encoding == "gzip":
-            html = gzip.decompress(raw)
-        elif encoding == "deflate":
-            html = zlib.decompress(raw)
-        elif encoding == "br":
-            html = brotli.decompress(raw)
+        if encoding:
+            encoding = encoding.lower()
+            if "gzip" in encoding:
+                html = gzip.decompress(raw)
+            elif "deflate" in encoding:
+                html = zlib.decompress(raw)
+            elif "br" in encoding:
+                html = brotli.decompress(raw)
+            else:
+                html = raw
         else:
             html = raw
 
@@ -165,7 +169,7 @@ def fetch_full_page_content(url: HttpUrl, timeout: int = 10) -> str:
     except urllib.error.HTTPError as e:
         if e.code in (403, 401):
             logger.error(f"Authentication error for {url}: {e.code}")
-            return f"[Error: Access denied to {url} (code {e.code})]"
+            return ""
         else:
             logger.error(f"HTTP error for {url}: {e.code}")
             raise
