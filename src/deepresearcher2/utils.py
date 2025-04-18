@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+import urllib.error
+import urllib.request
+
+from bs4 import BeautifulSoup
 from duckduckgo_search import DDGS
 from pydantic import BaseModel, Field, HttpUrl
 from tenacity import retry, stop_after_attempt, wait_exponential
@@ -23,10 +27,6 @@ def retry_with_backoff(func: callable) -> callable:
 @retry_with_backoff
 def fetch_page_content(url: str) -> str:
     """Fetch the content of a webpage given its URL."""
-    import urllib.error
-    import urllib.request
-
-    from bs4 import BeautifulSoup
 
     try:
         response = urllib.request.urlopen(url, timeout=10)
@@ -110,6 +110,48 @@ class WebSearchResult2(BaseModel):
     content: str = Field(..., description="main content of the web search result")
 
 
+def fetch_full_page_content(url: HttpUrl, timeout: int = 10) -> str:
+    """
+    Fetch the full content of a webpage.
+
+    Args:
+        url (HttpUrl): The URL of a webpage
+        timeout (int): Timeout in seconds for the request. Defaults to 10 seconds.
+
+    Returns:
+        str: The full content of the webpage
+
+    Raises:
+        urllib.error.HTTPError: If the server can be reached but returns an error
+        urllib.error.URLError: If the server cannot be reached
+
+    Example:
+        >>> content = fetch_full_page_content("https://example.com")
+        >>> print(content)
+    """
+
+    try:
+        # Pretend to be a browser
+        headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"}
+        request = urllib.request.Request(str(url), headers=headers)
+        response = urllib.request.urlopen(request, timeout=timeout)
+        html = response.read()
+        text = BeautifulSoup(html, "html.parser").get_text()
+        return text
+
+    except urllib.error.HTTPError as e:
+        if e.code in (403, 401):
+            logger.error(f"Authentication error for {url}: {e.code}")
+            return f"[Error: Access denied to {url} (code {e.code})]"
+        else:
+            logger.error(f"HTTP error for {url}: {e.code}")
+            raise
+
+    except urllib.error.URLError as e:
+        logger.error(f"Network error for {url}: {str(e)}")
+        raise
+
+
 def duckduckgo(query: str, max_results: int = 2, max_content_length: int | None = None) -> list[WebSearchResult2]:
     """
     Perform a web search using DuckDuckGo and return a list of results.
@@ -136,7 +178,8 @@ def duckduckgo(query: str, max_results: int = 2, max_content_length: int | None 
             if not ddgs_results:
                 logger.warning(f"DuckDuckGo returned no results for: {query}")
                 return []
-        except (ConnectionError, TimeoutError):
+        except (ConnectionError, TimeoutError) as e:
+            logger.error(f"Network error during DuckDuckGo search: {str(e)}")
             raise
 
     # Convert to pydantic objects

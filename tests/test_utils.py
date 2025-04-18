@@ -6,7 +6,7 @@ import os
 from pydantic import HttpUrl
 
 from deepresearcher2 import logger
-from deepresearcher2.utils import duckduckgo, duckduckgo_search
+from deepresearcher2.utils import duckduckgo, duckduckgo_search, fetch_full_page_content
 
 
 def test_duckduckgo_search(topic: str, load_env: None) -> None:
@@ -26,6 +26,20 @@ def test_duckduckgo_search(topic: str, load_env: None) -> None:
 
     # Check if the number of results is correct
     assert len(result["results"]) == n
+
+
+def test_fetch_full_page_content() -> None:
+    """
+    Test the fetch_full_page_content() function
+    """
+
+    url = "https://example.com"
+    content = fetch_full_page_content(url)
+    assert "Example Domain" in content
+
+    # url2 = "https://www.politico.com/news/magazine/2025/01/30/curtis-yarvins-ideas-00201552"
+    # content2 = fetch_full_page_content(url2)
+    # assert "Curtis Yarvin's Ideas" in content2
 
 
 def test_duckduckgoo(load_env: None) -> None:
