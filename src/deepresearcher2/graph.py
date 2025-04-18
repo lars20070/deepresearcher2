@@ -6,38 +6,11 @@ import os
 from dataclasses import dataclass, field
 
 from dotenv import load_dotenv
-from pydantic_ai import Agent
-from pydantic_ai.models.openai import OpenAIModel
-from pydantic_ai.providers.openai import OpenAIProvider
 from pydantic_graph import BaseNode, End, Graph, GraphRunContext
 
 from deepresearcher2.agents import query_agent
 from deepresearcher2.logger import logger
-from deepresearcher2.prompts import query_instructions
 from deepresearcher2.utils import duckduckgo_search
-
-
-async def deepresearch() -> None:
-    """
-    Deep research workflow.
-    """
-    load_dotenv()
-
-    topic = os.environ.get("TOPIC", "petrichor")
-
-    # Generate the query
-    async with query_agent.run_mcp_servers():
-        prompt = f"Please generate a web search query for the following topic: {topic}"
-        result = await query_agent.run(prompt)
-        query = result.output
-        logger.debug(f"Web search query: {query}")
-
-    # Run the search
-    search_results = duckduckgo_search(query=query.query, max_results=10)
-    for r in search_results:
-        logger.debug(f"Search result title: {r.title}")
-        logger.debug(f"Search result url: {r.url}")
-        logger.debug(f"Search result content length: {len(r.content)}")
 
 
 # Data classes
@@ -50,25 +23,6 @@ class DeepState:
     summary: str = ""
 
 
-# Agents
-ollama_model = OpenAIModel(
-    # model_name="llama3.3",
-    model_name="gemma3:4b",  # fast, for debugging purposes
-    # model_name="gemma3:27b",
-    # model_name="qwen2.5:7b",
-    # model_name="mistral:7b",
-    provider=OpenAIProvider(base_url="http://localhost:11434/v1"),
-)
-
-agent = Agent(
-    model=ollama_model,
-    # model="openai:gpt-4o",
-    output_type=str,
-    system_prompt=query_instructions,
-    instrument=True,
-)
-
-
 # Nodes
 @dataclass
 class WebSearch(BaseNode[DeepState]):
@@ -79,9 +33,21 @@ class WebSearch(BaseNode[DeepState]):
     async def run(self, ctx: GraphRunContext[DeepState]) -> SummarizeSearchResults:
         logger.debug(f"Running Web Search with count number {ctx.state.count}.")
 
-        prompt = f"Research the topic {ctx.state.topic}."
-        result = await agent.run(user_prompt=prompt)
-        logger.debug(f"Web Search result:\n{result.output}")
+        topic = ctx.state.topic
+
+        # Generate the query
+        async with query_agent.run_mcp_servers():
+            prompt = f"Please generate a web search query for the following topic: {topic}"
+            result = await query_agent.run(prompt)
+            query = result.output
+            logger.debug(f"Web search query: {query}")
+
+        # Run the search
+        search_results = duckduckgo_search(query=query.query, max_results=10)
+        for r in search_results:
+            logger.debug(f"Search result title: {r.title}")
+            logger.debug(f"Search result url: {r.url}")
+            logger.debug(f"Search result content length: {len(r.content)}")
 
         return SummarizeSearchResults()
 
@@ -123,7 +89,7 @@ class FinalizeSummary(BaseNode[DeepState]):
         return End("End of deep research workflow.")
 
 
-async def deepresearch_2() -> None:
+async def deepresearch() -> None:
     """
     Graph use
     """
