@@ -24,7 +24,7 @@ class DeepState:
     search_query: WebSearchQuery | None = field(default_factory=lambda: None)
     search_results: list[WebSearchResult] | None = field(default_factory=lambda: None)
     count: int = 0
-    summary: str = ""
+    summary: str | None = None
 
 
 # Nodes
@@ -48,11 +48,11 @@ class WebSearch(BaseNode[DeepState]):
             logger.debug(f"Web search query: {query}")
 
         # Run the search
-        search_results = duckduckgo_search(
+        ctx.state.search_results = duckduckgo_search(
             query=query.query,
             max_results=int(os.environ.get("MAX_WEB_SEARCH_RESULTS", "2")),
         )
-        for r in search_results:
+        for r in ctx.state.search_results:
             logger.debug(f"Search result title: {r.title}")
             logger.debug(f"Search result url: {r.url}")
             logger.debug(f"Search result content length: {len(r.content)}")
@@ -68,6 +68,25 @@ class SummarizeSearchResults(BaseNode[DeepState]):
 
     async def run(self, ctx: GraphRunContext[DeepState]) -> ReflectOnSearch:
         logger.debug(f"Running Summarize Search Results with count number {ctx.state.count}.")
+
+        content = ""
+        for r in ctx.state.search_results:
+            content += f"{r.title}\n{r.content}\n\n"
+
+        if ctx.state.summary is None:
+            prompt = f"<User Input> \n {ctx.state.topic} \n </User Input>\n\n<New Search Results> \n {content} \n </New Search Results>"
+        else:
+            prompt = (
+                f"<User Input> \n {ctx.state.topic} \n </User Input>\n\n"
+                f"<Existing Summary> \n {ctx.state.summary} \n </Existing Summary>\n\n"
+                f"<New Search Results> \n {content} \n </New Search Results>"
+            )
+
+        logger.debug(f"length: {len(prompt)}")
+
+        # new_summary = await summary_agent.run(prompt=prompt)
+        # logger.debug(f"New summary:\n{new_summary.output}")
+
         return ReflectOnSearch()
 
 
@@ -117,8 +136,8 @@ async def deepresearch() -> None:
     logger.debug(f"Result: {result.output}")
 
     # Mermaid code
-    mermaid_code = graph.mermaid_code(start_node=WebSearch())
-    logger.debug(f"Mermaid graph:\n{mermaid_code}")
+    # mermaid_code = graph.mermaid_code(start_node=WebSearch())
+    # logger.debug(f"Mermaid graph:\n{mermaid_code}")
 
 
 def main() -> None:

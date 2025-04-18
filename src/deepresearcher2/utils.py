@@ -6,8 +6,8 @@ import urllib.request
 import zlib
 
 import brotli
-from bs4 import BeautifulSoup
 from duckduckgo_search import DDGS
+from markdownify import markdownify as html2md
 from pydantic import HttpUrl
 from tenacity import retry, stop_after_attempt, wait_exponential
 
@@ -76,7 +76,8 @@ def fetch_full_page_content(url: HttpUrl, timeout: int = 10) -> str:
             html = raw
 
         # Decode the HTML content
-        text = BeautifulSoup(html, "html.parser").get_text()
+        # text = BeautifulSoup(html, "html.parser").get_text()
+        text = html2md(html)
         return text
 
     except urllib.error.HTTPError as e:

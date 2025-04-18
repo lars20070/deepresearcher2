@@ -27,6 +27,7 @@ dependencies = [
   "duckduckgo-search>=8.0.1",
   "tenacity>=9.1.2",
   "brotli>=1.1.0",
+  "markdownify>=1.1.0",
 ]
 
 [project.scripts]
