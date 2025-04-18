@@ -37,6 +37,10 @@ def test_fetch_full_page_content() -> None:
     content = fetch_full_page_content(url)
     assert "Example Domain" in content
 
+    url3 = "https://en.wikipedia.org/wiki/Daniel_Noboa"
+    content3 = fetch_full_page_content(url3)
+    assert "Daniel Noboa" in content3
+
     # url2 = "https://www.politico.com/news/magazine/2025/01/30/curtis-yarvins-ideas-00201552"
     # content2 = fetch_full_page_content(url2)
     # assert "Curtis Yarvin's Ideas" in content2

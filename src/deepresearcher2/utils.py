@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
 
+import gzip
 import urllib.error
 import urllib.request
+import zlib
 
+import brotli
 from bs4 import BeautifulSoup
 from duckduckgo_search import DDGS
 from pydantic import BaseModel, Field, HttpUrl
@@ -131,11 +134,31 @@ def fetch_full_page_content(url: HttpUrl, timeout: int = 10) -> str:
     """
 
     try:
-        # Pretend to be a browser
-        headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"}
+        # Mimic a browser by setting appropriate headers
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+            "Accept-Language": "en-US,en;q=0.5",
+            "Accept-Encoding": "gzip, deflate, br",
+            "Connection": "keep-alive",
+            "Upgrade-Insecure-Requests": "1",
+        }
         request = urllib.request.Request(str(url), headers=headers)
         response = urllib.request.urlopen(request, timeout=timeout)
-        html = response.read()
+        raw = response.read()
+        encoding = response.headers.get("Content-Encoding")
+
+        # Decompress the content if necessary
+        if encoding == "gzip":
+            html = gzip.decompress(raw)
+        elif encoding == "deflate":
+            html = zlib.decompress(raw)
+        elif encoding == "br":
+            html = brotli.decompress(raw)
+        else:
+            html = raw
+
+        # Decode the HTML content
         text = BeautifulSoup(html, "html.parser").get_text()
         return text
 
