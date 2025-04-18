@@ -6,20 +6,16 @@ import os
 from dataclasses import dataclass, field
 
 from dotenv import load_dotenv
-from pydantic import BaseModel, Field, HttpUrl
 from pydantic_ai import Agent
 from pydantic_ai.mcp import MCPServerStdio
 from pydantic_ai.models.openai import OpenAIModel
 from pydantic_ai.providers.openai import OpenAIProvider
 from pydantic_graph import BaseNode, End, Graph, GraphRunContext
 
-from deepresearcher2 import instructions, logger
-
-
-class WebSearchResult(BaseModel):
-    title: str = Field(..., description="short descriptive title of the web search result")
-    url: HttpUrl = Field(..., description="URL of the web search result")
-    content: str = Field(..., description="main content of the web search result")
+from deepresearcher2 import logger
+from deepresearcher2.models import WebSearchQuery
+from deepresearcher2.prompts import query_instructions
+from deepresearcher2.utils import duckduckgo_search
 
 
 async def deepresearch() -> None:
@@ -36,49 +32,38 @@ async def deepresearch() -> None:
     # model_name = "mistral-nemo"
     ollama_model = OpenAIModel(
         model_name=model_name,
-        provider=OpenAIProvider(
-            base_url="http://localhost:11434/v1",
-        ),
+        provider=OpenAIProvider(base_url="http://localhost:11434/v1"),
     )
 
-    # MCP setup
-    # mcp_server_python = MCPServerStdio(
-    #     "deno",
-    #     args=[
-    #         "run",
-    #         "-N",
-    #         "-R=node_modules",
-    #         "-W=node_modules",
-    #         "--node-modules-dir=auto",
-    #         "jsr:@pydantic/mcp-run-python",
-    #         "stdio",
-    #     ],
-    # )
+    # MCP server setup
+    mcp_server_duckduckgo = MCPServerStdio("uvx", args=["duckduckgo-mcp-server"])
 
-    mcp_server_duckduckgo = MCPServerStdio(
-        "uvx",
-        args=[
-            "duckduckgo-mcp-server",
-        ],
-    )
-
-    agent = Agent(
+    # Agent setup
+    # Note that we provide internet access to the query writing agent. This might be a bit circular.
+    # TODO: Check whether this improves the queries or is just a waste of time.
+    query_agent = Agent(
         model=ollama_model,
         # model="openai:gpt-4o",
-        mcp_servers=[
-            # mcp_server_python,
-            mcp_server_duckduckgo,
-        ],
-        output_type=WebSearchResult,
+        mcp_servers=[mcp_server_duckduckgo],
+        output_type=WebSearchQuery,
+        system_prompt=query_instructions,
+        retries=5,
         instrument=True,
     )
-    logger.debug(f"Agent: {agent}")
 
-    async with agent.run_mcp_servers():
-        # prompt = "What is the capital of France?"
-        prompt = f"Please run a web search for the following topic: {topic}"
-        result = await agent.run(prompt)
-        logger.debug(f"Result:\n{result.output}")
+    # Generate the query
+    async with query_agent.run_mcp_servers():
+        prompt = f"Please generate a web search query for the following topic: {topic}"
+        result = await query_agent.run(prompt)
+        query = result.output
+        logger.debug(f"Web search query: {query}")
+
+    # Run the search
+    search_results = duckduckgo_search(query=query.query, max_results=10)
+    for r in search_results:
+        logger.debug(f"Search result title: {r.title}")
+        logger.debug(f"Search result url: {r.url}")
+        logger.debug(f"Search result content length: {len(r.content)}")
 
 
 # Data classes
@@ -105,7 +90,7 @@ agent = Agent(
     model=ollama_model,
     # model="openai:gpt-4o",
     output_type=str,
-    system_prompt=instructions,
+    system_prompt=query_instructions,
     instrument=True,
 )
 

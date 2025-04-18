@@ -8,10 +8,11 @@ import zlib
 import brotli
 from bs4 import BeautifulSoup
 from duckduckgo_search import DDGS
-from pydantic import BaseModel, Field, HttpUrl
+from pydantic import HttpUrl
 from tenacity import retry, stop_after_attempt, wait_exponential
 
 from deepresearcher2 import logger
+from deepresearcher2.models import WebSearchResult
 
 
 def retry_with_backoff(func: callable, retry_min: int = 20, retry_max: int = 1000, retry_attempts: int = 5) -> callable:
@@ -91,14 +92,8 @@ def fetch_full_page_content(url: HttpUrl, timeout: int = 10) -> str:
         raise
 
 
-class WebSearchResult2(BaseModel):
-    title: str = Field(..., description="short descriptive title of the web search result")
-    url: HttpUrl = Field(..., description="URL of the web search result")
-    content: str = Field(..., description="main content of the web search result")
-
-
 @retry_with_backoff
-def duckduckgo_search(query: str, max_results: int = 2, max_content_length: int | None = None) -> list[WebSearchResult2]:
+def duckduckgo_search(query: str, max_results: int = 2, max_content_length: int | None = None) -> list[WebSearchResult]:
     """
     Perform a web search using DuckDuckGo and return a list of results.
 
@@ -108,7 +103,7 @@ def duckduckgo_search(query: str, max_results: int = 2, max_content_length: int 
         max_content_length (int | None, optional): Maximum character length of the content. If none, the full content is returned. Defaults to None.
 
     Returns:
-        list[WebSearchResult2]: list of search results
+        list[WebSearchResult]: list of search results
 
     Example:
         >>> results = duckduckgo("petrichor", max_results=10)
@@ -147,7 +142,7 @@ def duckduckgo_search(query: str, max_results: int = 2, max_content_length: int 
             if len(full_content) > len(content):
                 content = full_content
 
-        result = WebSearchResult2(title=title, url=url, content=content)
+        result = WebSearchResult(title=title, url=url, content=content)
         results.append(result)
 
     return results

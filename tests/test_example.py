@@ -366,7 +366,7 @@ async def test_agent_delegation(load_env: None) -> None:
             deps=ctx.deps,
             usage=ctx.usage,
         )
-        return r.data[:5]
+        return r.output[:5]
 
     @joke_generation_agent.tool
     async def get_jokes(ctx: RunContext[ClientAndKey], count: int) -> str:

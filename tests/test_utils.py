@@ -32,7 +32,7 @@ def test_duckduckgo_search(load_env: None) -> None:
     Test the duckduckgo_search() search function
     """
 
-    # Full conent length
+    # Full content length
     n = 3  # Number of results
     topic = os.environ.get("TOPIC", "petrichor")
     results = duckduckgo_search(
