@@ -37,6 +37,7 @@ class WebSearch(BaseNode[DeepState]):
     async def run(self, ctx: GraphRunContext[DeepState]) -> SummarizeSearchResults:
         logger.debug(f"Running Web Search with count number {ctx.state.count}.")
 
+        load_dotenv()
         topic = ctx.state.topic
 
         # Generate the query
@@ -47,7 +48,10 @@ class WebSearch(BaseNode[DeepState]):
             logger.debug(f"Web search query: {query}")
 
         # Run the search
-        search_results = duckduckgo_search(query=query.query, max_results=10)
+        search_results = duckduckgo_search(
+            query=query.query,
+            max_results=int(os.environ.get("MAX_WEB_SEARCH_RESULTS", "2")),
+        )
         for r in search_results:
             logger.debug(f"Search result title: {r.title}")
             logger.debug(f"Search result url: {r.url}")
