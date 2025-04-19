@@ -754,10 +754,14 @@ async def test_email() -> None:
 @pytest.mark.example
 @pytest.mark.ollama
 @pytest.mark.asyncio
-async def test_dependencies(load_env: None) -> None:
+async def test_structured_input() -> None:
     """
-    Test how dependencies can be used to feed structured data into a model.
+    Test how dependencies and structured system prompts can be used to feed structured data into a model.
     https://ai.pydantic.dev/dependencies/
+    https://ai.pydantic.dev/agents/#system-prompts
+
+    The user details are stored in the run context dependency. At run time, this information
+    is converted to XML and prepended to the system prompt.
     """
 
     logger.debug("Testing dependencies in PydanticAI.")
@@ -779,14 +783,20 @@ async def test_dependencies(load_env: None) -> None:
         # model="openai:gpt-4o",
         deps_type=MyInput,
         output_type=MyOutput,
-        system_prompt="Please write a greeting for a letter. Take the nationality and name of the user into account.",
+        system_prompt="""
+            Please write a greeting in the language of the user. Take the nationality and name of the user into account.
+            Be concise and formal. Only return the greeting.
+            """,
     )
 
-    input = MyInput(name="Paul Erdos", nationality="Hungarian")
+    @agent.system_prompt
+    def add_user_details(ctx: RunContext[MyInput]) -> str:
+        return f"User details:\n{format_as_xml(ctx.deps, root_tag='user')}\n"
 
     result = await agent.run(
-        deps=input,
+        deps=MyInput(name="Paul Erdos", nationality="Hungarian"),
         user_prompt="Please generate a greeting in the language of the user.",
     )
 
     logger.debug(f"Greeting: {result.output.greeting}")
+    assert "Paul" in result.output.greeting
