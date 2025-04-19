@@ -63,8 +63,6 @@ jobs:
       with:
         name: deepresearcher2-pytest-logs
         path: deepresearcher2.log
-    - name: Run script with minimal example
-      run: uv run minimalexample
     - name: Install Graphviz for UML diagrams
       if: runner.os == 'Linux'
       run: |
