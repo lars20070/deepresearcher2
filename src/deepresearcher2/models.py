@@ -11,4 +11,4 @@ class WebSearchQuery(BaseModel):
 class WebSearchResult(BaseModel):
     title: str = Field(..., description="short descriptive title of the web search result")
     url: HttpUrl = Field(..., description="URL of the web search result")
-    content: str = Field(..., description="main content of the web search result")
+    content: str = Field(..., description="main content of the web search result in Markdown format")

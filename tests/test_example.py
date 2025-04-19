@@ -749,3 +749,44 @@ async def test_email() -> None:
     mermaid_code = graph.mermaid_code(start_node=WriteEmail())
     logger.debug(f"Mermaid graph:\n{mermaid_code}")
     assert "stateDiagram" in mermaid_code
+
+
+@pytest.mark.example
+@pytest.mark.ollama
+@pytest.mark.asyncio
+async def test_dependencies(load_env: None) -> None:
+    """
+    Test how dependencies can be used to feed structured data into a model.
+    https://ai.pydantic.dev/dependencies/
+    """
+
+    logger.debug("Testing dependencies in PydanticAI.")
+
+    class MyInput(BaseModel):
+        name: str
+        nationality: str
+
+    class MyOutput(BaseModel):
+        greeting: str
+
+    ollama_model = OpenAIModel(
+        model_name="llama3.3",
+        provider=OpenAIProvider(base_url="http://localhost:11434/v1"),
+    )
+
+    agent = Agent(
+        model=ollama_model,
+        # model="openai:gpt-4o",
+        deps_type=MyInput,
+        output_type=MyOutput,
+        system_prompt="Please write a greeting for a letter. Take the nationality and name of the user into account.",
+    )
+
+    input = MyInput(name="Paul Erdos", nationality="Hungarian")
+
+    result = await agent.run(
+        deps=input,
+        user_prompt="Please generate a greeting in the language of the user.",
+    )
+
+    logger.debug(f"Greeting: {result.output.greeting}")
