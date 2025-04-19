@@ -56,6 +56,7 @@ class WebSearch(BaseNode[DeepState]):
             logger.debug(f"Search result title: {r.title}")
             logger.debug(f"Search result url: {r.url}")
             logger.debug(f"Search result content length: {len(r.content)}")
+            # logger.debug(f"Search result content:\n{r.content}")
 
         return SummarizeSearchResults()
 

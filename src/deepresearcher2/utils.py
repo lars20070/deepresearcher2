@@ -6,8 +6,9 @@ import urllib.request
 import zlib
 
 import brotli
+from bs4 import BeautifulSoup
 from duckduckgo_search import DDGS
-from markdownify import markdownify as html2md
+from markdownify import markdownify as mdfy
 from pydantic import HttpUrl
 from tenacity import retry, stop_after_attempt, wait_exponential
 
@@ -23,6 +24,39 @@ def retry_with_backoff(func: callable, retry_min: int = 20, retry_max: int = 100
     """
 
     return retry(wait=wait_exponential(min=retry_min, max=retry_max), stop=stop_after_attempt(retry_attempts))(func)
+
+
+def html2markdown(html: bytes) -> str:
+    """
+    Convert HTML to (clean) Markdown.
+    Unwanted html tags and empty lines are removed.
+
+    Args:
+        html (bytes): The HTML content to convert
+
+    Returns:
+        str: The converted Markdown content
+    """
+
+    # Parse HTML
+    soup = BeautifulSoup(html, "html.parser")
+
+    # Remove unwanted tags
+    for tag in soup.find_all(["script", "style", "noscript", "iframe", "header", "footer", "nav", "form", "input", "button", "aside", "svg"]):
+        tag.decompose()
+
+    # Remove empty tags
+    for tag in soup.find_all():
+        if not tag.text.strip() and tag.name not in ["br", "img"]:
+            tag.decompose()
+
+    # Convert to Markdown
+    markdown = mdfy(str(soup))
+
+    # Remove blank lines
+    markdown = "\n".join(line for line in markdown.splitlines() if line.strip())
+
+    return markdown
 
 
 @retry_with_backoff
@@ -75,10 +109,8 @@ def fetch_full_page_content(url: HttpUrl, timeout: int = 10) -> str:
         else:
             html = raw
 
-        # Decode the HTML content
-        # text = BeautifulSoup(html, "html.parser").get_text()
-        text = html2md(html)
-        return text
+        # Convert to Markdown
+        return html2markdown(html)
 
     except urllib.error.HTTPError as e:
         if e.code in (403, 401):
