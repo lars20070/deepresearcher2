@@ -780,7 +780,6 @@ async def test_structured_input() -> None:
 
     agent = Agent(
         model=ollama_model,
-        # model="openai:gpt-4o",
         deps_type=MyInput,
         output_type=MyOutput,
         system_prompt="""
