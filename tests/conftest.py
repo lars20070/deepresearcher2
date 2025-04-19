@@ -31,4 +31,4 @@ def load_env() -> None:
 @pytest.fixture
 def topic() -> str:
     """Provide a research topic for unit testing."""
-    return "syzygy"
+    return "petrichor"

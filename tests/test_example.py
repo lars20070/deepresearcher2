@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
+from __future__ import annotations as _annotations
 
 import os
 import random
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import date
 from io import StringIO
-from typing import Any
+from typing import TYPE_CHECKING, Any
 from unittest.mock import patch
 
 import logfire
@@ -13,13 +14,17 @@ import pytest
 from httpx import AsyncClient
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
-from pydantic import BaseModel
-from pydantic_ai import Agent, ModelRetry, RunContext
+from pydantic import BaseModel, EmailStr
+from pydantic_ai import Agent, ModelRetry, RunContext, format_as_xml
 from pydantic_ai.mcp import MCPServerHTTP, MCPServerStdio
+
+if TYPE_CHECKING:
+    from pydantic_ai.messages import ModelMessage
 from pydantic_ai.models.openai import OpenAIModel
 from pydantic_ai.providers.openai import OpenAIProvider
 from pydantic_evals import Case, Dataset
 from pydantic_evals.evaluators import Evaluator, EvaluatorContext, IsInstance
+from pydantic_graph import BaseNode, End, Graph, GraphRunContext
 
 from deepresearcher2 import basic_chat, chat_with_python, logger
 
@@ -40,7 +45,7 @@ async def test_pydanticai_agent(load_env: None) -> None:
     )
 
     result = await agent.run('Where does "hello world" come from?')
-    logger.debug(f"Result from agent: {result.data}")
+    logger.debug(f"Result from agent: {result.output}")
 
 
 @pytest.mark.example
@@ -69,12 +74,12 @@ async def test_pydanticai_ollama() -> None:
 
     agent = Agent(
         ollama_model,
-        result_type=CityLocation,
+        output_type=CityLocation,
     )
 
     result = await agent.run("Where were the olympics held in 2012?")
-    logger.debug(f"Result from agent: {result.data}")
-    assert result.data.city == "London"
+    logger.debug(f"Result from agent: {result.output}")
+    assert result.output.city == "London"
 
     usage = result.usage()
     logger.debug(f"Usage statistics: {usage}")
@@ -163,6 +168,13 @@ def test_chat_with_python() -> None:
         assert "5779" in output
 
 
+@dataclass
+class Deps:
+    client: AsyncClient
+    weather_api_key: str | None
+    geo_api_key: str | None
+
+
 @pytest.mark.example
 @pytest.mark.paid
 @pytest.mark.asyncio
@@ -174,12 +186,6 @@ async def test_weather_agent(load_env: None) -> None:
     Slightly modified example from the Pydantic documentation.
     https://ai.pydantic.dev/examples/weather-agent/
     """
-
-    @dataclass
-    class Deps:
-        client: AsyncClient
-        weather_api_key: str | None
-        geo_api_key: str | None
 
     # TODO: Replace GPT-4o by any Ollama model
     # Model response is <|python_tag|>get_lat_lng(args=["Zurich"])
@@ -302,10 +308,16 @@ async def test_weather_agent(load_env: None) -> None:
             geo_api_key=geo_api_key,
         )
         result = await weather_agent.run("What is the weather like in Zurich and in Wiltshire?", deps=deps)
-        logger.debug(f"Response from weather agent: {result.data}")
+        logger.debug(f"Response from weather agent: {result.output}")
 
     assert weather_agent.model.model_name == "gpt-4o"
-    assert "Zurich" in result.data
+    assert "Zurich" in result.output
+
+
+@dataclass
+class ClientAndKey:
+    http_client: AsyncClient
+    api_key: str
 
 
 @pytest.mark.paid
@@ -327,11 +339,6 @@ async def test_agent_delegation(load_env: None) -> None:
     #     ),
     # )
 
-    @dataclass
-    class ClientAndKey:
-        http_client: AsyncClient
-        api_key: str
-
     # TODO: The agents cannot use the Ollama Llama3.3 model. Why?
     joke_selection_agent = Agent(
         model="openai:gpt-4o",
@@ -347,7 +354,7 @@ async def test_agent_delegation(load_env: None) -> None:
         model="openai:gpt-4o",
         # model=ollama_model,
         deps_type=ClientAndKey,
-        result_type=list[str],
+        output_type=list[str],
         system_prompt=('Use the "get_jokes" tool to get some jokes on the given subject, then extract each joke into a list.'),
         instrument=True,
     )
@@ -359,7 +366,7 @@ async def test_agent_delegation(load_env: None) -> None:
             deps=ctx.deps,
             usage=ctx.usage,
         )
-        return r.data[:5]
+        return r.output[:5]
 
     @joke_generation_agent.tool
     async def get_jokes(ctx: RunContext[ClientAndKey], count: int) -> str:
@@ -374,10 +381,10 @@ async def test_agent_delegation(load_env: None) -> None:
     async with AsyncClient() as client:
         deps = ClientAndKey(client, "foobar")
         result = await joke_selection_agent.run("Tell me a joke.", deps=deps)
-        logger.debug(result.data)
+        logger.debug(result.output)
         logger.debug(result.usage())
 
-        assert isinstance(result.data, str)
+        assert isinstance(result.output, str)
         assert result.usage().requests > 0
 
 
@@ -475,10 +482,10 @@ async def test_mcp_sse_client(load_env: None) -> None:
 
     async with agent.run_mcp_servers():
         result = await agent.run("How many days between 2000-01-01 and 2025-03-18?")
-        logger.debug(f"Result: {result.data}")
+        logger.debug(f"Result: {result.output}")
 
         # 9,208 days is the correct answer.
-        assert "9,208 days" in result.data
+        assert "9,208 days" in result.output
 
 
 @pytest.mark.paid
@@ -520,10 +527,10 @@ async def test_mcp_stdio_client(load_env: None) -> None:
 
     async with agent.run_mcp_servers():
         result = await agent.run("How many days between 2000-01-01 and 2025-03-18?")
-        logger.debug(f"Result: {result.data}")
+        logger.debug(f"Result: {result.output}")
 
         # 9,208 days is the correct answer.
-        assert "9,208 days" in result.data
+        assert "9,208 days" in result.output
 
 
 @pytest.mark.paid
@@ -547,3 +554,248 @@ async def test_mcp_server(load_env: None) -> None:
         result = await session.call_tool("poet", {"theme": "socks"})
         logger.debug(f"Complete poem:\n{result.content[0].text}")
         assert "socks" in result.content[0].text
+
+
+@pytest.mark.example
+@pytest.mark.asyncio
+async def test_pydantic_graph() -> None:
+    """
+    Define a simple graph and test its traversal.
+    See flow chart in tests/README.md
+    https://youtu.be/WFvugLf_760
+
+    Node A simply passes the track number on to the next node.
+    Node B decides whether to continue to node C or stop.
+    Node C passes the track number to the final result.
+
+    track number <= 5: nodes A, B and C executed
+    track number > 5: nodes A and B executed, but not C
+    """
+
+    @dataclass
+    class NodeA(BaseNode[int]):
+        """
+        Pass track number on.
+        """
+
+        track_number: int = 0
+
+        async def run(self, ctx: GraphRunContext) -> NodeB:
+            logger.debug("Running Node A.")
+            return NodeB(self.track_number)
+
+    @dataclass
+    class NodeB(BaseNode[int]):
+        """
+        Decision node.
+        """
+
+        track_number: int = 0
+
+        async def run(self, ctx: GraphRunContext) -> NodeC | End:
+            logger.debug("Running Node B.")
+            if self.track_number > 5:
+                return End(f"Stop at Node B with track number {self.track_number}")
+            else:
+                return NodeC(self.track_number)
+
+    @dataclass
+    class NodeC(BaseNode[int]):
+        """
+        Not always executed.
+        """
+
+        track_number: int = 0
+
+        async def run(self, ctx: GraphRunContext) -> End:
+            logger.info("Running Node C.")
+            return End(f"Stop at Node C with track number {self.track_number}")
+
+    logger.info("Testing Pydantic Graph")
+
+    # Define the agent graph
+    graph = Graph(nodes=[NodeA, NodeB, NodeC])
+
+    # Run the agent graph
+    result_1 = await graph.run(start_node=NodeA(track_number=1))
+    logger.debug(f"Result: {result_1.output}")
+    assert "Node C" in result_1.output
+
+    result_2 = await graph.run(start_node=NodeA(track_number=6))
+    logger.debug(f"Result: {result_2.output}")
+    assert "Node B" in result_2.output
+
+    # Mermaid code
+    mermaid_code = graph.mermaid_code(start_node=NodeA())
+    logger.debug(f"Mermaid graph:\n{mermaid_code}")
+    assert "stateDiagram" in mermaid_code
+
+
+@pytest.mark.example
+@pytest.mark.ollama
+@pytest.mark.asyncio
+async def test_email() -> None:
+    """
+    Define a graph with agents and test its execution.
+    See flow chart in tests/README.md
+    https://ai.pydantic.dev/graph/#genai-example
+    https://www.youtube.com/watch?v=WFvugLf_760&list=WL&index=31&t=563s
+
+    Node WriteEmail generates an email.
+    Node Feedback evaluates the email and provides feedback. Crucially, the email must mention user's interests.
+
+    In the first pass, the email does not mention the user's interests.
+    In the second pass, the email does mention the user's interests based on the feedback.
+    """
+
+    # Data classes
+    @dataclass
+    class User:
+        name: str
+        email: EmailStr
+        interests: list[str]
+
+    @dataclass
+    class Email:
+        subject: str
+        body: str
+
+    @dataclass
+    class State:
+        user: User
+        write_agent_messages: list[ModelMessage] = field(default_factory=list)
+
+    class EmailRequiresWrite(BaseModel):
+        feedback: str
+
+    class EmailOk(BaseModel):
+        pass
+
+    # Agents
+    ollama_model = OpenAIModel(
+        model_name="llama3.3",
+        provider=OpenAIProvider(base_url="http://localhost:11434/v1"),
+    )
+
+    email_writer_agent = Agent(
+        model=ollama_model,
+        output_type=Email,
+        system_prompt="Write a welcome email to our tech blog.",
+    )
+
+    feedback_agent = Agent(
+        model=ollama_model,
+        output_type=EmailRequiresWrite | EmailOk,
+        system_prompt="Review the email and provide feedback. Email must reference the users specific interests.",
+    )
+
+    # Nodes
+    @dataclass
+    class WriteEmail(BaseNode[State]):
+        email_feedback: str | None = None
+
+        async def run(self, ctx: GraphRunContext[State]) -> Feedback:
+            # Generate prompt
+            if self.email_feedback:
+                # Second or later pass
+                prompt = f"Rewrite the email for the user:\n{format_as_xml(ctx.state.user)}\nFeedback: {self.email_feedback}"
+            else:
+                # First pass
+                prompt = f"Write a welcome email for the user:\n{format_as_xml(ctx.state.user)}"
+
+            # Generate email
+            result = await email_writer_agent.run(
+                prompt,
+                message_history=ctx.state.write_agent_messages,
+            )
+
+            ctx.state.write_agent_messages += result.all_messages()
+            return Feedback(result.output)
+
+    @dataclass
+    class Feedback(BaseNode[State, None, Email]):
+        email: Email
+
+        async def run(
+            self,
+            ctx: GraphRunContext[State],
+        ) -> WriteEmail | End[Email]:
+            prompt = format_as_xml({"user": ctx.state.user, "email": self.email})
+            result = await feedback_agent.run(prompt)
+            if isinstance(result.output, EmailRequiresWrite):
+                return WriteEmail(email_feedback=result.output.feedback)
+            else:
+                return End(self.email)
+
+    # Graph
+    graph = Graph(nodes=(WriteEmail, Feedback))
+
+    # Test run
+    user = User(
+        name="John Doe",
+        email="john.joe@example.com",
+        interests=["Haskel", "Lisp", "Fortran"],
+    )
+    state = State(user)
+
+    result = await graph.run(WriteEmail(), state=state)
+    logger.debug(f"Final email: {result.output.body}")
+
+    # Both name and interests should be in the email.
+    assert user.name in result.output.body
+    assert user.interests[0] in result.output.body
+
+    # Mermaid code
+    mermaid_code = graph.mermaid_code(start_node=WriteEmail())
+    logger.debug(f"Mermaid graph:\n{mermaid_code}")
+    assert "stateDiagram" in mermaid_code
+
+
+@pytest.mark.example
+@pytest.mark.ollama
+@pytest.mark.asyncio
+async def test_structured_input() -> None:
+    """
+    Test how dependencies and structured system prompts can be used to feed structured data into a model.
+    https://ai.pydantic.dev/dependencies/
+    https://ai.pydantic.dev/agents/#system-prompts
+
+    The user details are stored in the run context dependency. At run time, this information
+    is converted to XML and prepended to the system prompt.
+    """
+
+    logger.debug("Testing dependencies in PydanticAI.")
+
+    class MyInput(BaseModel):
+        name: str
+        nationality: str
+
+    class MyOutput(BaseModel):
+        greeting: str
+
+    ollama_model = OpenAIModel(
+        model_name="llama3.3",
+        provider=OpenAIProvider(base_url="http://localhost:11434/v1"),
+    )
+
+    agent = Agent(
+        model=ollama_model,
+        deps_type=MyInput,
+        output_type=MyOutput,
+        system_prompt="""
+            Please write a greeting in the language of the user. Take the nationality and name of the user into account.
+            Be concise and formal. Only return the greeting.
+            """,
+    )
+
+    @agent.system_prompt
+    def add_user_details(ctx: RunContext[MyInput]) -> str:
+        return f"User details:\n{format_as_xml(ctx.deps, root_tag='user')}\n"
+
+    result = await agent.run(
+        deps=MyInput(name="Paul Erdos", nationality="Hungarian"),
+        user_prompt="Please generate a greeting in the language of the user.",
+    )
+
+    logger.debug(f"Greeting: {result.output.greeting}")
+    assert "Paul" in result.output.greeting
