@@ -9,8 +9,9 @@ from pydantic import BaseModel, Field
 @dataclass
 class DeepState:
     topic: str = "petrichor"
-    search_query: WebSearchQuery | None = field(default_factory=lambda: None)
-    search_results: list[WebSearchResult] | None = field(default_factory=lambda: None)
+    search_query: WebSearchQuery | None = field(default_factory=lambda: None)  # single search query for the current loop
+    search_results: list[WebSearchResult] | None = field(default_factory=lambda: None)  # list of search results in the current loop
+    search_summaries: list[WebSearchSummary] | None = field(default_factory=lambda: None)  # list of all search summaries of the past loops
     count: int = 0
     summary: str | None = None
 
@@ -31,12 +32,15 @@ class WebSearchSummary(BaseModel):
     summary: str = Field(..., description="summary of multiple web search results")
     aspect: str = Field(..., description="aspect of the topic being summarized")
 
+    # TODO: The model struggles with summaries that are too short. It seems the model does not understand the returned value error.
     # @field_validator("summary")
     # @classmethod
     # def validate_summary_length(cls, text: str) -> str:
     #     word_count = len(text.split())
     #     if word_count < 100:
-    #         raise ValueError(f"Summary too short: {word_count} words, minimum 100 required")
+    #         raise ValueError(
+    #             f"The summary you have written is too short: {word_count} words. You are required to write a summary of at least 100 words."
+    #         )
     #     if word_count > 400:
-    #         raise ValueError(f"Summary too long: {word_count} words, maximum 400 allowed")
+    #         raise ValueError(f"The summary you have written is too long: {word_count} words. The maximum allowed length is 400 words.")
     #     return text

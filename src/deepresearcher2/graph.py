@@ -41,11 +41,11 @@ class WebSearch(BaseNode[DeepState]):
             max_results=int(os.environ.get("MAX_WEB_SEARCH_RESULTS", "2")),
             max_content_length=12000,  # maximum length of 12k characters
         )
-        for r in ctx.state.search_results:
-            logger.debug(f"Search result title: {r.title}")
-            logger.debug(f"Search result url: {r.url}")
-            logger.debug(f"Search result content length: {len(r.content)}")
-            # logger.debug(f"Search result content:\n{r.content}")
+        # for r in ctx.state.search_results:
+        #     logger.debug(f"Search result title: {r.title}")
+        #     logger.debug(f"Search result url: {r.url}")
+        #     logger.debug(f"Search result content length: {len(r.content)}")
+        #     logger.debug(f"Search result content:\n{r.content}")
 
         return SummarizeSearchResults()
 
@@ -59,8 +59,6 @@ class SummarizeSearchResults(BaseNode[DeepState]):
     async def run(self, ctx: GraphRunContext[DeepState]) -> ReflectOnSearch:
         logger.debug(f"Running Summarize Search Results with count number {ctx.state.count}.")
 
-        logger.debug(f"Number of web search results: {len(ctx.state.search_results)}")
-
         @summary_agent.system_prompt
         def add_web_search_results() -> str:
             """
@@ -73,6 +71,12 @@ class SummarizeSearchResults(BaseNode[DeepState]):
         async with query_agent.run_mcp_servers():
             summary = await summary_agent.run(user_prompt=f"Please summarize the provided web search results for the topic {ctx.state.topic}.")
             logger.debug(f"Web search summary:\n{summary.output.summary}")
+
+            # Append the summary to the list of all search summaries
+            if ctx.state.search_summaries is None:
+                ctx.state.search_summaries = [summary]
+            else:
+                ctx.state.search_summaries.append(summary)
 
         return ReflectOnSearch()
 
@@ -100,7 +104,7 @@ class FinalizeSummary(BaseNode[DeepState]):
 
     async def run(self, ctx: GraphRunContext[DeepState]) -> End:
         logger.debug("Running Finalize Summary.")
-        return End("End of deep research workflow.")
+        return End("End of deep research workflow.\n\n")
 
 
 async def deepresearch() -> None:
