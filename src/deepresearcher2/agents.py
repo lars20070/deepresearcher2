@@ -5,7 +5,7 @@ from pydantic_ai.mcp import MCPServerStdio
 from pydantic_ai.models.openai import OpenAIModel
 from pydantic_ai.providers.openai import OpenAIProvider
 
-from deepresearcher2.models import WebSearchQuery
+from deepresearcher2.models import WebSearchQuery, WebSearchSummary
 from deepresearcher2.prompts import query_instructions, summary_instructions
 
 # Models
@@ -33,10 +33,13 @@ query_agent = Agent(
     instrument=True,
 )
 
+# Note that we provide internet access to the summary agent. Maybe the agent wants to clarify some facts.
+# TODO: Check whether this improves the queries or is just a waste of time.
 summary_agent = Agent(
     model=ollama_model,
     # model="openai:gpt-4o",
-    output_type=str,
+    mcp_servers=[mcp_server_duckduckgo],
+    output_type=WebSearchSummary,
     system_prompt=summary_instructions,
     retries=5,
     instrument=True,

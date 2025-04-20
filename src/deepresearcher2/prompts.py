@@ -100,6 +100,26 @@ When creating a summary:
 3. Ensure the summary is relevant to the user topic and not just a collection of facts
 </REQUIREMENTS>
 
-<FORMATTING>
-- Start directly with the summary, without preamble or titles. Do not use XML tags in the output.
-</FORMATTING>"""
+<FORMAT>
+Format your response as a JSON object with ALL of these exact keys:
+   - "summary": Summary of ALL web search results. Start directly with the summary, without preamble or titles. Do not use XML tags or Markdown
+   formatting in the output. The summary should be at least 100 words long. The summary should be less than 400 words long.
+   - "aspect": The specific aspect of the topic being researched
+</FORMAT>
+
+<EXAMPLE>
+Example output:
+{{
+    "summary": "Petrichor refers to the earthy scent produced when rain falls on dry soil or ground, often experienced as a pleasant smell.
+    It is characterized by its distinct aroma, which is typically associated with the smell of rain on dry earth. According to dictionary definitions,
+    petrichor is the term used to describe this phenomenon, with the word itself pronounced as PET-rih-kor. The smell is generally considered pleasant
+    and is often noticed when rain falls on dry soil or ground, releasing the distinctive aroma into the air. The term 'petrichor' refers to the
+    distinctive scent that occurs when rain falls on dry soil or rocks. The word was coined in 1964 by two Australian researchers, who discovered that
+    the smell is caused by oils released from plants and soil. These oils can come from roots, leaves, and other organic matter, and are carried into
+    the air by raindrops. Petrichor is often associated with the smell of earthy, mossy, or musty aromas, and is a distinctive feature of many natural
+    environments.",
+    "aspect": "definition and meaning",
+}}
+</EXAMPLE>
+
+Provide your response in JSON format."""

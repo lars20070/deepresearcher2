@@ -39,6 +39,7 @@ class WebSearch(BaseNode[DeepState]):
         ctx.state.search_results = duckduckgo_search(
             query=query.query,
             max_results=int(os.environ.get("MAX_WEB_SEARCH_RESULTS", "2")),
+            max_content_length=12000,  # maximum length of 12k characters
         )
         for r in ctx.state.search_results:
             logger.debug(f"Search result title: {r.title}")
@@ -60,22 +61,18 @@ class SummarizeSearchResults(BaseNode[DeepState]):
 
         logger.debug(f"Number of web search results: {len(ctx.state.search_results)}")
 
-        # search_results_xml = format_as_xml(ctx.state.search_results, root_tag="search_results")
-        # logger.debug(f"+++ START +++\nSearch results XML:\n{search_results_xml}\n+++ END +++\n")
-
         @summary_agent.system_prompt
         def add_web_search_results() -> str:
             """
             Add web search results to the system prompt.
             """
-            xml = format_as_xml(
-                ctx.state.search_results,
-                root_tag="search_results",
-            )
+            xml = format_as_xml(ctx.state.search_results, root_tag="search_results")
             return f"List of web search results:\n{xml}"
 
-        summary = await summary_agent.run(user_prompt=f"Please summarize the provided web search results for the topic {ctx.state.topic}.")
-        logger.debug(f"Web search summary:\n{summary.output}")
+        # Generate the summary
+        async with query_agent.run_mcp_servers():
+            summary = await summary_agent.run(user_prompt=f"Please summarize the provided web search results for the topic {ctx.state.topic}.")
+            logger.debug(f"Web search summary:\n{summary.output.summary}")
 
         return ReflectOnSearch()
 
