@@ -9,9 +9,9 @@ from dotenv import load_dotenv
 from pydantic_ai import format_as_xml
 from pydantic_graph import BaseNode, End, Graph, GraphRunContext
 
-from deepresearcher2.agents import query_agent, summary_agent
+from deepresearcher2.agents import query_agent, reflection_agent, summary_agent
 from deepresearcher2.logger import logger
-from deepresearcher2.models import DeepState
+from deepresearcher2.models import DeepState, WebSearchSummary
 from deepresearcher2.utils import duckduckgo_search
 
 
@@ -73,10 +73,8 @@ class SummarizeSearchResults(BaseNode[DeepState]):
             logger.debug(f"Web search summary:\n{summary.output.summary}")
 
             # Append the summary to the list of all search summaries
-            if ctx.state.search_summaries is None:
-                ctx.state.search_summaries = [summary]
-            else:
-                ctx.state.search_summaries.append(summary)
+            ctx.state.search_summaries = ctx.state.search_summaries or []
+            ctx.state.search_summaries.append(WebSearchSummary(summary=summary.output.summary, aspect=summary.output.aspect))
 
         return ReflectOnSearch()
 
@@ -89,6 +87,24 @@ class ReflectOnSearch(BaseNode[DeepState]):
 
     async def run(self, ctx: GraphRunContext[DeepState]) -> WebSearch | FinalizeSummary:
         logger.debug(f"Running Reflect on Search with count number {ctx.state.count}.")
+
+        # xml = format_as_xml(ctx.state.search_summaries, root_tag="search_summaries")
+        # logger.debug(f"Search summaries:\n{xml}")
+
+        @reflection_agent.system_prompt
+        def add_search_summaries() -> str:
+            """
+            Add search summaries to the system prompt.
+            """
+            xml = format_as_xml(ctx.state.search_summaries, root_tag="search_summaries")
+            return f"List of search summaries:\n{xml}"
+
+        # Reflect on the summaries so far
+        async with query_agent.run_mcp_servers():
+            result = await reflection_agent.run(user_prompt=f"Please reflect on the provided web search summaries for the topic {ctx.state.topic}.")
+            logger.debug(f"Reflection result:\n{result.output}")
+
+        # Flow control
         if ctx.state.count < int(os.environ.get("MAX_RESEARCH_LOOPS", "10")):
             ctx.state.count += 1
             return WebSearch()
