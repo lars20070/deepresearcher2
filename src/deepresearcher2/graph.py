@@ -12,6 +12,7 @@ from pydantic_graph import BaseNode, End, Graph, GraphRunContext
 from deepresearcher2.agents import query_agent, reflection_agent, summary_agent
 from deepresearcher2.logger import logger
 from deepresearcher2.models import DeepState, Reflection, WebSearchSummary
+from deepresearcher2.prompts import query_instructions_with_reflection
 from deepresearcher2.utils import duckduckgo_search
 
 
@@ -27,6 +28,18 @@ class WebSearch(BaseNode[DeepState]):
 
         load_dotenv()
         topic = ctx.state.topic
+
+        @query_agent.system_prompt
+        def add_reflection() -> str:
+            """
+            Add reflection from the previous loop to the system prompt.
+            """
+            if ctx.state.reflection:
+                xml = format_as_xml(ctx.state.reflection, root_tag="reflection")
+                logger.debug(f"Reflection:\n{xml}")
+                return f"Reflection on existing knowledge:\n{xml}" + query_instructions_with_reflection
+            else:
+                return ""
 
         # Generate the query
         async with query_agent.run_mcp_servers():
@@ -88,8 +101,8 @@ class ReflectOnSearch(BaseNode[DeepState]):
     async def run(self, ctx: GraphRunContext[DeepState]) -> WebSearch | FinalizeSummary:
         logger.debug(f"Running Reflect on Search with count number {ctx.state.count}.")
 
-        # xml = format_as_xml(ctx.state.search_summaries, root_tag="search_summaries")
-        # logger.debug(f"Search summaries:\n{xml}")
+        xml = format_as_xml(ctx.state.search_summaries, root_tag="search_summaries")
+        logger.debug(f"Search summaries:\n{xml}")
 
         @reflection_agent.system_prompt
         def add_search_summaries() -> str:
@@ -104,8 +117,8 @@ class ReflectOnSearch(BaseNode[DeepState]):
             reflection = await reflection_agent.run(
                 user_prompt=f"Please reflect on the provided web search summaries for the topic {ctx.state.topic}."
             )
-            logger.debug(f"Reflection knowledge gaps:\n{reflection.output.knowledge_gaps}")
-            logger.debug(f"Reflection knowledge coverage:\n{reflection.output.knowledge_coverage}")
+            # logger.debug(f"Reflection knowledge gaps:\n{reflection.output.knowledge_gaps}")
+            # logger.debug(f"Reflection knowledge coverage:\n{reflection.output.knowledge_coverage}")
 
             ctx.state.reflection = Reflection(
                 knowledge_gaps=reflection.output.knowledge_gaps,

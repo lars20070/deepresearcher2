@@ -22,6 +22,12 @@ Example output:
 
 Provide your response in JSON format."""
 
+query_instructions_with_reflection = """
+Take the information in the reflection into account when generating the query.
+Do not include aspects mentioned in the knowledge coverage in the search query.
+Incorporate knowledge gaps into the search query.
+"""
+
 summary_instructions = """
 <GOAL>
 Generate a high-quality summary of the web search results and keep it concise / related to the user topic.
