@@ -3,8 +3,7 @@ from __future__ import annotations as _annotations
 
 import asyncio
 import os
-from dataclasses import dataclass, field
-from typing import TYPE_CHECKING
+from dataclasses import dataclass
 
 from dotenv import load_dotenv
 from pydantic_ai import format_as_xml
@@ -12,20 +11,8 @@ from pydantic_graph import BaseNode, End, Graph, GraphRunContext
 
 from deepresearcher2.agents import query_agent, summary_agent
 from deepresearcher2.logger import logger
-
-if TYPE_CHECKING:
-    from deepresearcher2.models import WebSearchQuery, WebSearchResult
+from deepresearcher2.models import DeepState
 from deepresearcher2.utils import duckduckgo_search
-
-
-# Data classes
-@dataclass
-class DeepState:
-    topic: str = "petrichor"
-    search_query: WebSearchQuery | None = field(default_factory=lambda: None)
-    search_results: list[WebSearchResult] | None = field(default_factory=lambda: None)
-    count: int = 0
-    summary: str | None = None
 
 
 # Nodes
