@@ -16,11 +16,11 @@ from deepresearcher2.logger import logger
 from deepresearcher2.models import WebSearchResult
 
 
-def retry_with_backoff(func: callable, retry_min: int = 20, retry_max: int = 1000, retry_attempts: int = 5) -> callable:
+def retry_with_backoff(func: callable, retry_min: int = 20, retry_max: int = 1000, retry_attempts: int = 2) -> callable:
     """
     Retry decorator with exponential backoff.
 
-    For example, the first retry will wait 20 seconds, the second 40 seconds, the third 80 seconds, and so on. Stopping after 5 attempts.
+    For example, the first retry will wait 20 seconds, the second 40 seconds, the third 80 seconds, and so on. Stopping after 2 attempts.
     """
 
     return retry(wait=wait_exponential(min=retry_min, max=retry_max), stop=stop_after_attempt(retry_attempts))(func)
@@ -59,7 +59,7 @@ def html2markdown(html: bytes) -> str:
     return markdown
 
 
-@retry_with_backoff
+# @retry_with_backoff
 def fetch_full_page_content(url: HttpUrl, timeout: int = 10) -> str:
     """
     Fetch the full content of a webpage.

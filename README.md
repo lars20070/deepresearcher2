@@ -4,14 +4,6 @@ fully local web research and report writing assistant
 
 ## UML diagrams
 
-![package diagram](./uml/packages.png "Deep Researcher 2 package structure")
-<br>*Deep Researcher 2 package structure*
-
-<br>
-
-![class diagram](./uml/classes.png "Deep Researcher 2 class structure")
-<br>*Deep Researcher 2 class structure*
-
 ``` mermaid
 stateDiagram-v2
     direction LR
@@ -29,6 +21,15 @@ stateDiagram-v2
 <br>*Deep Researcher 2 design*
 <br>
 <br>
+
+![class diagram](./uml/classes.png "Deep Researcher 2 class structure")
+<br>*Deep Researcher 2 class structure*
+
+<br>
+
+![package diagram](./uml/packages.png "Deep Researcher 2 package structure")
+<br>*Deep Researcher 2 package structure*
+
 <br>
 <br>
 
@@ -43,18 +44,6 @@ flowchart LR
 <br>*MCPs in Deep Researcher 2*
 <br>
 <br>
-<br>
-<br>
-
-``` mermaid
-classDiagram
-    DeepState: string topic
-    DeepState: string search_query
-    DeepState: list search_results
-    DeepState: int loop_count
-    DeepState: string running_summary
-```
-<br>*state class*
 
 ## Models and MCPs
 

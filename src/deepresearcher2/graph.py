@@ -36,7 +36,6 @@ class WebSearch(BaseNode[DeepState]):
             """
             if ctx.state.reflection:
                 xml = format_as_xml(ctx.state.reflection, root_tag="reflection")
-                logger.debug(f"Reflection:\n{xml}")
                 return f"Reflection on existing knowledge:\n{xml}" + query_instructions_with_reflection
             else:
                 return ""
@@ -117,8 +116,8 @@ class ReflectOnSearch(BaseNode[DeepState]):
             reflection = await reflection_agent.run(
                 user_prompt=f"Please reflect on the provided web search summaries for the topic {ctx.state.topic}."
             )
-            # logger.debug(f"Reflection knowledge gaps:\n{reflection.output.knowledge_gaps}")
-            # logger.debug(f"Reflection knowledge coverage:\n{reflection.output.knowledge_coverage}")
+            logger.debug(f"Reflection knowledge gaps:\n{reflection.output.knowledge_gaps}")
+            logger.debug(f"Reflection knowledge coverage:\n{reflection.output.knowledge_coverage}")
 
             ctx.state.reflection = Reflection(
                 knowledge_gaps=reflection.output.knowledge_gaps,
