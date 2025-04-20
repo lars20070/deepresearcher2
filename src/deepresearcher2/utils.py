@@ -175,7 +175,7 @@ def duckduckgo_search(query: str, max_results: int = 2, max_content_length: int 
             if len(full_content) > len(content):
                 content = full_content
 
-        result = WebSearchResult(title=title, url=url, content=content)
+        result = WebSearchResult(title=title, url=str(url), content=content)
         results.append(result)
 
     return results

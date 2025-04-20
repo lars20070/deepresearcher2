@@ -36,6 +36,7 @@ query_agent = Agent(
 summary_agent = Agent(
     model=ollama_model,
     # model="openai:gpt-4o",
+    output_type=str,
     system_prompt=summary_instructions,
     retries=5,
     instrument=True,

@@ -2,8 +2,6 @@
 
 import os
 
-from pydantic import HttpUrl
-
 from deepresearcher2 import logger
 from deepresearcher2.utils import duckduckgo_search, fetch_full_page_content
 
@@ -48,7 +46,7 @@ def test_duckduckgo_search(load_env: None) -> None:
         assert r.title is not None
         assert r.url is not None
         assert r.content is not None
-        assert isinstance(r.url, HttpUrl)
+        assert isinstance(r.url, str)
 
     # Restricted content length
     m = 100  # Max content length
