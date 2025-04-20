@@ -11,7 +11,7 @@ from pydantic_graph import BaseNode, End, Graph, GraphRunContext
 
 from deepresearcher2.agents import query_agent, reflection_agent, summary_agent
 from deepresearcher2.logger import logger
-from deepresearcher2.models import DeepState, WebSearchSummary
+from deepresearcher2.models import DeepState, Reflection, WebSearchSummary
 from deepresearcher2.utils import duckduckgo_search
 
 
@@ -101,8 +101,16 @@ class ReflectOnSearch(BaseNode[DeepState]):
 
         # Reflect on the summaries so far
         async with query_agent.run_mcp_servers():
-            result = await reflection_agent.run(user_prompt=f"Please reflect on the provided web search summaries for the topic {ctx.state.topic}.")
-            logger.debug(f"Reflection result:\n{result.output}")
+            reflection = await reflection_agent.run(
+                user_prompt=f"Please reflect on the provided web search summaries for the topic {ctx.state.topic}."
+            )
+            logger.debug(f"Reflection knowledge gaps:\n{reflection.output.knowledge_gaps}")
+            logger.debug(f"Reflection knowledge coverage:\n{reflection.output.knowledge_coverage}")
+
+            ctx.state.reflection = Reflection(
+                knowledge_gaps=reflection.output.knowledge_gaps,
+                knowledge_coverage=reflection.output.knowledge_coverage,
+            )
 
         # Flow control
         if ctx.state.count < int(os.environ.get("MAX_RESEARCH_LOOPS", "10")):

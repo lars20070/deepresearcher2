@@ -12,8 +12,8 @@ class DeepState:
     search_query: WebSearchQuery | None = field(default_factory=lambda: None)  # single search query for the current loop
     search_results: list[WebSearchResult] | None = field(default_factory=lambda: None)  # list of search results in the current loop
     search_summaries: list[WebSearchSummary] | None = field(default_factory=lambda: None)  # list of all search summaries of the past loops
+    reflection: Reflection | None = field(default_factory=lambda: None)  # reflection on the search results of the previous current loop
     count: int = 0
-    summary: str | None = None
 
 
 class WebSearchQuery(BaseModel):
@@ -44,3 +44,8 @@ class WebSearchSummary(BaseModel):
     #     if word_count > 400:
     #         raise ValueError(f"The summary you have written is too long: {word_count} words. The maximum allowed length is 400 words.")
     #     return text
+
+
+class Reflection(BaseModel):
+    knowledge_gaps: str = Field(..., description="aspects of the topic which require further exploration")
+    knowledge_coverage: str = Field(..., description="aspects of the topic which have already been covered sufficiently")
