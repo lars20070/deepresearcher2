@@ -6,7 +6,7 @@ from pydantic_ai.models.openai import OpenAIModel
 from pydantic_ai.providers.openai import OpenAIProvider
 
 from deepresearcher2.models import Reflection, WebSearchQuery, WebSearchSummary
-from deepresearcher2.prompts import query_instructions, reflection_instructions, summary_instructions
+from deepresearcher2.prompts import reflection_instructions, summary_instructions
 
 # Models
 model_name = "llama3.3"
@@ -28,7 +28,7 @@ query_agent = Agent(
     # model="openai:gpt-4o",
     mcp_servers=[mcp_server_duckduckgo],
     output_type=WebSearchQuery,
-    system_prompt=query_instructions,
+    system_prompt="",
     retries=5,
     instrument=True,
 )

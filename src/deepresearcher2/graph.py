@@ -12,7 +12,7 @@ from pydantic_graph import BaseNode, End, Graph, GraphRunContext
 from deepresearcher2.agents import query_agent, reflection_agent, summary_agent
 from deepresearcher2.logger import logger
 from deepresearcher2.models import DeepState, Reflection, WebSearchSummary
-from deepresearcher2.prompts import query_instructions_with_reflection
+from deepresearcher2.prompts import query_instructions_with_reflection, query_instructions_without_reflection
 from deepresearcher2.utils import duckduckgo_search
 
 
@@ -36,9 +36,9 @@ class WebSearch(BaseNode[DeepState]):
             """
             if ctx.state.reflection:
                 xml = format_as_xml(ctx.state.reflection, root_tag="reflection")
-                return f"Reflection on existing knowledge:\n{xml}" + query_instructions_with_reflection
+                return query_instructions_with_reflection + f"Reflection on existing knowledge:\n{xml}\n" + "Provide your response in JSON format."
             else:
-                return ""
+                return query_instructions_without_reflection
 
         # Generate the query
         async with query_agent.run_mcp_servers():

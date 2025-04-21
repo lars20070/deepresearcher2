@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-query_instructions = """
+query_instructions_without_reflection = """
 Your goal is to generate a targeted web search query.
 The query will gather information related to a specific topic.
 
@@ -23,9 +23,34 @@ Example output:
 Provide your response in JSON format."""
 
 query_instructions_with_reflection = """
-Take the information in the reflection into account when generating the query.
-Do not include aspects mentioned in the knowledge coverage in the search query.
-Incorporate knowledge gaps into the search query.
+Your goal is to generate a targeted web search query.
+The query will gather information related to a specific topic based on specific knowledge gaps.
+
+<REQUIREMENTS>
+When generating the web search query:
+1. Take all knowledge gaps into account. They form the basis of the search query.
+2. Check that the query is at least vaguely related to the topic.
+3. Do not include any aspects mentioned in the knowledge coverage.
+</REQUIREMENTS>
+
+<FORMAT>
+Format your response as a JSON object with ALL three of these exact keys:
+   - "query": The actual search query string
+   - "aspect": The specific aspect of the topic and knowledge gaps being researched
+   - "rationale": Brief explanation of why this query is relevant
+</FORMAT>
+
+<EXAMPLE>
+Example output:
+{{
+    "query": "Rosalind Franklin biography",
+    "aspect": "biography",
+    "rationale": "The user is looking for information about Rosalind Franklin, so a search query about her biography is most relevant."
+}}
+</EXAMPLE>
+
+Provide your response in JSON format.
+
 """
 
 summary_instructions = """
