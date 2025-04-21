@@ -63,6 +63,7 @@ def html2markdown(html: bytes) -> str:
 def fetch_full_page_content(url: HttpUrl, timeout: int = 10) -> str:
     """
     Fetch the full content of a webpage.
+    Note that the method never raises an exception but returns an empty string if the page cannot be fetched.
 
     Args:
         url (HttpUrl): The URL of a webpage
@@ -118,11 +119,11 @@ def fetch_full_page_content(url: HttpUrl, timeout: int = 10) -> str:
             return ""
         else:
             logger.error(f"HTTP error for {url}: {e.code}")
-            raise
+            return ""
 
     except urllib.error.URLError as e:
         logger.error(f"Network error for {url}: {str(e)}")
-        raise
+        return ""
 
 
 @retry_with_backoff
