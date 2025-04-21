@@ -1,6 +1,8 @@
 # Deep Researcher 2
 
-Fully local web research and report writing assistant.
+Fully local web research and report writing assistant. The models run locally in Ollama. The web searches are performed with DuckDuckGo. By default, no API keys are required.
+
+Some of the [code examples](tests/) do require API keys.
 
 ## Getting started
 1. Install [Ollama](https://ollama.com) and pull a model.

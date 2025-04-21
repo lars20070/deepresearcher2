@@ -1,8 +1,9 @@
 ## Examples
 
-The repository contains many code examples which are unrelated to the Deep Researcher 2 functionality. They can be found in `tests/test_example.py` and `src/deeprearcher2/examples.py`. The later can be executed as scripts. For example:
+The repository contains many code examples which are unrelated to the Deep Researcher 2 functionality. They can be found in `tests/test_example.py` and `src/deeprearcher2/examples.py`. The later can be executed as scripts.
 ```bash
 uv run chat
+uv run chatpython
 uv run mcpserver
 ```
 <br>
