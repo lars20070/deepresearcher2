@@ -36,6 +36,7 @@ class WebSearch(BaseNode[DeepState]):
             """
             if ctx.state.reflection:
                 xml = format_as_xml(ctx.state.reflection, root_tag="reflection")
+                logger.debug(f"\n\n+++ Reflection +++:\n{xml}\n\n")
                 return query_instructions_with_reflection + f"Reflection on existing knowledge:\n{xml}\n" + "Provide your response in JSON format."
             else:
                 return query_instructions_without_reflection

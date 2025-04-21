@@ -23,14 +23,42 @@ Example output:
 Provide your response in JSON format."""
 
 query_instructions_with_reflection = """
+<GOAL>
 Your goal is to generate a targeted web search query.
 The query will gather information related to a specific topic based on specific knowledge gaps.
+</GOAL>
+
+<INPUT_FORMAT>
+You will receive the knowledge gaps in XML format. The XML will use the following schema.
+
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:element name="reflection">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="knowledge_gaps" type="xs:string"/>
+        <xs:element name="knowledge_coverage" type="xs:string"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>
+
+Below is an example of the XML format you will receive.
+
+<reflection>
+  <knowledge_gaps>impact of her work on modern molecular biology, her personal life and struggles, detailed analysis of Photograph 51</knowledge_gaps>
+  <knowledge_coverage>biography and contributions</knowledge_coverage>
+</reflection>
+
+</INPUT_FORMAT>
 
 <REQUIREMENTS>
 When generating the web search query:
-1. Take all knowledge gaps into account. They form the basis of the search query.
-2. Check that the query is at least vaguely related to the topic.
-3. Do not include any aspects mentioned in the knowledge coverage.
+1. The knowledge gaps form the basis of the search query.
+2. Identify the most relevant point in the knowledge gaps and use it to create a focused search query. Do not summarize the knowledge gaps.
+3. Check that the query is at least vaguely related to the topic.
 </REQUIREMENTS>
 
 <FORMAT>
@@ -187,7 +215,7 @@ When reflecting on the web search summaries:
 1. Take all summaries into account and evaluate them in their entirety
 2. Identify aspects which have been covered extensively and those which require further exploration
 3. Be methodical when identifying knowldge coverage
-4. Be creative and think out of the box when searching for knowledge gaps.
+4. Be creative and think out of the box when searching for knowledge gaps. Do not reply with 'None' or 'Nothing' for the knowledge gaps.
 5. Reply only with keywords and phrases, not full sentences.
 6. Do not include any XML tags or Markdown formatting in the output.
 7. Do not include any preamble or titles in the output.
