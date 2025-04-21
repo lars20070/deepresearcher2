@@ -29,23 +29,7 @@ The query will gather information related to a specific topic based on specific 
 </GOAL>
 
 <INPUT_FORMAT>
-You will receive the knowledge gaps in XML format. The XML will use the following schema.
-
-<?xml version="1.0" encoding="UTF-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
-
-  <xs:element name="reflection">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element name="knowledge_gaps" type="xs:string"/>
-        <xs:element name="knowledge_coverage" type="xs:string"/>
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-
-</xs:schema>
-
-Below is an example of the XML format you will receive.
+You will receive the knowledge gaps in XML format. Here is an example.
 
 <reflection>
   <knowledge_gaps>impact of her work on modern molecular biology, her personal life and struggles, detailed analysis of Photograph 51</knowledge_gaps>
@@ -88,30 +72,7 @@ Generate a high-quality summary of the web search results and keep it concise / 
 </GOAL>
 
 <INPUT_FORMAT>
-You will receive the list of web search results in XML format. The XML will use the following schema.
-
-<?xml version="1.0" encoding="UTF-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
-
-  <xs:element name="search_results">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element name="WebSearchResult" maxOccurs="unbounded">
-          <xs:complexType>
-            <xs:sequence>
-              <xs:element name="title" type="xs:string"/>
-              <xs:element name="url" type="xs:anyURI"/>
-              <xs:element name="content" type="xs:string"/>
-            </xs:sequence>
-          </xs:complexType>
-        </xs:element>
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-
-</xs:schema>
-
-Below is an example of the XML format you will receive.
+You will receive the list of web search results in XML format. Here is an example.
 
 <search_results>
     <WebSearchResult>
@@ -167,30 +128,7 @@ Reflect on the summaries and identify knowledge gaps and coverage.
 </GOAL>
 
 <INPUT_FORMAT>
-You will receive the list of web search summaries in XML format. The XML will use the following schema.
-
-<?xml version="1.0" encoding="UTF-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
-
-  <!-- Root element -->
-  <xs:element name="search_summaries">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element name="WebSearchSummary" maxOccurs="unbounded">
-          <xs:complexType>
-            <xs:sequence>
-              <xs:element name="summary" type="xs:string"/>
-              <xs:element name="aspect" type="xs:string"/>
-            </xs:sequence>
-          </xs:complexType>
-        </xs:element>
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-
-</xs:schema>
-
-Below is an example of the XML format you will receive.
+You will receive the list of web search summaries in XML format. Here is an example.
 
 <search_summaries>
   <WebSearchSummary>
