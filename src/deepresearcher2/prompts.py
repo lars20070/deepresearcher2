@@ -59,12 +59,13 @@ When generating the web search query:
 1. The knowledge gaps form the basis of the search query.
 2. Identify the most relevant point in the knowledge gaps and use it to create a focused search query. Do not summarize the knowledge gaps.
 3. Check that the query is at least vaguely related to the topic.
+4. Do not include the topic in the aspect of the query, since this is too broad.
 </REQUIREMENTS>
 
 <FORMAT>
 Format your response as a JSON object with ALL three of these exact keys:
    - "query": The actual search query string
-   - "aspect": The specific aspect of the topic and knowledge gaps being researched
+   - "aspect": The specific aspect of the topic and knowledge gaps being researched. The aspect should not include the topic itself.
    - "rationale": Brief explanation of why this query is relevant
 </FORMAT>
 
@@ -129,16 +130,18 @@ Below is an example of the XML format you will receive.
 
 <REQUIREMENTS>
 When creating a summary:
-1. Highlight the most relevant information related to the user topic from the search results
-2. Ensure a coherent flow of information
-3. Ensure the summary is relevant to the user topic and not just a collection of facts
+1. Compile all information related to the user topic from the search results
+2. The compiled paragraph should be at leasdt 1000 words long.
+3. Ensure a coherent flow of information
+4. Ensure the compilation is relevant to the user topic and not just a collection of facts
+5. The "aspect" value in the JSON response MUST NOT include the topic itself. The aspect should be very specific to the information in the summary.
 </REQUIREMENTS>
 
 <FORMAT>
 Format your response as a JSON object with ALL of these exact keys:
-   - "summary": Summary of ALL web search results. Start directly with the summary, without preamble or titles. Do not use XML tags or Markdown
-   formatting in the output. The summary should be at least 100 words long. The summary should be less than 400 words long.
-   - "aspect": The specific aspect of the topic being researched
+   - "summary": Long form compilation of ALL information of the web search results. Start directly with the compilation, without preamble or titles.
+   Do not use XML tags or Markdown formatting in the output. The summary should be at least 100 words long.
+   - "aspect": The specific aspect of the topic being researched. Do not include the topic itself in the aspect.
 </FORMAT>
 
 <EXAMPLE>

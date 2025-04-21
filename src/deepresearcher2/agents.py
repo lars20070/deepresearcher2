@@ -35,10 +35,11 @@ query_agent = Agent(
 
 # Note that we provide internet access to the summary agent. Maybe the agent wants to clarify some facts.
 # TODO: Check whether this improves the queries or is just a waste of time.
+# Sometimes the model fails to reply with JSON. In this case, the model tries to google for a fix. Better switch off the internet access.
 summary_agent = Agent(
     model=ollama_model,
     # model="openai:gpt-4o",
-    mcp_servers=[mcp_server_duckduckgo],
+    # mcp_servers=[mcp_server_duckduckgo],
     output_type=WebSearchSummary,
     system_prompt=summary_instructions,
     retries=5,
