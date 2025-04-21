@@ -10,7 +10,7 @@ from deepresearcher2.prompts import reflection_instructions, summary_instruction
 
 # Models
 model_name = "llama3.3"
-# model_name = "firefunction-v2"
+# model_name = "firefunction-v2"  # fails during reflection task
 # model_name = "mistral-nemo"  # Nemo is terrible in replying in JSON.
 ollama_model = OpenAIModel(
     model_name=model_name,

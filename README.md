@@ -1,8 +1,20 @@
 # Deep Researcher 2
 
-fully local web research and report writing assistant
+Fully local web research and report writing assistant.
 
-## UML diagrams
+## Getting started
+1. Install [Ollama](https://ollama.com) and pull a model.
+   ```bash
+   ollama pull llama3.3
+   ```
+2. Create an `.env` file and fill in the placeholders including the `TOPIC`.
+   ```bash
+   cp .env.example .env
+   ```
+3. Start up the workflow.
+   ```bash
+   uv run research
+   ```
 
 ``` mermaid
 stateDiagram-v2
@@ -18,9 +30,11 @@ stateDiagram-v2
     ReflectOnSummary --> FinalizeSummary
     FinalizeSummary --> [*]
 ```
-<br>*Deep Researcher 2 design*
+<br>*Deep Researcher 2 workflow*
 <br>
 <br>
+
+## UML diagrams
 
 ![class diagram](./uml/classes.png "Deep Researcher 2 class structure")
 <br>*Deep Researcher 2 class structure*
@@ -32,27 +46,3 @@ stateDiagram-v2
 
 <br>
 <br>
-
-``` mermaid
-flowchart LR
-    CoordinatorModel["coordinator model<br>Llama 3.3"]
-    SearchMCP["web search MCP<br>DuckDuckGo"]
-    ReasoningMCP["reasoning MCP<br>DeepSeek R1"]
-    CoordinatorModel --> SearchMCP
-    CoordinatorModel --> ReasoningMCP
-```
-<br>*MCPs in Deep Researcher 2*
-<br>
-<br>
-
-## Models and MCPs
-
-* coordinator models for tool/MCP use
-  * Llama 3.3 `llama3.3` (Meta)
-  * Firefunction v2 `firefunction-v2` (Fireworks AI)
-  * Mistral Nemo `mistral-nemo` (Mistral + Nvidia)
-    * fails to make proper use of the Python execution MCP
-* search MCP
-  * [DuckDuckGo MCP](https://github.com/nickclyde/duckduckgo-mcp-server)
-    * `search` tool
-    * `fetch_content` tool
