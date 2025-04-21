@@ -145,6 +145,6 @@ def mcp_server() -> None:
     async def poet(theme: str) -> str:
         """Poem generator"""
         r = await server_agent.run(f"Write a poem about {theme}.")
-        return r.data
+        return r.output
 
     server.run()
