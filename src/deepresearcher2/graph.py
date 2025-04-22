@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 from pydantic_ai import format_as_xml
 from pydantic_graph import BaseNode, End, Graph, GraphRunContext
 
-from deepresearcher2.agents import query_agent, reflection_agent, summary_agent
+from deepresearcher2.agents import final_summary_agent, query_agent, reflection_agent, summary_agent
 from deepresearcher2.logger import logger
 from deepresearcher2.models import DeepState, Reflection, WebSearchSummary
 from deepresearcher2.prompts import query_instructions_with_reflection, query_instructions_without_reflection
@@ -80,7 +80,7 @@ class SummarizeSearchResults(BaseNode[DeepState]):
             return f"List of web search results:\n{xml}"
 
         # Generate the summary
-        async with query_agent.run_mcp_servers():
+        async with summary_agent.run_mcp_servers():
             summary = await summary_agent.run(
                 user_prompt=f"Please summarize the provided web search results for the topic <TOPIC>{ctx.state.topic}</TOPIC>."
             )
@@ -114,7 +114,7 @@ class ReflectOnSearch(BaseNode[DeepState]):
             return f"List of search summaries:\n{xml}"
 
         # Reflect on the summaries so far
-        async with query_agent.run_mcp_servers():
+        async with reflection_agent.run_mcp_servers():
             reflection = await reflection_agent.run(
                 user_prompt=f"Please reflect on the provided web search summaries for the topic <TOPIC>{ctx.state.topic}</TOPIC>."
             )
@@ -142,6 +142,25 @@ class FinalizeSummary(BaseNode[DeepState]):
 
     async def run(self, ctx: GraphRunContext[DeepState]) -> End:
         logger.debug("Running Finalize Summary.")
+
+        xml = format_as_xml(ctx.state.search_summaries, root_tag="SEARCH SUMMARIES")
+        logger.debug(f"Search summaries:\n{xml}")
+
+        @final_summary_agent.system_prompt
+        def add_search_summaries() -> str:
+            """
+            Add search summaries to the system prompt.
+            """
+            xml = format_as_xml(ctx.state.search_summaries, root_tag="SEARCH SUMMARIES")
+            return f"List of search summaries:\n{xml}"
+
+        # Finalize the summary of the entire report
+        async with final_summary_agent.run_mcp_servers():
+            final_summary = await final_summary_agent.run(
+                user_prompt=f"Please summarize all web search summaries for the topic <TOPIC>{ctx.state.topic}</TOPIC>."
+            )
+            logger.debug(f"Final summary:\n{final_summary.output.summary}")
+
         return End("End of deep research workflow.\n\n")
 
 

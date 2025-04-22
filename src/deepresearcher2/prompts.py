@@ -123,8 +123,13 @@ Example output:
 Provide your response in JSON format."""
 
 reflection_instructions = """
+You are an expert research assistant analyzing a summary of web searches.
+
 <GOAL>
-Reflect on the summaries and identify knowledge gaps and coverage.
+1. Identify knowledge gaps i.e. areas that need deeper exploration.
+2. Generate a follow-up question that would help expand your understanding.
+3. Focus on technical details, implementation specifics, or emerging trends that weren't fully covered.
+4. Identify also knowledge coverage i.e. areas that have been sufficiently covered.
 </GOAL>
 
 <INPUT_FORMAT>
@@ -178,3 +183,7 @@ Example output:
 </EXAMPLE>
 
 Provide your response as a list of keywords in JSON format."""
+
+final_summary_instructions = """
+Write a good summary.
+"""

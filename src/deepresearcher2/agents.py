@@ -5,8 +5,8 @@ from pydantic_ai.mcp import MCPServerStdio
 from pydantic_ai.models.openai import OpenAIModel
 from pydantic_ai.providers.openai import OpenAIProvider
 
-from deepresearcher2.models import Reflection, WebSearchQuery, WebSearchSummary
-from deepresearcher2.prompts import reflection_instructions, summary_instructions
+from deepresearcher2.models import FinalSummary, Reflection, WebSearchQuery, WebSearchSummary
+from deepresearcher2.prompts import final_summary_instructions, reflection_instructions, summary_instructions
 
 # Models
 model_name = "llama3.3"
@@ -51,6 +51,15 @@ reflection_agent = Agent(
     # model="openai:gpt-4o",
     output_type=Reflection,
     system_prompt=reflection_instructions,
+    retries=5,
+    instrument=True,
+)
+
+final_summary_agent = Agent(
+    model=ollama_model,
+    # model="openai:gpt-4o",
+    output_type=FinalSummary,
+    system_prompt=final_summary_instructions,
     retries=5,
     instrument=True,
 )
