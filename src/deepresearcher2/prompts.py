@@ -225,10 +225,9 @@ When creating the report:
 </REQUIREMENTS>
 
 <FORMAT>
-Format your response as a JSON object with ALL of these exact keys:
+Format your response as a JSON object with a single key:
    - "summary": Long form compilation of ALL information of the web search results. Start directly with the compilation, without preamble or titles.
-   Do not use XML tags in the output. You can use Markdown formatting if you want. You can use bullet points or tables. Write multiple paragraphs
-   each at least 1000 words long.
+   Do not use XML tags in the output. Write multiple paragraphs each at least 1000 words long.
 </FORMAT>
 
 <EXAMPLE>
@@ -237,12 +236,11 @@ Example output:
     "summary": "Petrichor refers to the earthy scent produced when rain falls on dry soil or ground, often experienced as a pleasant smell.
     It is characterized by its distinct aroma, which is typically associated with the smell of rain on dry earth. According to dictionary definitions,
     petrichor is the term used to describe this phenomenon, with the word itself pronounced as PET-rih-kor. The smell is generally considered pleasant
-    and is often noticed when rain falls on dry soil or ground, releasing the distinctive aroma into the air.
-    
-    The term **petrichor** refers to the distinctive scent that occurs when rain falls on dry soil or rocks. The word was coined in 1964 by two
-    Australian researchers, who discovered that the smell is caused by oils released from plants and soil. These oils can come from roots, leaves, and
-    other organic matter, and are carried into the air by raindrops. Petrichor is often associated with the smell of earthy, mossy, or musty aromas,
-    and is a distinctive feature of many natural environments.",
+    and is often noticed when rain falls on dry soil or ground, releasing the distinctive aroma into the air. The term petrichor refers to the
+    distinctive scent that occurs when rain falls on dry soil or rocks. The word was coined in 1964 by two Australian researchers, who discovered
+    that the smell is caused by oils released from plants and soil. These oils can come from roots, leaves, and other organic matter, and are carried
+    into the air by raindrops. Petrichor is often associated with the smell of earthy, mossy, or musty aromas, and is a distinctive feature of many
+    natural environments.",
 }}
 </EXAMPLE>
 

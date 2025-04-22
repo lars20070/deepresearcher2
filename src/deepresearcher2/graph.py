@@ -3,6 +3,7 @@ from __future__ import annotations as _annotations
 
 import asyncio
 import os
+import re
 from dataclasses import dataclass
 
 from dotenv import load_dotenv
@@ -143,6 +144,9 @@ class FinalizeSummary(BaseNode[DeepState]):
     async def run(self, ctx: GraphRunContext[DeepState]) -> End:
         logger.debug("Running Finalize Summary.")
 
+        load_dotenv()
+        topic = ctx.state.topic
+
         xml = format_as_xml(ctx.state.search_summaries, root_tag="SEARCH SUMMARIES")
         logger.debug(f"Search summaries:\n{xml}")
 
@@ -159,7 +163,17 @@ class FinalizeSummary(BaseNode[DeepState]):
             final_summary = await final_summary_agent.run(
                 user_prompt=f"Please summarize all web search summaries for the topic <TOPIC>{ctx.state.topic}</TOPIC>."
             )
-            logger.debug(f"Final summary:\n{final_summary.output.summary}")
+            report = f"## {topic}\n\n" + final_summary.output.summary
+            logger.debug(f"Final report:\n{report}")
+
+        # Export the report
+        output_dir = "reports/"
+        if os.path.exists(output_dir):
+            file_name = re.sub(r"[^a-zA-Z0-9]", "_", topic).lower()
+            path_md = os.path.join(output_dir, f"{file_name}.md")
+            logger.debug(f"Exporting report to {path_md}")
+            with open(path_md, "w", encoding="utf-8") as f:
+                f.write(report)
 
         return End("End of deep research workflow.\n\n")
 
