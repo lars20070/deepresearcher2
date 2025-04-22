@@ -35,14 +35,14 @@ class WebSearch(BaseNode[DeepState]):
             Add reflection from the previous loop to the system prompt.
             """
             if ctx.state.reflection:
-                xml = format_as_xml(ctx.state.reflection, root_tag="reflection")
+                xml = format_as_xml(ctx.state.reflection, root_tag="REFLECTION")
                 return query_instructions_with_reflection + f"Reflection on existing knowledge:\n{xml}\n" + "Provide your response in JSON format."
             else:
                 return query_instructions_without_reflection
 
         # Generate the query
         async with query_agent.run_mcp_servers():
-            prompt = f"Please generate a web search query for the following topic: {topic}"
+            prompt = f"Please generate a web search query for the following topic: <TOPIC>{topic}</TOPIC>"
             result = await query_agent.run(prompt)
             query = result.output
             logger.debug(f"Web search query: {query}")
@@ -76,12 +76,14 @@ class SummarizeSearchResults(BaseNode[DeepState]):
             """
             Add web search results to the system prompt.
             """
-            xml = format_as_xml(ctx.state.search_results, root_tag="search_results")
+            xml = format_as_xml(ctx.state.search_results, root_tag="SEARCH RESULTS")
             return f"List of web search results:\n{xml}"
 
         # Generate the summary
         async with query_agent.run_mcp_servers():
-            summary = await summary_agent.run(user_prompt=f"Please summarize the provided web search results for the topic {ctx.state.topic}.")
+            summary = await summary_agent.run(
+                user_prompt=f"Please summarize the provided web search results for the topic <TOPIC>{ctx.state.topic}</TOPIC>."
+            )
             logger.debug(f"Web search summary:\n{summary.output.summary}")
 
             # Append the summary to the list of all search summaries
@@ -100,7 +102,7 @@ class ReflectOnSearch(BaseNode[DeepState]):
     async def run(self, ctx: GraphRunContext[DeepState]) -> WebSearch | FinalizeSummary:
         logger.debug(f"Running Reflect on Search with count number {ctx.state.count}.")
 
-        xml = format_as_xml(ctx.state.search_summaries, root_tag="search_summaries")
+        xml = format_as_xml(ctx.state.search_summaries, root_tag="SEARCH SUMMARIES")
         logger.debug(f"Search summaries:\n{xml}")
 
         @reflection_agent.system_prompt
@@ -108,13 +110,13 @@ class ReflectOnSearch(BaseNode[DeepState]):
             """
             Add search summaries to the system prompt.
             """
-            xml = format_as_xml(ctx.state.search_summaries, root_tag="search_summaries")
+            xml = format_as_xml(ctx.state.search_summaries, root_tag="SEARCH SUMMARIES")
             return f"List of search summaries:\n{xml}"
 
         # Reflect on the summaries so far
         async with query_agent.run_mcp_servers():
             reflection = await reflection_agent.run(
-                user_prompt=f"Please reflect on the provided web search summaries for the topic {ctx.state.topic}."
+                user_prompt=f"Please reflect on the provided web search summaries for the topic <TOPIC>{ctx.state.topic}</TOPIC>."
             )
             logger.debug(f"Reflection knowledge gaps:\n{reflection.output.knowledge_gaps}")
             logger.debug(f"Reflection knowledge coverage:\n{reflection.output.knowledge_coverage}")
@@ -143,6 +145,7 @@ class FinalizeSummary(BaseNode[DeepState]):
         return End("End of deep research workflow.\n\n")
 
 
+# Workflow
 async def deepresearch() -> None:
     """
     Graph use
@@ -155,10 +158,7 @@ async def deepresearch() -> None:
     graph = Graph(nodes=[WebSearch, SummarizeSearchResults, ReflectOnSearch, FinalizeSummary])
 
     # Run the agent graph
-    state = DeepState(
-        topic=os.environ.get("TOPIC", "petrichor"),
-        count=1,
-    )
+    state = DeepState(topic=os.environ.get("TOPIC", "petrichor"), count=1)
     result = await graph.run(WebSearch(), state=state)
     logger.debug(f"Result: {result.output}")
 
