@@ -9,6 +9,9 @@ from pydantic_ai.exceptions import ModelRetry
 from pydantic_ai.models.openai import OpenAIModel
 from pydantic_ai.providers.openai import OpenAIProvider
 
+# Most code examples can be found in tests/test_example.py
+# The methods here are an exception. They can be executed as scripts via [project.scripts] in pyproject.toml
+
 
 def basic_chat() -> None:
     """
@@ -46,7 +49,7 @@ def basic_chat() -> None:
             user_message,
             message_history=result.all_messages() if result else None,
         )
-        print(result.data)
+        print(result.output)
 
 
 def chat_with_python() -> None:
@@ -118,7 +121,7 @@ def chat_with_python() -> None:
             user_message,
             message_history=result.all_messages() if result else None,
         )
-        print(result.data)
+        print(result.output)
 
 
 def mcp_server() -> None:
@@ -142,6 +145,6 @@ def mcp_server() -> None:
     async def poet(theme: str) -> str:
         """Poem generator"""
         r = await server_agent.run(f"Write a poem about {theme}.")
-        return r.data
+        return r.output
 
     server.run()
