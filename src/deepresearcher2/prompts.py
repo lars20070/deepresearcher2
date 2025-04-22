@@ -92,7 +92,7 @@ You will receive the list of web search results in XML format. Here is an exampl
 <REQUIREMENTS>
 When creating a summary:
 1. Compile all information related to the user topic from the search results
-2. The compiled paragraph should be at leasdt 1000 words long.
+2. The compiled paragraph should be at least 1000 words long.
 3. Ensure a coherent flow of information
 4. Ensure the compilation is relevant to the user topic and not just a collection of facts
 5. The "aspect" value in the JSON response MUST NOT include the topic itself. The aspect should be very specific to the information in the summary.
@@ -138,7 +138,7 @@ You will receive the list of web search summaries in XML format. Here is an exam
 <search_summaries>
   <WebSearchSummary>
     <summary>Petrichor refers to the earthy scent produced when rain falls on dry soil or ground, often experienced as a pleasant smell. It is 
-    haracterized by its distinct aroma, which is typically associated with the smell of rain on dry earth. According to dictionary definitions,
+    characterized by its distinct aroma, which is typically associated with the smell of rain on dry earth. According to dictionary definitions,
     petrichor is the term used to describe this phenomenon, with the word itself pronounced as PET-rih-kor. The smell is generally considered
     pleasant and is often noticed when rain falls on dry soil or ground, releasing the distinctive aroma into the air. The term 'petrichor' refers
     to the distinctive scent that occurs when rain falls on dry soil or rocks. The word was coined in 1964 by two Australian researchers, who
@@ -160,7 +160,7 @@ You will receive the list of web search summaries in XML format. Here is an exam
 When reflecting on the web search summaries:
 1. Take all summaries into account and evaluate them in their entirety
 2. Identify aspects which have been covered extensively and those which require further exploration
-3. Be methodical when identifying knowldge coverage
+3. Be methodical when identifying knowledge coverage
 4. Be creative and think out of the box when searching for knowledge gaps. Do not reply with 'None' or 'Nothing' for the knowledge gaps.
 5. Reply only with keywords and phrases, not full sentences.
 6. Do not include any XML tags or Markdown formatting in the output.
@@ -185,5 +185,66 @@ Example output:
 Provide your response as a list of keywords in JSON format."""
 
 final_summary_instructions = """
-Write a good summary.
+You are an award winning journalist compiling a final report on a topic.
+
+<GOAL>
+1. Write one or multiple praragraphs compiling ALL information of a list of search summaries.
+2. Compile the information you are given. Do not summarize or shorten the information.
+</GOAL>
+
+<INPUT_FORMAT>
+You will receive the list of web search summaries in XML format. Here is an example.
+
+<search_summaries>
+  <WebSearchSummary>
+    <summary>Petrichor refers to the earthy scent produced when rain falls on dry soil or ground, often experienced as a pleasant smell. It is 
+    characterized by its distinct aroma, which is typically associated with the smell of rain on dry earth. According to dictionary definitions,
+    petrichor is the term used to describe this phenomenon, with the word itself pronounced as PET-rih-kor. The smell is generally considered
+    pleasant and is often noticed when rain falls on dry soil or ground, releasing the distinctive aroma into the air. The term 'petrichor' refers
+    to the distinctive scent that occurs when rain falls on dry soil or rocks. The word was coined in 1964 by two Australian researchers, who
+    discovered that the smell is caused by oils released from plants and soil. These oils can come from roots, leaves, and other organic matter,
+    and are carried into the air by raindrops. Petrichor is often associated with the smell of earthy, mossy, or musty aromas, and is a distinctive
+    feature of many natural environments.</summary>
+    <aspect>definition and meaning</aspect>
+  </WebSearchSummary>
+  <WebSearchSummary>
+    <summary>Petrichor refers to the distinctive scent that occurs when rain falls on dry soil or rocks, often associated with a sweet, earthy aroma.
+    </summary>
+    <aspect>definition and explanations</aspect>
+  </WebSearchSummary>
+</search_summaries>
+
+</INPUT_FORMAT>
+
+<REQUIREMENTS>
+When creating the report:
+1. Compile all information related to the user topic from the search summaries
+2. The compiled should consist of three or more paragraphs. Each paragraph should be at least 1000 words long.
+3. Ensure a coherent flow of information.
+4. Ensure the compilation is relevant to the user topic and not just a collection of facts.
+</REQUIREMENTS>
+
+<FORMAT>
+Format your response as a JSON object with ALL of these exact keys:
+   - "summary": Long form compilation of ALL information of the web search results. Start directly with the compilation, without preamble or titles.
+   Do not use XML tags in the output. You can use Markdown formatting if you want. You can use bullet points or tables. Write multiple paragraphs
+   each at least 1000 words long.
+</FORMAT>
+
+<EXAMPLE>
+Example output:
+{{
+    "summary": "Petrichor refers to the earthy scent produced when rain falls on dry soil or ground, often experienced as a pleasant smell.
+    It is characterized by its distinct aroma, which is typically associated with the smell of rain on dry earth. According to dictionary definitions,
+    petrichor is the term used to describe this phenomenon, with the word itself pronounced as PET-rih-kor. The smell is generally considered pleasant
+    and is often noticed when rain falls on dry soil or ground, releasing the distinctive aroma into the air.
+    
+    The term **petrichor** refers to the distinctive scent that occurs when rain falls on dry soil or rocks. The word was coined in 1964 by two
+    Australian researchers, who discovered that the smell is caused by oils released from plants and soil. These oils can come from roots, leaves, and
+    other organic matter, and are carried into the air by raindrops. Petrichor is often associated with the smell of earthy, mossy, or musty aromas,
+    and is a distinctive feature of many natural environments.",
+}}
+</EXAMPLE>
+
+Provide your response in JSON format.
 """
