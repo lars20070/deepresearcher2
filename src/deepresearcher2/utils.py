@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
-
 import gzip
+import os
+import re
 import urllib.error
 import urllib.request
 import zlib
 
 import brotli
+import pypandoc
 from bs4 import BeautifulSoup
 from duckduckgo_search import DDGS
 from markdownify import markdownify as mdfy
@@ -180,3 +182,49 @@ def duckduckgo_search(query: str, max_results: int = 2, max_content_length: int 
         results.append(result)
 
     return results
+
+
+def export_report(report: str, topic: str = "Report", output_dir: str = "reports/") -> None:
+    """
+    Export the report to markdown (and pdf).
+    If 'pandoc' is installed on the system, the report will be exported to both markdown and pdf formats.
+
+    Args:
+        report (str): The report content in markdown format.
+        topic (str): The topic of the report. Defaults to "Report".
+        output_dir (str): The directory where the report will be saved. Defaults to "reports/".
+    """
+    if os.path.exists(output_dir):
+        file_name = re.sub(r"[^a-zA-Z0-9]", "_", topic).lower()
+        path_md = os.path.join(output_dir, f"{file_name}.md")
+        logger.debug(f"Exporting report to {path_md}")
+        with open(path_md, "w", encoding="utf-8") as f:
+            f.write(report)
+
+        # Convert markdown to PDF using Pandoc
+        try:
+            logger.info(f"Writing the final report as PDF to '{output_dir}'")
+            logger.debug(f"Pandoc version {pypandoc.get_pandoc_version()} is installed at path: '{pypandoc.get_pandoc_path()}'")
+            path_pdf = os.path.join(output_dir, f"{file_name}.pdf")
+            pypandoc.convert_file(
+                path_md,
+                "pdf",
+                outputfile=path_pdf,
+                extra_args=[
+                    "--pdf-engine=xelatex",
+                    "-V",
+                    "colorlinks=true",
+                    "-V",
+                    "linkcolor=blue",  # Internal links
+                    "-V",
+                    "urlcolor=blue",  # External links
+                    "-V",
+                    "citecolor=blue",
+                    "--from",
+                    "markdown+autolink_bare_uris",  # Ensures bare URLs are also hyperlinked
+                ],
+            )
+        except Exception:
+            logger.error("Pandoc is not installed. Skipping conversion to PDF.")
+    else:
+        logger.error(f"Output directory {output_dir} does not exist. Skipping writing the final report.")

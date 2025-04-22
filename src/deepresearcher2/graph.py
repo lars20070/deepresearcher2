@@ -3,7 +3,6 @@ from __future__ import annotations as _annotations
 
 import asyncio
 import os
-import re
 from dataclasses import dataclass
 
 from dotenv import load_dotenv
@@ -14,7 +13,7 @@ from deepresearcher2.agents import final_summary_agent, query_agent, reflection_
 from deepresearcher2.logger import logger
 from deepresearcher2.models import DeepState, Reflection, WebSearchSummary
 from deepresearcher2.prompts import query_instructions_with_reflection, query_instructions_without_reflection
-from deepresearcher2.utils import duckduckgo_search
+from deepresearcher2.utils import duckduckgo_search, export_report
 
 
 # Nodes
@@ -103,33 +102,35 @@ class ReflectOnSearch(BaseNode[DeepState]):
     async def run(self, ctx: GraphRunContext[DeepState]) -> WebSearch | FinalizeSummary:
         logger.debug(f"Running Reflect on Search with count number {ctx.state.count}.")
 
-        xml = format_as_xml(ctx.state.search_summaries, root_tag="SEARCH SUMMARIES")
-        logger.debug(f"Search summaries:\n{xml}")
-
-        @reflection_agent.system_prompt
-        def add_search_summaries() -> str:
-            """
-            Add search summaries to the system prompt.
-            """
-            xml = format_as_xml(ctx.state.search_summaries, root_tag="SEARCH SUMMARIES")
-            return f"List of search summaries:\n{xml}"
-
-        # Reflect on the summaries so far
-        async with reflection_agent.run_mcp_servers():
-            reflection = await reflection_agent.run(
-                user_prompt=f"Please reflect on the provided web search summaries for the topic <TOPIC>{ctx.state.topic}</TOPIC>."
-            )
-            logger.debug(f"Reflection knowledge gaps:\n{reflection.output.knowledge_gaps}")
-            logger.debug(f"Reflection knowledge coverage:\n{reflection.output.knowledge_coverage}")
-
-            ctx.state.reflection = Reflection(
-                knowledge_gaps=reflection.output.knowledge_gaps,
-                knowledge_coverage=reflection.output.knowledge_coverage,
-            )
-
         # Flow control
+        # Should we ponder on the next web search or compile the final report?
         if ctx.state.count < int(os.environ.get("MAX_RESEARCH_LOOPS", "10")):
             ctx.state.count += 1
+
+            xml = format_as_xml(ctx.state.search_summaries, root_tag="SEARCH SUMMARIES")
+            logger.debug(f"Search summaries:\n{xml}")
+
+            @reflection_agent.system_prompt
+            def add_search_summaries() -> str:
+                """
+                Add search summaries to the system prompt.
+                """
+                xml = format_as_xml(ctx.state.search_summaries, root_tag="SEARCH SUMMARIES")
+                return f"List of search summaries:\n{xml}"
+
+            # Reflect on the summaries so far
+            async with reflection_agent.run_mcp_servers():
+                reflection = await reflection_agent.run(
+                    user_prompt=f"Please reflect on the provided web search summaries for the topic <TOPIC>{ctx.state.topic}</TOPIC>."
+                )
+                logger.debug(f"Reflection knowledge gaps:\n{reflection.output.knowledge_gaps}")
+                logger.debug(f"Reflection knowledge coverage:\n{reflection.output.knowledge_coverage}")
+
+                ctx.state.reflection = Reflection(
+                    knowledge_gaps=reflection.output.knowledge_gaps,
+                    knowledge_coverage=reflection.output.knowledge_coverage,
+                )
+
             return WebSearch()
         else:
             return FinalizeSummary()
@@ -167,13 +168,7 @@ class FinalizeSummary(BaseNode[DeepState]):
             logger.debug(f"Final report:\n{report}")
 
         # Export the report
-        output_dir = "reports/"
-        if os.path.exists(output_dir):
-            file_name = re.sub(r"[^a-zA-Z0-9]", "_", topic).lower()
-            path_md = os.path.join(output_dir, f"{file_name}.md")
-            logger.debug(f"Exporting report to {path_md}")
-            with open(path_md, "w", encoding="utf-8") as f:
-                f.write(report)
+        export_report(report=report, topic=topic)
 
         return End("End of deep research workflow.\n\n")
 
