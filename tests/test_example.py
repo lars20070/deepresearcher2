@@ -175,6 +175,7 @@ class Deps:
     geo_api_key: str | None
 
 
+@pytest.mark.skip(reason="https://geocode.maps.co has strict request limits. '429 Too Many Requests' is very likely.")
 @pytest.mark.example
 @pytest.mark.paid
 @pytest.mark.asyncio
