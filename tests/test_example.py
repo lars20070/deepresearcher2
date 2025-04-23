@@ -20,14 +20,18 @@ from pydantic_ai.mcp import MCPServerHTTP, MCPServerStdio
 
 if TYPE_CHECKING:
     from pydantic_ai.messages import ModelMessage
+from dotenv import load_dotenv
 from pydantic_ai.models.openai import OpenAIModel
 from pydantic_ai.providers.openai import OpenAIProvider
 from pydantic_evals import Case, Dataset
 from pydantic_evals.evaluators import Evaluator, EvaluatorContext, IsInstance
 from pydantic_graph import BaseNode, End, Graph, GraphRunContext
 
-import deepresearcher2.env  # noqa: F401
-from deepresearcher2 import basic_chat, chat_with_python, config, logger
+from deepresearcher2.config import config
+from deepresearcher2.examples import basic_chat, chat_with_python
+from deepresearcher2.logger import logger
+
+load_dotenv()
 
 
 @pytest.mark.example

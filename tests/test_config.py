@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 import os
 
-import deepresearcher2.env  # noqa: F401
+from dotenv import load_dotenv
+
 from deepresearcher2.config import config
 from deepresearcher2.logger import logger
+
+load_dotenv()
 
 
 def test_config() -> None:

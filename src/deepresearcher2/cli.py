@@ -3,7 +3,7 @@
 import subprocess
 import sys
 
-from . import logger
+from .logger import logger
 
 """
 CLI wrappers in order to add these commands to [project.scripts] in pyproject.toml

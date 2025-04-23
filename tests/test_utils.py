@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
 
 
-import deepresearcher2.env  # noqa: F401
-from deepresearcher2 import config, logger
+from dotenv import load_dotenv
+
+from deepresearcher2.config import config
+from deepresearcher2.logger import logger
 from deepresearcher2.utils import duckduckgo_search, fetch_full_page_content
+
+load_dotenv()
 
 
 def test_fetch_full_page_content() -> None:

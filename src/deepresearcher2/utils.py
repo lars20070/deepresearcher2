@@ -14,7 +14,7 @@ from markdownify import markdownify as mdfy
 from pydantic import HttpUrl
 from tenacity import retry, stop_after_attempt, wait_exponential
 
-from . import logger
+from .logger import logger
 from .models import WebSearchResult
 
 

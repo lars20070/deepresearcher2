@@ -2,13 +2,14 @@
 
 import logfire
 import rizaio
+from dotenv import load_dotenv
 from mcp.server.fastmcp import FastMCP
 from pydantic_ai import Agent
 from pydantic_ai.exceptions import ModelRetry
 from pydantic_ai.models.openai import OpenAIModel
 from pydantic_ai.providers.openai import OpenAIProvider
 
-from . import env  # noqa: F401
+load_dotenv()
 
 # Most code examples can be found in tests/test_example.py
 # The methods here are an exception. They can be executed as scripts via [project.scripts] in pyproject.toml

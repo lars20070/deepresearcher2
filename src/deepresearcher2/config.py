@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
+from dotenv import load_dotenv
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-from . import env  # noqa: F401
+load_dotenv()
 
 
 class Config(BaseSettings):

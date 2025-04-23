@@ -1,10 +1,12 @@
+#!/usr/bin/env python3
+
 import logfire
+from dotenv import load_dotenv
 from loguru import logger
 
-from . import (
-    config,
-    env,  # noqa: F401
-)
+from .config import config
+
+load_dotenv()
 
 # Configure Logfire
 logfire.configure(

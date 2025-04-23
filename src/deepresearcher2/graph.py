@@ -4,18 +4,18 @@ from __future__ import annotations as _annotations
 import asyncio
 from dataclasses import dataclass
 
+from dotenv import load_dotenv
 from pydantic_ai import format_as_xml
 from pydantic_graph import BaseNode, End, Graph, GraphRunContext
 
-from . import (
-    config,
-    env,  # noqa: F401
-    logger,
-)
 from .agents import final_summary_agent, query_agent, reflection_agent, summary_agent
+from .config import config
+from .logger import logger
 from .models import DeepState, Reflection, WebSearchSummary
 from .prompts import query_instructions_with_reflection, query_instructions_without_reflection
 from .utils import duckduckgo_search, export_report
+
+load_dotenv()
 
 
 # Nodes
