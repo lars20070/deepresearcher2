@@ -22,7 +22,7 @@ def uml() -> None:
         "-o",
         "dot",
         "-A",
-        #        "-k",
+        "--only-classnames",
         "-d",
         "./uml",
         "./src/deepresearcher2",
