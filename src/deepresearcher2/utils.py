@@ -14,8 +14,8 @@ from markdownify import markdownify as mdfy
 from pydantic import HttpUrl
 from tenacity import retry, stop_after_attempt, wait_exponential
 
-from deepresearcher2.logger import logger
-from deepresearcher2.models import WebSearchResult
+from . import logger
+from .models import WebSearchResult
 
 
 def retry_with_backoff(func: callable, retry_min: int = 20, retry_max: int = 1000, retry_attempts: int = 5) -> callable:

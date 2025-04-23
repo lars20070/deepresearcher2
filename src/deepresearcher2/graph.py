@@ -4,15 +4,18 @@ from __future__ import annotations as _annotations
 import asyncio
 from dataclasses import dataclass
 
-from dotenv import load_dotenv
 from pydantic_ai import format_as_xml
 from pydantic_graph import BaseNode, End, Graph, GraphRunContext
 
-from deepresearcher2 import config, logger
-from deepresearcher2.agents import final_summary_agent, query_agent, reflection_agent, summary_agent
-from deepresearcher2.models import DeepState, Reflection, WebSearchSummary
-from deepresearcher2.prompts import query_instructions_with_reflection, query_instructions_without_reflection
-from deepresearcher2.utils import duckduckgo_search, export_report
+from . import (
+    config,
+    env,  # noqa: F401
+    logger,
+)
+from .agents import final_summary_agent, query_agent, reflection_agent, summary_agent
+from .models import DeepState, Reflection, WebSearchSummary
+from .prompts import query_instructions_with_reflection, query_instructions_without_reflection
+from .utils import duckduckgo_search, export_report
 
 
 # Nodes
@@ -25,7 +28,6 @@ class WebSearch(BaseNode[DeepState]):
     async def run(self, ctx: GraphRunContext[DeepState]) -> SummarizeSearchResults:
         logger.debug(f"Running Web Search with count number {ctx.state.count}.")
 
-        load_dotenv()
         topic = ctx.state.topic
 
         @query_agent.system_prompt
@@ -144,7 +146,6 @@ class FinalizeSummary(BaseNode[DeepState]):
     async def run(self, ctx: GraphRunContext[DeepState]) -> End:
         logger.debug("Running Finalize Summary.")
 
-        load_dotenv()
         topic = ctx.state.topic
 
         xml = format_as_xml(ctx.state.search_summaries, root_tag="SEARCH SUMMARIES")
@@ -178,8 +179,6 @@ async def deepresearch() -> None:
     Graph use
     """
     logger.info("Starting deep research workflow.")
-
-    load_dotenv()
 
     # Define the agent graph
     graph = Graph(nodes=[WebSearch, SummarizeSearchResults, ReflectOnSearch, FinalizeSummary])

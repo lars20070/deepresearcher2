@@ -1,13 +1,14 @@
-import os
-
 import logfire
-from dotenv import load_dotenv
 from loguru import logger
 
+from . import (
+    config,
+    env,  # noqa: F401
+)
+
 # Configure Logfire
-load_dotenv()
 logfire.configure(
-    token=os.environ.get("LOGFIRE_TOKEN"),
+    token=config.logfire_token,
     send_to_logfire=True,
 )
 

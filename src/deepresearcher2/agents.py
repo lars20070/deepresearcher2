@@ -5,8 +5,8 @@ from pydantic_ai.mcp import MCPServerStdio
 from pydantic_ai.models.openai import OpenAIModel
 from pydantic_ai.providers.openai import OpenAIProvider
 
-from deepresearcher2.models import FinalSummary, Reflection, WebSearchQuery, WebSearchSummary
-from deepresearcher2.prompts import final_summary_instructions, reflection_instructions, summary_instructions
+from .models import FinalSummary, Reflection, WebSearchQuery, WebSearchSummary
+from .prompts import final_summary_instructions, reflection_instructions, summary_instructions
 
 # Models
 model_name = "llama3.3"

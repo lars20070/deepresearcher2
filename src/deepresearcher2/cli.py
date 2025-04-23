@@ -3,7 +3,7 @@
 import subprocess
 import sys
 
-from deepresearcher2.logger import logger
+from . import logger
 
 """
 CLI wrappers in order to add these commands to [project.scripts] in pyproject.toml

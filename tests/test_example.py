@@ -26,13 +26,14 @@ from pydantic_evals import Case, Dataset
 from pydantic_evals.evaluators import Evaluator, EvaluatorContext, IsInstance
 from pydantic_graph import BaseNode, End, Graph, GraphRunContext
 
+import deepresearcher2.env  # noqa: F401
 from deepresearcher2 import basic_chat, chat_with_python, config, logger
 
 
 @pytest.mark.example
 @pytest.mark.paid
 @pytest.mark.asyncio
-async def test_pydanticai_agent(load_env: None) -> None:
+async def test_pydanticai_agent() -> None:
     """
     Test the Agent() class with a cloud model
     https://ai.pydantic.dev/#why-use-pydanticai
@@ -88,7 +89,7 @@ async def test_pydanticai_ollama() -> None:
 
 
 @pytest.mark.example
-def test_pydanticai_logfire(load_env: None) -> None:
+def test_pydanticai_logfire() -> None:
     """
     Test the basic Logfire functionality
     https://ai.pydantic.dev/logfire/#using-logfire
@@ -179,7 +180,7 @@ class Deps:
 @pytest.mark.example
 @pytest.mark.paid
 @pytest.mark.asyncio
-async def test_weather_agent(load_env: None) -> None:
+async def test_weather_agent() -> None:
     """
     Test Ollama agent with two tools.
     Note that geocode.maps.co has strict request limits. '429 Too Many Requests' is likely.
@@ -321,7 +322,7 @@ class ClientAndKey:
 @pytest.mark.paid
 @pytest.mark.example
 @pytest.mark.asyncio
-async def test_agent_delegation(load_env: None) -> None:
+async def test_agent_delegation() -> None:
     """
     Test the agent delegation functionality
 
@@ -454,7 +455,7 @@ async def test_pydantic_evals() -> None:
 @pytest.mark.paid
 @pytest.mark.example
 @pytest.mark.asyncio
-async def test_mcp_sse_client(load_env: None) -> None:
+async def test_mcp_sse_client() -> None:
     """
     Test the Pydantic MCP SSE client.
     https://ai.pydantic.dev/mcp/client/#sse-client
@@ -489,7 +490,7 @@ async def test_mcp_sse_client(load_env: None) -> None:
 @pytest.mark.paid
 @pytest.mark.example
 @pytest.mark.asyncio
-async def test_mcp_stdio_client(load_env: None) -> None:
+async def test_mcp_stdio_client() -> None:
     """
     Test the Pydantic MCP SSE client.
     https://ai.pydantic.dev/mcp/client/#sse-client
@@ -534,7 +535,7 @@ async def test_mcp_stdio_client(load_env: None) -> None:
 @pytest.mark.paid
 @pytest.mark.example
 @pytest.mark.asyncio
-async def test_mcp_server(load_env: None) -> None:
+async def test_mcp_server() -> None:
     """
     Test the MCP server functionality defined in deepresearcher2.examples.mcp_server()
 

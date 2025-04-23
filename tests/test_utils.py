@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 
+import deepresearcher2.env  # noqa: F401
 from deepresearcher2 import config, logger
 from deepresearcher2.utils import duckduckgo_search, fetch_full_page_content
 
@@ -24,7 +25,7 @@ def test_fetch_full_page_content() -> None:
     # assert "Curtis Yarvin's Ideas" in content3
 
 
-def test_duckduckgo_search(load_env: None) -> None:
+def test_duckduckgo_search() -> None:
     """
     Test the duckduckgo_search() search function
     """

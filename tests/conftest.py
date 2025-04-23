@@ -3,7 +3,6 @@
 import os
 
 import pytest
-from dotenv import load_dotenv
 
 
 def pytest_configure(config: pytest.Config) -> None:
@@ -20,12 +19,6 @@ def skip_ollama_tests(request: pytest.FixtureRequest) -> None:
     """
     if request.node.get_closest_marker("ollama") and os.getenv("GITHUB_ACTIONS") == "true":
         pytest.skip("Tests requiring Ollama skipped in CI environment")
-
-
-@pytest.fixture
-def load_env() -> None:
-    """Load environment variables."""
-    load_dotenv()
 
 
 @pytest.fixture

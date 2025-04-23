@@ -2,6 +2,8 @@
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+from . import env  # noqa: F401
+
 
 class Config(BaseSettings):
     """
