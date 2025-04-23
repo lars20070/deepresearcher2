@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 
-import os
 
-from deepresearcher2 import logger
+from deepresearcher2 import config, logger
 from deepresearcher2.utils import duckduckgo_search, fetch_full_page_content
 
 
@@ -32,7 +31,7 @@ def test_duckduckgo_search(load_env: None) -> None:
 
     # Full content length
     n = 3  # Number of results
-    topic = os.environ.get("TOPIC", "petrichor")
+    topic = config.topic
     results = duckduckgo_search(
         topic,
         max_results=n,

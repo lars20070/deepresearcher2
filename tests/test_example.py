@@ -26,7 +26,7 @@ from pydantic_evals import Case, Dataset
 from pydantic_evals.evaluators import Evaluator, EvaluatorContext, IsInstance
 from pydantic_graph import BaseNode, End, Graph, GraphRunContext
 
-from deepresearcher2 import basic_chat, chat_with_python, logger
+from deepresearcher2 import basic_chat, chat_with_python, config, logger
 
 
 @pytest.mark.example
@@ -97,7 +97,7 @@ def test_pydanticai_logfire(load_env: None) -> None:
     https://logfire.pydantic.dev/docs/reference/advanced/testing/
     """
     logfire.configure(
-        token=os.environ.get("LOGFIRE_TOKEN"),
+        token=config.logfire_token,
         send_to_logfire=True,
     )
 
@@ -175,7 +175,7 @@ class Deps:
     geo_api_key: str | None
 
 
-@pytest.mark.skip(reason="https://geocode.maps.co has strict request limits. '429 Too Many Requests' is very likely.")
+@pytest.mark.skip(reason="https://geocode.maps.co has strict request limits. '429 Too Many Requests' is likely.")
 @pytest.mark.example
 @pytest.mark.paid
 @pytest.mark.asyncio
@@ -299,14 +299,11 @@ async def test_weather_agent(load_env: None) -> None:
         }
 
     async with AsyncClient() as client:
-        # Create a free API key at https://www.tomorrow.io/weather-api/
-        weather_api_key = os.getenv("WEATHER_API_KEY")
-        # Create a free API key at https://geocode.maps.co/
-        geo_api_key = os.getenv("GEO_API_KEY")
+        # Create a free API keys at https://www.tomorrow.io/weather-api/ and https://geocode.maps.co/
         deps = Deps(
             client=client,
-            weather_api_key=weather_api_key,
-            geo_api_key=geo_api_key,
+            weather_api_key=config.weather_api_key,
+            geo_api_key=config.geo_api_key,
         )
         result = await weather_agent.run("What is the weather like in Zurich and in Wiltshire?", deps=deps)
         logger.debug(f"Response from weather agent: {result.output}")

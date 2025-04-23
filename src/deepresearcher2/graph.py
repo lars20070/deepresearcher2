@@ -2,15 +2,14 @@
 from __future__ import annotations as _annotations
 
 import asyncio
-import os
 from dataclasses import dataclass
 
 from dotenv import load_dotenv
 from pydantic_ai import format_as_xml
 from pydantic_graph import BaseNode, End, Graph, GraphRunContext
 
+from deepresearcher2 import config, logger
 from deepresearcher2.agents import final_summary_agent, query_agent, reflection_agent, summary_agent
-from deepresearcher2.logger import logger
 from deepresearcher2.models import DeepState, Reflection, WebSearchSummary
 from deepresearcher2.prompts import query_instructions_with_reflection, query_instructions_without_reflection
 from deepresearcher2.utils import duckduckgo_search, export_report
@@ -50,7 +49,7 @@ class WebSearch(BaseNode[DeepState]):
         # Run the search
         ctx.state.search_results = duckduckgo_search(
             query=query.query,
-            max_results=int(os.environ.get("MAX_WEB_SEARCH_RESULTS", "2")),
+            max_results=config.max_web_search_results,
             max_content_length=12000,  # maximum length of 12k characters
         )
         # for r in ctx.state.search_results:
@@ -104,7 +103,7 @@ class ReflectOnSearch(BaseNode[DeepState]):
 
         # Flow control
         # Should we ponder on the next web search or compile the final report?
-        if ctx.state.count < int(os.environ.get("MAX_RESEARCH_LOOPS", "10")):
+        if ctx.state.count < config.max_research_loops:
             ctx.state.count += 1
 
             xml = format_as_xml(ctx.state.search_summaries, root_tag="SEARCH SUMMARIES")
@@ -186,7 +185,7 @@ async def deepresearch() -> None:
     graph = Graph(nodes=[WebSearch, SummarizeSearchResults, ReflectOnSearch, FinalizeSummary])
 
     # Run the agent graph
-    state = DeepState(topic=os.environ.get("TOPIC", "petrichor"), count=1)
+    state = DeepState(topic=config.topic, count=1)
     result = await graph.run(WebSearch(), state=state)
     logger.debug(f"Result: {result.output}")
 
