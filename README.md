@@ -20,7 +20,6 @@ Some of the [code examples](tests/) do require API keys.
 
 ``` mermaid
 stateDiagram-v2
-    direction LR
     WebSearch: Web Search
     SummarizeSearchResults: Summarize Search Results
     ReflectOnSummary: Reflect on Summary
