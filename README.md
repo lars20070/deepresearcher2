@@ -26,9 +26,9 @@ stateDiagram-v2
     ReflectOnSummary: Reflect on Summary
     FinalizeSummary: Finalize Summary
     [*] --> WebSearch
-    WebSearch --> SummarizeSearchResults
-    SummarizeSearchResults --> ReflectOnSummary
-    ReflectOnSummary --> WebSearch
+    WebSearch --> SummarizeSearchResults: web search result
+    SummarizeSearchResults --> ReflectOnSummary: web search summary
+    ReflectOnSummary --> WebSearch: reflection
     ReflectOnSummary --> FinalizeSummary
     FinalizeSummary --> [*]
 ```
