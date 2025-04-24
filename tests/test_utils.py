@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 
 from deepresearcher2.config import config
 from deepresearcher2.logger import logger
-from deepresearcher2.utils import duckduckgo_search, fetch_full_page_content, tavily_search
+from deepresearcher2.utils import duckduckgo_search, fetch_full_page_content, perplexity_search, tavily_search
 
 load_dotenv()
 
@@ -107,3 +107,46 @@ def test_tavily_search() -> None:
     assert len(results2) <= n
     for r in results2:
         assert len(r.content) <= m
+
+
+@pytest.mark.paid
+def test_perplexity_search() -> None:
+    """
+    Test the perplexity_search() search function
+    """
+
+    # Full content length
+    n = 3  # Number of results
+    topic = config.topic
+    results = perplexity_search(
+        topic,
+        max_results=n,
+    )
+
+    assert len(results) <= n
+    for r in results:
+        assert r.title is not None
+        assert r.url is not None
+        # assert r.summary is not None
+        assert r.content is not None
+        assert isinstance(r.url, str)
+    #     logger.debug(f"search result title: {r.title}")
+    #     logger.debug(f"search result url: {r.url}")
+    #     logger.debug(f"search result summary: {r.summary}")
+    #     logger.debug(f"search result content length: {len(r.content)}")
+    #     # logger.debug(f"search result content: {r.content}")
+
+    # # results_json = json.dumps([r.model_dump() for r in results], indent=2)
+    # # logger.debug(f"Tavily search results:\n{results_json}")
+
+    # # Restricted content length
+    # m = 100  # Max content length
+    # results2 = perplexity_search(
+    #     topic,
+    #     max_results=n,
+    #     max_content_length=m,
+    # )
+
+    # assert len(results2) <= n
+    # for r in results2:
+    #     assert len(r.content) <= m
