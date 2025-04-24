@@ -11,8 +11,6 @@ load_dotenv()
 class SearchEngine(str, Enum):
     duckduckgo = "duckduckgo"
     tavily = "tavily"
-    perplexity = "perplexity"
-    brave = "brave"
 
 
 class Config(BaseSettings):
