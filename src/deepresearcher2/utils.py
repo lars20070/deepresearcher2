@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import gzip
+import json
 import os
 import re
 import urllib.error
@@ -12,6 +13,7 @@ from bs4 import BeautifulSoup
 from duckduckgo_search import DDGS
 from markdownify import markdownify as mdfy
 from pydantic import HttpUrl
+from tavily import TavilyClient
 from tenacity import retry, stop_after_attempt, wait_exponential
 
 from .logger import logger
@@ -204,13 +206,26 @@ def tavily_search(query: str, max_results: int = 2, max_content_length: int | No
     """
     logger.info(f"Tavily web search for: {query}")
 
-    result = WebSearchResult(
-        title="xyz",
-        url="https://example.com",
-        content="xyz",
-    )
+    tavily_client = TavilyClient()
 
-    return [result]
+    tavily_results = tavily_client.search(
+        query,
+        max_results=max_results,
+        include_raw_content=False,
+    )
+    # logger.debug(f"Complete Tavily results:\n{json.dumps(tavily_results['results'], indent=2)}")
+
+    # Convert to pydantic objects
+    results = []
+    for r in tavily_results["results"]:
+        title = r["title"]
+        url = r["url"]
+        content = r["content"]
+
+        result = WebSearchResult(title=title, url=str(url), content=content)
+        results.append(result)
+
+    return results
 
 
 def export_report(report: str, topic: str = "Report", output_dir: str = "reports/") -> None:
