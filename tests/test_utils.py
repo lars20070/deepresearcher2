@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-import json
 
 import pytest
 from dotenv import load_dotenv
@@ -87,10 +86,24 @@ def test_tavily_search() -> None:
         assert r.content is not None
         assert isinstance(r.url, str)
 
-    results_json = json.dumps([r.model_dump() for r in results], indent=2)
-    logger.debug(f"Tavily search results:\n{results_json}")
+    # results_json = json.dumps([r.model_dump() for r in results], indent=2)
+    # logger.debug(f"Tavily search results:\n{results_json}")
 
-    # for r in results:
-    #     logger.debug(f"search result title: {r.title}")
-    #     logger.debug(f"search result url: {r.url}")
-    #     logger.debug(f"search result content length: {len(r.content)}")
+    for r in results:
+        logger.debug(f"search result title: {r.title}")
+        logger.debug(f"search result url: {r.url}")
+        logger.debug(f"search result summary: {r.summary}")
+        logger.debug(f"search result content length: {len(r.content)}")
+        # logger.debug(f"search result content: {r.content}")
+
+    # Restricted content length
+    m = 100  # Max content length
+    results2 = tavily_search(
+        topic,
+        max_results=n,
+        max_content_length=m,
+    )
+
+    assert len(results2) <= n
+    for r in results2:
+        assert len(r.content) <= m

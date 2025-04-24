@@ -169,14 +169,15 @@ def duckduckgo_search(query: str, max_results: int = 2, max_content_length: int 
 
         # Fetch full page content if needed
         if max_content_length is not None:
-            if len(content) < max_content_length:
+            if content is not None and len(content) < max_content_length:
                 full_content = fetch_full_page_content(url)
                 if len(full_content) > len(content):
                     content = full_content
-            content = content[:max_content_length]
+            if content is not None:
+                content = content[:max_content_length]
         else:
             full_content = fetch_full_page_content(url)
-            if len(full_content) > len(content):
+            if content is not None and len(full_content) > len(content):
                 content = full_content
 
         result = WebSearchResult(title=title, url=str(url), content=content)
@@ -210,7 +211,7 @@ def tavily_search(query: str, max_results: int = 2, max_content_length: int | No
         tavily_results = tavily_client.search(
             query,
             max_results=max_results,
-            include_raw_content=False,
+            include_raw_content=True,
         )
         if not tavily_results:
             logger.warning(f"Tavily returned no results for: {query}")
@@ -218,6 +219,7 @@ def tavily_search(query: str, max_results: int = 2, max_content_length: int | No
     except (ConnectionError, TimeoutError) as e:
         logger.error(f"Network error during Tavily search: {str(e)}")
         raise
+
     # logger.debug(f"Complete Tavily results:\n{json.dumps(tavily_results['results'], indent=2)}")
 
     # Convert to pydantic objects
@@ -225,9 +227,23 @@ def tavily_search(query: str, max_results: int = 2, max_content_length: int | No
     for r in tavily_results["results"]:
         title = r["title"]
         url = r["url"]
-        content = r["content"]
+        summary = r["content"]
+        content = r["raw_content"]
 
-        result = WebSearchResult(title=title, url=str(url), content=content)
+        # Fetch full page content if needed
+        if max_content_length is not None:
+            if content is not None and len(content) < max_content_length:
+                full_content = fetch_full_page_content(url)
+                if len(full_content) > len(content):
+                    content = full_content
+            if content is not None:
+                content = content[:max_content_length]
+        else:
+            full_content = fetch_full_page_content(url)
+            if content is not None and len(full_content) > len(content):
+                content = full_content
+
+        result = WebSearchResult(title=title, url=str(url), summary=summary, content=content)
         results.append(result)
 
     return results
