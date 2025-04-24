@@ -8,6 +8,7 @@ import zlib
 
 import brotli
 import pypandoc
+import requests
 from bs4 import BeautifulSoup
 from duckduckgo_search import DDGS
 from markdownify import markdownify as mdfy
@@ -15,6 +16,7 @@ from pydantic import HttpUrl
 from tavily import TavilyClient
 from tenacity import retry, stop_after_attempt, wait_exponential
 
+from .config import config
 from .logger import logger
 from .models import WebSearchResult
 
@@ -247,6 +249,54 @@ def tavily_search(query: str, max_results: int = 2, max_content_length: int | No
         results.append(result)
 
     return results
+
+
+@retry_with_backoff
+def perplexity_search(query: str) -> list[WebSearchResult]:
+    """
+    Perform a web search using Perplexity and return a list of results.
+    Note that the list of results contains only a single item.
+    Note that the 'summary' field is empty.
+
+    Args:
+        query (str): The search query to execute.
+
+    Returns:
+        list[WebSearchResult]: list of search results
+
+    Example:
+        >>> results = perplexity_search("petrichor", max_results=10)
+        >>> for result in results:
+        ...     print(result.title, result.url)
+    """
+    logger.info(f"Perplexity web search for: {query}")
+
+    perplexity_url = "https://api.perplexity.ai/chat/completions"
+    headers = {"accept": "application/json", "content-type": "application/json", "Authorization": f"Bearer {config.perplexity_api_key}"}
+    payload = {
+        "model": "sonar-pro",
+        "messages": [
+            {"role": "system", "content": "Search the web and provide factual information with sources."},
+            {"role": "user", "content": query},
+        ],
+    }
+
+    try:
+        response = requests.post(perplexity_url, headers=headers, json=payload)
+        response.raise_for_status()
+    except (ConnectionError, TimeoutError) as e:
+        logger.error(f"Network error during Perplexity search: {str(e)}")
+        raise
+
+    perplexity_results = response.json()
+    # logger.debug(f"Complete Perplexity results:\n{json.dumps(perplexity_results, indent=2)}")
+
+    title = query
+    url = perplexity_results["citations"][0]  # TODO: A list of URLs is returned, but we cannot press them into WebSearchResult.
+    content = perplexity_results["choices"][0]["message"]["content"]
+
+    result = WebSearchResult(title=title, url=url, content=content)
+    return [result]
 
 
 def export_report(report: str, topic: str = "Report", output_dir: str = "reports/") -> None:

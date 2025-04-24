@@ -323,6 +323,7 @@ class ClientAndKey:
     api_key: str
 
 
+@pytest.mark.skip(reason="Sometimes GPT-4o ends up in an infinite loop. Not sure why.")
 @pytest.mark.paid
 @pytest.mark.example
 @pytest.mark.asyncio

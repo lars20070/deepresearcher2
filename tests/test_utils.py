@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 
 from deepresearcher2.config import config
 from deepresearcher2.logger import logger
-from deepresearcher2.utils import duckduckgo_search, fetch_full_page_content, tavily_search
+from deepresearcher2.utils import duckduckgo_search, fetch_full_page_content, perplexity_search, tavily_search
 
 load_dotenv()
 
@@ -107,3 +107,23 @@ def test_tavily_search() -> None:
     assert len(results2) <= n
     for r in results2:
         assert len(r.content) <= m
+
+
+@pytest.mark.paid
+def test_perplexity_search() -> None:
+    """
+    Test the perplexity_search() search function
+    """
+
+    topic = config.topic
+    results = perplexity_search(topic)
+    result = results[0]  # Perplexity search returns only a single result
+
+    assert result.title is not None
+    assert result.url is not None
+    assert result.summary is None
+    assert result.content is not None
+    logger.debug(f"search result title: {result.title}")
+    logger.debug(f"search result url: {result.url}")
+    logger.debug(f"search result content length: {len(result.content)}")
+    # logger.debug(f"search result content: {result.content}")
