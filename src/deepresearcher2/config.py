@@ -1,9 +1,18 @@
 #!/usr/bin/env python3
+from enum import Enum
+
 from dotenv import load_dotenv
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 load_dotenv()
+
+
+class SearchEngine(str, Enum):
+    duckduckgo = "duckduckgo"
+    tavily = "tavily"
+    perplexity = "perplexity"
+    brave = "brave"
 
 
 class Config(BaseSettings):
@@ -15,6 +24,7 @@ class Config(BaseSettings):
     topic: str = Field(default="petrichor", description="topic to be researched", min_length=2)
     max_research_loops: int = Field(default=3, description="number of search-summary-reflection loops")
     max_web_search_results: int = Field(default=2, description="number of results in a single web search")
+    search_engine: SearchEngine = Field(default=SearchEngine.duckduckgo, description="search engine for the web searches")
 
     # API keys
     tavily_api_key: str | None = None
