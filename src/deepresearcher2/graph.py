@@ -9,11 +9,11 @@ from pydantic_ai import format_as_xml
 from pydantic_graph import BaseNode, End, Graph, GraphRunContext
 
 from .agents import final_summary_agent, query_agent, reflection_agent, summary_agent
-from .config import config
+from .config import SearchEngine, config
 from .logger import logger
 from .models import DeepState, Reflection, WebSearchSummary
 from .prompts import query_instructions_with_reflection, query_instructions_without_reflection
-from .utils import duckduckgo_search, export_report
+from .utils import duckduckgo_search, export_report, perplexity_search, tavily_search
 
 load_dotenv()
 
@@ -49,11 +49,22 @@ class WebSearch(BaseNode[DeepState]):
             logger.debug(f"Web search query: {query}")
 
         # Run the search
-        ctx.state.search_results = duckduckgo_search(
-            query=query.query,
-            max_results=config.max_web_search_results,
-            max_content_length=12000,  # maximum length of 12k characters
-        )
+        search_params = {
+            "query": query.query,
+            "max_results": config.max_web_search_results,
+            "max_content_length": 12000,
+        }
+        if config.search_engine == SearchEngine.duckduckgo:
+            ctx.state.search_results = duckduckgo_search(**search_params)
+        elif config.search_engine == SearchEngine.tavily:
+            ctx.state.search_results = tavily_search(**search_params)
+        elif config.search_engine == SearchEngine.perplexity:
+            ctx.state.search_results = perplexity_search(query.query)
+        else:
+            message = f"Unsupported search engine: {config.search_engine}"
+            logger.error(message)
+            raise ValueError(message)
+
         # for r in ctx.state.search_results:
         #     logger.debug(f"Search result title: {r.title}")
         #     logger.debug(f"Search result url: {r.url}")
