@@ -206,12 +206,18 @@ def tavily_search(query: str, max_results: int = 2, max_content_length: int | No
     logger.info(f"Tavily web search for: {query}")
 
     tavily_client = TavilyClient()
-
-    tavily_results = tavily_client.search(
-        query,
-        max_results=max_results,
-        include_raw_content=False,
-    )
+    try:
+        tavily_results = tavily_client.search(
+            query,
+            max_results=max_results,
+            include_raw_content=False,
+        )
+        if not tavily_results:
+            logger.warning(f"Tavily returned no results for: {query}")
+            return []
+    except (ConnectionError, TimeoutError) as e:
+        logger.error(f"Network error during Tavily search: {str(e)}")
+        raise
     # logger.debug(f"Complete Tavily results:\n{json.dumps(tavily_results['results'], indent=2)}")
 
     # Convert to pydantic objects
