@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
-
-
+import pytest
 from dotenv import load_dotenv
 
 from deepresearcher2.config import config
 from deepresearcher2.logger import logger
-from deepresearcher2.utils import duckduckgo_search, fetch_full_page_content
+from deepresearcher2.utils import duckduckgo_search, fetch_full_page_content, tavily_search
 
 load_dotenv()
 
@@ -63,3 +62,23 @@ def test_duckduckgo_search() -> None:
     assert len(results2) <= n
     for r in results2:
         assert len(r.content) <= m
+
+
+@pytest.mark.paid
+def test_tavily_search() -> None:
+    """
+    Test the tavily_search() search function
+    """
+
+    # Full content length
+    n = 3  # Number of results
+    topic = config.topic
+    results = tavily_search(
+        topic,
+        max_results=n,
+    )
+
+    for r in results:
+        logger.debug(f"search result title: {r.title}")
+        logger.debug(f"search result url: {r.url}")
+        logger.debug(f"search result content length: {len(r.content)}")

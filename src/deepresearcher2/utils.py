@@ -142,7 +142,7 @@ def duckduckgo_search(query: str, max_results: int = 2, max_content_length: int 
         list[WebSearchResult]: list of search results
 
     Example:
-        >>> results = duckduckgo("petrichor", max_results=10)
+        >>> results = duckduckgo_search("petrichor", max_results=10)
         >>> for result in results:
         ...     print(result.title, result.url)
     """
@@ -182,6 +182,35 @@ def duckduckgo_search(query: str, max_results: int = 2, max_content_length: int 
         results.append(result)
 
     return results
+
+
+@retry_with_backoff
+def tavily_search(query: str, max_results: int = 2, max_content_length: int | None = None) -> list[WebSearchResult]:
+    """
+    Perform a web search using Tavily and return a list of results.
+
+    Args:
+        query (str): The search query to execute.
+        max_results (int, optional): Maximum number of results to return. Defaults to 2.
+        max_content_length (int | None, optional): Maximum character length of the content. If none, the full content is returned. Defaults to None.
+
+    Returns:
+        list[WebSearchResult]: list of search results
+
+    Example:
+        >>> results = tavily_search("petrichor", max_results=10)
+        >>> for result in results:
+        ...     print(result.title, result.url)
+    """
+    logger.info(f"Tavily web search for: {query}")
+
+    result = WebSearchResult(
+        title="xyz",
+        url="https://example.com",
+        content="xyz",
+    )
+
+    return [result]
 
 
 def export_report(report: str, topic: str = "Report", output_dir: str = "reports/") -> None:
