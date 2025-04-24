@@ -167,18 +167,18 @@ def duckduckgo_search(query: str, max_results: int = 2, max_content_length: int 
         url = r.get("href")
         content = r.get("body")
 
-        # Fetch full page content if needed
-        if max_content_length is not None:
-            if content is not None and len(content) < max_content_length:
-                full_content = fetch_full_page_content(url)
-                if len(full_content) > len(content):
-                    content = full_content
-            if content is not None:
-                content = content[:max_content_length]
-        else:
+        # Should we fetch full page content?
+        should_fetch = content is None or max_content_length is None or (max_content_length is not None and len(content) < max_content_length)
+
+        # Only fetch if necessary
+        if should_fetch:
             full_content = fetch_full_page_content(url)
-            if content is not None and len(full_content) > len(content):
+            if content is None or len(full_content) > len(content):
                 content = full_content
+
+        # Apply length constraint if needed
+        if max_content_length is not None and content is not None:
+            content = content[:max_content_length]
 
         result = WebSearchResult(title=title, url=str(url), content=content)
         results.append(result)
@@ -230,18 +230,18 @@ def tavily_search(query: str, max_results: int = 2, max_content_length: int | No
         summary = r["content"]
         content = r["raw_content"]
 
-        # Fetch full page content if needed
-        if max_content_length is not None:
-            if content is not None and len(content) < max_content_length:
-                full_content = fetch_full_page_content(url)
-                if len(full_content) > len(content):
-                    content = full_content
-            if content is not None:
-                content = content[:max_content_length]
-        else:
+        # Should we fetch full page content?
+        should_fetch = content is None or max_content_length is None or (max_content_length is not None and len(content) < max_content_length)
+
+        # Only fetch if necessary
+        if should_fetch:
             full_content = fetch_full_page_content(url)
-            if content is not None and len(full_content) > len(content):
+            if content is None or len(full_content) > len(content):
                 content = full_content
+
+        # Apply length constraint if needed
+        if max_content_length is not None and content is not None:
+            content = content[:max_content_length]
 
         result = WebSearchResult(title=title, url=str(url), summary=summary, content=content)
         results.append(result)
