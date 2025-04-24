@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import gzip
-import json
 import os
 import re
 import urllib.error
