@@ -12,6 +12,7 @@ load_dotenv()
 logfire.configure(
     token=config.logfire_token,
     send_to_logfire=True,
+    scrubbing=False,
 )
 
 # Configure Loguru

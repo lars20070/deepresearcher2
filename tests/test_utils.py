@@ -49,6 +49,7 @@ def test_duckduckgo_search() -> None:
         logger.debug(f"search result content length: {len(r.content)}")
         assert r.title is not None
         assert r.url is not None
+        assert r.summary is None  # DuckDuckGo does not provide a summary.
         assert r.content is not None
         assert isinstance(r.url, str)
 
@@ -83,18 +84,17 @@ def test_tavily_search() -> None:
     for r in results:
         assert r.title is not None
         assert r.url is not None
+        assert r.summary is not None
         assert r.content is not None
         assert isinstance(r.url, str)
-
-    # results_json = json.dumps([r.model_dump() for r in results], indent=2)
-    # logger.debug(f"Tavily search results:\n{results_json}")
-
-    for r in results:
         logger.debug(f"search result title: {r.title}")
         logger.debug(f"search result url: {r.url}")
         logger.debug(f"search result summary: {r.summary}")
         logger.debug(f"search result content length: {len(r.content)}")
         # logger.debug(f"search result content: {r.content}")
+
+    # results_json = json.dumps([r.model_dump() for r in results], indent=2)
+    # logger.debug(f"Tavily search results:\n{results_json}")
 
     # Restricted content length
     m = 100  # Max content length
