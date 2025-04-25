@@ -65,11 +65,7 @@ class WebSearch(BaseNode[DeepState]):
             logger.error(message)
             raise ValueError(message)
 
-        # for r in ctx.state.search_results:
-        #     logger.debug(f"Search result title: {r.title}")
-        #     logger.debug(f"Search result url: {r.url}")
-        #     logger.debug(f"Search result content length: {len(r.content)}")
-        #     logger.debug(f"Search result content:\n{r.content}")
+        # logger.debug(f"Web search results:\n{format_as_xml(ctx.state.search_results, root_tag='search_results')}")
 
         return SummarizeSearchResults()
 
@@ -88,7 +84,7 @@ class SummarizeSearchResults(BaseNode[DeepState]):
             """
             Add web search results to the system prompt.
             """
-            xml = format_as_xml(ctx.state.search_results, root_tag="SEARCH RESULTS")
+            xml = format_as_xml(ctx.state.search_results, root_tag="search_results")
             return f"List of web search results:\n{xml}"
 
         # Generate the summary
@@ -96,7 +92,7 @@ class SummarizeSearchResults(BaseNode[DeepState]):
             summary = await summary_agent.run(
                 user_prompt=f"Please summarize the provided web search results for the topic <TOPIC>{ctx.state.topic}</TOPIC>."
             )
-            logger.debug(f"Web search summary:\n{summary.output.summary}")
+            logger.debug(f"Web search summary:\n{summary.output.model_dump_json(indent=2)}")
 
             # Append the summary to the list of all search summaries
             ctx.state.search_summaries = ctx.state.search_summaries or []

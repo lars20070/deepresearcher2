@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-
 import pytest
 
 from deepresearcher2.graph import DeepState, GraphRunContext, SummarizeSearchResults, WebSearch

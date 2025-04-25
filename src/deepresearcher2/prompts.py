@@ -67,58 +67,39 @@ Provide your response in JSON format.
 """
 
 summary_instructions = """
-<GOAL>
-Generate a high-quality summary of the web search results and keep it concise / related to the user topic.
-</GOAL>
+You are a search results summarizer. Your task is to generate a comprehensive summary from web search results that is relevant to the user's topic.
 
 <INPUT_FORMAT>
-You will receive the list of web search results in XML format. Here is an example.
-
-<search_results>
-    <WebSearchResult>
-        <title>petrichor, n. meanings, etymology and more | Oxford English Dictionary</title>
-        <url>https://www.oed.com/dictionary/petrichor_n</url>
-        <content>Petrichor (/ˈpɛtrɪkɔːr/ PET-rih-kor) is the earthy scent produced when rain falls on dry soil.</content>
-    </WebSearchResult>
-    <WebSearchResult>
-        <title>PETRICHOR | English meaning - Cambridge Dictionary</title>
-        <url>https://dictionary.cambridge.org/dictionary/english/petrichor</url>
-        <content>the smell produced when rain falls on dry ground, usually experienced as being pleasant</content>
-    </WebSearchResult>
-</search_results>
-
+You will receive web search results in XML with `<WebSearchResult>` tags containing:
+- `<title>`: Descriptive title
+- `<url>`: Source URL
+- `<summary>`: Brief summary 
+- `<content>`: Raw content
 </INPUT_FORMAT>
 
 <REQUIREMENTS>
-When creating a summary:
-1. Compile all information related to the user topic from the search results
-2. The compiled paragraph should be at least 1000 words long.
-3. Ensure a coherent flow of information
-4. Ensure the compilation is relevant to the user topic and not just a collection of facts
-5. The "aspect" value in the JSON response MUST NOT include the topic itself. The aspect should be very specific to the information in the summary.
+1. Compile all topic-relevant information from search results
+2. Create a summary at least 1000 words long
+3. Ensure coherent information flow
+4. Keep content relevant to the user topic
+5. The "aspect" value must be specific to the information and must NOT include the topic itself
 </REQUIREMENTS>
 
-<FORMAT>
-Format your response as a JSON object with ALL of these exact keys:
-   - "summary": Long form compilation of ALL information of the web search results. Start directly with the compilation, without preamble or titles.
-   Do not use XML tags or Markdown formatting in the output. The summary should be at least 100 words long.
-   - "aspect": The specific aspect of the topic being researched. Do not include the topic itself in the aspect.
-</FORMAT>
+<OUTPUT FORMAT>
+Respond with a JSON object containing:
+- "summary": Direct compilation of ALL information (minimum 1000 words) without preamble, XML tags, or Markdown
+- "aspect": The specific aspect of the topic being researched (excluding the topic itself)
+</OUTPUT FORMAT>
 
-<EXAMPLE>
-Example output:
-{{
+<EXAMPLE OUTPUT>
+```json
+{
     "summary": "Petrichor refers to the earthy scent produced when rain falls on dry soil or ground, often experienced as a pleasant smell.
-    It is characterized by its distinct aroma, which is typically associated with the smell of rain on dry earth. According to dictionary definitions,
-    petrichor is the term used to describe this phenomenon, with the word itself pronounced as PET-rih-kor. The smell is generally considered pleasant
-    and is often noticed when rain falls on dry soil or ground, releasing the distinctive aroma into the air. The term 'petrichor' refers to the
-    distinctive scent that occurs when rain falls on dry soil or rocks. The word was coined in 1964 by two Australian researchers, who discovered that
-    the smell is caused by oils released from plants and soil. These oils can come from roots, leaves, and other organic matter, and are carried into
-    the air by raindrops. Petrichor is often associated with the smell of earthy, mossy, or musty aromas, and is a distinctive feature of many natural
-    environments.",
-    "aspect": "definition and meaning",
-}}
-</EXAMPLE>
+    It is characterized by its distinct aroma, which is typically associated with the smell of rain on dry earth.",
+    "aspect": "definition and meaning"
+}
+```
+</EXAMPLE OUTPUT>
 
 Provide your response in JSON format."""
 
