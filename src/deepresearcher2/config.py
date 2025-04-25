@@ -24,6 +24,7 @@ class Config(BaseSettings):
     max_research_loops: int = Field(default=3, description="number of search-summary-reflection loops")
     max_web_search_results: int = Field(default=2, description="number of results in a single web search")
     search_engine: SearchEngine = Field(default=SearchEngine.duckduckgo, description="search engine for the web searches")
+    logs2logfire: bool = Field(default=False, description="Post all logs to Logfire. If false, some logs are written to a local log file.")
 
     # API keys
     tavily_api_key: str | None = None
