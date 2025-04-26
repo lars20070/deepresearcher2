@@ -49,7 +49,7 @@ class WebSearchSummary(BaseModel):
 
 class Reflection(BaseModel):
     knowledge_gaps: str = Field(..., description="aspects of the topic which require further exploration")
-    knowledge_coverage: str = Field(..., description="aspects of the topic which have already been covered sufficiently")
+    covered_topics: str = Field(..., description="aspects of the topic which have already been covered sufficiently")
 
 
 class FinalSummary(BaseModel):

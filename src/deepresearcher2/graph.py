@@ -115,7 +115,7 @@ class ReflectOnSearch(BaseNode[DeepState]):
         if ctx.state.count < config.max_research_loops:
             ctx.state.count += 1
 
-            xml = format_as_xml(ctx.state.search_summaries, root_tag="SEARCH SUMMARIES")
+            xml = format_as_xml(ctx.state.search_summaries, root_tag="search_summaries")
             logger.debug(f"Search summaries:\n{xml}")
 
             @reflection_agent.system_prompt
@@ -123,7 +123,7 @@ class ReflectOnSearch(BaseNode[DeepState]):
                 """
                 Add search summaries to the system prompt.
                 """
-                xml = format_as_xml(ctx.state.search_summaries, root_tag="SEARCH SUMMARIES")
+                xml = format_as_xml(ctx.state.search_summaries, root_tag="search_summaries")
                 return f"List of search summaries:\n{xml}"
 
             # Reflect on the summaries so far
@@ -132,11 +132,11 @@ class ReflectOnSearch(BaseNode[DeepState]):
                     user_prompt=f"Please reflect on the provided web search summaries for the topic <TOPIC>{ctx.state.topic}</TOPIC>."
                 )
                 logger.debug(f"Reflection knowledge gaps:\n{reflection.output.knowledge_gaps}")
-                logger.debug(f"Reflection knowledge coverage:\n{reflection.output.knowledge_coverage}")
+                logger.debug(f"Reflection knowledge coverage:\n{reflection.output.covered_topics}")
 
                 ctx.state.reflection = Reflection(
                     knowledge_gaps=reflection.output.knowledge_gaps,
-                    knowledge_coverage=reflection.output.knowledge_coverage,
+                    covered_topics=reflection.output.covered_topics,
                 )
 
             return WebSearch()
@@ -155,7 +155,7 @@ class FinalizeSummary(BaseNode[DeepState]):
 
         topic = ctx.state.topic
 
-        xml = format_as_xml(ctx.state.search_summaries, root_tag="SEARCH SUMMARIES")
+        xml = format_as_xml(ctx.state.search_summaries, root_tag="search_summaries")
         logger.debug(f"Search summaries:\n{xml}")
 
         @final_summary_agent.system_prompt
@@ -163,7 +163,7 @@ class FinalizeSummary(BaseNode[DeepState]):
             """
             Add search summaries to the system prompt.
             """
-            xml = format_as_xml(ctx.state.search_summaries, root_tag="SEARCH SUMMARIES")
+            xml = format_as_xml(ctx.state.search_summaries, root_tag="search_summaries")
             return f"List of search summaries:\n{xml}"
 
         # Finalize the summary of the entire report

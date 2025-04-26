@@ -4,11 +4,11 @@ query_instructions_without_reflection = """
 Please generate a targeted web search query for a specific topic.
 
 <REQUIREMENTS>
-1.  **Specificity:** The query must be specific and focused on a single aspect of the topic.
-2.  **Relevance:** Ensure the query directly relates to the core topic.
-3.  **Conciseness:** The query string must not exceed 100 characters.
-4.  **Aspect Definition:** The 'aspect' value must describe the specific focus of the query, excluding the main topic itself.
-5.  **Rationale:** Briefly explain why this query is relevant for researching the topic.
+1. **Specificity:** The query must be specific and focused on a single aspect of the topic.
+2. **Relevance:** Ensure the query directly relates to the core topic.
+3. **Conciseness:** The query string must not exceed 100 characters.
+4. **Aspect Definition:** The 'aspect' value must describe the specific focus of the query, excluding the main topic itself.
+5. **Rationale:** Briefly explain why this query is relevant for researching the topic.
 </REQUIREMENTS>
 
 <OUTPUT_FORMAT>
@@ -37,7 +37,7 @@ based on specific knowledge gaps.
 <INPUT_FORMAT>
 You will receive reflections in XML with `<reflections>` tags containing:
 - `<knowledge_gaps>`: information that has not been covered in the previous search results
-- `<knowledge_coverage>`: information that has been covered and should not be repeated
+- `<covered_topics>`: information that has been covered and should not be repeated
 </INPUT_FORMAT>
 
 <REQUIREMENTS>
@@ -115,25 +115,26 @@ You will receive web search summaries in XML with `<WebSearchSummary>` tags cont
 <REQUIREMENTS>
 1. Analyze all summaries thoroughly
 2. Identify knowledge gaps needing deeper exploration
-3. Identify well-covered knowledge areas
+3. Identify well-covered topics to avoid repetition in future searches
 4. Be curious and creative with knowledge gaps! Never return "None" or "Nothing".
 5. Use keywords and phrases only, not sentences
 6. Return only the JSON object - no explanations or formatting
 7. Consider technical details, implementation specifics, and emerging trends
-8. Be thorough yet concise
+8. Consider second and third-order effects or implications of the topic when exploring knowledge gaps
+9. Be thorough yet concise
 </REQUIREMENTS>
 
 <OUTPUT_FORMAT>
 Respond with a JSON object containing:
 - "knowledge_gaps": Detailed list of specific aspects requiring further research
-- "knowledge_coverage": List of aspects already thoroughly covered
+- "covered_topics": List of aspects already thoroughly covered
 </OUTPUT_FORMAT>
 
 <EXAMPLE_OUTPUT>
 ```json
 {
     "knowledge_gaps": "scientific mechanisms, psychological effects, regional variations, commercial applications, cultural significance",
-    "knowledge_coverage": "basic definition, etymology, general description"
+    "covered_topics": "basic definition, etymology, general description"
 }
 ```
 </EXAMPLE_OUTPUT>
@@ -144,19 +145,9 @@ final_summary_instructions = """
 You are a precise information compiler that transforms web search summaries into comprehensive reports. Follow these instructions carefully.
 
 <INPUT_FORMAT>
-You will receive web search summaries in XML format like this:
-
-<search_summaries>
-  <WebSearchSummary>
-    <summary>Content of the first search result ...</summary>
-    <aspect>Aspect of this information</aspect>
-  </WebSearchSummary>
-  <WebSearchSummary>
-    <summary>Content of another search result ...</summary>
-    <aspect>Aspect of this information</aspect>
-  </WebSearchSummary>
-</search_summaries>
-
+You will receive web search summaries in XML with `<WebSearchSummary>` tags containing:
+- `<summary>`: Summary of the search result as text
+- `<aspect>`: Specific aspect discussed in the summary
 </INPUT_FORMAT>
 
 <REQUIREMENTS>
