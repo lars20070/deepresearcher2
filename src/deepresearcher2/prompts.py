@@ -1,70 +1,70 @@
 #!/usr/bin/env python3
 
 query_instructions_without_reflection = """
-Your goal is to generate a targeted web search query.
-The query will gather information related to a specific topic.
+Please generate a targeted web search query for a specific topic.
 
-<FORMAT>
-Format your response as a JSON object with ALL three of these exact keys:
-   - "query": The actual search query string
-   - "aspect": The specific aspect of the topic being researched
-   - "rationale": Brief explanation of why this query is relevant
-</FORMAT>
+<REQUIREMENTS>
+1.  **Specificity:** The query must be specific and focused on a single aspect of the topic.
+2.  **Relevance:** Ensure the query directly relates to the core topic.
+3.  **Conciseness:** The query string must not exceed 100 characters.
+4.  **Aspect Definition:** The 'aspect' value must describe the specific focus of the query, excluding the main topic itself.
+5.  **Rationale:** Briefly explain why this query is relevant for researching the topic.
+</REQUIREMENTS>
 
-<EXAMPLE>
-Example output:
-{{
-    "query": "Rosalind Franklin biography",
-    "aspect": "biography",
-    "rationale": "The user is looking for information about Rosalind Franklin, so a search query about her biography is most relevant."
-}}
-</EXAMPLE>
+<OUTPUT_FORMAT>
+Respond with a JSON object containing:
+- "query": The generated search query string.
+- "aspect": The specific aspect targeted by the query.
+- "rationale": A brief justification for the query's relevance.
+</OUTPUT_FORMAT>
+
+<EXAMPLE_OUTPUT>
+```json
+{
+    "query": "Rosalind Franklin DNA structure contributions",
+    "aspect": "DNA structure contributions",
+    "rationale": "Focuses on her specific scientific contributions rather than general biography, addressing a key area of her work."
+}
+```
+</EXAMPLE_OUTPUT>
 
 Provide your response in JSON format."""
 
 query_instructions_with_reflection = """
-<GOAL>
-Your goal is to generate a targeted web search query.
-The query will gather information related to a specific topic based on specific knowledge gaps.
-</GOAL>
+Please generate a targeted web search query for a specific topic. The query will gather information related to a specific topic
+based on specific knowledge gaps.
 
 <INPUT_FORMAT>
-You will receive the knowledge gaps in XML format. Here is an example.
-
-<reflection>
-  <knowledge_gaps>impact of her work on modern molecular biology, her personal life and struggles, detailed analysis of Photograph 51</knowledge_gaps>
-  <knowledge_coverage>biography and contributions</knowledge_coverage>
-</reflection>
-
+You will receive reflections in XML with `<reflections>` tags containing:
+- `<knowledge_gaps>`: information that has not been covered in the previous search results
+- `<knowledge_coverage>`: information that has been covered and should not be repeated
 </INPUT_FORMAT>
 
 <REQUIREMENTS>
-When generating the web search query:
 1. The knowledge gaps form the basis of the search query.
 2. Identify the most relevant point in the knowledge gaps and use it to create a focused search query. Do not summarize the knowledge gaps.
 3. Check that the query is at least vaguely related to the topic.
 4. Do not include the topic in the aspect of the query, since this is too broad.
 </REQUIREMENTS>
 
-<FORMAT>
-Format your response as a JSON object with ALL three of these exact keys:
-   - "query": The actual search query string
-   - "aspect": The specific aspect of the topic and knowledge gaps being researched. The aspect should not include the topic itself.
-   - "rationale": Brief explanation of why this query is relevant
-</FORMAT>
+<OUTPUT_FORMAT>
+Respond with a JSON object containing:
+- "query": The generated search query string.
+- "aspect": The specific aspect targeted by the query.
+- "rationale": A brief justification for the query's relevance.
+</OUTPUT_FORMAT>
 
-<EXAMPLE>
-Example output:
-{{
-    "query": "Rosalind Franklin biography",
-    "aspect": "biography",
-    "rationale": "The user is looking for information about Rosalind Franklin, so a search query about her biography is most relevant."
-}}
-</EXAMPLE>
+<EXAMPLE_OUTPUT>
+```json
+{
+    "query": "Rosalind Franklin DNA structure contributions",
+    "aspect": "DNA structure contributions",
+    "rationale": "Focuses on her specific scientific contributions rather than general biography, addressing a key area of her work."
+}
+```
+</EXAMPLE_OUTPUT>
 
-Provide your response in JSON format.
-
-"""
+Provide your response in JSON format."""
 
 summary_instructions = """
 You are a search results summarizer. Your task is to generate a comprehensive summary from web search results that is relevant to the user's topic.
@@ -141,64 +141,46 @@ Respond with a JSON object containing:
 Provide your response in JSON format."""
 
 final_summary_instructions = """
-You are an award winning journalist compiling a final report on a topic.
-
-<GOAL>
-1. Write one or multiple praragraphs compiling ALL information of a list of search summaries.
-2. Compile the information you are given. Do not summarize or shorten the information.
-</GOAL>
+You are a precise information compiler that transforms web search summaries into comprehensive reports. Follow these instructions carefully.
 
 <INPUT_FORMAT>
-You will receive the list of web search summaries in XML format. Here is an example.
+You will receive web search summaries in XML format like this:
 
 <search_summaries>
   <WebSearchSummary>
-    <summary>Petrichor refers to the earthy scent produced when rain falls on dry soil or ground, often experienced as a pleasant smell. It is 
-    characterized by its distinct aroma, which is typically associated with the smell of rain on dry earth. According to dictionary definitions,
-    petrichor is the term used to describe this phenomenon, with the word itself pronounced as PET-rih-kor. The smell is generally considered
-    pleasant and is often noticed when rain falls on dry soil or ground, releasing the distinctive aroma into the air. The term 'petrichor' refers
-    to the distinctive scent that occurs when rain falls on dry soil or rocks. The word was coined in 1964 by two Australian researchers, who
-    discovered that the smell is caused by oils released from plants and soil. These oils can come from roots, leaves, and other organic matter,
-    and are carried into the air by raindrops. Petrichor is often associated with the smell of earthy, mossy, or musty aromas, and is a distinctive
-    feature of many natural environments.</summary>
-    <aspect>definition and meaning</aspect>
+    <summary>Content of the first search result ...</summary>
+    <aspect>Aspect of this information</aspect>
   </WebSearchSummary>
   <WebSearchSummary>
-    <summary>Petrichor refers to the distinctive scent that occurs when rain falls on dry soil or rocks, often associated with a sweet, earthy aroma.
-    </summary>
-    <aspect>definition and explanations</aspect>
+    <summary>Content of another search result ...</summary>
+    <aspect>Aspect of this information</aspect>
   </WebSearchSummary>
 </search_summaries>
 
 </INPUT_FORMAT>
 
 <REQUIREMENTS>
-When creating the report:
-1. Compile all information related to the user topic from the search summaries
-2. The compiled should consist of three or more paragraphs. Each paragraph should be at least 1000 words long.
-3. Ensure a coherent flow of information.
-4. Ensure the compilation is relevant to the user topic and not just a collection of facts.
+1. Extract and consolidate all relevant information from the provided summaries
+2. Create a coherent, well-structured report that flows logically
+3. Focus on delivering comprehensive information relevant to the implied topic
+4. When search results contain conflicting information, present both perspectives and indicate the discrepancy
+5. Structure your report into 3-5 paragraphs of reasonable length (150-300 words each)
+6. Avoid redundancy while ensuring all important information is included
 </REQUIREMENTS>
 
-<FORMAT>
-Format your response as a JSON object with a single key:
-   - "summary": Long form compilation of ALL information of the web search results. Start directly with the compilation, without preamble or titles.
-   Do not use XML tags in the output. Write multiple paragraphs each at least 1000 words long.
-</FORMAT>
+<OUTPUT_FORMAT>
+Respond with a JSON object containing:
+- "summary": The comprehensive report, starting directly with the information without preamble.
+</OUTPUT_FORMAT>
 
-<EXAMPLE>
-Example output:
-{{
-    "summary": "Petrichor refers to the earthy scent produced when rain falls on dry soil or ground, often experienced as a pleasant smell.
-    It is characterized by its distinct aroma, which is typically associated with the smell of rain on dry earth. According to dictionary definitions,
-    petrichor is the term used to describe this phenomenon, with the word itself pronounced as PET-rih-kor. The smell is generally considered pleasant
-    and is often noticed when rain falls on dry soil or ground, releasing the distinctive aroma into the air. The term petrichor refers to the
-    distinctive scent that occurs when rain falls on dry soil or rocks. The word was coined in 1964 by two Australian researchers, who discovered
-    that the smell is caused by oils released from plants and soil. These oils can come from roots, leaves, and other organic matter, and are carried
-    into the air by raindrops. Petrichor is often associated with the smell of earthy, mossy, or musty aromas, and is a distinctive feature of many
-    natural environments.",
-}}
-</EXAMPLE>
+<EXAMPLE_OUTPUT>
+```json
+{
+    "summary": "Your comprehensive report here. Start directly with the information without preamble.
+    Write multiple cohesive paragraphs with logical flow."
+}
+```
+</EXAMPLE_OUTPUT>
 
-Provide your response in JSON format.
+The JSON response must be properly formatted with quotes escaped within the summary value. Do not include any text outside the JSON object.
 """

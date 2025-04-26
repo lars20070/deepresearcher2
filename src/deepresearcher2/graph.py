@@ -36,7 +36,7 @@ class WebSearch(BaseNode[DeepState]):
             Add reflection from the previous loop to the system prompt.
             """
             if ctx.state.reflection:
-                xml = format_as_xml(ctx.state.reflection, root_tag="REFLECTION")
+                xml = format_as_xml(ctx.state.reflection, root_tag="reflection")
                 return query_instructions_with_reflection + f"Reflection on existing knowledge:\n{xml}\n" + "Provide your response in JSON format."
             else:
                 return query_instructions_without_reflection
