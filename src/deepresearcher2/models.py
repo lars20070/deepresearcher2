@@ -29,9 +29,15 @@ class WebSearchResult(BaseModel):
     content: str | None = Field(None, description="main content of the web search result in Markdown format")
 
 
+class Reference(BaseModel):
+    title: str = Field(..., description="title of the reference")
+    url: str = Field(..., description="URL of the reference")
+
+
 class WebSearchSummary(BaseModel):
     summary: str = Field(..., description="summary of multiple web search results")
     aspect: str = Field(..., description="aspect of the topic being summarized")
+    references: list[Reference] | None = Field(None, description="list of references for the summary")
 
     # TODO: The model struggles with summaries that are too short. It seems the model does not understand the returned value error.
     # @field_validator("summary")
