@@ -84,6 +84,8 @@ You will receive web search results in XML with `<WebSearchResult>` tags contain
 4. Keep content relevant to the user topic
 5. The "aspect" value must be specific to the information and must NOT include the topic itself
 6. If you use any information from <summary> or <content>, include the source URL <url> in the "references" list
+7. Ensure "references" is a proper JSON array of objects, not a string representation
+8. Each reference object must contain "title" and "url" as direct key-value pairs
 </REQUIREMENTS>
 
 <OUTPUT_FORMAT>
