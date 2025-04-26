@@ -85,6 +85,7 @@ def fetch_full_page_content(url: HttpUrl, timeout: int = 10) -> str:
         >>> content = fetch_full_page_content("https://example.com")
         >>> print(content)
     """
+    logger.info(f"Fetching content from URL: {str(url)}")
 
     try:
         # Mimic a browser by setting appropriate headers
