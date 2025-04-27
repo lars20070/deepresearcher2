@@ -11,7 +11,6 @@ import pypandoc
 import requests
 from bs4 import BeautifulSoup
 from duckduckgo_search import DDGS
-from markdownify import markdownify as mdfy
 from pydantic import HttpUrl
 from tavily import TavilyClient
 from tenacity import retry, stop_after_attempt, wait_exponential
@@ -31,37 +30,36 @@ def retry_with_backoff(func: callable, retry_min: int = 20, retry_max: int = 100
     return retry(wait=wait_exponential(min=retry_min, max=retry_max), stop=stop_after_attempt(retry_attempts))(func)
 
 
-def html2markdown(html: bytes) -> str:
+def html2text(html: bytes) -> str:
     """
-    Convert HTML to (clean) Markdown.
-    Unwanted html tags and empty lines are removed.
+    Convert HTML to (clean) plain text.
 
     Args:
         html (bytes): The HTML content to convert
 
     Returns:
-        str: The converted Markdown content
+        str: The converted plain text content
     """
 
     # Parse HTML
-    soup = BeautifulSoup(html, "html.parser")
+    soup = BeautifulSoup(html, "lxml")
 
-    # Remove unwanted tags
-    for tag in soup.find_all(["script", "style", "noscript", "iframe", "header", "footer", "nav", "form", "input", "button", "aside", "svg"]):
-        tag.decompose()
+    # Remove scripts and style elements
+    for junk in soup(["nav", "footer", "header", "aside", "form", "script", "style"]):
+        junk.decompose()
 
-    # Remove empty tags
-    for tag in soup.find_all():
-        if not tag.text.strip() and tag.name not in ["br", "img"]:
-            tag.decompose()
+    # Extract main content
+    paragraphs = soup.find_all(["p", "div", "section", "article", "blockquote"])
+    content = [p.get_text(strip=True, separator=" ") for p in paragraphs]
+    clean_text = "\n".join(content)
 
-    # Convert to Markdown
-    markdown = mdfy(str(soup))
+    # Whitespace cleanup
+    clean_text = re.sub(r"\s+\n", "\n", clean_text)  # clean spaces before newlines
+    clean_text = re.sub(r"\n\s+", "\n", clean_text)  # clean spaces after newlines
+    clean_text = re.sub(r"\n{3,}", "\n\n", clean_text)  # no more than 2 newlines in a row
+    clean_text = clean_text.replace("\xa0", " ")  # replace non-breaking spaces
 
-    # Remove blank lines
-    markdown = "\n".join(line for line in markdown.splitlines() if line.strip())
-
-    return markdown
+    return clean_text
 
 
 # @retry_with_backoff
@@ -116,8 +114,10 @@ def fetch_full_page_content(url: HttpUrl, timeout: int = 10) -> str:
         else:
             html = raw
 
-        # Convert to Markdown
-        return html2markdown(html)
+        # Clean up html
+        text = html2text(html)
+
+        return text
 
     except urllib.error.HTTPError as e:
         if e.code in (403, 401):

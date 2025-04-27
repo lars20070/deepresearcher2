@@ -3,6 +3,8 @@ from __future__ import annotations as _annotations
 
 import os
 import random
+import re
+import urllib
 from dataclasses import dataclass, field
 from datetime import date
 from io import StringIO
@@ -20,6 +22,7 @@ from pydantic_ai.mcp import MCPServerHTTP, MCPServerStdio
 
 if TYPE_CHECKING:
     from pydantic_ai.messages import ModelMessage
+from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 from pydantic_ai.models.openai import OpenAIModel
 from pydantic_ai.providers.openai import OpenAIProvider
@@ -803,3 +806,39 @@ async def test_structured_input() -> None:
 
     logger.debug(f"Greeting: {result.output.greeting}")
     assert "Paul" in result.output.greeting
+
+
+@pytest.mark.example
+def test_beautifulsoup() -> None:
+    """
+    Test the BeautifulSoup package.
+    Here we scrape a Wikipedia entry for clean text content.
+    """
+
+    url = "https://en.wikipedia.org/wiki/Petrichor"
+
+    # Read raw html
+    request = urllib.request.Request(url)
+    response = urllib.request.urlopen(request)
+    html = response.read()
+    logger.debug(f"Raw html response:\n{html}")
+
+    # Clean up html
+    soup = BeautifulSoup(html, "lxml")
+
+    # Remove style elements etc.
+    for junk in soup(["nav", "footer", "header", "aside", "form", "script", "style"]):
+        junk.decompose()
+
+    # Extract main content
+    paragraphs = soup.find_all(["p", "div", "section", "article", "blockquote"])
+    content = [p.get_text(strip=True, separator=" ") for p in paragraphs]
+    clean_text = "\n".join(content)
+
+    # Whitespace cleanup
+    clean_text = re.sub(r"\s+\n", "\n", clean_text)  # clean spaces before newlines
+    clean_text = re.sub(r"\n\s+", "\n", clean_text)  # clean spaces after newlines
+    clean_text = re.sub(r"\n{3,}", "\n\n", clean_text)  # no more than 2 newlines in a row
+    clean_text = clean_text.replace("\xa0", " ")  # replace non-breaking spaces
+
+    logger.debug(f"Cleaned up text:\n{clean_text[:10000]}")
