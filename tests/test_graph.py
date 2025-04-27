@@ -43,4 +43,9 @@ async def test_websearch(topic: str) -> None:
         assert r.url is not None
         assert r.summary is not None or r.content is not None
 
-    logger.debug(f"Search results:\n{json.dumps([r.model_dump() for r in search_results], indent=2)}")
+    results_json = json.dumps([r.model_dump() for r in search_results], indent=2)
+    logger.debug(f"Search results:\n{results_json}")
+
+    # # Serialize the state to JSON
+    # with open("tests/data/state_1.json", "w") as f:
+    #     f.write(ctx.state.model_dump_json(indent=2))

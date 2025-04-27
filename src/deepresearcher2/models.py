@@ -1,19 +1,16 @@
 #!/usr/bin/env python3
 from __future__ import annotations as _annotations
 
-from dataclasses import dataclass, field
-
 from pydantic import BaseModel, Field
 
 
-@dataclass
-class DeepState:
-    topic: str = "petrichor"
-    search_query: WebSearchQuery | None = field(default_factory=lambda: None)  # single search query for the current loop
-    search_results: list[WebSearchResult] | None = field(default_factory=lambda: None)  # list of search results in the current loop
-    search_summaries: list[WebSearchSummary] | None = field(default_factory=lambda: None)  # list of all search summaries of the past loops
-    reflection: Reflection | None = field(default_factory=lambda: None)  # reflection on the search results of the previous current loop
-    count: int = 0
+class DeepState(BaseModel):
+    topic: str = Field(default="petrichor", description="main research topic")
+    search_query: WebSearchQuery | None = Field(default=None, description="single search query for the current loop")
+    search_results: list[WebSearchResult] | None = Field(default=None, description="list of search results in the current loop")
+    search_summaries: list[WebSearchSummary] | None = Field(default=None, description="list of all search summaries of the past loops")
+    reflection: Reflection | None = Field(default=None, description="reflection on the search results of the previous current loop")
+    count: int = Field(default=0, description="counter for tracking iteration count")
 
 
 class WebSearchQuery(BaseModel):

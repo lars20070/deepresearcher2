@@ -132,7 +132,7 @@ class ReflectOnSearch(BaseNode[DeepState]):
                     user_prompt=f"Please reflect on the provided web search summaries for the topic <TOPIC>{ctx.state.topic}</TOPIC>."
                 )
                 logger.debug(f"Reflection knowledge gaps:\n{reflection.output.knowledge_gaps}")
-                logger.debug(f"Reflection knowledge coverage:\n{reflection.output.covered_topics}")
+                logger.debug(f"Reflection covered topics:\n{reflection.output.covered_topics}")
 
                 ctx.state.reflection = Reflection(
                     knowledge_gaps=reflection.output.knowledge_gaps,
