@@ -5,7 +5,7 @@ import json
 import pytest
 
 from deepresearcher2.config import config
-from deepresearcher2.graph import DeepState, GraphRunContext, ReflectOnSearch, SummarizeSearchResults, WebSearch
+from deepresearcher2.graph import DeepState, FinalizeSummary, GraphRunContext, ReflectOnSearch, SummarizeSearchResults, WebSearch
 from deepresearcher2.logger import logger
 
 
@@ -96,4 +96,46 @@ async def test_summarizesearchresults() -> None:
 
     # Serialize the state to JSON
     with open("tests/data/state_2.json", "w") as f:
+        f.write(ctx.state.model_dump_json(indent=2))
+
+
+@pytest.mark.ollama
+@pytest.mark.asyncio
+async def test_reflectonsearch() -> None:
+    """
+    Test ReflectOnSearch() node
+    """
+    logger.info("Testing ReflectOnSearch() node")
+
+    # Prepare the initial state
+    with open("tests/data/state_2.json") as f:
+        state_json = f.read()
+
+    state = DeepState.model_validate_json(state_json)
+    ctx = GraphRunContext(state=state, deps=None)
+
+    assert ctx.state.topic == "petrichor"
+    assert ctx.state.count == 1
+    assert ctx.state.search_query is not None
+    assert ctx.state.search_results is not None
+    assert len(ctx.state.search_results) == 3
+    assert ctx.state.search_summaries is not None
+    assert len(ctx.state.search_summaries) == 1
+    assert ctx.state.reflection is None
+
+    # Run the ReflectOnSearch node
+    node = ReflectOnSearch()
+    result = await node.run(ctx)
+
+    assert isinstance(result, (WebSearch | FinalizeSummary))
+    reflection = ctx.state.reflection
+    assert reflection is not None
+    assert reflection.knowledge_gaps is not None
+    assert reflection.covered_topics is not None
+
+    reflection_json = reflection.model_dump_json(indent=2)
+    logger.debug(f"Reflection:\n{reflection_json}")
+
+    # Serialize the state to JSON
+    with open("tests/data/state_3.json", "w") as f:
         f.write(ctx.state.model_dump_json(indent=2))
