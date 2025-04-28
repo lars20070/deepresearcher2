@@ -45,12 +45,12 @@ class WebSearch(BaseNode[DeepState]):
         async with query_agent.run_mcp_servers():
             prompt = f"Please generate a web search query for the following topic: <TOPIC>{topic}</TOPIC>"
             result = await query_agent.run(prompt)
-            query = result.output
-            logger.debug(f"Web search query: {query}")
+            ctx.state.search_query = result.output
+            logger.debug(f"Web search query:\n{ctx.state.search_query.model_dump_json(indent=2)}")
 
         # Run the search
         search_params = {
-            "query": query.query,
+            "query": ctx.state.search_query.query,
             "max_results": config.max_web_search_results,
             "max_content_length": 12000,
         }
@@ -59,7 +59,7 @@ class WebSearch(BaseNode[DeepState]):
         elif config.search_engine == SearchEngine.tavily:
             ctx.state.search_results = tavily_search(**search_params)
         elif config.search_engine == SearchEngine.perplexity:
-            ctx.state.search_results = perplexity_search(query.query)
+            ctx.state.search_results = perplexity_search(ctx.state.search_query.query)
         else:
             message = f"Unsupported search engine: {config.search_engine}"
             logger.error(message)
