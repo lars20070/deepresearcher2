@@ -96,7 +96,13 @@ class SummarizeSearchResults(BaseNode[DeepState]):
 
             # Append the summary to the list of all search summaries
             ctx.state.search_summaries = ctx.state.search_summaries or []
-            ctx.state.search_summaries.append(WebSearchSummary(summary=summary.output.summary, aspect=summary.output.aspect))
+            ctx.state.search_summaries.append(
+                WebSearchSummary(
+                    summary=summary.output.summary,
+                    aspect=summary.output.aspect,
+                    references=summary.output.references,
+                )
+            )
 
         return ReflectOnSearch()
 

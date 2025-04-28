@@ -79,6 +79,15 @@ async def test_summarizesearchresults() -> None:
     result = await node.run(ctx)
 
     assert isinstance(result, ReflectOnSearch)
+    search_summaries = ctx.state.search_summaries
+    assert search_summaries is not None
+    assert len(search_summaries) == 1
+    for s in search_summaries:
+        assert s.summary is not None
+        assert s.aspect is not None
+
+    summaries_json = json.dumps([s.model_dump() for s in search_summaries], indent=2)
+    logger.debug(f"Search summaries:\n{summaries_json}")
 
     # Serialize the state to JSON
     with open("tests/data/state_2.json", "w") as f:
