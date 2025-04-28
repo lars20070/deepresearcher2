@@ -85,6 +85,11 @@ async def test_summarizesearchresults() -> None:
     for s in search_summaries:
         assert s.summary is not None
         assert s.aspect is not None
+        # TODO: Since there is a summary, there should be at least one reference. But sometimes the model struggles the genereate valid JSON.
+        assert s.references is not None
+        for r in s.references:
+            assert r.title is not None
+            assert r.url is not None
 
     summaries_json = json.dumps([s.model_dump() for s in search_summaries], indent=2)
     logger.debug(f"Search summaries:\n{summaries_json}")
