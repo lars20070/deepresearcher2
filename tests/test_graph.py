@@ -68,9 +68,9 @@ async def test_summarizesearchresults() -> None:
 
     assert ctx.state.topic == "petrichor"
     assert ctx.state.count == 1
+    assert ctx.state.search_query is not None
     assert ctx.state.search_results is not None
     assert len(ctx.state.search_results) == 3
-    assert ctx.state.search_query is None
     assert ctx.state.search_summaries is None
     assert ctx.state.reflection is None
 
