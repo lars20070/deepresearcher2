@@ -50,8 +50,17 @@
     }
   ],
   "reflection": {
-    "knowledge_gaps": "chemical composition, geological implications, psychological effects, cultural significance across regions, applications in environmental conservation",
-    "covered_topics": "definition, etymology, general description, scientific mechanisms, literary references"
+    "knowledge_gaps": [
+      "chemical composition",
+      "psychological impact",
+      "regional variations",
+      "commercial applications"
+    ],
+    "covered_topics": [
+      "definition and meaning",
+      "cultural significance",
+      "scientific mechanisms"
+    ]
   },
   "count": 2
 }

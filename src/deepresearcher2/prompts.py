@@ -42,9 +42,11 @@ You will receive reflections in XML with `<reflections>` tags containing:
 
 <REQUIREMENTS>
 1. The knowledge gaps form the basis of the search query.
-2. Identify the most relevant point in the knowledge gaps and use it to create a focused search query. Do not summarize the knowledge gaps.
-3. Check that the query is at least vaguely related to the topic.
-4. Do not include the topic in the aspect of the query, since this is too broad.
+2. Identify the most relevant point in the knowledge gaps and use it to create a focused search query.
+3. Pick only one item from the list of knowledge gaps. Do not include all knowledge gaps in the construction of the query.
+4. Check that the query is not covering any aspects listed in the list of covered topics.
+5. Check that the query is at least vaguely related to the topic.
+6. Do not include the topic in the aspect of the query, since this is too broad.
 </REQUIREMENTS>
 
 <OUTPUT_FORMAT>
@@ -136,19 +138,30 @@ You will receive web search summaries in XML with `<WebSearchSummary>` tags cont
 7. Consider technical details, implementation specifics, and emerging trends
 8. Consider second and third-order effects or implications of the topic when exploring knowledge gaps
 9. Be thorough yet concise
+10. Ensure that the list of knowledgae gaps and the list of covered topics are distinct and do not overlap.
 </REQUIREMENTS>
 
 <OUTPUT_FORMAT>
 Respond with a JSON object containing:
-- "knowledge_gaps": Detailed list of specific aspects requiring further research
+- "knowledge_gaps": List of specific aspects requiring further research
 - "covered_topics": List of aspects already thoroughly covered
 </OUTPUT_FORMAT>
 
 <EXAMPLE_OUTPUT>
 ```json
 {
-    "knowledge_gaps": "scientific mechanisms, psychological effects, regional variations, commercial applications, cultural significance",
-    "covered_topics": "basic definition, etymology, general description"
+    "knowledge_gaps": [
+        "scientific mechanisms",
+        "psychological effects",
+        "regional variations",
+        "commercial applications",
+        "cultural significance"
+    ],
+    "covered_topics": [
+        "basic definition",
+        "etymology",
+        "general description"
+    ]
 }
 ```
 </EXAMPLE_OUTPUT>

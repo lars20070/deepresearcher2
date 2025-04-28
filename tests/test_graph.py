@@ -94,9 +94,9 @@ async def test_summarizesearchresults() -> None:
     summaries_json = json.dumps([s.model_dump() for s in search_summaries], indent=2)
     logger.debug(f"Search summaries:\n{summaries_json}")
 
-    # Serialize the state to JSON
-    with open("tests/data/state_2.json", "w") as f:
-        f.write(ctx.state.model_dump_json(indent=2))
+    # # Serialize the state to JSON
+    # with open("tests/data/state_2.json", "w") as f:
+    #     f.write(ctx.state.model_dump_json(indent=2))
 
 
 @pytest.mark.ollama
@@ -136,6 +136,6 @@ async def test_reflectonsearch() -> None:
     reflection_json = reflection.model_dump_json(indent=2)
     logger.debug(f"Reflection:\n{reflection_json}")
 
-    # Serialize the state to JSON
-    with open("tests/data/state_3.json", "w") as f:
-        f.write(ctx.state.model_dump_json(indent=2))
+    # # Serialize the state to JSON
+    # with open("tests/data/state_3.json", "w") as f:
+    #     f.write(ctx.state.model_dump_json(indent=2))
