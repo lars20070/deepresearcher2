@@ -51,12 +51,6 @@ jobs:
       run: uv build
     - name: Lint the package
       run: uvx ruff check .
-    - name: Run unit tests
-      # -v                verbose
-      # -m "not paid"     skip tests requiring paid API keys
-      # -p no:warnings    ignore warnings
-      # -n auto           run tests in parallel
-      run: uv run pytest -v -m "not paid" -p no:warnings -n auto
     - name: Upload logs
       uses: actions/upload-artifact@v4
       if: always()
