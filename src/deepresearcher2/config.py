@@ -14,6 +14,12 @@ class SearchEngine(str, Enum):
     perplexity = "perplexity"
 
 
+class Model(str, Enum):
+    llama33 = "llama3.3"
+    qwen3 = "qwen3:32b"
+    gpt4o = "openai:gpt-4o"
+
+
 class Config(BaseSettings):
     """
     Configuration settings for the application.
@@ -24,6 +30,7 @@ class Config(BaseSettings):
     max_research_loops: int = Field(default=3, description="number of search-summary-reflection loops")
     max_web_search_results: int = Field(default=2, description="number of results in a single web search")
     search_engine: SearchEngine = Field(default=SearchEngine.duckduckgo, description="search engine for the web searches")
+    model: Model = Field(default=Model.llama33, description="model to be used by all agents")
     reports_folder: str = Field(default="reports/", description="output directory for the final reports")
     logs2logfire: bool = Field(default=False, description="Post all logs to Logfire. If false, some logs are written to a local log file.")
 

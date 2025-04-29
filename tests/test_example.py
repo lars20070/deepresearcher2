@@ -572,7 +572,7 @@ async def test_pydantic_graph() -> None:
     https://youtu.be/WFvugLf_760
 
     Node A simply passes the track number on to the next node.
-    Node B decides whether to continue to node C or stop.
+    Node B decides whether to continue to node C or to stop.
     Node C passes the track number to the final result.
 
     track number <= 5: nodes A, B and C executed

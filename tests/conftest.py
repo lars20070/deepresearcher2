@@ -5,7 +5,7 @@ from collections.abc import Generator
 
 import pytest
 
-from deepresearcher2.config import config
+from deepresearcher2.config import Model, SearchEngine, config
 from deepresearcher2.logger import logger
 
 
@@ -41,7 +41,8 @@ def config_for_testing(monkeypatch: pytest.MonkeyPatch) -> Generator[None, None,
     monkeypatch.setattr(config, "topic", "petrichor")
     monkeypatch.setattr(config, "max_research_loops", 3)
     monkeypatch.setattr(config, "max_web_search_results", 2)
-    monkeypatch.setattr(config, "search_engine", "duckduckgo")
+    monkeypatch.setattr(config, "search_engine", SearchEngine.duckduckgo)
+    monkeypatch.setattr(config, "model", Model.llama33)
     monkeypatch.setattr(config, "reports_folder", "tests/reports/")
     monkeypatch.setattr(config, "logs2logfire", False)
 
