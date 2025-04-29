@@ -1,22 +1,6 @@
 # Deep Researcher 2
 
-Fully local web research and report writing assistant. The models run locally in Ollama. The web searches are performed with DuckDuckGo. By default, no API keys are required.
-
-Some of the [code examples](tests/) do require API keys.
-
-## Getting started
-1. Install [Ollama](https://ollama.com) and pull a model.
-   ```bash
-   ollama pull llama3.3
-   ```
-2. Create an `.env` file and fill in the placeholders including the `TOPIC`.
-   ```bash
-   cp .env.example .env
-   ```
-3. Start up the workflow.
-   ```bash
-   uv run research
-   ```
+Fully local web research and report writing assistant. The models run locally in Ollama. The web searches are performed with DuckDuckGo. No API keys are required.
 
 ``` mermaid
 stateDiagram-v2
@@ -34,3 +18,14 @@ stateDiagram-v2
 <br>*Deep Researcher 2 workflow*
 <br>
 <br>
+
+## Getting started
+1. Install [Ollama](https://ollama.com) and pull a model.
+   ```bash
+   ollama pull llama3.3
+   ```
+2. Start up the workflow.
+   ```bash
+   uv run research
+   ```
+

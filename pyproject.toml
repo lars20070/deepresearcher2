@@ -61,30 +61,6 @@ lint.ignore = [
 ]
 lint.pydocstyle.convention = "google"
 
-[tool.pytest.ini_options]
-addopts = ["-m", "not paid"] # Skip tests that require a paid API key
-asyncio_default_fixture_loop_scope = "function" # Use "session" for a single event loop for all tests or "function" for a new event loop for every test (more isolation).
-markers = [
-  "paid: tests requiring paid APIs",
-  "ollama: tests requiring a local Ollama instance",
-  "example: examples which are not testing deepresearcher2 functionality",
-]
-
-[tool.coverage.run]
-branch = true
-source = ["deepresearcher2"]
-parallel = true
-disable_warnings = ["module-not-measured"]
-omit = ["tests/*", "src/deepresearcher2/cli.py"]
-
-[tool.coverage.report]
-show_missing = true  # Show line numbers of missing coverage in terminal
-skip_covered = false # Show all files, including those with full coverage
-skip_empty = true    # Skip files with no statements
-
-[tool.coverage.html]
-directory = "coverage"
-
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"

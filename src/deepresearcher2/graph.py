@@ -14,8 +14,6 @@ from pydantic_ai.models.openai import OpenAIModel
 from pydantic_ai.providers.openai import OpenAIProvider
 from pydantic_graph import BaseNode, End, Graph, GraphRunContext
 
-from .logger import logger
-
 load_dotenv()
 
 # Config parameters
@@ -274,7 +272,6 @@ def duckduckgo_search(query: str) -> list[WebSearchResult]:
     Returns:
         list[WebSearchResult]: list of search results
     """
-    logger.info(f"DuckDuckGo web search for: {query}")
 
     # Run the search
     with DDGS() as ddgs:
@@ -311,8 +308,6 @@ class WebSearch(BaseNode[DeepState]):
     """
 
     async def run(self, ctx: GraphRunContext[DeepState]) -> SummarizeSearchResults:
-        logger.debug(f"Running Web Search with count number {ctx.state.count}.")
-
         topic = ctx.state.topic
 
         @query_agent.system_prompt
@@ -331,7 +326,6 @@ class WebSearch(BaseNode[DeepState]):
             prompt = f"Please generate a web search query for the following topic: <TOPIC>{topic}</TOPIC>"
             result = await query_agent.run(prompt)
             ctx.state.search_query = result.output
-            logger.debug(f"Web search query:\n{ctx.state.search_query.model_dump_json(indent=2)}")
 
         # Run the search
         ctx.state.search_results = duckduckgo_search(ctx.state.search_query.query)
@@ -346,8 +340,6 @@ class SummarizeSearchResults(BaseNode[DeepState]):
     """
 
     async def run(self, ctx: GraphRunContext[DeepState]) -> ReflectOnSearch:
-        logger.debug(f"Running Summarize Search Results with count number {ctx.state.count}.")
-
         @summary_agent.system_prompt
         def add_web_search_results() -> str:
             """
@@ -361,7 +353,6 @@ class SummarizeSearchResults(BaseNode[DeepState]):
             summary = await summary_agent.run(
                 user_prompt=f"Please summarize the provided web search results for the topic <TOPIC>{ctx.state.topic}</TOPIC>."
             )
-            logger.debug(f"Web search summary:\n{summary.output.model_dump_json(indent=2)}")
 
             # Append the summary to the list of all search summaries
             ctx.state.search_summaries = ctx.state.search_summaries or []
@@ -382,15 +373,10 @@ class ReflectOnSearch(BaseNode[DeepState]):
     """
 
     async def run(self, ctx: GraphRunContext[DeepState]) -> WebSearch | FinalizeSummary:
-        logger.debug(f"Running Reflect on Search with count number {ctx.state.count}.")
-
         # Flow control
         # Should we ponder on the next web search or compile the final report?
         if ctx.state.count < max_research_loops:
             ctx.state.count += 1
-
-            xml = format_as_xml(ctx.state.search_summaries, root_tag="search_summaries")
-            logger.debug(f"Search summaries:\n{xml}")
 
             @reflection_agent.system_prompt
             def add_search_summaries() -> str:
@@ -405,8 +391,6 @@ class ReflectOnSearch(BaseNode[DeepState]):
                 reflection = await reflection_agent.run(
                     user_prompt=f"Please reflect on the provided web search summaries for the topic <TOPIC>{ctx.state.topic}</TOPIC>."
                 )
-                logger.debug(f"Reflection knowledge gaps:\n{reflection.output.knowledge_gaps}")
-                logger.debug(f"Reflection covered topics:\n{reflection.output.covered_topics}")
 
                 ctx.state.reflection = Reflection(
                     knowledge_gaps=reflection.output.knowledge_gaps,
@@ -425,12 +409,7 @@ class FinalizeSummary(BaseNode[DeepState]):
     """
 
     async def run(self, ctx: GraphRunContext[DeepState]) -> End:
-        logger.debug("Running Finalize Summary.")
-
         topic = ctx.state.topic
-
-        xml = format_as_xml(ctx.state.search_summaries, root_tag="search_summaries")
-        logger.debug(f"Search summaries:\n{xml}")
 
         @final_summary_agent.system_prompt
         def add_search_summaries() -> str:
@@ -446,7 +425,6 @@ class FinalizeSummary(BaseNode[DeepState]):
                 user_prompt=f"Please summarize all web search summaries for the topic <TOPIC>{ctx.state.topic}</TOPIC>."
             )
             report = f"## {topic}\n\n" + final_summary.output.summary
-            logger.debug(f"Final report:\n{report}")
 
         # Export the report
         export_report(report=report, topic=topic)
