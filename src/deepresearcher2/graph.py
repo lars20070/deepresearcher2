@@ -2,20 +2,61 @@
 from __future__ import annotations as _annotations
 
 import asyncio
+import os
+import re
 from dataclasses import dataclass
 
 from dotenv import load_dotenv
+from duckduckgo_search import DDGS
 from pydantic_ai import format_as_xml
 from pydantic_graph import BaseNode, End, Graph, GraphRunContext
 
 from .agents import final_summary_agent, query_agent, reflection_agent, summary_agent
-from .config import SearchEngine, config
+from .config import config
 from .logger import logger
-from .models import DeepState, Reflection, WebSearchSummary
+from .models import DeepState, Reflection, WebSearchResult, WebSearchSummary
 from .prompts import query_instructions_with_reflection, query_instructions_without_reflection
-from .utils import duckduckgo_search, export_report, perplexity_search, tavily_search
 
 load_dotenv()
+
+
+def duckduckgo_search(query: str) -> list[WebSearchResult]:
+    """
+    Perform a web search using DuckDuckGo and return a list of results.
+
+    Args:
+        query (str): The search query to execute.
+
+    Returns:
+        list[WebSearchResult]: list of search results
+    """
+    logger.info(f"DuckDuckGo web search for: {query}")
+
+    # Run the search
+    with DDGS() as ddgs:
+        ddgs_results = list(ddgs.text(query, max_results=3))
+
+    # Convert to pydantic objects
+    results = []
+    for r in ddgs_results:
+        result = WebSearchResult(title=r.get("title"), url=r.get("href"), content=r.get("body"))
+        results.append(result)
+
+    return results
+
+
+def export_report(report: str, topic: str = "Report") -> None:
+    """
+    Export the report to markdown.
+
+    Args:
+        report (str): The report content in markdown format.
+        topic (str): The topic of the report. Defaults to "Report".
+    """
+    file_name = re.sub(r"[^a-zA-Z0-9]", "_", topic).lower()
+    path_md = os.path.join("reports/", f"{file_name}.md")
+    with open(path_md, "w", encoding="utf-8") as f:
+        f.write(report)
 
 
 # Nodes
@@ -49,23 +90,7 @@ class WebSearch(BaseNode[DeepState]):
             logger.debug(f"Web search query:\n{ctx.state.search_query.model_dump_json(indent=2)}")
 
         # Run the search
-        search_params = {
-            "query": ctx.state.search_query.query,
-            # "max_results": config.max_web_search_results,
-            # "max_content_length": 12000,
-        }
-        if config.search_engine == SearchEngine.duckduckgo:
-            ctx.state.search_results = duckduckgo_search(**search_params)
-        elif config.search_engine == SearchEngine.tavily:
-            ctx.state.search_results = tavily_search(**search_params)
-        elif config.search_engine == SearchEngine.perplexity:
-            ctx.state.search_results = perplexity_search(ctx.state.search_query.query)
-        else:
-            message = f"Unsupported search engine: {config.search_engine}"
-            logger.error(message)
-            raise ValueError(message)
-
-        # logger.debug(f"Web search results:\n{format_as_xml(ctx.state.search_results, root_tag='search_results')}")
+        ctx.state.search_results = duckduckgo_search(ctx.state.search_query.query)
 
         return SummarizeSearchResults()
 
@@ -180,7 +205,7 @@ class FinalizeSummary(BaseNode[DeepState]):
             logger.debug(f"Final report:\n{report}")
 
         # Export the report
-        export_report(report=report, topic=topic, output_dir=config.reports_folder)
+        export_report(report=report, topic=topic)
 
         return End("End of deep research workflow.\n\n")
 
