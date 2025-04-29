@@ -51,8 +51,8 @@ class WebSearch(BaseNode[DeepState]):
         # Run the search
         search_params = {
             "query": ctx.state.search_query.query,
-            "max_results": config.max_web_search_results,
-            "max_content_length": 12000,
+            # "max_results": config.max_web_search_results,
+            # "max_content_length": 12000,
         }
         if config.search_engine == SearchEngine.duckduckgo:
             ctx.state.search_results = duckduckgo_search(**search_params)
@@ -100,7 +100,6 @@ class SummarizeSearchResults(BaseNode[DeepState]):
                 WebSearchSummary(
                     summary=summary.output.summary,
                     aspect=summary.output.aspect,
-                    references=summary.output.references,
                 )
             )
 
@@ -200,10 +199,6 @@ async def deepresearch() -> None:
     state = DeepState(topic=config.topic, count=1)
     result = await graph.run(WebSearch(), state=state)
     logger.debug(f"Result: {result.output}")
-
-    # Mermaid code
-    # mermaid_code = graph.mermaid_code(start_node=WebSearch())
-    # logger.debug(f"Mermaid graph:\n{mermaid_code}")
 
 
 def main() -> None:

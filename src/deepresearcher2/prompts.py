@@ -85,16 +85,12 @@ You will receive web search results in XML with `<WebSearchResult>` tags contain
 3. Ensure coherent information flow
 4. Keep content relevant to the user topic
 5. The "aspect" value must be specific to the information and must NOT include the topic itself
-6. If you use any information from <summary> or <content>, include the source URL <url> in the "references" list
-7. Ensure "references" is a proper JSON array of objects, not a string representation
-8. Each reference object must contain "title" and "url" as direct key-value pairs
 </REQUIREMENTS>
 
 <OUTPUT_FORMAT>
 Respond with a JSON object containing:
 - "summary": Direct compilation of ALL information (minimum 1000 words) without preamble, XML tags, or Markdown
 - "aspect": The specific aspect of the topic being researched (excluding the topic itself)
-- "references": List of references used in the summary, including "title" and "url"
 </OUTPUT_FORMAT>
 
 <EXAMPLE_OUTPUT>
@@ -103,16 +99,6 @@ Respond with a JSON object containing:
     "summary": "Petrichor refers to the earthy scent produced when rain falls on dry soil or ground, often experienced as a pleasant smell.
     It is characterized by its distinct aroma, which is typically associated with the smell of rain on dry earth.",
     "aspect": "definition and meaning",
-    "references": [
-        {
-            "title": "Petrichor - Wikipedia",
-            "url": "https://en.wikipedia.org/wiki/Petrichor"
-        },
-        {
-            "title": "The Science of Petrichor",
-            "url": "https://www.scientificamerican.com/article/the-science-of-petrichor/"
-        }
-    ]
 }
 ```
 </EXAMPLE_OUTPUT>

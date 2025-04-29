@@ -132,58 +132,26 @@ def fetch_full_page_content(url: HttpUrl, timeout: int = 10) -> str:
         return ""
 
 
-@retry_with_backoff
-def duckduckgo_search(query: str, max_results: int = 2, max_content_length: int | None = None) -> list[WebSearchResult]:
+def duckduckgo_search(query: str) -> list[WebSearchResult]:
     """
     Perform a web search using DuckDuckGo and return a list of results.
 
     Args:
         query (str): The search query to execute.
-        max_results (int, optional): Maximum number of results to return. Defaults to 2.
-        max_content_length (int | None, optional): Maximum character length of the content. If none, the full content is returned. Defaults to None.
 
     Returns:
         list[WebSearchResult]: list of search results
-
-    Example:
-        >>> results = duckduckgo_search("petrichor", max_results=10)
-        >>> for result in results:
-        ...     print(result.title, result.url)
     """
     logger.info(f"DuckDuckGo web search for: {query}")
 
     # Run the search
     with DDGS() as ddgs:
-        try:
-            ddgs_results = list(ddgs.text(query, max_results=max_results))
-            if not ddgs_results:
-                logger.warning(f"DuckDuckGo returned no results for: {query}")
-                return []
-        except (ConnectionError, TimeoutError) as e:
-            logger.error(f"Network error during DuckDuckGo search: {str(e)}")
-            raise
+        ddgs_results = list(ddgs.text(query, max_results=3))
 
     # Convert to pydantic objects
     results = []
     for r in ddgs_results:
-        title = r.get("title")
-        url = r.get("href")
-        content = r.get("body")
-
-        # Should we fetch full page content?
-        should_fetch = content is None or max_content_length is None or (max_content_length is not None and len(content) < max_content_length)
-
-        # Only fetch if necessary
-        if should_fetch:
-            full_content = fetch_full_page_content(url)
-            if content is None or len(full_content) > len(content):
-                content = full_content
-
-        # Apply length constraint if needed
-        if max_content_length is not None and content is not None:
-            content = content[:max_content_length]
-
-        result = WebSearchResult(title=title, url=str(url), content=content)
+        result = WebSearchResult(title=r.get("title"), url=r.get("href"), content=r.get("body"))
         results.append(result)
 
     return results

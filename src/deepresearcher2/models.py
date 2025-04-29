@@ -34,20 +34,6 @@ class Reference(BaseModel):
 class WebSearchSummary(BaseModel):
     summary: str = Field(..., description="summary of multiple web search results")
     aspect: str = Field(..., description="aspect of the topic being summarized")
-    references: list[Reference] | None = Field(None, description="list of references for the summary")
-
-    # TODO: The model struggles with summaries that are too short. It seems the model does not understand the returned value error.
-    # @field_validator("summary")
-    # @classmethod
-    # def validate_summary_length(cls, text: str) -> str:
-    #     word_count = len(text.split())
-    #     if word_count < 100:
-    #         raise ValueError(
-    #             f"The summary you have written is too short: {word_count} words. You are required to write a summary of at least 100 words."
-    #         )
-    #     if word_count > 400:
-    #         raise ValueError(f"The summary you have written is too long: {word_count} words. The maximum allowed length is 400 words.")
-    #     return text
 
 
 class Reflection(BaseModel):
