@@ -2,18 +2,20 @@
 from __future__ import annotations as _annotations
 
 import asyncio
-import os
 from dataclasses import dataclass
 
 from dotenv import load_dotenv
 from pydantic_ai import format_as_xml
 from pydantic_graph import BaseNode, End, Graph, GraphRunContext
 
-from deepresearcher2.agents import final_summary_agent, query_agent, reflection_agent, summary_agent
-from deepresearcher2.logger import logger
-from deepresearcher2.models import DeepState, Reflection, WebSearchSummary
-from deepresearcher2.prompts import query_instructions_with_reflection, query_instructions_without_reflection
-from deepresearcher2.utils import duckduckgo_search, export_report
+from .agents import final_summary_agent, query_agent, reflection_agent, summary_agent
+from .config import SearchEngine, config
+from .logger import logger
+from .models import DeepState, Reflection, WebSearchSummary
+from .prompts import query_instructions_with_reflection, query_instructions_without_reflection
+from .utils import duckduckgo_search, export_report, perplexity_search, tavily_search
+
+load_dotenv()
 
 
 # Nodes
@@ -26,7 +28,6 @@ class WebSearch(BaseNode[DeepState]):
     async def run(self, ctx: GraphRunContext[DeepState]) -> SummarizeSearchResults:
         logger.debug(f"Running Web Search with count number {ctx.state.count}.")
 
-        load_dotenv()
         topic = ctx.state.topic
 
         @query_agent.system_prompt
@@ -35,7 +36,7 @@ class WebSearch(BaseNode[DeepState]):
             Add reflection from the previous loop to the system prompt.
             """
             if ctx.state.reflection:
-                xml = format_as_xml(ctx.state.reflection, root_tag="REFLECTION")
+                xml = format_as_xml(ctx.state.reflection, root_tag="reflection")
                 return query_instructions_with_reflection + f"Reflection on existing knowledge:\n{xml}\n" + "Provide your response in JSON format."
             else:
                 return query_instructions_without_reflection
@@ -44,20 +45,27 @@ class WebSearch(BaseNode[DeepState]):
         async with query_agent.run_mcp_servers():
             prompt = f"Please generate a web search query for the following topic: <TOPIC>{topic}</TOPIC>"
             result = await query_agent.run(prompt)
-            query = result.output
-            logger.debug(f"Web search query: {query}")
+            ctx.state.search_query = result.output
+            logger.debug(f"Web search query:\n{ctx.state.search_query.model_dump_json(indent=2)}")
 
         # Run the search
-        ctx.state.search_results = duckduckgo_search(
-            query=query.query,
-            max_results=int(os.environ.get("MAX_WEB_SEARCH_RESULTS", "2")),
-            max_content_length=12000,  # maximum length of 12k characters
-        )
-        # for r in ctx.state.search_results:
-        #     logger.debug(f"Search result title: {r.title}")
-        #     logger.debug(f"Search result url: {r.url}")
-        #     logger.debug(f"Search result content length: {len(r.content)}")
-        #     logger.debug(f"Search result content:\n{r.content}")
+        search_params = {
+            "query": ctx.state.search_query.query,
+            "max_results": config.max_web_search_results,
+            "max_content_length": 12000,
+        }
+        if config.search_engine == SearchEngine.duckduckgo:
+            ctx.state.search_results = duckduckgo_search(**search_params)
+        elif config.search_engine == SearchEngine.tavily:
+            ctx.state.search_results = tavily_search(**search_params)
+        elif config.search_engine == SearchEngine.perplexity:
+            ctx.state.search_results = perplexity_search(ctx.state.search_query.query)
+        else:
+            message = f"Unsupported search engine: {config.search_engine}"
+            logger.error(message)
+            raise ValueError(message)
+
+        # logger.debug(f"Web search results:\n{format_as_xml(ctx.state.search_results, root_tag='search_results')}")
 
         return SummarizeSearchResults()
 
@@ -76,7 +84,7 @@ class SummarizeSearchResults(BaseNode[DeepState]):
             """
             Add web search results to the system prompt.
             """
-            xml = format_as_xml(ctx.state.search_results, root_tag="SEARCH RESULTS")
+            xml = format_as_xml(ctx.state.search_results, root_tag="search_results")
             return f"List of web search results:\n{xml}"
 
         # Generate the summary
@@ -84,11 +92,17 @@ class SummarizeSearchResults(BaseNode[DeepState]):
             summary = await summary_agent.run(
                 user_prompt=f"Please summarize the provided web search results for the topic <TOPIC>{ctx.state.topic}</TOPIC>."
             )
-            logger.debug(f"Web search summary:\n{summary.output.summary}")
+            logger.debug(f"Web search summary:\n{summary.output.model_dump_json(indent=2)}")
 
             # Append the summary to the list of all search summaries
             ctx.state.search_summaries = ctx.state.search_summaries or []
-            ctx.state.search_summaries.append(WebSearchSummary(summary=summary.output.summary, aspect=summary.output.aspect))
+            ctx.state.search_summaries.append(
+                WebSearchSummary(
+                    summary=summary.output.summary,
+                    aspect=summary.output.aspect,
+                    references=summary.output.references,
+                )
+            )
 
         return ReflectOnSearch()
 
@@ -104,10 +118,10 @@ class ReflectOnSearch(BaseNode[DeepState]):
 
         # Flow control
         # Should we ponder on the next web search or compile the final report?
-        if ctx.state.count < int(os.environ.get("MAX_RESEARCH_LOOPS", "10")):
+        if ctx.state.count < config.max_research_loops:
             ctx.state.count += 1
 
-            xml = format_as_xml(ctx.state.search_summaries, root_tag="SEARCH SUMMARIES")
+            xml = format_as_xml(ctx.state.search_summaries, root_tag="search_summaries")
             logger.debug(f"Search summaries:\n{xml}")
 
             @reflection_agent.system_prompt
@@ -115,7 +129,7 @@ class ReflectOnSearch(BaseNode[DeepState]):
                 """
                 Add search summaries to the system prompt.
                 """
-                xml = format_as_xml(ctx.state.search_summaries, root_tag="SEARCH SUMMARIES")
+                xml = format_as_xml(ctx.state.search_summaries, root_tag="search_summaries")
                 return f"List of search summaries:\n{xml}"
 
             # Reflect on the summaries so far
@@ -124,11 +138,11 @@ class ReflectOnSearch(BaseNode[DeepState]):
                     user_prompt=f"Please reflect on the provided web search summaries for the topic <TOPIC>{ctx.state.topic}</TOPIC>."
                 )
                 logger.debug(f"Reflection knowledge gaps:\n{reflection.output.knowledge_gaps}")
-                logger.debug(f"Reflection knowledge coverage:\n{reflection.output.knowledge_coverage}")
+                logger.debug(f"Reflection covered topics:\n{reflection.output.covered_topics}")
 
                 ctx.state.reflection = Reflection(
                     knowledge_gaps=reflection.output.knowledge_gaps,
-                    knowledge_coverage=reflection.output.knowledge_coverage,
+                    covered_topics=reflection.output.covered_topics,
                 )
 
             return WebSearch()
@@ -145,10 +159,9 @@ class FinalizeSummary(BaseNode[DeepState]):
     async def run(self, ctx: GraphRunContext[DeepState]) -> End:
         logger.debug("Running Finalize Summary.")
 
-        load_dotenv()
         topic = ctx.state.topic
 
-        xml = format_as_xml(ctx.state.search_summaries, root_tag="SEARCH SUMMARIES")
+        xml = format_as_xml(ctx.state.search_summaries, root_tag="search_summaries")
         logger.debug(f"Search summaries:\n{xml}")
 
         @final_summary_agent.system_prompt
@@ -156,7 +169,7 @@ class FinalizeSummary(BaseNode[DeepState]):
             """
             Add search summaries to the system prompt.
             """
-            xml = format_as_xml(ctx.state.search_summaries, root_tag="SEARCH SUMMARIES")
+            xml = format_as_xml(ctx.state.search_summaries, root_tag="search_summaries")
             return f"List of search summaries:\n{xml}"
 
         # Finalize the summary of the entire report
@@ -168,7 +181,7 @@ class FinalizeSummary(BaseNode[DeepState]):
             logger.debug(f"Final report:\n{report}")
 
         # Export the report
-        export_report(report=report, topic=topic)
+        export_report(report=report, topic=topic, output_dir=config.reports_folder)
 
         return End("End of deep research workflow.\n\n")
 
@@ -180,13 +193,11 @@ async def deepresearch() -> None:
     """
     logger.info("Starting deep research workflow.")
 
-    load_dotenv()
-
     # Define the agent graph
     graph = Graph(nodes=[WebSearch, SummarizeSearchResults, ReflectOnSearch, FinalizeSummary])
 
     # Run the agent graph
-    state = DeepState(topic=os.environ.get("TOPIC", "petrichor"), count=1)
+    state = DeepState(topic=config.topic, count=1)
     result = await graph.run(WebSearch(), state=state)
     logger.debug(f"Result: {result.output}")
 

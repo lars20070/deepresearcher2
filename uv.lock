@@ -489,7 +489,7 @@ wheels = [
 
 [[package]]
 name = "deepresearcher2"
-version = "0.1.1"
+version = "0.1.2"
 source = { editable = "." }
 dependencies = [
     { name = "brotli" },
@@ -502,6 +502,7 @@ dependencies = [
     { name = "pydantic-ai", extra = ["examples"] },
     { name = "pydantic-ai-slim", extra = ["mcp"] },
     { name = "pydantic-evals", extra = ["logfire"] },
+    { name = "pydantic-settings" },
     { name = "pylint" },
     { name = "pypandoc" },
     { name = "pytest" },
@@ -528,6 +529,7 @@ requires-dist = [
     { name = "pydantic-ai", extras = ["cli", "examples", "mcp"], specifier = ">=0.0.40" },
     { name = "pydantic-ai-slim", extras = ["mcp"], specifier = ">=0.0.40" },
     { name = "pydantic-evals", extras = ["logfire"], specifier = ">=0.0.51" },
+    { name = "pydantic-settings", specifier = ">=2.8.1" },
     { name = "pylint", specifier = ">=3.3.4" },
     { name = "pypandoc", specifier = ">=1.15" },
     { name = "pytest", specifier = ">=8.3.4" },

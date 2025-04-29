@@ -1,14 +1,18 @@
-import os
+#!/usr/bin/env python3
 
 import logfire
 from dotenv import load_dotenv
 from loguru import logger
 
-# Configure Logfire
+from .config import config
+
 load_dotenv()
+
+# Configure Logfire
 logfire.configure(
-    token=os.environ.get("LOGFIRE_TOKEN"),
+    token=config.logfire_token,
     send_to_logfire=True,
+    scrubbing=False,
 )
 
 # Configure Loguru
@@ -21,4 +25,5 @@ logger.add(
 
 # Logfire as sink for Loguru
 # i.e. emit a Logfire log for every Loguru log
-# logger.configure(handlers=[logfire.loguru_handler()])
+if config.logs2logfire:
+    logger.configure(handlers=[logfire.loguru_handler()])

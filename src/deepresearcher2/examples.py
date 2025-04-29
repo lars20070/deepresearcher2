@@ -9,6 +9,8 @@ from pydantic_ai.exceptions import ModelRetry
 from pydantic_ai.models.openai import OpenAIModel
 from pydantic_ai.providers.openai import OpenAIProvider
 
+load_dotenv()
+
 # Most code examples can be found in tests/test_example.py
 # The methods here are an exception. They can be executed as scripts via [project.scripts] in pyproject.toml
 
@@ -94,8 +96,6 @@ def chat_with_python() -> None:
         Returns:
             str: The output of the code execution.
         """
-        load_dotenv()
-
         logfire.debug(f"Executing code:\n{code}")
         riza = rizaio.Riza()
         result = riza.command.exec(
@@ -133,8 +133,6 @@ def mcp_server() -> None:
 
     Test the response of the server with test_mcp_server()
     """
-    load_dotenv()
-
     server = FastMCP("PydanticAI Server")
     server_agent = Agent(
         "anthropic:claude-3-5-haiku-latest",

@@ -3,7 +3,7 @@
 import subprocess
 import sys
 
-from deepresearcher2.logger import logger
+from .logger import logger
 
 """
 CLI wrappers in order to add these commands to [project.scripts] in pyproject.toml
@@ -22,7 +22,7 @@ def uml() -> None:
         "-o",
         "dot",
         "-A",
-        #        "-k",
+        "--only-classnames",
         "-d",
         "./uml",
         "./src/deepresearcher2",

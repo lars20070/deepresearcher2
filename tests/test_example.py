@@ -3,6 +3,8 @@ from __future__ import annotations as _annotations
 
 import os
 import random
+import re
+import urllib
 from dataclasses import dataclass, field
 from datetime import date
 from io import StringIO
@@ -20,19 +22,25 @@ from pydantic_ai.mcp import MCPServerHTTP, MCPServerStdio
 
 if TYPE_CHECKING:
     from pydantic_ai.messages import ModelMessage
+from bs4 import BeautifulSoup
+from dotenv import load_dotenv
 from pydantic_ai.models.openai import OpenAIModel
 from pydantic_ai.providers.openai import OpenAIProvider
 from pydantic_evals import Case, Dataset
 from pydantic_evals.evaluators import Evaluator, EvaluatorContext, IsInstance
 from pydantic_graph import BaseNode, End, Graph, GraphRunContext
 
-from deepresearcher2 import basic_chat, chat_with_python, logger
+from deepresearcher2.config import config
+from deepresearcher2.examples import basic_chat, chat_with_python
+from deepresearcher2.logger import logger
+
+load_dotenv()
 
 
 @pytest.mark.example
 @pytest.mark.paid
 @pytest.mark.asyncio
-async def test_pydanticai_agent(load_env: None) -> None:
+async def test_pydanticai_agent() -> None:
     """
     Test the Agent() class with a cloud model
     https://ai.pydantic.dev/#why-use-pydanticai
@@ -88,7 +96,7 @@ async def test_pydanticai_ollama() -> None:
 
 
 @pytest.mark.example
-def test_pydanticai_logfire(load_env: None) -> None:
+def test_pydanticai_logfire() -> None:
     """
     Test the basic Logfire functionality
     https://ai.pydantic.dev/logfire/#using-logfire
@@ -97,7 +105,7 @@ def test_pydanticai_logfire(load_env: None) -> None:
     https://logfire.pydantic.dev/docs/reference/advanced/testing/
     """
     logfire.configure(
-        token=os.environ.get("LOGFIRE_TOKEN"),
+        token=config.logfire_token,
         send_to_logfire=True,
     )
 
@@ -175,10 +183,11 @@ class Deps:
     geo_api_key: str | None
 
 
+@pytest.mark.skip(reason="https://geocode.maps.co has strict request limits. '429 Too Many Requests' is likely.")
 @pytest.mark.example
 @pytest.mark.paid
 @pytest.mark.asyncio
-async def test_weather_agent(load_env: None) -> None:
+async def test_weather_agent() -> None:
     """
     Test Ollama agent with two tools.
     Note that geocode.maps.co has strict request limits. '429 Too Many Requests' is likely.
@@ -298,14 +307,11 @@ async def test_weather_agent(load_env: None) -> None:
         }
 
     async with AsyncClient() as client:
-        # Create a free API key at https://www.tomorrow.io/weather-api/
-        weather_api_key = os.getenv("WEATHER_API_KEY")
-        # Create a free API key at https://geocode.maps.co/
-        geo_api_key = os.getenv("GEO_API_KEY")
+        # Create a free API keys at https://www.tomorrow.io/weather-api/ and https://geocode.maps.co/
         deps = Deps(
             client=client,
-            weather_api_key=weather_api_key,
-            geo_api_key=geo_api_key,
+            weather_api_key=config.weather_api_key,
+            geo_api_key=config.geo_api_key,
         )
         result = await weather_agent.run("What is the weather like in Zurich and in Wiltshire?", deps=deps)
         logger.debug(f"Response from weather agent: {result.output}")
@@ -320,10 +326,11 @@ class ClientAndKey:
     api_key: str
 
 
+@pytest.mark.skip(reason="Sometimes GPT-4o ends up in an infinite loop. Not sure why.")
 @pytest.mark.paid
 @pytest.mark.example
 @pytest.mark.asyncio
-async def test_agent_delegation(load_env: None) -> None:
+async def test_agent_delegation() -> None:
     """
     Test the agent delegation functionality
 
@@ -456,7 +463,7 @@ async def test_pydantic_evals() -> None:
 @pytest.mark.paid
 @pytest.mark.example
 @pytest.mark.asyncio
-async def test_mcp_sse_client(load_env: None) -> None:
+async def test_mcp_sse_client() -> None:
     """
     Test the Pydantic MCP SSE client.
     https://ai.pydantic.dev/mcp/client/#sse-client
@@ -491,7 +498,7 @@ async def test_mcp_sse_client(load_env: None) -> None:
 @pytest.mark.paid
 @pytest.mark.example
 @pytest.mark.asyncio
-async def test_mcp_stdio_client(load_env: None) -> None:
+async def test_mcp_stdio_client() -> None:
     """
     Test the Pydantic MCP SSE client.
     https://ai.pydantic.dev/mcp/client/#sse-client
@@ -536,7 +543,7 @@ async def test_mcp_stdio_client(load_env: None) -> None:
 @pytest.mark.paid
 @pytest.mark.example
 @pytest.mark.asyncio
-async def test_mcp_server(load_env: None) -> None:
+async def test_mcp_server() -> None:
     """
     Test the MCP server functionality defined in deepresearcher2.examples.mcp_server()
 
@@ -565,7 +572,7 @@ async def test_pydantic_graph() -> None:
     https://youtu.be/WFvugLf_760
 
     Node A simply passes the track number on to the next node.
-    Node B decides whether to continue to node C or stop.
+    Node B decides whether to continue to node C or to stop.
     Node C passes the track number to the final result.
 
     track number <= 5: nodes A, B and C executed
@@ -799,3 +806,39 @@ async def test_structured_input() -> None:
 
     logger.debug(f"Greeting: {result.output.greeting}")
     assert "Paul" in result.output.greeting
+
+
+@pytest.mark.example
+def test_beautifulsoup() -> None:
+    """
+    Test the BeautifulSoup package.
+    Here we scrape a Wikipedia entry for clean text content.
+    """
+
+    url = "https://en.wikipedia.org/wiki/Petrichor"
+
+    # Read raw html
+    request = urllib.request.Request(url)
+    response = urllib.request.urlopen(request)
+    html = response.read()
+    logger.debug(f"Raw html response:\n{html}")
+
+    # Clean up html
+    soup = BeautifulSoup(html, "lxml")
+
+    # Remove style elements etc.
+    for junk in soup(["nav", "footer", "header", "aside", "form", "script", "style"]):
+        junk.decompose()
+
+    # Extract main content
+    paragraphs = soup.find_all(["p", "div", "section", "article", "blockquote"])
+    content = [p.get_text(strip=True, separator=" ") for p in paragraphs]
+    clean_text = "\n".join(content)
+
+    # Whitespace cleanup
+    clean_text = re.sub(r"\s+\n", "\n", clean_text)  # clean spaces before newlines
+    clean_text = re.sub(r"\n\s+", "\n", clean_text)  # clean spaces after newlines
+    clean_text = re.sub(r"\n{3,}", "\n\n", clean_text)  # no more than 2 newlines in a row
+    clean_text = clean_text.replace("\xa0", " ")  # replace non-breaking spaces
+
+    logger.debug(f"Cleaned up text:\n{clean_text[:10000]}")

@@ -20,15 +20,14 @@ Some of the [code examples](tests/) do require API keys.
 
 ``` mermaid
 stateDiagram-v2
-    direction LR
     WebSearch: Web Search
     SummarizeSearchResults: Summarize Search Results
     ReflectOnSummary: Reflect on Summary
     FinalizeSummary: Finalize Summary
     [*] --> WebSearch
-    WebSearch --> SummarizeSearchResults
-    SummarizeSearchResults --> ReflectOnSummary
-    ReflectOnSummary --> WebSearch
+    WebSearch --> SummarizeSearchResults: web search result
+    SummarizeSearchResults --> ReflectOnSummary: web search summary
+    ReflectOnSummary --> WebSearch: reflection
     ReflectOnSummary --> FinalizeSummary
     FinalizeSummary --> [*]
 ```

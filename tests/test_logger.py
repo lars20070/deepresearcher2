@@ -2,7 +2,7 @@
 
 import logfire
 
-from deepresearcher2 import logger
+from deepresearcher2.logger import logger
 
 
 def test_loguru() -> None:
