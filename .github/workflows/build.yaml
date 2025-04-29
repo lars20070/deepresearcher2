@@ -63,24 +63,3 @@ jobs:
       with:
         name: deepresearcher2-pytest-logs
         path: deepresearcher2.log
-    - name: Install Graphviz for UML diagrams
-      if: runner.os == 'Linux'
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y graphviz
-    - name: Generate UML diagrams
-      run: |
-        mkdir -p ./uml
-        uv run pyreverse -o png -A -k -d ./uml ./src/deepresearcher2
-    - name: Upload UML class diagram
-      uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: deepresearcher2-uml-classes
-        path: uml/classes.png
-    - name: Upload UML package diagram
-      uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: deepresearcher2-uml-packages
-        path: uml/packages.png
