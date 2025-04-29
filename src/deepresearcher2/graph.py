@@ -14,7 +14,6 @@ from pydantic_ai.models.openai import OpenAIModel
 from pydantic_ai.providers.openai import OpenAIProvider
 from pydantic_graph import BaseNode, End, Graph, GraphRunContext
 
-from .config import config
 from .logger import logger
 from .prompts import (
     final_summary_instructions,
@@ -25,6 +24,11 @@ from .prompts import (
 )
 
 load_dotenv()
+
+# Config parameters
+topic = "petrichor"
+max_research_loops = 2
+max_web_search_results = 3
 
 
 # Models
@@ -91,7 +95,7 @@ def duckduckgo_search(query: str) -> list[WebSearchResult]:
 
     # Run the search
     with DDGS() as ddgs:
-        ddgs_results = list(ddgs.text(query, max_results=3))
+        ddgs_results = list(ddgs.text(query, max_results=max_web_search_results))
 
     # Convert to pydantic objects
     results = []
@@ -199,7 +203,7 @@ class ReflectOnSearch(BaseNode[DeepState]):
 
         # Flow control
         # Should we ponder on the next web search or compile the final report?
-        if ctx.state.count < config.max_research_loops:
+        if ctx.state.count < max_research_loops:
             ctx.state.count += 1
 
             xml = format_as_xml(ctx.state.search_summaries, root_tag="search_summaries")
@@ -278,7 +282,7 @@ async def deepresearch() -> None:
     graph = Graph(nodes=[WebSearch, SummarizeSearchResults, ReflectOnSearch, FinalizeSummary])
 
     # Run the agent graph
-    state = DeepState(topic=config.topic, count=1)
+    state = DeepState(topic=topic, count=1)
     result = await graph.run(WebSearch(), state=state)
     logger.debug(f"Result: {result.output}")
 
