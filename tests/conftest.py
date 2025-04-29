@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
 
 import os
+from collections.abc import Generator
 
 import pytest
+
+from deepresearcher2.config import config
 
 
 def pytest_configure(config: pytest.Config) -> None:
@@ -25,3 +28,18 @@ def skip_ollama_tests(request: pytest.FixtureRequest) -> None:
 def topic() -> str:
     """Provide a research topic for unit testing."""
     return "petrichor"
+
+
+@pytest.fixture
+def config_for_testing(monkeypatch: pytest.MonkeyPatch) -> Generator[None, None, None]:
+    """
+    Override the config for unit testing.
+    """
+    monkeypatch.setattr(config, "topic", "petrichor")
+    monkeypatch.setattr(config, "max_research_loops", 3)
+    monkeypatch.setattr(config, "max_web_search_results", 2)
+    monkeypatch.setattr(config, "search_engine", "duckduckgo")
+    monkeypatch.setattr(config, "reports_folder", "tests/reports/")
+    monkeypatch.setattr(config, "logs2logfire", False)
+
+    yield

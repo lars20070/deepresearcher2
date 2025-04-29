@@ -181,7 +181,7 @@ class FinalizeSummary(BaseNode[DeepState]):
             logger.debug(f"Final report:\n{report}")
 
         # Export the report
-        export_report(report=report, topic=topic)
+        export_report(report=report, topic=topic, output_dir=config.reports_folder)
 
         return End("End of deep research workflow.\n\n")
 

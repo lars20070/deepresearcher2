@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import json
+from collections.abc import Generator
 
 import pytest
 from pydantic_graph import End
@@ -188,7 +189,7 @@ async def test_reflectonsearch() -> None:
 
 @pytest.mark.ollama
 @pytest.mark.asyncio
-async def test_finalizesummary() -> None:
+async def test_finalizesummary(config_for_testing: Generator[None, None, None]) -> None:
     """
     Test FinalizeSummary() node
     """

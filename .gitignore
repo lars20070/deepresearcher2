@@ -20,3 +20,5 @@ node_modules/
 # reports
 reports/*.md
 reports/*.pdf
+tests/reports/*.md
+tests/reports/*.pdf
