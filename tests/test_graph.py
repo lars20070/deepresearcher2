@@ -3,6 +3,7 @@
 import json
 
 import pytest
+from pydantic_graph import End
 
 from deepresearcher2.config import config
 from deepresearcher2.graph import DeepState, FinalizeSummary, GraphRunContext, ReflectOnSearch, SummarizeSearchResults, WebSearch
@@ -183,3 +184,34 @@ async def test_reflectonsearch() -> None:
     # # Serialize the state to JSON
     # with open("tests/data/state_3.json", "w") as f:
     #     f.write(ctx.state.model_dump_json(indent=2))
+
+
+@pytest.mark.ollama
+@pytest.mark.asyncio
+async def test_finalizesummary() -> None:
+    """
+    Test FinalizeSummary() node
+    """
+    logger.info("Testing FinalizeSummary() node")
+
+    # Prepare the initial state
+    with open("tests/data/state_3.json") as f:
+        state_json = f.read()
+
+    state = DeepState.model_validate_json(state_json)
+    ctx = GraphRunContext(state=state, deps=None)
+
+    assert ctx.state.topic == "petrichor"
+    assert ctx.state.count == 2
+    assert ctx.state.search_query is not None
+    assert ctx.state.search_results is not None
+    assert len(ctx.state.search_results) == 3
+    assert ctx.state.search_summaries is not None
+    assert len(ctx.state.search_summaries) == 1
+    assert ctx.state.reflection is not None
+
+    # Run the FinalizeSummary node
+    node = FinalizeSummary()
+    result = await node.run(ctx)
+
+    assert isinstance(result, End)
