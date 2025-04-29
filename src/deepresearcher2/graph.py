@@ -8,16 +8,73 @@ from dataclasses import dataclass
 
 from dotenv import load_dotenv
 from duckduckgo_search import DDGS
-from pydantic_ai import format_as_xml
+from pydantic import BaseModel, Field
+from pydantic_ai import Agent, format_as_xml
+from pydantic_ai.models.openai import OpenAIModel
+from pydantic_ai.providers.openai import OpenAIProvider
 from pydantic_graph import BaseNode, End, Graph, GraphRunContext
 
-from .agents import final_summary_agent, query_agent, reflection_agent, summary_agent
 from .config import config
 from .logger import logger
-from .models import DeepState, Reflection, WebSearchResult, WebSearchSummary
-from .prompts import query_instructions_with_reflection, query_instructions_without_reflection
+from .prompts import (
+    final_summary_instructions,
+    query_instructions_with_reflection,
+    query_instructions_without_reflection,
+    reflection_instructions,
+    summary_instructions,
+)
 
 load_dotenv()
+
+
+# Models
+class DeepState(BaseModel):
+    topic: str = Field(default="petrichor", description="main research topic")
+    search_query: WebSearchQuery | None = Field(default=None, description="single search query for the current loop")
+    search_results: list[WebSearchResult] | None = Field(default=None, description="list of search results in the current loop")
+    search_summaries: list[WebSearchSummary] | None = Field(default=None, description="list of all search summaries of the past loops")
+    reflection: Reflection | None = Field(default=None, description="reflection on the search results of the previous current loop")
+    count: int = Field(default=0, description="counter for tracking iteration count")
+
+
+class WebSearchQuery(BaseModel):
+    query: str = Field(..., description="search query")
+    aspect: str = Field(..., description="aspect of the topic being researched")
+    rationale: str = Field(..., description="rationale for the search query")
+
+
+class WebSearchResult(BaseModel):
+    title: str = Field(..., description="short descriptive title of the web search result")
+    url: str = Field(..., description="URL of the web search result")
+    summary: str | None = Field(None, description="summary of the web search result")
+    content: str | None = Field(None, description="main content of the web search result in Markdown format")
+
+
+class Reference(BaseModel):
+    title: str = Field(..., description="title of the reference")
+    url: str = Field(..., description="URL of the reference")
+
+
+class WebSearchSummary(BaseModel):
+    summary: str = Field(..., description="summary of multiple web search results")
+    aspect: str = Field(..., description="aspect of the topic being summarized")
+
+
+class Reflection(BaseModel):
+    knowledge_gaps: list[str] = Field(..., description="aspects of the topic which require further exploration")
+    covered_topics: list[str] = Field(..., description="aspects of the topic which have already been covered sufficiently")
+
+
+class FinalSummary(BaseModel):
+    summary: str = Field(..., description="summary of the topic for the final report")
+
+
+# Agents
+model = OpenAIModel(model_name="llama3.3", provider=OpenAIProvider(base_url="http://localhost:11434/v1"))
+query_agent = Agent(model=model, output_type=WebSearchQuery, system_prompt="")
+summary_agent = Agent(model=model, output_type=WebSearchSummary, system_prompt=summary_instructions)
+reflection_agent = Agent(model=model, output_type=Reflection, system_prompt=reflection_instructions)
+final_summary_agent = Agent(model=model, output_type=FinalSummary, system_prompt=final_summary_instructions)
 
 
 def duckduckgo_search(query: str) -> list[WebSearchResult]:

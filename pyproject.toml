@@ -32,10 +32,6 @@ dependencies = [
 ]
 
 [project.scripts]
-uml = "deepresearcher2.cli:uml"
-chat = "deepresearcher2.examples:basic_chat"
-chatpython = "deepresearcher2.examples:chat_with_python"
-mcpserver = "deepresearcher2.examples:mcp_server"
 research = "deepresearcher2.graph:main"
 
 [tool.ruff]
