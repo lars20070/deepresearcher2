@@ -6,15 +6,12 @@ import os
 import re
 from dataclasses import dataclass
 
-from dotenv import load_dotenv
 from duckduckgo_search import DDGS
 from pydantic import BaseModel, Field
 from pydantic_ai import Agent, format_as_xml
 from pydantic_ai.models.openai import OpenAIModel
 from pydantic_ai.providers.openai import OpenAIProvider
 from pydantic_graph import BaseNode, End, Graph, GraphRunContext
-
-load_dotenv()
 
 # Config parameters
 topic = "petrichor"
