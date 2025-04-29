@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
-
+import glob
 import json
+import os
 from collections.abc import Generator
 
 import pytest
@@ -189,9 +190,12 @@ async def test_reflectonsearch() -> None:
 
 @pytest.mark.ollama
 @pytest.mark.asyncio
-async def test_finalizesummary(config_for_testing: Generator[None, None, None]) -> None:
+async def test_finalizesummary(config_for_testing: Generator[None, None, None], cleanup_reports_folder: None) -> None:
     """
     Test FinalizeSummary() node
+
+    Note that we are only testing the creation of markdown reports.
+    PDF reports might or might not be created depending on whether 'pandoc' is installed on the system.
     """
     logger.info("Testing FinalizeSummary() node")
 
@@ -216,3 +220,5 @@ async def test_finalizesummary(config_for_testing: Generator[None, None, None]) 
     result = await node.run(ctx)
 
     assert isinstance(result, End)
+    md_files = glob.glob(os.path.join(config.reports_folder, "*.md"))
+    assert len(md_files) == 1  # A single report should be created.

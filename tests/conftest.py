@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-
+import glob
 import os
 from collections.abc import Generator
 
 import pytest
 
 from deepresearcher2.config import config
+from deepresearcher2.logger import logger
 
 
 def pytest_configure(config: pytest.Config) -> None:
@@ -26,7 +27,9 @@ def skip_ollama_tests(request: pytest.FixtureRequest) -> None:
 
 @pytest.fixture
 def topic() -> str:
-    """Provide a research topic for unit testing."""
+    """
+    Provide a research topic for unit testing.
+    """
     return "petrichor"
 
 
@@ -43,3 +46,17 @@ def config_for_testing(monkeypatch: pytest.MonkeyPatch) -> Generator[None, None,
     monkeypatch.setattr(config, "logs2logfire", False)
 
     yield
+
+
+@pytest.fixture
+def cleanup_reports_folder(config_for_testing: Generator[None, None, None]) -> None:
+    """
+    Remove all old report files
+    """
+    for pattern in ["*.md", "*.pdf"]:
+        for f in glob.glob(os.path.join(config.reports_folder, pattern)):
+            try:
+                os.remove(f)
+                logger.debug(f"Removed file {f}")
+            except OSError as e:
+                logger.error(f"Error removing file {f}: {e}")
