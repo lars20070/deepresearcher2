@@ -6,29 +6,16 @@ readme = "README.md"
 authors = [{ name = "Lars Nilse", email = "l.nilse@dunelm.org.uk" }]
 requires-python = ">=3.11"
 dependencies = [
-  "loguru>=0.7.3",
   "pytest>=8.3.4",
   "ruff>=0.9.5",
   "pylint>=3.3.4",
   "pytest-xdist>=3.6.1",
-  "tavily-python>=0.5.1",
-  "pytest-cov>=6.0.0",
   "pydantic>=2.10.6",
   "pytest-asyncio>=0.25.3",
-  "pypandoc>=1.15",
   "pydantic-ai[cli,examples,mcp]>=0.0.40",
-  "logfire>=3.10.0",
   "python-dotenv>=1.1.0",
-  "rizaio>=0.10.0",
-  "pydantic-evals[logfire]>=0.0.51",
   "pydantic-ai-slim[mcp]>=0.0.40",
-  "duckduckgo-mcp-server>=0.1.1",
-  "wordcloud>=1.9.4",
   "duckduckgo-search>=8.0.1",
-  "tenacity>=9.1.2",
-  "brotli>=1.1.0",
-  "markdownify>=1.1.0",
-  "pydantic-settings>=2.8.1",
 ]
 
 [project.scripts]
