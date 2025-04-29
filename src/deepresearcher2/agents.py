@@ -12,8 +12,7 @@ load_dotenv()
 
 # Models
 model_name = "llama3.3"
-# model_name = "firefunction-v2"  # fails during reflection task
-# model_name = "mistral-nemo"  # Nemo is terrible in replying in JSON.
+# model_name = "qwen3:32b"
 ollama_model = OpenAIModel(
     model_name=model_name,
     provider=OpenAIProvider(base_url="http://localhost:11434/v1"),

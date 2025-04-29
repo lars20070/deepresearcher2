@@ -53,6 +53,50 @@ async def test_websearch(topic: str) -> None:
 
 @pytest.mark.ollama
 @pytest.mark.asyncio
+async def test_websearch_reflection(topic: str) -> None:
+    """
+    Test WebSearch node with reflection
+    """
+    logger.info("Testing WebSearch() node with reflection")
+
+    # Prepare the initial state
+    with open("tests/data/state_3.json") as f:
+        state_json = f.read()
+
+    state = DeepState.model_validate_json(state_json)
+    ctx = GraphRunContext(state=state, deps=None)
+
+    assert ctx.state.topic == "petrichor"
+    assert ctx.state.count == 2  # We are now in the second loop. We have the reflections from the first loop.
+    assert ctx.state.search_query is not None
+    assert ctx.state.search_results is not None
+    assert len(ctx.state.search_results) == 3
+    assert ctx.state.search_summaries is not None
+    assert len(ctx.state.search_summaries) == 1
+    assert ctx.state.reflection is not None
+
+    # Run the WebSearch node
+    node = WebSearch()
+    result = await node.run(ctx)
+
+    assert isinstance(result, SummarizeSearchResults)
+    search_results = ctx.state.search_results
+    assert search_results is not None
+    if config.search_engine == "perplexity":
+        assert len(search_results) == 1  # Perplexity return only one result
+    else:
+        assert len(search_results) == config.max_web_search_results
+    for r in search_results:
+        assert r.title is not None
+        assert r.url is not None
+        assert r.summary is not None or r.content is not None
+
+    results_json = json.dumps([r.model_dump() for r in search_results], indent=2)
+    logger.debug(f"Search results:\n{results_json}")
+
+
+@pytest.mark.ollama
+@pytest.mark.asyncio
 async def test_summarizesearchresults() -> None:
     """
     Test SummarizeSearchResults() node
