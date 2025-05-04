@@ -11,7 +11,7 @@ from pydantic_graph import BaseNode, End, Graph, GraphRunContext
 from .agents import final_summary_agent, query_agent, reflection_agent, summary_agent
 from .config import SearchEngine, config
 from .logger import logger
-from .models import DeepState, Reflection, WebSearchSummary
+from .models import DeepState, Reference, Reflection, WebSearchSummary
 from .prompts import query_instructions_with_reflection, query_instructions_without_reflection
 from .utils import duckduckgo_search, export_report, perplexity_search, tavily_search
 
@@ -65,7 +65,7 @@ class WebSearch(BaseNode[DeepState]):
             logger.error(message)
             raise ValueError(message)
 
-        # logger.debug(f"Web search results:\n{format_as_xml(ctx.state.search_results, root_tag='search_results')}")
+        logger.debug(f"Web search results:\n{format_as_xml(ctx.state.search_results, root_tag='search_results')}")
 
         return SummarizeSearchResults()
 
@@ -89,20 +89,27 @@ class SummarizeSearchResults(BaseNode[DeepState]):
 
         # Generate the summary
         async with summary_agent.run_mcp_servers():
-            summary = await summary_agent.run(
+            result = await summary_agent.run(
                 user_prompt=f"Please summarize the provided web search results for the topic <TOPIC>{ctx.state.topic}</TOPIC>."
             )
-            logger.debug(f"Web search summary:\n{summary.output.model_dump_json(indent=2)}")
+            logger.debug(f"Web search summary:\n{result.output}")
+
+            # Transfer search result references to the summary
+            references = []
+            for ref in ctx.state.search_results:
+                if ref.title and ref.url:
+                    references.append(Reference(title=ref.title, url=ref.url))
+
+            summary = WebSearchSummary(
+                summary=result.output,  # Summary from the agent
+                aspect=ctx.state.search_query.aspect,  # Aspect from the search query
+                references=references,  # References from the search results
+            )
+            logger.debug(f"Summary result:\n{format_as_xml(summary, root_tag='single_search_summary')}")
 
             # Append the summary to the list of all search summaries
             ctx.state.search_summaries = ctx.state.search_summaries or []
-            ctx.state.search_summaries.append(
-                WebSearchSummary(
-                    summary=summary.output.summary,
-                    aspect=summary.output.aspect,
-                    references=summary.output.references,
-                )
-            )
+            ctx.state.search_summaries.append(summary)
 
         return ReflectOnSearch()
 
