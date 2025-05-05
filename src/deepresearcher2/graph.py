@@ -184,8 +184,18 @@ class FinalizeSummary(BaseNode[DeepState]):
             final_summary = await final_summary_agent.run(
                 user_prompt=f"Please summarize all web search summaries for the topic <TOPIC>{ctx.state.topic}</TOPIC>."
             )
-            report = f"## {topic}\n\n" + final_summary.output.summary
-            logger.debug(f"Final report:\n{report}")
+            logger.debug(f"Final summary:\n{final_summary.output.summary}")
+
+        # Compile the final report
+        report = f"# {topic}\n\n"
+        report += f"{final_summary.output.summary}\n\n"  # Overall summary
+        for summary in ctx.state.search_summaries:  # Summaries of individual searches
+            report += f"\n## {summary.aspect}\n\n"
+            report += f"{summary.summary}\n\n"
+            report += "### References\n"
+            for ref in summary.references:
+                report += f"- {ref.title} [{ref.url}]({ref.url})\n"
+            report += "\n"
 
         # Export the report
         export_report(report=report, topic=topic, output_dir=config.reports_folder)

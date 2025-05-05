@@ -81,7 +81,7 @@ You will receive web search results in XML with `<WebSearchResult>` tags contain
 
 <REQUIREMENTS>
 1. Compile all topic-relevant information from search results
-2. Create a summary at least 1000 words long
+2. Create a summary at least 1000 words long without preamble, XML tags, or Markdown
 3. Ensure coherent information flow
 4. Keep content relevant to the user topic
 </REQUIREMENTS>

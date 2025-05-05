@@ -22,4 +22,5 @@ def test_config() -> None:
     assert config is not None
     assert config.max_research_loops == max_research_loops
     assert config.search_engine == search_engine
-    logger.debug(f"Config:\n{config.model_dump_json(indent=2)}")
+
+    # logger.debug(f"Config:\n{config.model_dump_json(indent=2)}")
