@@ -7,7 +7,7 @@ Some of the [code examples](tests/) do require API keys.
 ## Getting started
 1. Install [Ollama](https://ollama.com) and pull a model.
    ```bash
-   ollama pull llama3.3
+   ollama pull qwen3:8b
    ```
 2. Create an `.env` file and fill in the placeholders including the `TOPIC`.
    ```bash

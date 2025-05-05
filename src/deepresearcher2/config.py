@@ -16,8 +16,10 @@ class SearchEngine(str, Enum):
 
 class Model(str, Enum):
     llama33 = "llama3.3"
-    qwen3 = "qwen3:32b"
+    qwen3_8b = "qwen3:8b"
+    qwen3_32b = "qwen3:32b"
     gpt4o = "openai:gpt-4o"
+    gpt4omini = "openai:gpt-4o-mini"
 
 
 class Config(BaseSettings):

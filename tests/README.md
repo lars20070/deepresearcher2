@@ -23,7 +23,7 @@ stateDiagram-v2
     NodeB --> [*]
     NodeC --> [*]
 ```
-<br>*state diagram for example [`test_pydantic_graph`](test_example.py#L561)*
+<br>*state diagram for example [`test_pydantic_graph`](test_example.py#L568)*
 <br>
 <br>
 <br>
@@ -37,4 +37,4 @@ stateDiagram-v2
     Feedback --> WriteEmail
     Feedback --> [*]
 ```
-<br>*state diagram for example [`test_email`](test_example.py#L637)*
+<br>*state diagram for example [`test_email`](test_example.py#L644)*

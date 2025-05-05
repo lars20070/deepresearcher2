@@ -14,7 +14,7 @@ from deepresearcher2.logger import logger
 
 @pytest.mark.ollama
 @pytest.mark.asyncio
-async def test_websearch(topic: str) -> None:
+async def test_websearch_without_reflection(topic: str) -> None:
     """
     Test WebSearch node without reflection
     """
@@ -56,7 +56,7 @@ async def test_websearch(topic: str) -> None:
 
 @pytest.mark.ollama
 @pytest.mark.asyncio
-async def test_websearch_reflection(topic: str) -> None:
+async def test_websearch_with_reflection(topic: str) -> None:
     """
     Test WebSearch node with reflection
     """
