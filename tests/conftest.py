@@ -42,7 +42,7 @@ def config_for_testing(monkeypatch: pytest.MonkeyPatch) -> Generator[None, None,
     monkeypatch.setattr(config, "max_research_loops", 3)
     monkeypatch.setattr(config, "max_web_search_results", 2)
     monkeypatch.setattr(config, "search_engine", SearchEngine.duckduckgo)
-    monkeypatch.setattr(config, "model", Model.qwen3_8b)
+    monkeypatch.setattr(config, "model", Model.llama33)
     monkeypatch.setattr(config, "reports_folder", "tests/reports/")
     monkeypatch.setattr(config, "logs2logfire", False)
 
