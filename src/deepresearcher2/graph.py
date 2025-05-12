@@ -13,7 +13,7 @@ from .config import SearchEngine, config
 from .logger import logger
 from .models import DeepState, Reference, Reflection, WebSearchSummary
 from .prompts import query_instructions_with_reflection, query_instructions_without_reflection
-from .utils import duckduckgo_search, export_report, perplexity_search, tavily_search
+from .utils import duckduckgo_search, export_report, perplexity_search, remove_reasoning_tags, tavily_search
 
 load_dotenv()
 
@@ -92,6 +92,7 @@ class SummarizeSearchResults(BaseNode[DeepState]):
             result = await summary_agent.run(
                 user_prompt=f"Please summarize the provided web search results for the topic <TOPIC>{ctx.state.topic}</TOPIC>."
             )
+            result.output = remove_reasoning_tags(result.output)
             logger.debug(f"Web search summary:\n{result.output}")
 
             # Transfer search result references to the summary

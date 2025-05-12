@@ -344,3 +344,17 @@ def export_report(report: str, topic: str = "Report", output_dir: str = "reports
             logger.error("Pandoc is not installed. Skipping conversion to PDF.")
     else:
         logger.error(f"Output directory {output_dir} does not exist. Skipping writing the final report.")
+
+
+def remove_reasoning_tags(text: str) -> str:
+    """
+    Remove any text between reasoning tags <think>...</think>.
+
+    Args:
+        text (str): The text containing reasoning tags.
+
+    Returns:
+        str: The text without reasoning tags.
+    """
+    pattern = r"(?:<|&lt;)think(?:>|&gt;).*?(?:<|&lt;)/think(?:>|&gt;)"
+    return re.sub(pattern, "", text, flags=re.DOTALL)
