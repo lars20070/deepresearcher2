@@ -142,15 +142,18 @@ class ReflectOnSearch(BaseNode[DeepState]):
 
             # Reflect on the summaries so far
             async with reflection_agent.run_mcp_servers():
-                reflection = await reflection_agent.run(
+                reflection_run_output = await reflection_agent.run( # Name changed for clarity
                     user_prompt=f"Please reflect on the provided web search summaries for the topic <TOPIC>{ctx.state.topic}</TOPIC>."
                 )
-                logger.debug(f"Reflection knowledge gaps:\n{reflection.output.knowledge_gaps}")
-                logger.debug(f"Reflection covered topics:\n{reflection.output.covered_topics}")
+                # reflection_run_output.output should now contain knowledge_gaps, covered_topics, AND exploratory_paths
+                logger.debug(f"Reflection knowledge gaps:\n{reflection_run_output.output.knowledge_gaps}")
+                logger.debug(f"Reflection covered topics:\n{reflection_run_output.output.covered_topics}")
+                logger.debug(f"Reflection exploratory paths:\n{reflection_run_output.output.exploratory_paths}")
 
-                ctx.state.reflection = Reflection(
-                    knowledge_gaps=reflection.output.knowledge_gaps,
-                    covered_topics=reflection.output.covered_topics,
+                ctx.state.reflection = Reflection( # This is our model from models.py
+                    knowledge_gaps=reflection_run_output.output.knowledge_gaps,
+                    covered_topics=reflection_run_output.output.covered_topics,
+                    exploratory_paths=reflection_run_output.output.exploratory_paths,
                 )
 
             return WebSearch()

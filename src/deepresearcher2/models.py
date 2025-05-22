@@ -53,6 +53,7 @@ class WebSearchSummary(BaseModel):
 class Reflection(BaseModel):
     knowledge_gaps: list[str] = Field(..., description="aspects of the topic which require further exploration")
     covered_topics: list[str] = Field(..., description="aspects of the topic which have already been covered sufficiently")
+    exploratory_paths: list[str] | None = Field(default=None, description="List of tangentially related topics or questions for novel insights.")
 
 
 class FinalSummary(BaseModel):

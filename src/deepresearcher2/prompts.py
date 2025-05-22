@@ -38,15 +38,17 @@ based on specific knowledge gaps.
 You will receive reflections in XML with `<reflections>` tags containing:
 - `<knowledge_gaps>`: information that has not been covered in the previous search results
 - `<covered_topics>`: information that has been covered and should not be repeated
+- `<exploratory_paths>`: a list of tangentially related topics or questions for novel insights. (Optional: this may not always be present)
 </INPUT_FORMAT>
 
 <REQUIREMENTS>
 1. The knowledge gaps form the basis of the search query.
-2. Identify the most relevant point in the knowledge gaps and use it to create a focused search query.
-3. Pick only one item from the list of knowledge gaps. Do not include all knowledge gaps in the construction of the query.
-4. Check that the query is not covering any aspects listed in the list of covered topics.
-5. Check that the query is at least vaguely related to the topic.
-6. Do not include the topic in the aspect of the query, since this is too broad.
+2. If `exploratory_paths` are provided and are not empty in the reflection, consider them. One of your generated queries (if generating multiple, or the primary one if single) OR your primary focus for the query should be to bridge the main topic with one of the `exploratory_paths`. Frame the query to investigate this connection.
+3. Identify the most relevant point in the `knowledge_gaps` (especially one derived from an `exploratory_path`, if applicable) and use it to create a focused search query.
+4. Pick only one item from the list of knowledge gaps or exploratory paths to be the primary focus for the query. Do not include all knowledge gaps, or multiple exploratory paths in the construction of the query.
+5. Check that the query is not covering any aspects listed in the list of covered topics.
+6. Check that the query is at least vaguely related to the topic.
+7. Do not include the topic in the aspect of the query, since this is too broad.
 </REQUIREMENTS>
 
 <OUTPUT_FORMAT>
@@ -115,14 +117,17 @@ You will receive web search summaries in XML with `<WebSearchSummary>` tags cont
 6. Return only the JSON object - no explanations or formatting
 7. Consider technical details, implementation specifics, and emerging trends
 8. Consider second and third-order effects or implications of the topic when exploring knowledge gaps
-9. Be thorough yet concise
-10. Ensure that the list of knowledgae gaps and the list of covered topics are distinct and do not overlap.
+9. Identify 1-2 'exploratory paths'. These are topics or questions that are tangentially related to the main subject but could offer novel insights or connections. Think about distant analogies, related fields, or 'what if' scenarios.
+10. Be thorough yet concise
+11. At least one of the identified `knowledge_gaps` should be directly inspired by or aim to bridge towards an `exploratory_path`.
+12. Ensure that the list of knowledgae gaps and the list of covered topics are distinct and do not overlap.
 </REQUIREMENTS>
 
 <OUTPUT_FORMAT>
 Respond with a JSON object containing:
 - "knowledge_gaps": List of specific aspects requiring further research
 - "covered_topics": List of aspects already thoroughly covered
+- "exploratory_paths": List of 1-2 tangentially related topics or questions for novel insights
 </OUTPUT_FORMAT>
 
 <EXAMPLE_OUTPUT>
@@ -139,6 +144,10 @@ Respond with a JSON object containing:
         "basic definition",
         "etymology",
         "general description"
+    ],
+    "exploratory_paths": [
+        "historical precedents of similar phenomena",
+        "cross-species olfactory responses to rain"
     ]
 }
 ```
