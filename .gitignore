@@ -22,3 +22,6 @@ reports/*.md
 reports/*.pdf
 tests/reports/*.md
 tests/reports/*.pdf
+
+# Coding agents
+CLAUDE.local.md
