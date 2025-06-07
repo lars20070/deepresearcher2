@@ -19,7 +19,7 @@ else:
     # Local Ollama model
     model = OpenAIModel(
         model_name=config.model.value,
-        provider=OpenAIProvider(base_url="http://localhost:11434/v1"),
+        provider=OpenAIProvider(base_url=f"{config.ollama_host}/v1"),
     )
 
 # MCP serves

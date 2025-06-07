@@ -9,6 +9,8 @@ from pydantic_ai.exceptions import ModelRetry
 from pydantic_ai.models.openai import OpenAIModel
 from pydantic_ai.providers.openai import OpenAIProvider
 
+from .config import config
+
 load_dotenv()
 
 # Most code examples can be found in tests/test_example.py
@@ -29,7 +31,7 @@ def basic_chat() -> None:
     ollama_model = OpenAIModel(
         model_name=model,
         provider=OpenAIProvider(
-            base_url="http://localhost:11434/v1",
+            base_url=f"{config.ollama_host}/v1",
         ),
     )
 
@@ -70,7 +72,7 @@ def chat_with_python() -> None:
     ollama_model = OpenAIModel(
         model_name=model,
         provider=OpenAIProvider(
-            base_url="http://localhost:11434/v1",
+            base_url=f"{config.ollama_host}/v1",
         ),
     )
 

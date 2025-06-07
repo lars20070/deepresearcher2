@@ -76,7 +76,6 @@ async def test_pydanticai_ollama() -> None:
     ollama_model = OpenAIModel(
         model_name=model,
         provider=OpenAIProvider(
-            # base_url="http://localhost:11434/v1",
             base_url=f"{config.ollama_host}/v1",
         ),
     )
@@ -202,7 +201,7 @@ async def test_weather_agent() -> None:
     # Maybe look into this issue. https://github.com/pydantic/pydantic-ai/issues/437
     # ollama_model = OpenAIModel(
     #     model_name="llama3.3",
-    #     provider=OpenAIProvider(base_url="http://localhost:11434/v1"),
+    #     provider=OpenAIProvider(base_url=f"{config.ollama_host}/v1"),
     # )
 
     weather_agent = Agent(
@@ -343,7 +342,7 @@ async def test_agent_delegation() -> None:
     # ollama_model = OpenAIModel(
     #     model_name=model,
     #     provider=OpenAIProvider(
-    #         base_url="http://localhost:11434/v1",
+    #         base_url=f"{config.ollama_host}/v1",
     #     ),
     # )
 
@@ -476,7 +475,7 @@ async def test_mcp_sse_client() -> None:
     # model = "llama3.3"
     # ollama_model = OpenAIModel(
     #     model_name=model,
-    #     provider=OpenAIProvider(base_url="http://localhost:11434/v1"),
+    #     provider=OpenAIProvider(base_url=f"{config.ollama_host}/v1"),
     # )
 
     # MCP server providing run_python_code tool
@@ -510,7 +509,7 @@ async def test_mcp_stdio_client() -> None:
     # model = "llama3.3"
     # ollama_model = OpenAIModel(
     #     model_name=model,
-    #     provider=OpenAIProvider(base_url="http://localhost:11434/v1"),
+    #     provider=OpenAIProvider(base_url=f"{config.ollama_host}/v1"),
     # )
 
     # MCP server providing run_python_code tool
@@ -682,7 +681,7 @@ async def test_email() -> None:
     # Agents
     ollama_model = OpenAIModel(
         model_name="llama3.3",
-        provider=OpenAIProvider(base_url="http://localhost:11434/v1"),
+        provider=OpenAIProvider(base_url=f"{config.ollama_host}/v1"),
     )
 
     email_writer_agent = Agent(
@@ -783,7 +782,7 @@ async def test_structured_input() -> None:
 
     ollama_model = OpenAIModel(
         model_name="llama3.3",
-        provider=OpenAIProvider(base_url="http://localhost:11434/v1"),
+        provider=OpenAIProvider(base_url=f"{config.ollama_host}/v1"),
     )
 
     agent = Agent(
