@@ -26,10 +26,12 @@
     "plaintext": false,
   },
   "chat.agent.enabled": true,
-  "r.lsp.promptToInstall": false,
   "cSpell.enabled": true,
   "cSpell.allowCompoundWords": true,
   "cSpell.language": "en",
+  "cSpell.ignorePaths": [
+    "**/*.json"
+  ],
   "cSpell.words": [
     "iloc",
     "logit",

@@ -30,6 +30,8 @@
     "berublan.vscode-log-viewer",
     // mermaid 
     "bierner.markdown-mermaid",
+    // container
+    "ms-vscode-remote.remote-containers",
   ],
   "unwantedRecommendations": [
     "mechatroner.rainbow-csv",
