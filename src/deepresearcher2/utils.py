@@ -5,6 +5,7 @@ import re
 import urllib.error
 import urllib.request
 import zlib
+from collections.abc import Callable
 
 import brotli
 import pypandoc
@@ -20,21 +21,30 @@ from .logger import logger
 from .models import WebSearchResult
 
 
-def retry_with_backoff(func: callable, retry_min: int = 20, retry_max: int = 1000, retry_attempts: int = 5) -> callable:
+def retry_with_backoff(retry_min: int = 20, retry_max: int = 1000, retry_attempts: int = 5) -> Callable:
     """
-    Retry decorator with exponential backoff.
+    Decorator factory for retrying a function with exponential backoff.
+
     For example, the first retry will wait 20 seconds, the second 40 seconds, the third 80 seconds, and so on.
     But never exceeding 1000 seconds. Stopping after 5 attempts.
 
     Args:
-        func (callable): The function to retry.
         retry_min (int): First retry wait time in seconds. Defaults to 20 seconds.
         retry_max (int): Maximum retry wait time in seconds.
             The wait time no longer rises exponentially beyond this maximum wait time. Defaults to 1000 seconds.
         retry_attempts (int): Maximum number of retry attempts. Defaults to 5 attempts.
+    
+    Returns:
+        Callable: A tenacity decorator instance.
+
+    Example:
+        >>> @retry_with_backoff(retry_min=20, retry_max=2000, retry_attempts=50)
     """
 
-    return retry(wait=wait_exponential(exp_base=2, multiplier=retry_min, min=retry_min, max=retry_max), stop=stop_after_attempt(retry_attempts))(func)
+    return retry(
+        wait=wait_exponential(exp_base=2, multiplier=retry_min, min=retry_min, max=retry_max),
+        stop=stop_after_attempt(retry_attempts)
+    )
 
 
 def html2text(html: bytes) -> str:
@@ -69,7 +79,7 @@ def html2text(html: bytes) -> str:
     return clean_text
 
 
-# @retry_with_backoff
+# @retry_with_backoff()
 def fetch_full_page_content(url: HttpUrl, timeout: int = 10) -> str:
     """
     Fetch the full content of a webpage.
@@ -139,7 +149,7 @@ def fetch_full_page_content(url: HttpUrl, timeout: int = 10) -> str:
         return ""
 
 
-@retry_with_backoff
+@retry_with_backoff(retry_min=20, retry_max=2000, retry_attempts=50)
 def duckduckgo_search(query: str, max_results: int = 2, max_content_length: int | None = None) -> list[WebSearchResult]:
     """
     Perform a web search using DuckDuckGo and return a list of results.
@@ -196,7 +206,7 @@ def duckduckgo_search(query: str, max_results: int = 2, max_content_length: int 
     return results
 
 
-@retry_with_backoff
+@retry_with_backoff()
 def tavily_search(query: str, max_results: int = 2, max_content_length: int | None = None) -> list[WebSearchResult]:
     """
     Perform a web search using Tavily and return a list of results.
@@ -259,7 +269,7 @@ def tavily_search(query: str, max_results: int = 2, max_content_length: int | No
     return results
 
 
-@retry_with_backoff
+@retry_with_backoff()
 def perplexity_search(query: str) -> list[WebSearchResult]:
     """
     Perform a web search using Perplexity and return a list of results.
