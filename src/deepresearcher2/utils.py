@@ -29,7 +29,8 @@ def retry_with_backoff(func: callable, retry_min: int = 20, retry_max: int = 100
     Args:
         func (callable): The function to retry.
         retry_min (int): First retry wait time in seconds. Defaults to 20 seconds.
-        retry_max (int): Maximum retry wait time in seconds. The wait time no longer rises exponentially beyond this maximum wait time. Defaults to 1000 seconds.
+        retry_max (int): Maximum retry wait time in seconds.
+            The wait time no longer rises exponentially beyond this maximum wait time. Defaults to 1000 seconds.
         retry_attempts (int): Maximum number of retry attempts. Defaults to 5 attempts.
     """
 
@@ -195,7 +196,7 @@ def duckduckgo_search(query: str, max_results: int = 2, max_content_length: int 
     return results
 
 
-@retry_with_backoff(retry_min=30, retry_max=1200, retry_attempts=10)
+@retry_with_backoff
 def tavily_search(query: str, max_results: int = 2, max_content_length: int | None = None) -> list[WebSearchResult]:
     """
     Perform a web search using Tavily and return a list of results.
