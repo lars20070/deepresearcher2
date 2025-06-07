@@ -76,7 +76,8 @@ async def test_pydanticai_ollama() -> None:
     ollama_model = OpenAIModel(
         model_name=model,
         provider=OpenAIProvider(
-            base_url="http://localhost:11434/v1",
+            # base_url="http://localhost:11434/v1",
+            base_url=f"{config.ollama_host}/v1",
         ),
     )
 
