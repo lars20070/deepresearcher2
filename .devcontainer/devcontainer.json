@@ -11,7 +11,13 @@
     "ghcr.io/lukewiwa/features/shellcheck:0": {},
     "ghcr.io/prulloac/devcontainer-features/latex:1": {},
     "ghcr.io/prulloac/devcontainer-features/ollama:1": {},
-    "ghcr.io/devcontainers-extra/features/curl-apt-get:1": {}
+    "ghcr.io/devcontainers-extra/features/curl-apt-get:1": {},
+    "ghcr.io/jsburckhardt/devcontainer-features/uv:1": {},
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "installLsof": true,
+      "installBuildTools": true, // This option installs build-essential
+      "upgradePackages": true
+    }
   },
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
   "forwardPorts": [
@@ -26,7 +32,7 @@
     "OLLAMA_HOST": "http://host.docker.internal:11434"
   }, // Use the external Ollama process as Ollama host server 
   // Use 'postCreateCommand' to run commands after the container is created.
-  //"postCreateCommand": "",
+  "postCreateCommand": "sudo apt-get update && sudo apt-get install -y cmake pkg-config libclang-dev",
   // Use 'postStartCommand' to run commands after the container is started.
   //"postStartCommand": "",
   // Configure tool-specific properties.
