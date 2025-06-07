@@ -17,4 +17,4 @@ The project relies on local LLMs running in `ollama`. The Ollama CLI is installe
 
 In order to avoid pulling models at container startup, we mount the `~/.ollama` folder of the host system into the container. Make sure the local Ollama installation exists.
 
-The Ollama installation on the host system is GPU accelerated. The Ollama installation in the container is not. For that reason, we use the Ollama installation on the host system as external Ollama server by setting the `OLLAMA_HOST` environment variable. Strictly speaking, mounting of the external `~/ollama` folder is no longer necessary.
+The Ollama installation on the host system is GPU accelerated. The Ollama installation in the container is not. For that reason, we use the Ollama installation on the host system as external Ollama server by setting the `OLLAMA_HOST` environment variable. Strictly speaking, mounting of the external `~/.ollama` folder is therefore not necessary.
