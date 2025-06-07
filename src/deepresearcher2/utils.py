@@ -34,7 +34,7 @@ def retry_with_backoff(func: callable, retry_min: int = 20, retry_max: int = 100
         retry_attempts (int): Maximum number of retry attempts. Defaults to 5 attempts.
     """
 
-    return retry(wait=wait_exponential(min=retry_min, max=retry_max), stop=stop_after_attempt(retry_attempts))(func)
+    return retry(wait=wait_exponential(exp_base=2, multiplier=retry_min, min=retry_min, max=retry_max), stop=stop_after_attempt(retry_attempts))(func)
 
 
 def html2text(html: bytes) -> str:
