@@ -34,6 +34,7 @@ def test_duckduckgo_search() -> None:
     """
     Test the duckduckgo_search() search function
     """
+    logger.info("Testing duckduckgo_search().")
 
     # Full content length
     n = 3  # Number of results

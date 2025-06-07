@@ -23,8 +23,14 @@ from .models import WebSearchResult
 def retry_with_backoff(func: callable, retry_min: int = 20, retry_max: int = 1000, retry_attempts: int = 5) -> callable:
     """
     Retry decorator with exponential backoff.
+    For example, the first retry will wait 20 seconds, the second 40 seconds, the third 80 seconds, and so on.
+    But never exceeding 1000 seconds. Stopping after 5 attempts.
 
-    For example, the first retry will wait 20 seconds, the second 40 seconds, the third 80 seconds, and so on. Stopping after 5 attempts.
+    Args:
+        func (callable): The function to retry.
+        retry_min (int): First retry wait time in seconds. Defaults to 20 seconds.
+        retry_max (int): Maximum retry wait time in seconds. The wait time no longer rises exponentially beyond this maximum wait time. Defaults to 1000 seconds.
+        retry_attempts (int): Maximum number of retry attempts. Defaults to 5 attempts.
     """
 
     return retry(wait=wait_exponential(min=retry_min, max=retry_max), stop=stop_after_attempt(retry_attempts))(func)
@@ -189,7 +195,7 @@ def duckduckgo_search(query: str, max_results: int = 2, max_content_length: int 
     return results
 
 
-@retry_with_backoff
+@retry_with_backoff(retry_min=30, retry_max=1200, retry_attempts=10)
 def tavily_search(query: str, max_results: int = 2, max_content_length: int | None = None) -> list[WebSearchResult]:
     """
     Perform a web search using Tavily and return a list of results.
