@@ -29,7 +29,7 @@ def test_fetch_full_page_content() -> None:
     # assert "Curtis Yarvin's Ideas" in content3
 
 
-@pytest.mark.skip(reason="DuckDuckGo aggressively rate limitted.")
+@pytest.mark.skip(reason="DuckDuckGo aggressively rate limited.")
 def test_duckduckgo_search() -> None:
     """
     Test the duckduckgo_search() search function
