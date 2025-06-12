@@ -1,0 +1,1 @@
+If read-write file system access is configured for Claude Code via `/allowed-tools`, it is advised to run [Claude Code](https://docs.anthropic.com/en/docs/claude-code/overview) in a dev container. For more details, refer to the [Dev Container](../.devcontainer/README.md) documentation.

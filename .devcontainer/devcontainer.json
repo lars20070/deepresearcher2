@@ -1,0 +1,82 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/python
+{
+  "name": "Python 3",
+  // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+  "image": "mcr.microsoft.com/devcontainers/python:1-3.12-bullseye",
+  // Features to add to the dev container. More info: https://containers.dev/features.
+  "features": {
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/rocker-org/devcontainer-features/pandoc:1": {},
+    "ghcr.io/lukewiwa/features/shellcheck:0": {},
+    "ghcr.io/prulloac/devcontainer-features/latex:1": {},
+    "ghcr.io/prulloac/devcontainer-features/ollama:1": {},
+    "ghcr.io/devcontainers-extra/features/curl-apt-get:1": {},
+    "ghcr.io/jsburckhardt/devcontainer-features/uv:1": {},
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "installLsof": true,
+      "installBuildTools": true, // This option installs build-essential
+      "upgradePackages": true
+    }
+  },
+  // Use 'forwardPorts' to make a list of ports inside the container available locally.
+  "forwardPorts": [
+    11434
+  ], // Ollama default port
+  // Mount local Ollama models into the container
+  "mounts": [
+    "source=${localEnv:HOME}/.ollama,target=/home/vscode/.ollama,type=bind"
+  ],
+  // Use 'containerEnv' to set environment variables in the container.
+  "containerEnv": {
+    "OLLAMA_HOST": "http://host.docker.internal:11434"
+  }, // Use the external Ollama process as Ollama host server 
+  // Use 'postCreateCommand' to run commands after the container is created.
+  "postCreateCommand": "sudo apt-get update && sudo apt-get install -y cmake pkg-config libclang-dev",
+  // Use 'postStartCommand' to run commands after the container is started.
+  //"postStartCommand": "",
+  // Configure tool-specific properties.
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/local/bin/python"
+      },
+      "extensions": [
+        // Python
+        "nicohlr.pycharm",
+        "ms-python.python",
+        "charliermarsh.ruff",
+        "njpwerner.autodocstring",
+        // yaml + toml
+        "redhat.vscode-yaml",
+        "tamasfe.even-better-toml",
+        // Bash
+        "timonwong.shellcheck",
+        "mkhl.shfmt",
+        // LaTeX
+        "mathematic.vscode-latex",
+        "lgarcin.vscode-pweave",
+        // git + GitHub Actions
+        "ivanhofer.git-assistant",
+        "GitHub.vscode-github-actions",
+        "me-dutour-mathieu.vscode-github-actions",
+        "GitHub.vscode-pull-request-github",
+        // Copilot
+        "GitHub.copilot",
+        "GitHub.copilot-chat",
+        "ms-vscode.vscode-copilot-data-analysis",
+        "AutomataLabs.copilot-mcp",
+        // spell checker
+        "streetsidesoftware.code-spell-checker",
+        // logging
+        "berublan.vscode-log-viewer",
+        // mermaid 
+        "bierner.markdown-mermaid",
+        // container
+        "ms-vscode-remote.remote-containers"
+      ]
+    }
+  }
+  // Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+  // "remoteUser": "root"
+}

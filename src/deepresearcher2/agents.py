@@ -6,7 +6,7 @@ from pydantic_ai.models.openai import OpenAIModel
 from pydantic_ai.providers.openai import OpenAIProvider
 
 from .config import config
-from .models import FinalSummary, Reflection, WebSearchQuery, WebSearchSummary
+from .models import FinalSummary, Reflection, WebSearchQuery
 from .prompts import final_summary_instructions, reflection_instructions, summary_instructions
 
 load_dotenv()
@@ -19,7 +19,7 @@ else:
     # Local Ollama model
     model = OpenAIModel(
         model_name=config.model.value,
-        provider=OpenAIProvider(base_url="http://localhost:11434/v1"),
+        provider=OpenAIProvider(base_url=f"{config.ollama_host}/v1"),
     )
 
 # MCP serves
@@ -43,7 +43,7 @@ query_agent = Agent(
 summary_agent = Agent(
     model=model,
     # mcp_servers=[mcp_server_duckduckgo],
-    output_type=WebSearchSummary,
+    output_type=str,
     system_prompt=summary_instructions,
     retries=5,
     instrument=True,
