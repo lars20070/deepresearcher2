@@ -1,0 +1,59 @@
+{
+  "projectName": "DeepResearcher2",
+  "description": "A fully local web research and report writing assistant using local LLM models via Ollama",
+  "language": "python",
+  "framework": "pydantic-ai + pydantic-graph",
+  "testFramework": "pytest",
+  "codeStyle": {
+    "formatter": "ruff",
+    "linter": "ruff",
+    "maxLineLength": 120
+  },
+  "dependencies": {
+    "runtime": [
+      "pydantic-ai",
+      "pydantic-graph",
+      "ollama",
+      "asyncio"
+    ],
+    "dev": [
+      "pytest",
+      "ruff",
+      "uv"
+    ]
+  },
+  "projectStructure": {
+    "src": "src/deepresearcher2/",
+    "tests": "tests/",
+    "config": ".env files for configuration"
+  },
+  "keyFiles": [
+    "src/deepresearcher2/graph.py",
+    "src/deepresearcher2/agents.py",
+    "src/deepresearcher2/models.py",
+    "src/deepresearcher2/config.py",
+    "CLAUDE.md"
+  ],
+  "conventions": {
+    "asyncPatterns": "Use async/await for all LLM interactions and web searches",
+    "errorHandling": "Use tenacity for retries, proper logging for debugging",
+    "testMarkers": "Use pytest markers: 'paid', 'ollama', 'example'",
+    "docstrings": "Use concise docstrings for classes and complex functions"
+  },
+  "architecture": {
+    "pattern": "Directed graph workflow with specialized nodes",
+    "nodes": [
+      "WebSearch",
+      "SummarizeSearchResults",
+      "ReflectOnSearch",
+      "FinalizeSummary"
+    ],
+    "agents": "Specialized LLM agents for different workflow steps",
+    "searchEngines": [
+      "DuckDuckGo (default)",
+      "Tavily",
+      "Perplexity"
+    ],
+    "models": "Local via Ollama or cloud models"
+  }
+}
