@@ -30,7 +30,6 @@ jobs:
         echo TAVILY_API_KEY=${{ secrets.TAVILY_API_KEY }} >> .env
         echo GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }} >> .env
         echo LOGFIRE_TOKEN=${{ secrets.LOGFIRE_TOKEN }} >> .env
-        echo RIZA_API_KEY=${{ secrets.RIZA_API_KEY }} >> .env
         echo OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} >> .env
         echo WEATHER_API_KEY=${{ secrets.WEATHER_API_KEY }} >> .env
         echo GEO_API_KEY=${{ secrets.GEO_API_KEY }} >> .env
