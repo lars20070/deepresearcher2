@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 
 from deepresearcher2.config import config
 from deepresearcher2.logger import logger
-from deepresearcher2.utils import brave_search, duckduckgo_search, fetch_full_page_content, perplexity_search, tavily_search
+from deepresearcher2.utils import brave_search, duckduckgo_search, fetch_full_page_content, perplexity_search, serper_search, tavily_search
 
 load_dotenv()
 
@@ -136,6 +136,25 @@ def test_perplexity_search() -> None:
 def test_brave_search() -> None:
     topic = config.topic
     results = brave_search(topic, max_results=3)
+    result = results[0]
+
+    assert len(results) == 3
+    assert result.title is not None
+    assert result.url is not None
+    assert result.summary is not None
+    assert result.content is not None
+    logger.debug(f"search result title: {result.title}")
+    logger.debug(f"search result url: {result.url}")
+    logger.debug(f"search result summary: {result.summary}")
+    logger.debug(f"search result content length: {len(result.content)}")
+    # logger.debug(f"search result content: {result.content}")
+
+
+# @pytest.mark.paid
+# Serper API is generous. 2,500 free requests per month. Hence, we always run the test.
+def test_serper_search() -> None:
+    topic = config.topic
+    results = serper_search(topic, max_results=3)
     result = results[0]
 
     assert len(results) == 3

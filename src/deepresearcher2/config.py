@@ -13,6 +13,7 @@ class SearchEngine(str, Enum):
     tavily = "tavily"
     perplexity = "perplexity"
     brave = "brave"
+    serper = "serper"
 
 
 class Model(str, Enum):
@@ -48,6 +49,7 @@ class Config(BaseSettings):
     anthropic_api_key: str | None = None
     brave_api_key: str | None = None
     perplexity_api_key: str | None = None
+    serper_api_key: str | None = None
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", case_sensitive=False)
 

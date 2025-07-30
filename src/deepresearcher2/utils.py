@@ -375,6 +375,68 @@ def brave_search(query: str, max_results: int = 2, max_content_length: int | Non
     return results
 
 
+# @retry_with_backoff()
+def serper_search(query: str, max_results: int = 2, max_content_length: int | None = None) -> list[WebSearchResult]:
+    """
+    Perform a web search using Serper and return a list of results.
+
+    Args:
+        query (str): The search query to execute.
+        max_results (int, optional): Maximum number of results to return. Defaults to 2.
+        max_content_length (int | None, optional): Maximum character length of the content. If none, the full content is returned. Defaults to None.
+
+    Returns:
+        list[WebSearchResult]: list of search results
+
+    Example:
+        >>> results = serper_search("petrichor", max_results=10)
+        >>> for result in results:
+        ...     print(result.title, result.url)
+    """
+    logger.info(f"Serper web search for: {query}")
+
+    serper_url = "https://google.serper.dev/search"
+    headers = {
+        "X-API-KEY": config.serper_api_key,
+        "Content-Type": "application/json",
+    }
+    payload = {
+        "q": query,
+        "num": max_results,
+    }
+
+    try:
+        response = requests.post(serper_url, headers=headers, json=payload)
+        response.raise_for_status()
+        # serper_results = response.json().get("organic", [])
+    except (ConnectionError, TimeoutError) as e:
+        logger.error(f"Network error during Serper search: {str(e)}")
+        raise
+    except requests.exceptions.HTTPError as e:
+        logger.error(f"HTTP error during Serper search: {str(e)}")
+        raise
+
+    serper_results = response.json().get("organic", [])
+    if not serper_results:
+        logger.warning(f"Serper returned no results for: {query}")
+        return []
+
+    results = []
+    for r in serper_results:
+        title = r.get("title")
+        url = r.get("link")
+        summary = r.get("snippet")
+        content = fetch_full_page_content(url)
+
+        if max_content_length is not None and content is not None:
+            content = content[:max_content_length]
+
+        result = WebSearchResult(title=title, url=str(url), summary=summary, content=content)
+        results.append(result)
+
+    return results
+
+
 def export_report(report: str, topic: str = "Report", output_dir: str = "reports/") -> None:
     """
     Export the report to markdown (and pdf).
