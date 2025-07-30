@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import gzip
-import json
 import os
 import re
 import urllib.error
@@ -63,16 +62,14 @@ def html2text(html: bytes) -> str:
     for junk in soup(["nav", "footer", "header", "aside", "form", "script", "style"]):
         junk.decompose()
 
-    # Extract main content
-    paragraphs = soup.find_all(["p", "div", "section", "article", "blockquote"])
-    content = [p.get_text(strip=True, separator=" ") for p in paragraphs]
-    clean_text = "\n".join(content)
+    # Get text from the entire soup object after removing junk
+    text = soup.get_text()
 
-    # Whitespace cleanup
-    clean_text = re.sub(r"\s+\n", "\n", clean_text)  # clean spaces before newlines
-    clean_text = re.sub(r"\n\s+", "\n", clean_text)  # clean spaces after newlines
-    clean_text = re.sub(r"\n{3,}", "\n\n", clean_text)  # no more than 2 newlines in a row
-    clean_text = clean_text.replace("\xa0", " ")  # replace non-breaking spaces
+    # Some cleanup
+    lines = (line.strip() for line in text.splitlines())  # Break into lines and remove leading and trailing space on each
+    chunks = (phrase.strip() for line in lines for phrase in line.split("  "))  # Break multi-headlines into a line each
+    clean_text = "\n".join(chunk for chunk in chunks if chunk)  # Drop blank lines
+    clean_text = clean_text.replace("\xa0", " ")  # Replace non-breaking spaces
 
     return clean_text
 
@@ -316,13 +313,14 @@ def perplexity_search(query: str) -> list[WebSearchResult]:
 
 
 @retry_with_backoff()
-def brave_search(query: str, max_results: int = 2) -> list[WebSearchResult]:
+def brave_search(query: str, max_results: int = 2, max_content_length: int | None = None) -> list[WebSearchResult]:
     """
     Perform a web search using Brave and return a list of results.
 
     Args:
         query (str): The search query to execute.
         max_results (int, optional): Maximum number of results to return. Defaults to 2.
+        max_content_length (int | None, optional): Maximum character length of the content. If none, the full content is returned. Defaults to None.
 
     Returns:
         list[WebSearchResult]: list of search results
@@ -342,14 +340,39 @@ def brave_search(query: str, max_results: int = 2) -> list[WebSearchResult]:
     params = {
         "q": query,
         "count": max_results,
-        # "country": "us",
-        # "search_lang": "en",
+        "search_lang": "en",
+        "country": "US",
     }
-    response = requests.get(brave_url, headers=headers, params=params).json()
-    logger.debug(f"Complete Brave results:\n{json.dumps(response, indent=2)}")
 
-    result = WebSearchResult(title=query, url="https://example.org", content="")
-    return [result]
+    try:
+        response = requests.get(brave_url, headers=headers, params=params)
+        response.raise_for_status()
+    except (ConnectionError, TimeoutError) as e:
+        logger.error(f"Network error during Brave search: {str(e)}")
+        raise
+    except requests.exceptions.HTTPError as e:
+        logger.error(f"HTTP error during Brave search: {str(e)}")
+        raise
+
+    brave_results = response.json().get("web", {}).get("results", [])
+    if not brave_results:
+        logger.warning(f"Brave returned no results for: {query}")
+        return []
+
+    results = []
+    for r in brave_results:
+        title = r.get("title")
+        url = r.get("url")
+        summary = r.get("description")
+        content = fetch_full_page_content(url)
+
+        if max_content_length is not None and content is not None:
+            content = content[:max_content_length]
+
+        result = WebSearchResult(title=title, url=str(url), summary=summary, content=content)
+        results.append(result)
+
+    return results
 
 
 def export_report(report: str, topic: str = "Report", output_dir: str = "reports/") -> None:
