@@ -33,6 +33,7 @@ jobs:
         echo OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} >> .env
         echo WEATHER_API_KEY=${{ secrets.WEATHER_API_KEY }} >> .env
         echo GEO_API_KEY=${{ secrets.GEO_API_KEY }} >> .env
+        echo BRAVE_API_KEY=${{ secrets.BRAVE_API_KEY }} >> .env
     - name: Install uv package manager
       uses: astral-sh/setup-uv@v5.2.2
       with:
