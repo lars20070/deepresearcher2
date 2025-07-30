@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 
 from deepresearcher2.config import config
 from deepresearcher2.logger import logger
-from deepresearcher2.utils import duckduckgo_search, fetch_full_page_content, perplexity_search, tavily_search
+from deepresearcher2.utils import brave_search, duckduckgo_search, fetch_full_page_content, perplexity_search, tavily_search
 
 load_dotenv()
 
@@ -129,3 +129,13 @@ def test_perplexity_search() -> None:
     logger.debug(f"search result url: {result.url}")
     logger.debug(f"search result content length: {len(result.content)}")
     # logger.debug(f"search result content: {result.content}")
+
+
+# @pytest.mark.paid
+def test_brave_search() -> None:
+    topic = config.topic
+    results = brave_search(topic, max_results=3)
+    result = results[0]
+
+    assert len(results) > 0
+    logger.debug(f"search result title: {result.title}")

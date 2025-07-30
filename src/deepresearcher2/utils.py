@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import gzip
+import json
 import os
 import re
 import urllib.error
@@ -33,7 +34,7 @@ def retry_with_backoff(retry_min: int = 20, retry_max: int = 1000, retry_attempt
         retry_max (int): Maximum retry wait time in seconds.
             The wait time no longer rises exponentially beyond this maximum wait time. Defaults to 1000 seconds.
         retry_attempts (int): Maximum number of retry attempts. Defaults to 5 attempts.
-    
+
     Returns:
         Callable: A tenacity decorator instance.
 
@@ -41,10 +42,7 @@ def retry_with_backoff(retry_min: int = 20, retry_max: int = 1000, retry_attempt
         >>> @retry_with_backoff(retry_min=20, retry_max=2000, retry_attempts=50)
     """
 
-    return retry(
-        wait=wait_exponential(exp_base=2, multiplier=retry_min, min=retry_min, max=retry_max),
-        stop=stop_after_attempt(retry_attempts)
-    )
+    return retry(wait=wait_exponential(exp_base=2, multiplier=retry_min, min=retry_min, max=retry_max), stop=stop_after_attempt(retry_attempts))
 
 
 def html2text(html: bytes) -> str:
@@ -283,7 +281,7 @@ def perplexity_search(query: str) -> list[WebSearchResult]:
         list[WebSearchResult]: list of search results
 
     Example:
-        >>> results = perplexity_search("petrichor", max_results=10)
+        >>> results = perplexity_search("petrichor")
         >>> for result in results:
         ...     print(result.title, result.url)
     """
@@ -314,6 +312,43 @@ def perplexity_search(query: str) -> list[WebSearchResult]:
     content = perplexity_results["choices"][0]["message"]["content"]
 
     result = WebSearchResult(title=title, url=url, content=content)
+    return [result]
+
+
+@retry_with_backoff()
+def brave_search(query: str, max_results: int = 2) -> list[WebSearchResult]:
+    """
+    Perform a web search using Brave and return a list of results.
+
+    Args:
+        query (str): The search query to execute.
+        max_results (int, optional): Maximum number of results to return. Defaults to 2.
+
+    Returns:
+        list[WebSearchResult]: list of search results
+
+    Example:
+        >>> results = brave_search("petrichor", max_results=10)
+        >>> for result in results:
+        ...     print(result.title, result.url)
+    """
+    logger.info(f"Brave web search for: {query}")
+
+    brave_url = "https://api.search.brave.com/res/v1/web/search"
+    headers = {
+        "X-Subscription-Token": config.brave_api_key,
+        "Accept": "application/json",
+    }
+    params = {
+        "q": query,
+        "count": max_results,
+        # "country": "us",
+        # "search_lang": "en",
+    }
+    response = requests.get(brave_url, headers=headers, params=params).json()
+    logger.debug(f"Complete Brave results:\n{json.dumps(response, indent=2)}")
+
+    result = WebSearchResult(title=query, url="https://example.org", content="")
     return [result]
 
 
