@@ -19,7 +19,6 @@ dependencies = [
   "pydantic-ai[cli,examples,mcp]>=0.0.40",
   "logfire>=3.10.0",
   "python-dotenv>=1.1.0",
-  "rizaio>=0.10.0",
   "pydantic-evals[logfire]>=0.0.51",
   "pydantic-ai-slim[mcp]>=0.0.40",
   "duckduckgo-mcp-server>=0.1.1",
@@ -34,7 +33,6 @@ dependencies = [
 [project.scripts]
 uml = "deepresearcher2.cli:uml"
 chat = "deepresearcher2.examples:basic_chat"
-chatpython = "deepresearcher2.examples:chat_with_python"
 mcpserver = "deepresearcher2.examples:mcp_server"
 research = "deepresearcher2.graph:main"
 

@@ -326,7 +326,6 @@ dependencies = [
     { name = "pytest-cov" },
     { name = "pytest-xdist" },
     { name = "python-dotenv" },
-    { name = "rizaio" },
     { name = "ruff" },
     { name = "tavily-python" },
     { name = "tenacity" },
@@ -353,7 +352,6 @@ requires-dist = [
     { name = "pytest-cov", specifier = ">=6.0.0" },
     { name = "pytest-xdist", specifier = ">=3.6.1" },
     { name = "python-dotenv", specifier = ">=1.1.0" },
-    { name = "rizaio", specifier = ">=0.10.0" },
     { name = "ruff", specifier = ">=0.9.5" },
     { name = "tavily-python", specifier = ">=0.5.1" },
     { name = "tenacity", specifier = ">=9.1.2" },
@@ -1804,23 +1802,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/a1/53/830aa4c3066a8ab0ae9a9955976fb770fe9c6102117c8ec4ab3ea62d89e8/rich-14.0.0.tar.gz", hash = "sha256:82f1bc23a6a21ebca4ae0c45af9bdbc492ed20231dcb63f297d6d1021a9d5725", size = 224078 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/0d/9b/63f4c7ebc259242c89b3acafdb37b41d1185c07ff0011164674e9076b491/rich-14.0.0-py3-none-any.whl", hash = "sha256:1c9491e1951aac09caffd42f448ee3d04e58923ffe14993f6e83068dc395d7e0", size = 243229 },
-]
-
-[[package]]
-name = "rizaio"
-version = "0.11.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "anyio" },
-    { name = "distro" },
-    { name = "httpx" },
-    { name = "pydantic" },
-    { name = "sniffio" },
-    { name = "typing-extensions" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/8a/f3/071951a86d853287d15507797514afc8af7c19f964f349a0e242c2722977/rizaio-0.11.0.tar.gz", hash = "sha256:ceca16a3dc76a5a5d1d036f279743953350921b57a053a7c3c1410a354f68b44", size = 105752 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/f9/bb/a1ec8453672587fdff01a29704ec2eee24dfcda33c0d34709835f02a61e0/rizaio-0.11.0-py3-none-any.whl", hash = "sha256:db42b6ff092fb7b67c96ad739a1b01e9c5c57de92c7d0d6d7db9606eca3701a5", size = 91209 },
 ]
 
 [[package]]

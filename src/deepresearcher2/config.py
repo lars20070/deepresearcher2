@@ -41,7 +41,6 @@ class Config(BaseSettings):
     tavily_api_key: str | None = None
     gemini_api_key: str | None = None
     logfire_token: str | None = None
-    riza_api_key: str | None = None
     openai_api_key: str | None = None
     weather_api_key: str | None = None
     geo_api_key: str | None = None
