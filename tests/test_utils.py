@@ -131,7 +131,8 @@ def test_perplexity_search() -> None:
     # logger.debug(f"search result content: {result.content}")
 
 
-@pytest.mark.paid
+# @pytest.mark.paid
+# Brave API is generous. 2,000 free requests per month. Hence, we always run the test.
 def test_brave_search() -> None:
     topic = config.topic
     results = brave_search(topic, max_results=3)

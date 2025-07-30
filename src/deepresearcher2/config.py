@@ -12,6 +12,7 @@ class SearchEngine(str, Enum):
     duckduckgo = "duckduckgo"
     tavily = "tavily"
     perplexity = "perplexity"
+    brave = "brave"
 
 
 class Model(str, Enum):
