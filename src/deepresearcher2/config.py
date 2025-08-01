@@ -14,6 +14,7 @@ class SearchEngine(str, Enum):
     perplexity = "perplexity"
     brave = "brave"
     serper = "serper"
+    searxng = "searxng"
 
 
 class Model(str, Enum):
@@ -35,6 +36,7 @@ class Config(BaseSettings):
     max_web_search_results: int = Field(default=2, description="number of results in a single web search")
     search_engine: SearchEngine = Field(default=SearchEngine.duckduckgo, description="search engine for the web searches")
     ollama_host: str = Field(default="http://localhost:11434", description="Ollama host URL")
+    searxng_host: str = Field(default="http://localhost:8080", description="SearXNG host URL")
     model: Model = Field(default=Model.llama33, description="model to be used by all agents")
     reports_folder: str = Field(default="reports/", description="output directory for the final reports")
     logs2logfire: bool = Field(default=False, description="Post all logs to Logfire. If false, some logs are written to a local log file.")

@@ -458,7 +458,7 @@ def searxng_search(query: str, max_results: int = 2, max_content_length: int | N
     """
     logger.info(f"SearXNG web search for: {query}")
 
-    searxng_url = "http://localhost:8080/search"
+    searxng_url = config.searxng_host + "/search"
     payload = {
         "q": query,
         "format": "json",
