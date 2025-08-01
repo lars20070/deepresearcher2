@@ -1,19 +1,32 @@
 # Deep Researcher 2
 
-Fully local web research and report writing assistant. The models run locally in Ollama. The web searches are performed with DuckDuckGo. By default, no API keys are required.
+A fully local web research and report writing assistant that protects your privacy.
+The AI models run locally using Ollama, and web searches are performed locally with SearXNG.
+By default, no API keys are needed.
 
-Some of the [code examples](tests/) do require API keys.
+**Note:** Steps 1 and 2 are optional. You can choose to run the models and web searches in the cloud instead.
+If you do, you must add the required API keys to the `.env` file.
+
 
 ## Getting started
-1. Install [Ollama](https://ollama.com) and pull a model.
+1. Install [Ollama](https://ollama.com) and download a model.
    ```bash
    ollama pull qwen3:8b
    ```
-2. Create an `.env` file and fill in the placeholders including the `TOPIC`.
+2. Start [SearXNG](https://docs.searxng.org).
+   ```bash
+   git clone git@github.com:lars20070/searxng-docker.git
+   cd searxng-docker
+   sed -i '' "s|ultrasecretkey|$(openssl rand -hex 32)|g" searxng/settings.yml
+   docker compose up -d
+   # Check localhost:8080
+   ```
+3. Set up environment variables.<br>
+Create a `.env` file and fill in the placeholders including the `TOPIC`.
    ```bash
    cp .env.example .env
    ```
-3. Start up the workflow.
+4. Start up the workflow.
    ```bash
    uv run research
    ```

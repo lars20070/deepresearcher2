@@ -33,7 +33,7 @@ def retry_with_backoff(retry_min: int = 20, retry_max: int = 1000, retry_attempt
         retry_max (int): Maximum retry wait time in seconds.
             The wait time no longer rises exponentially beyond this maximum wait time. Defaults to 1000 seconds.
         retry_attempts (int): Maximum number of retry attempts. Defaults to 5 attempts.
-    
+
     Returns:
         Callable: A tenacity decorator instance.
 
@@ -41,10 +41,7 @@ def retry_with_backoff(retry_min: int = 20, retry_max: int = 1000, retry_attempt
         >>> @retry_with_backoff(retry_min=20, retry_max=2000, retry_attempts=50)
     """
 
-    return retry(
-        wait=wait_exponential(exp_base=2, multiplier=retry_min, min=retry_min, max=retry_max),
-        stop=stop_after_attempt(retry_attempts)
-    )
+    return retry(wait=wait_exponential(exp_base=2, multiplier=retry_min, min=retry_min, max=retry_max), stop=stop_after_attempt(retry_attempts))
 
 
 def html2text(html: bytes) -> str:
@@ -65,16 +62,14 @@ def html2text(html: bytes) -> str:
     for junk in soup(["nav", "footer", "header", "aside", "form", "script", "style"]):
         junk.decompose()
 
-    # Extract main content
-    paragraphs = soup.find_all(["p", "div", "section", "article", "blockquote"])
-    content = [p.get_text(strip=True, separator=" ") for p in paragraphs]
-    clean_text = "\n".join(content)
+    # Get text from the entire soup object after removing junk
+    text = soup.get_text()
 
-    # Whitespace cleanup
-    clean_text = re.sub(r"\s+\n", "\n", clean_text)  # clean spaces before newlines
-    clean_text = re.sub(r"\n\s+", "\n", clean_text)  # clean spaces after newlines
-    clean_text = re.sub(r"\n{3,}", "\n\n", clean_text)  # no more than 2 newlines in a row
-    clean_text = clean_text.replace("\xa0", " ")  # replace non-breaking spaces
+    # Some cleanup
+    lines = (line.strip() for line in text.splitlines())  # Break into lines and remove leading and trailing space on each
+    chunks = (phrase.strip() for line in lines for phrase in line.split("  "))  # Break multi-headlines into a line each
+    clean_text = "\n".join(chunk for chunk in chunks if chunk)  # Drop blank lines
+    clean_text = clean_text.replace("\xa0", " ")  # Replace non-breaking spaces
 
     return clean_text
 
@@ -283,7 +278,7 @@ def perplexity_search(query: str) -> list[WebSearchResult]:
         list[WebSearchResult]: list of search results
 
     Example:
-        >>> results = perplexity_search("petrichor", max_results=10)
+        >>> results = perplexity_search("petrichor")
         >>> for result in results:
         ...     print(result.title, result.url)
     """
@@ -315,6 +310,190 @@ def perplexity_search(query: str) -> list[WebSearchResult]:
 
     result = WebSearchResult(title=title, url=url, content=content)
     return [result]
+
+
+@retry_with_backoff()
+def brave_search(query: str, max_results: int = 2, max_content_length: int | None = None) -> list[WebSearchResult]:
+    """
+    Perform a web search using Brave and return a list of results.
+
+    Args:
+        query (str): The search query to execute.
+        max_results (int, optional): Maximum number of results to return. Defaults to 2.
+        max_content_length (int | None, optional): Maximum character length of the content. If none, the full content is returned. Defaults to None.
+
+    Returns:
+        list[WebSearchResult]: list of search results
+
+    Example:
+        >>> results = brave_search("petrichor", max_results=10)
+        >>> for result in results:
+        ...     print(result.title, result.url)
+    """
+    logger.info(f"Brave web search for: {query}")
+
+    brave_url = "https://api.search.brave.com/res/v1/web/search"
+    headers = {
+        "X-Subscription-Token": config.brave_api_key,
+        "Accept": "application/json",
+    }
+    params = {
+        "q": query,
+        "count": max_results,
+        "search_lang": "en",
+        "country": "US",
+    }
+
+    try:
+        response = requests.get(brave_url, headers=headers, params=params)
+        response.raise_for_status()
+    except (ConnectionError, TimeoutError) as e:
+        logger.error(f"Network error during Brave search: {str(e)}")
+        raise
+    except requests.exceptions.HTTPError as e:
+        logger.error(f"HTTP error during Brave search: {str(e)}")
+        raise
+
+    brave_results = response.json().get("web", {}).get("results", [])
+    if not brave_results:
+        logger.warning(f"Brave returned no results for: {query}")
+        return []
+
+    results = []
+    for r in brave_results:
+        title = r.get("title")
+        url = r.get("url")
+        summary = r.get("description")
+        content = fetch_full_page_content(url)
+
+        if max_content_length is not None and content is not None:
+            content = content[:max_content_length]
+
+        result = WebSearchResult(title=title, url=str(url), summary=summary, content=content)
+        results.append(result)
+
+    return results
+
+
+@retry_with_backoff()
+def serper_search(query: str, max_results: int = 2, max_content_length: int | None = None) -> list[WebSearchResult]:
+    """
+    Perform a web search using Serper and return a list of results.
+
+    Args:
+        query (str): The search query to execute.
+        max_results (int, optional): Maximum number of results to return. Defaults to 2.
+        max_content_length (int | None, optional): Maximum character length of the content. If none, the full content is returned. Defaults to None.
+
+    Returns:
+        list[WebSearchResult]: list of search results
+
+    Example:
+        >>> results = serper_search("petrichor", max_results=10)
+        >>> for result in results:
+        ...     print(result.title, result.url)
+    """
+    logger.info(f"Serper web search for: {query}")
+
+    serper_url = "https://google.serper.dev/search"
+    headers = {
+        "X-API-KEY": config.serper_api_key,
+        "Content-Type": "application/json",
+    }
+    payload = {
+        "q": query,
+        "num": max_results,
+    }
+
+    try:
+        response = requests.post(serper_url, headers=headers, json=payload)
+        response.raise_for_status()
+        # serper_results = response.json().get("organic", [])
+    except (ConnectionError, TimeoutError) as e:
+        logger.error(f"Network error during Serper search: {str(e)}")
+        raise
+    except requests.exceptions.HTTPError as e:
+        logger.error(f"HTTP error during Serper search: {str(e)}")
+        raise
+
+    serper_results = response.json().get("organic", [])
+    if not serper_results:
+        logger.warning(f"Serper returned no results for: {query}")
+        return []
+
+    results = []
+    for r in serper_results:
+        title = r.get("title")
+        url = r.get("link")
+        summary = r.get("snippet")
+        content = fetch_full_page_content(url)
+
+        if max_content_length is not None and content is not None:
+            content = content[:max_content_length]
+
+        result = WebSearchResult(title=title, url=str(url), summary=summary, content=content)
+        results.append(result)
+
+    return results
+
+
+@retry_with_backoff()
+def searxng_search(query: str, max_results: int = 2, max_content_length: int | None = None) -> list[WebSearchResult]:
+    """
+    Perform a web search using SearXNG and return a list of results.
+    Note that max_results cannot exceed 30.
+
+    Args:
+        query (str): The search query to execute.
+        max_results (int, optional): Maximum number of results to return. Defaults to 2. Maximum is 30.
+        max_content_length (int | None, optional): Maximum character length of the content. If none, the full content is returned. Defaults to None.
+
+    Returns:
+        list[WebSearchResult]: list of search results
+
+    Example:
+        >>> results = searxng_search("petrichor", max_results=10)
+        >>> for result in results:
+        ...     print(result.title, result.url)
+    """
+    logger.info(f"SearXNG web search for: {query}")
+
+    searxng_url = config.searxng_host + "/search"
+    payload = {
+        "q": query,
+        "format": "json",
+        "language": "en",
+    }
+
+    try:
+        response = requests.get(searxng_url, params=payload)
+        response.raise_for_status()
+    except (ConnectionError, TimeoutError) as e:
+        logger.error(f"Network error during SearXNG search: {str(e)}")
+        raise
+    except requests.exceptions.HTTPError as e:
+        logger.error(f"HTTP error during SearXNG search: {str(e)}")
+        raise
+
+    searxng_results = response.json().get("results", [])
+    if not searxng_results:
+        logger.warning(f"SearXNG returned no results for: {query}")
+        return []
+
+    results = []
+    for r in searxng_results[:max_results]:
+        title = r.get("title")
+        url = r.get("url")
+        summary = r.get("content")
+        content = fetch_full_page_content(url)
+
+        if max_content_length is not None and content is not None:
+            content = content[:max_content_length]
+
+        result = WebSearchResult(title=title, url=str(url), summary=summary, content=content)
+        results.append(result)
+
+    return results
 
 
 def export_report(report: str, topic: str = "Report", output_dir: str = "reports/") -> None:

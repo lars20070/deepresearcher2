@@ -13,7 +13,16 @@ from .config import SearchEngine, config
 from .logger import logger
 from .models import DeepState, Reference, Reflection, WebSearchSummary
 from .prompts import query_instructions_with_reflection, query_instructions_without_reflection
-from .utils import duckduckgo_search, export_report, perplexity_search, remove_reasoning_tags, tavily_search
+from .utils import (
+    brave_search,
+    duckduckgo_search,
+    export_report,
+    perplexity_search,
+    remove_reasoning_tags,
+    searxng_search,
+    serper_search,
+    tavily_search,
+)
 
 load_dotenv()
 
@@ -60,6 +69,12 @@ class WebSearch(BaseNode[DeepState]):
             ctx.state.search_results = tavily_search(**search_params)
         elif config.search_engine == SearchEngine.perplexity:
             ctx.state.search_results = perplexity_search(ctx.state.search_query.query)
+        elif config.search_engine == SearchEngine.brave:
+            ctx.state.search_results = brave_search(**search_params)
+        elif config.search_engine == SearchEngine.serper:
+            ctx.state.search_results = serper_search(**search_params)
+        elif config.search_engine == SearchEngine.searxng:
+            ctx.state.search_results = searxng_search(**search_params)
         else:
             message = f"Unsupported search engine: {config.search_engine}"
             logger.error(message)

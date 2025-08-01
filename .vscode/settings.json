@@ -68,14 +68,13 @@
     "Tpng",
     "Grankdir",
     "pydanticai",
-    "Riza",
-    "rizaio",
     "evals",
     "mcpserver",
     "Nemo",
     "petrichor",
     "markdownify",
     "qwen",
+    "searxng",
   ],
   "cSpell.languageSettings": [
     {
