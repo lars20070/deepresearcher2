@@ -4,17 +4,16 @@ A fully local web research and report writing assistant that protects your priva
 The AI models run locally using Ollama, and web searches are performed locally with SearXNG.
 By default, no API keys are needed.
 
-**Note:** Steps 1 and 2 are optional.<br>
-You can choose to run the models and web searches in the cloud instead.
+**Note:** Steps 1 and 2 are optional. You can choose to run the models and web searches in the cloud instead.
 If you do, you must add the required API keys to the `.env` file.
 
 
 ## Getting started
-1. **Install [Ollama](https://ollama.com) and download a model.**
+1. Install [Ollama](https://ollama.com) and download a model.
    ```bash
    ollama pull qwen3:8b
    ```
-2. **Start [SearXNG](https://docs.searxng.org).**
+2. Start [SearXNG](https://docs.searxng.org).
    ```bash
    git clone git@github.com:lars20070/searxng-docker.git
    cd searxng-docker
@@ -22,12 +21,12 @@ If you do, you must add the required API keys to the `.env` file.
    docker compose up -d
    # Check localhost:8080
    ```
-3. **Set up environment variables**<br>
+3. Set up environment variables.<br>
 Create a `.env` file and fill in the placeholders including the `TOPIC`.
    ```bash
    cp .env.example .env
    ```
-4. **Start up the workflow.**
+4. Start up the workflow.
    ```bash
    uv run research
    ```
