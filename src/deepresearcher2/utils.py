@@ -440,11 +440,12 @@ def serper_search(query: str, max_results: int = 2, max_content_length: int | No
 @retry_with_backoff()
 def searxng_search(query: str, max_results: int = 2, max_content_length: int | None = None) -> list[WebSearchResult]:
     """
-    Perform a web search using SearxNG and return a list of results.
+    Perform a web search using SearXNG and return a list of results.
+    Note that max_results cannot exceed 30.
 
     Args:
         query (str): The search query to execute.
-        max_results (int, optional): Maximum number of results to return. Defaults to 2.
+        max_results (int, optional): Maximum number of results to return. Defaults to 2. Maximum is 30.
         max_content_length (int | None, optional): Maximum character length of the content. If none, the full content is returned. Defaults to None.
 
     Returns:
@@ -455,50 +456,44 @@ def searxng_search(query: str, max_results: int = 2, max_content_length: int | N
         >>> for result in results:
         ...     print(result.title, result.url)
     """
-    logger.info(f"SearxNG web search for: {query}")
+    logger.info(f"SearXNG web search for: {query}")
 
-    # serper_url = "https://google.serper.dev/search"
-    # headers = {
-    #     "X-API-KEY": config.serper_api_key,
-    #     "Content-Type": "application/json",
-    # }
-    # payload = {
-    #     "q": query,
-    #     "num": max_results,
-    # }
+    searxng_url = "http://localhost:8080/search"
+    payload = {
+        "q": query,
+        "format": "json",
+        "language": "en",
+    }
 
-    # try:
-    #     response = requests.post(serper_url, headers=headers, json=payload)
-    #     response.raise_for_status()
-    #     # serper_results = response.json().get("organic", [])
-    # except (ConnectionError, TimeoutError) as e:
-    #     logger.error(f"Network error during Serper search: {str(e)}")
-    #     raise
-    # except requests.exceptions.HTTPError as e:
-    #     logger.error(f"HTTP error during Serper search: {str(e)}")
-    #     raise
+    try:
+        response = requests.get(searxng_url, params=payload)
+        response.raise_for_status()
+    except (ConnectionError, TimeoutError) as e:
+        logger.error(f"Network error during SearXNG search: {str(e)}")
+        raise
+    except requests.exceptions.HTTPError as e:
+        logger.error(f"HTTP error during SearXNG search: {str(e)}")
+        raise
 
-    # serper_results = response.json().get("organic", [])
-    # if not serper_results:
-    #     logger.warning(f"Serper returned no results for: {query}")
-    #     return []
+    searxng_results = response.json().get("results", [])
+    if not searxng_results:
+        logger.warning(f"SearXNG returned no results for: {query}")
+        return []
 
-    # results = []
-    # for r in serper_results:
-    #     title = r.get("title")
-    #     url = r.get("link")
-    #     summary = r.get("snippet")
-    #     content = fetch_full_page_content(url)
+    results = []
+    for r in searxng_results[:max_results]:
+        title = r.get("title")
+        url = r.get("url")
+        summary = r.get("content")
+        content = fetch_full_page_content(url)
 
-    #     if max_content_length is not None and content is not None:
-    #         content = content[:max_content_length]
+        if max_content_length is not None and content is not None:
+            content = content[:max_content_length]
 
-    #     result = WebSearchResult(title=title, url=str(url), summary=summary, content=content)
-    #     results.append(result)
+        result = WebSearchResult(title=title, url=str(url), summary=summary, content=content)
+        results.append(result)
 
-    # return results
-
-    return []
+    return results
 
 
 def export_report(report: str, topic: str = "Report", output_dir: str = "reports/") -> None:
