@@ -34,7 +34,7 @@ class Config(BaseSettings):
     topic: str = Field(default="petrichor", description="topic to be researched", min_length=2)
     max_research_loops: int = Field(default=3, description="number of search-summary-reflection loops")
     max_web_search_results: int = Field(default=2, description="number of results in a single web search")
-    search_engine: SearchEngine = Field(default=SearchEngine.duckduckgo, description="search engine for the web searches")
+    search_engine: SearchEngine = Field(default=SearchEngine.searxng, description="search engine for the web searches")
     ollama_host: str = Field(default="http://localhost:11434", description="Ollama host URL")
     searxng_host: str = Field(default="http://localhost:8080", description="SearXNG host URL")
     model: Model = Field(default=Model.llama33, description="model to be used by all agents")
