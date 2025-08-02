@@ -12,7 +12,6 @@ from deepresearcher2.graph import DeepState, FinalizeSummary, GraphRunContext, R
 from deepresearcher2.logger import logger
 
 
-@pytest.mark.skip(reason="DuckDuckGo aggressively rate limited.")
 @pytest.mark.ollama
 @pytest.mark.asyncio
 async def test_websearch_without_reflection(topic: str) -> None:
@@ -55,7 +54,6 @@ async def test_websearch_without_reflection(topic: str) -> None:
     #     f.write(ctx.state.model_dump_json(indent=2))
 
 
-@pytest.mark.skip(reason="DuckDuckGo aggressively rate limited.")
 @pytest.mark.ollama
 @pytest.mark.asyncio
 async def test_websearch_with_reflection(topic: str) -> None:
