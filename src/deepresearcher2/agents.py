@@ -30,7 +30,7 @@ mcp_server_duckduckgo = MCPServerStdio("uvx", args=["duckduckgo-mcp-server"])
 # TODO: Check whether this improves the queries or is just a waste of time.
 query_agent = Agent(
     model=model,
-    mcp_servers=[mcp_server_duckduckgo],
+    # mcp_servers=[mcp_server_duckduckgo],
     output_type=WebSearchQuery,
     system_prompt="",
     retries=5,
