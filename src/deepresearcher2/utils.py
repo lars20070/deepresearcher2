@@ -437,7 +437,6 @@ def serper_search(query: str, max_results: int = 2, max_content_length: int | No
     return results
 
 
-@retry_with_backoff()
 def searxng_search(query: str, max_results: int = 2, max_content_length: int | None = None) -> list[WebSearchResult]:
     """
     Perform a web search using SearXNG and return a list of results.

@@ -55,6 +55,7 @@ class WebSearch(BaseNode[DeepState]):
             prompt = f"Please generate a web search query for the following topic: <TOPIC>{topic}</TOPIC>"
             result = await query_agent.run(prompt)
             ctx.state.search_query = result.output
+            ctx.state.search_query.query += " -filetype:pdf"  # Exclude PDF files from search results. We cannot fetch the content anyway.
             logger.debug(f"Web search query:\n{ctx.state.search_query.model_dump_json(indent=2)}")
 
         # Run the search
