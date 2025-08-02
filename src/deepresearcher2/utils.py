@@ -143,6 +143,14 @@ def fetch_full_page_content(url: HttpUrl, timeout: int = 10) -> str:
         logger.error(f"Network error for {url}: {str(e)}")
         return ""
 
+    except TimeoutError as e:
+        logger.error(f"Timeout error for {url}: {str(e)}")
+        return ""
+
+    except Exception as e:
+        logger.error(f"Unexpected error for {url}: {str(e)}")
+        return ""
+
 
 @retry_with_backoff(retry_min=20, retry_max=2000, retry_attempts=50)
 def duckduckgo_search(query: str, max_results: int = 2, max_content_length: int | None = None) -> list[WebSearchResult]:
