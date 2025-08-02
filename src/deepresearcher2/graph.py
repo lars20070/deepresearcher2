@@ -81,7 +81,7 @@ class WebSearch(BaseNode[DeepState]):
             logger.error(message)
             raise ValueError(message)
 
-        logger.debug(f"Web search results:\n{format_as_xml(ctx.state.search_results, root_tag='search_results')}")
+        # logger.debug(f"Web search results:\n{format_as_xml(ctx.state.search_results, root_tag='search_results')}")
 
         return SummarizeSearchResults()
 
@@ -109,7 +109,7 @@ class SummarizeSearchResults(BaseNode[DeepState]):
                 user_prompt=f"Please summarize the provided web search results for the topic <TOPIC>{ctx.state.topic}</TOPIC>."
             )
             result.output = remove_reasoning_tags(result.output)
-            logger.debug(f"Web search summary:\n{result.output}")
+            # logger.debug(f"Web search summary:\n{result.output}")
 
             # Transfer search result references to the summary
             references = []
@@ -122,7 +122,7 @@ class SummarizeSearchResults(BaseNode[DeepState]):
                 aspect=ctx.state.search_query.aspect,  # Aspect from the search query
                 references=references,  # References from the search results
             )
-            logger.debug(f"Summary result:\n{format_as_xml(summary, root_tag='single_search_summary')}")
+            # logger.debug(f"Summary result:\n{format_as_xml(summary, root_tag='single_search_summary')}")
 
             # Append the summary to the list of all search summaries
             ctx.state.search_summaries = ctx.state.search_summaries or []
@@ -145,8 +145,8 @@ class ReflectOnSearch(BaseNode[DeepState]):
         if ctx.state.count < config.max_research_loops:
             ctx.state.count += 1
 
-            xml = format_as_xml(ctx.state.search_summaries, root_tag="search_summaries")
-            logger.debug(f"Search summaries:\n{xml}")
+            # xml = format_as_xml(ctx.state.search_summaries, root_tag="search_summaries")
+            # logger.debug(f"Search summaries:\n{xml}")
 
             @reflection_agent.system_prompt
             def add_search_summaries() -> str:
