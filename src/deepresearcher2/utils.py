@@ -143,10 +143,6 @@ def fetch_full_page_content(url: HttpUrl, timeout: int = 10) -> str:
         logger.error(f"Network error for {url}: {str(e)}")
         return ""
 
-    except TimeoutError as e:
-        logger.error(f"Timeout error for {url}: {str(e)}")
-        return ""
-
     except Exception as e:
         logger.error(f"Unexpected error for {url}: {str(e)}")
         return ""
@@ -373,6 +369,8 @@ def brave_search(query: str, max_results: int = 2, max_content_length: int | Non
         url = r.get("url")
         summary = r.get("description")
         content = fetch_full_page_content(url)
+        if not content:
+            content = summary
 
         if max_content_length is not None and content is not None:
             content = content[:max_content_length]
@@ -435,6 +433,8 @@ def serper_search(query: str, max_results: int = 2, max_content_length: int | No
         url = r.get("link")
         summary = r.get("snippet")
         content = fetch_full_page_content(url)
+        if not content:
+            content = summary
 
         if max_content_length is not None and content is not None:
             content = content[:max_content_length]
@@ -493,6 +493,8 @@ def searxng_search(query: str, max_results: int = 2, max_content_length: int | N
         url = r.get("url")
         summary = r.get("content")
         content = fetch_full_page_content(url)
+        if not content:
+            content = summary
 
         if max_content_length is not None and content is not None:
             content = content[:max_content_length]
