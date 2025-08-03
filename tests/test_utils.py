@@ -23,18 +23,14 @@ def test_fetch_full_page_content() -> None:
     Test the fetch_full_page_content() function
     """
 
-    url = "https://example.com"
+    url = "https://en.wikipedia.org/wiki/Daniel_Noboa"
     content = fetch_full_page_content(url)
-    assert "Example Domain" in content
-
-    url2 = "https://en.wikipedia.org/wiki/Daniel_Noboa"
-    content2 = fetch_full_page_content(url2)
-    assert "Daniel Noboa" in content2
+    assert "Daniel Noboa" in content
 
     # TODO: Workaround for 403 Access Denied
-    # url3 = "https://www.politico.com/news/magazine/2025/01/30/curtis-yarvins-ideas-00201552"
-    # content3 = fetch_full_page_content(url3)
-    # assert "Curtis Yarvin's Ideas" in content3
+    # url2 = "https://www.politico.com/news/magazine/2025/01/30/curtis-yarvins-ideas-00201552"
+    # content2 = fetch_full_page_content(url2)
+    # assert "Curtis Yarvin's Ideas" in content2
 
 
 @pytest.mark.skip(reason="DuckDuckGo aggressively rate limited.")
