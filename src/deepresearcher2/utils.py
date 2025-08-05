@@ -143,6 +143,22 @@ def fetch_full_page_content(url: HttpUrl, timeout: int = 10) -> str:
         logger.error(f"Network error for {url}: {str(e)}")
         return ""
 
+    except (gzip.BadGzipFile, OSError) as e:
+        logger.error(f"Gzip decompression error for {url}: {str(e)}")
+        return ""
+
+    except zlib.error as e:
+        logger.error(f"Deflate decompression error for {url}: {str(e)}")
+        return ""
+
+    except brotli.error as e:
+        logger.error(f"Brotli decompression error for {url}: {str(e)}")
+        return ""
+
+    except UnicodeDecodeError as e:
+        logger.error(f"Unicode decode error for {url}: {str(e)}")
+        return ""
+
     except Exception as e:
         logger.error(f"Unexpected error for {url}: {str(e)}")
         return ""
