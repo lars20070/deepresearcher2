@@ -40,6 +40,10 @@ class Config(BaseSettings):
     model: Model = Field(default=Model.llama33, description="model to be used by all agents")
     reports_folder: str = Field(default="reports/", description="output directory for the final reports")
     logs2logfire: bool = Field(default=False, description="Post all logs to Logfire. If false, some logs are written to a local log file.")
+    temperature_query: float = Field(default=1.0, description="Temperature for the model generating the web queries")
+    temperature_summary: float = Field(default=1.0, description="Temperature for the model generating the summaries of the web search results")
+    temperature_reflection: float = Field(default=1.0, description="Temperature for the model generating the reflection on the summaries")
+    temperature_final_summary: float = Field(default=1.0, description="Temperature for the model generating the final summary of the research report")
 
     # API keys
     tavily_api_key: str | None = None

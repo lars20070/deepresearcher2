@@ -35,6 +35,7 @@ query_agent = Agent(
     system_prompt="",
     retries=5,
     instrument=True,
+    temperature=config.temperature_query,
 )
 
 # Note that we provide internet access to the summary agent. Maybe the agent wants to clarify some facts.
@@ -47,6 +48,7 @@ summary_agent = Agent(
     system_prompt=summary_instructions,
     retries=5,
     instrument=True,
+    temperature=config.temperature_summary,
 )
 
 reflection_agent = Agent(
@@ -55,6 +57,7 @@ reflection_agent = Agent(
     system_prompt=reflection_instructions,
     retries=5,
     instrument=True,
+    temperature=config.temperature_reflection,
 )
 
 final_summary_agent = Agent(
@@ -63,4 +66,5 @@ final_summary_agent = Agent(
     system_prompt=final_summary_instructions,
     retries=5,
     instrument=True,
+    temperature=config.temperature_final_summary,
 )
