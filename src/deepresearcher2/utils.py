@@ -96,6 +96,7 @@ def fetch_full_page_content(url: HttpUrl, timeout: int = 10) -> str:
         >>> print(content)
     """
     logger.info(f"Fetching content from URL: {str(url)}")
+    text = ""
 
     try:
         # Mimic a browser by setting appropriate headers
@@ -129,39 +130,31 @@ def fetch_full_page_content(url: HttpUrl, timeout: int = 10) -> str:
         # Clean up html
         text = html2text(html)
 
-        return text
-
     except urllib.error.HTTPError as e:
         if e.code in (403, 401):
             logger.error(f"Authentication error for {url}: {e.code}")
-            return ""
         else:
             logger.error(f"HTTP error for {url}: {e.code}")
-            return ""
 
     except urllib.error.URLError as e:
         logger.error(f"Network error for {url}: {str(e)}")
-        return ""
 
     except (gzip.BadGzipFile, OSError) as e:
         logger.error(f"Gzip decompression error for {url}: {str(e)}")
-        return ""
 
     except zlib.error as e:
         logger.error(f"Deflate decompression error for {url}: {str(e)}")
-        return ""
 
     except brotli.error as e:
         logger.error(f"Brotli decompression error for {url}: {str(e)}")
-        return ""
 
     except UnicodeDecodeError as e:
         logger.error(f"Unicode decode error for {url}: {str(e)}")
-        return ""
 
     except Exception as e:
         logger.error(f"Unexpected error for {url}: {str(e)}")
-        return ""
+
+    return text
 
 
 @retry_with_backoff(retry_min=20, retry_max=2000, retry_attempts=50)
