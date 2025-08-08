@@ -75,6 +75,7 @@
     "markdownify",
     "qwen",
     "searxng",
+    "httpx",
   ],
   "cSpell.languageSettings": [
     {

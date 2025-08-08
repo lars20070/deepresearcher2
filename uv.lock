@@ -311,7 +311,7 @@ dependencies = [
     { name = "brotli" },
     { name = "duckduckgo-mcp-server" },
     { name = "duckduckgo-search" },
-    { name = "logfire" },
+    { name = "logfire", extra = ["httpx"] },
     { name = "loguru" },
     { name = "markdownify" },
     { name = "pydantic" },
@@ -337,7 +337,7 @@ requires-dist = [
     { name = "brotli", specifier = ">=1.1.0" },
     { name = "duckduckgo-mcp-server", specifier = ">=0.1.1" },
     { name = "duckduckgo-search", specifier = ">=8.0.1" },
-    { name = "logfire", specifier = ">=3.10.0" },
+    { name = "logfire", extras = ["httpx"], specifier = ">=3.10.0" },
     { name = "loguru", specifier = ">=0.7.3" },
     { name = "markdownify", specifier = ">=1.1.0" },
     { name = "pydantic", specifier = ">=2.10.6" },
@@ -857,6 +857,9 @@ asyncpg = [
 fastapi = [
     { name = "opentelemetry-instrumentation-fastapi" },
 ]
+httpx = [
+    { name = "opentelemetry-instrumentation-httpx" },
+]
 sqlite3 = [
     { name = "opentelemetry-instrumentation-sqlite3" },
 ]
@@ -1190,6 +1193,22 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/2f/65/75298953a469e9abe8ee2e5d2ff116a75d130313812697de74336374a43f/opentelemetry_instrumentation_fastapi-0.53b1.tar.gz", hash = "sha256:24e98ddd1bd8164069e68e36c47bb729fefb0a851e6dd520f4fc81c3bbc54147", size = 19321 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/01/06/b996a3b1f243938ebff7ca1a2290174a155c98791ff6f2e5db50bce0a1a2/opentelemetry_instrumentation_fastapi-0.53b1-py3-none-any.whl", hash = "sha256:f8ed5b65e9086b86caeae191fcf798ec7b47469ac7f0341461acc03886278741", size = 12125 },
+]
+
+[[package]]
+name = "opentelemetry-instrumentation-httpx"
+version = "0.53b1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "opentelemetry-api" },
+    { name = "opentelemetry-instrumentation" },
+    { name = "opentelemetry-semantic-conventions" },
+    { name = "opentelemetry-util-http" },
+    { name = "wrapt" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/f8/cb/8cf953b9ec0d458d15c4306aef77d9986f280cdac7eecb3e6af97484b091/opentelemetry_instrumentation_httpx-0.53b1.tar.gz", hash = "sha256:aa8636ad704a99c6dcb73b649035d820506e93d5a80e45254fa435f131611a9c", size = 17735 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/25/39/36136ebbfe0484e204c2afcd0c3cc6365c74fd478a0c680a85915a3f7337/opentelemetry_instrumentation_httpx-0.53b1-py3-none-any.whl", hash = "sha256:34d0057f2601036b85ad958ed052f1b8ea3439f964cb8f8493cb6cf05d7d1715", size = 14130 },
 ]
 
 [[package]]

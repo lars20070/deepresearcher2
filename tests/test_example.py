@@ -26,6 +26,7 @@ from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 from pydantic_ai.models.openai import OpenAIModel
 from pydantic_ai.providers.openai import OpenAIProvider
+from pydantic_ai.settings import ModelSettings
 from pydantic_evals import Case, Dataset
 from pydantic_evals.evaluators import Evaluator, EvaluatorContext, IsInstance
 from pydantic_graph import BaseNode, End, Graph, GraphRunContext
@@ -48,7 +49,7 @@ async def test_pydanticai_agent() -> None:
     logger.info("Testing PydanticAI Agent() class with a cloud model")
 
     agent = Agent(
-        model="google-gla:gemini-1.5-flash",
+        model="google-gla:gemini-2.0-flash",
         system_prompt="Be concise, reply with one sentence.",
     )
 
@@ -93,6 +94,53 @@ async def test_pydanticai_ollama() -> None:
     logger.debug(f"Usage statistics: {usage}")
     assert usage.requests == 1
     assert usage.total_tokens > 0
+
+
+@pytest.mark.example
+@pytest.mark.ollama
+@pytest.mark.asyncio
+async def test_pydanticai_temperature() -> None:
+    """
+    Test the Agent() class with a local Ollama model and different temperatures.
+
+    The temperature parameter ranges from 0.0 to 2.0 with 0.0 being deterministic and 2.0 being very creative.
+    """
+    logger.info("Testing PydanticAI Agent() class with a local Ollama model with different temperatures.")
+
+    model = "llama3.3"
+    # model = "qwen3:8b"
+    ollama_model = OpenAIModel(
+        model_name=model,
+        provider=OpenAIProvider(
+            base_url=f"{config.ollama_host}/v1",
+        ),
+    )
+
+    agent = Agent(ollama_model)
+
+    prompt = "Describe a new ice cream flavour? Answer in a single short sentence."
+    logger.debug(f"Prompt:\n{prompt}")
+
+    model_settings_1 = ModelSettings(temperature=0.01)
+    model_settings_2 = ModelSettings(temperature=1.99)
+
+    result_1 = await agent.run(prompt, model_settings=model_settings_1)
+    result_2 = await agent.run(prompt, model_settings=model_settings_2)
+
+    logger.debug(f"Result from agent (low temperature):\n{result_1.output}")
+    logger.debug(f"Result from agent (high temperature):\n{result_2.output}")
+    assert result_1.output is not None
+    assert result_2.output is not None
+
+    # ollama_model = OpenAIModel(model_name="llama3.3", provider=OpenAIProvider(base_url="http://localhost:11434/v1"))
+    # agent = Agent(ollama_model)
+
+    # prompt = "Describe a new ice cream flavour? Answer in a single short sentence."
+    # result_1 = await agent.run(prompt, settings=ModelSettings(temperature=0.0))
+    # result_2 = await agent.run(prompt, settings=ModelSettings(temperature=1.0))
+
+    # logger.debug(result_1.output)
+    # logger.debug(result_2.output)
 
 
 @pytest.mark.example

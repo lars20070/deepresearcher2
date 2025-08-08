@@ -14,6 +14,8 @@ logfire.configure(
     send_to_logfire=True,
     scrubbing=False,
 )
+logfire.instrument_pydantic_ai()
+logfire.instrument_httpx(capture_all=True)
 
 # Configure Loguru
 logger.remove(0)  # Remove default console logger
