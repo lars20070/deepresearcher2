@@ -121,14 +121,14 @@ async def test_pydanticai_temperature() -> None:
     prompt = "Describe a new ice cream flavour? Answer in a single short sentence."
     logger.debug(f"Prompt:\n{prompt}")
 
-    model_settings_1 = ModelSettings(temperature=0.01)
-    model_settings_2 = ModelSettings(temperature=1.99)
+    for _ in range(5):
+        result_1 = await agent.run(prompt, model_settings=ModelSettings(temperature=0.1))
+        logger.debug(f"Result from agent (low temperature):\n{result_1.output}")
 
-    result_1 = await agent.run(prompt, model_settings=model_settings_1)
-    result_2 = await agent.run(prompt, model_settings=model_settings_2)
+    for _ in range(5):
+        result_2 = await agent.run(prompt, model_settings=ModelSettings(temperature=1.9))
+        logger.debug(f"Result from agent (high temperature):\n{result_2.output}")
 
-    logger.debug(f"Result from agent (low temperature):\n{result_1.output}")
-    logger.debug(f"Result from agent (high temperature):\n{result_2.output}")
     assert result_1.output is not None
     assert result_2.output is not None
 

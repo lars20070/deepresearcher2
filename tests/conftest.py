@@ -44,7 +44,7 @@ def topic() -> str:
     return "petrichor"
 
 
-@pytest.fixture
+@pytest.fixture(autouse=True)
 def config_for_testing(monkeypatch: pytest.MonkeyPatch) -> Generator[None, None, None]:
     """
     Override the config for unit testing.
