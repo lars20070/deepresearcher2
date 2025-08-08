@@ -135,7 +135,7 @@ async def test_pydanticai_temperature() -> None:
         results_cold.append(result)
 
     output_cold = "\n".join(r.output for r in results_cold)
-    logger.debug(f"Result from agent (low temperature):\n{output_cold}")
+    logger.debug(f"Results from agent (low temperature):\n{output_cold}")
 
     results_hot = []
     for _ in range(3):
@@ -143,7 +143,7 @@ async def test_pydanticai_temperature() -> None:
         results_hot.append(result)
 
     output_hot = "\n".join(r.output for r in results_hot)
-    logger.debug(f"Result from agent (high temperature):\n{output_hot}")
+    logger.debug(f"Results from agent (high temperature):\n{output_hot}")
 
     for i in range(3):
         assert results_cold[i].output is not None
