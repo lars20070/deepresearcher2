@@ -104,11 +104,19 @@ async def test_pydanticai_temperature() -> None:
     Test the Agent() class with a local Ollama model and different temperatures.
 
     The temperature parameter ranges from 0.0 to 2.0 with 0.0 being deterministic and 2.0 being very creative.
+    At temperature 0.0, there is no variation of the three answers.
+    At temperature 2.0, the answers are more diverse and creative.
+
+    Note: Even at high temperatures, the first answer might not be that creative. A multi-step approach is necessary.
+    (1) Generate a list of possible answers.
+    (2) Rank the answers based on creativity and relevance.
+    (3) Select the top answer for the final response.
     """
     logger.info("Testing PydanticAI Agent() class with a local Ollama model with different temperatures.")
 
     model = "llama3.3"
     # model = "qwen3:8b"
+    # model = "gpt-oss"  # Really good answers.
     ollama_model = OpenAIModel(
         model_name=model,
         provider=OpenAIProvider(
@@ -121,26 +129,25 @@ async def test_pydanticai_temperature() -> None:
     prompt = "Describe a new ice cream flavour? Answer in a single short sentence."
     logger.debug(f"Prompt:\n{prompt}")
 
-    for _ in range(5):
-        result_1 = await agent.run(prompt, model_settings=ModelSettings(temperature=0.1))
-        logger.debug(f"Result from agent (low temperature):\n{result_1.output}")
+    results_cold = []
+    for _ in range(3):
+        result = await agent.run(prompt, model_settings=ModelSettings(temperature=0.0))
+        results_cold.append(result)
 
-    for _ in range(5):
-        result_2 = await agent.run(prompt, model_settings=ModelSettings(temperature=1.9))
-        logger.debug(f"Result from agent (high temperature):\n{result_2.output}")
+    output_cold = "\n".join(r.output for r in results_cold)
+    logger.debug(f"Result from agent (low temperature):\n{output_cold}")
 
-    assert result_1.output is not None
-    assert result_2.output is not None
+    results_hot = []
+    for _ in range(3):
+        result = await agent.run(prompt, model_settings=ModelSettings(temperature=2.0))
+        results_hot.append(result)
 
-    # ollama_model = OpenAIModel(model_name="llama3.3", provider=OpenAIProvider(base_url="http://localhost:11434/v1"))
-    # agent = Agent(ollama_model)
+    output_hot = "\n".join(r.output for r in results_hot)
+    logger.debug(f"Result from agent (high temperature):\n{output_hot}")
 
-    # prompt = "Describe a new ice cream flavour? Answer in a single short sentence."
-    # result_1 = await agent.run(prompt, settings=ModelSettings(temperature=0.0))
-    # result_2 = await agent.run(prompt, settings=ModelSettings(temperature=1.0))
-
-    # logger.debug(result_1.output)
-    # logger.debug(result_2.output)
+    for i in range(3):
+        assert results_cold[i].output is not None
+        assert results_hot[i].output is not None
 
 
 @pytest.mark.example
