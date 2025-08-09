@@ -129,25 +129,24 @@ async def test_pydanticai_temperature() -> None:
     prompt = "Describe a new ice cream flavour? Answer in a single short sentence."
     logger.debug(f"Prompt:\n{prompt}")
 
-    results_cold = []
-    for _ in range(3):
-        result = await agent.run(prompt, model_settings=ModelSettings(temperature=0.0))
-        results_cold.append(result)
+    # Run the agent with different temperatures
+    for t in [0.0, 1.0, 2.0]:
+        results = []
+        # Generate multiple responses
+        for _ in range(3):
+            result = await agent.run(prompt, model_settings=ModelSettings(temperature=t))
+            results.append(result)
 
-    output_cold = "\n".join(r.output for r in results_cold)
-    logger.debug(f"Results from agent (low temperature):\n{output_cold}")
+        # Log the output
+        log_output = "\n".join(r.output for r in results)
+        logger.debug(f"Results from agent (temperature={t}):\n{log_output}")
 
-    results_hot = []
-    for _ in range(3):
-        result = await agent.run(prompt, model_settings=ModelSettings(temperature=2.0))
-        results_hot.append(result)
-
-    output_hot = "\n".join(r.output for r in results_hot)
-    logger.debug(f"Results from agent (high temperature):\n{output_hot}")
-
-    for i in range(3):
-        assert results_cold[i].output is not None
-        assert results_hot[i].output is not None
+        # Check the variance of the outputs
+        assert all(r.output is not None for r in results)
+        if t == 0.0:
+            assert all(r.output == results[0].output for r in results)  # All outputs are identical for low temperature.
+        else:
+            assert len({r.output for r in results}) == len(results)  # All outputs are unique for high temperature.
 
 
 @pytest.mark.example

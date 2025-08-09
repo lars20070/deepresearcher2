@@ -119,6 +119,13 @@ You will receive web search summaries in XML with `<WebSearchSummary>` tags cont
 10. Ensure that the list of knowledgae gaps and the list of covered topics are distinct and do not overlap.
 </REQUIREMENTS>
 
+<STRICT_OUTPUT_REQUIREMENTS>
+- Output MUST be a single, valid JSON object that exactly matches this schema (no extra keys):
+  {"knowledge_gaps": ["<string>", ...], "covered_topics": ["<string>", ...]}
+- Arrays must contain only strings; do not include nulls or nested objects.
+- Use standard JSON (double quotes), no markdown/code fences, no preamble or trailing commentary.
+</STRICT_OUTPUT_REQUIREMENTS>
+
 <OUTPUT_FORMAT>
 Respond with a JSON object containing:
 - "knowledge_gaps": List of specific aspects requiring further research
