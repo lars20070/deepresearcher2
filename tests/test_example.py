@@ -16,7 +16,7 @@ import pytest
 from httpx import AsyncClient
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
 from pydantic_ai import Agent, ModelRetry, RunContext, format_as_xml
 from pydantic_ai.mcp import MCPServerHTTP, MCPServerStdio
 
@@ -107,7 +107,7 @@ async def test_pydanticai_temperature() -> None:
     At temperature 0.0, there is no variation of the three answers.
     At temperature 2.0, the answers are more diverse and creative.
 
-    Note: Even at high temperatures, the first answer might not be that creative. A multi-step approach is necessary.
+    Note: Even at high temperatures, the first answer might not be that creative. A multi-step approach is necessary, see Test B.
     (1) Generate a list of possible answers.
     (2) Rank the answers based on creativity and relevance.
     (3) Select the top answer for the final response.
@@ -115,7 +115,6 @@ async def test_pydanticai_temperature() -> None:
     logger.info("Testing PydanticAI Agent() class with a local Ollama model with different temperatures.")
 
     model = "llama3.3"
-    # model = "qwen3:8b"
     # model = "gpt-oss"  # Really good answers.
     ollama_model = OpenAIModel(
         model_name=model,
@@ -127,7 +126,9 @@ async def test_pydanticai_temperature() -> None:
     agent = Agent(ollama_model)
 
     prompt = "Describe a new ice cream flavour? Answer in a single short sentence."
-    logger.debug(f"Prompt:\n{prompt}")
+    logger.debug(f"Prompt: {prompt}")
+
+    logger.info("Test A: Effect of temperature on creativity and variance")
 
     # Run the agent with different temperatures
     for t in [0.0, 1.0, 2.0]:
@@ -144,9 +145,56 @@ async def test_pydanticai_temperature() -> None:
         # Check the variance of the outputs
         assert all(r.output is not None for r in results)
         if t == 0.0:
-            assert all(r.output == results[0].output for r in results)  # All outputs are identical for low temperature.
+            assert all(r.output == results[0].output for r in results)  # All outputs are identical for zero temperature.
         else:
-            assert len({r.output for r in results}) == len(results)  # All outputs are unique for high temperature.
+            assert len({r.output for r in results}) == len(results)  # All outputs are unique for non-zero temperature.
+
+    logger.info("Test B: Using ranking for single most creative response")
+
+    t = 1.5
+    results = []
+    for i in range(3):
+        result = await agent.run(prompt, model_settings=ModelSettings(temperature=t))
+        results.append(result)
+        logger.debug(f"Response {i + 1}: {result.output}")
+
+    responses = "\n\n".join([f"Response {i + 1}: {r.output}" for i, r in enumerate(results)])
+    ranking_prompt = f"""
+    Rank the creativity of the following ice cream flavor descriptions on a scale from 0.0 to 1.0 with 0.0 being the least creative
+    and 1.0 being the most creative. Assign DIFFERENT scores to each response, with more creative responses getting higher scores.
+    Do not give the same score to multiple responses.
+
+    {responses}
+
+    For each response, analyze originality, unexpectedness, and novelty of the concept.
+    """
+
+    class CreativityScore(BaseModel):
+        score: float = Field(..., ge=0.0, le=1.0, description="Score between 0.0 and 1.0")
+
+    ranking_agent = Agent(
+        model=ollama_model,
+        output_type=CreativityScore,
+        system_prompt=ranking_prompt,
+        retries=5,
+        instrument=True,
+    )
+
+    creativity: list[CreativityScore] = []
+    for i in range(3):
+        score = await ranking_agent.run(
+            f"Provide the creativity score for Response {i + 1} only.",
+            model_settings=ModelSettings(temperature=1.0),
+        )
+        logger.debug(f"Creativity score for Response {i + 1}: {score.output}")
+        creativity.append(score.output)
+
+    max_index = max(range(len(creativity)), key=lambda i: creativity[i].score)
+    result_most_creative = results[max_index]
+    logger.debug(f"Most creative response: {result_most_creative.output}")
+
+    assert all(0.0 <= c.score <= 1.0 for c in creativity)
+    assert result_most_creative.output is not None
 
 
 @pytest.mark.example
