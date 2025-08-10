@@ -166,35 +166,55 @@ async def test_pydanticai_temperature() -> None:
 
     {responses}
 
-    For each response, analyze originality, unexpectedness, and novelty of the concept.
+    <OUTPUT_FORMAT>
+    Return a single JSON object with exactly one key "scores".
+    "scores" must be an array of length {len(results)}, in the same order (Response 1..N).
+    Each item must be an object of the form {{ "score": <float between 0.0 and 1.0> }}.
+    Use standard JSON (double quotes). No extra keys, no markdown/code fences, no explanations before or after the JSON.
+    </OUTPUT_FORMAT>
+
+    <EXAMPLE_OUTPUT>
+    {{"scores": [
+            {{"score": 0.82 }},
+            {{"score": 0.37 }},
+            {{"score": 0.95 }}
+        ]}}
+    </EXAMPLE_OUTPUT>
     """
 
     class CreativityScore(BaseModel):
         score: float = Field(..., ge=0.0, le=1.0, description="Score between 0.0 and 1.0")
 
+    class CreativityScores(BaseModel):
+        scores: list[CreativityScore] = Field(
+            ...,
+            min_length=3,
+            max_length=3,
+            description="List of 3 creativity scores",
+        )
+
     ranking_agent = Agent(
         model=ollama_model,
-        output_type=CreativityScore,
+        output_type=CreativityScores,
         system_prompt=ranking_prompt,
         retries=5,
         instrument=True,
     )
 
-    creativity: list[CreativityScore] = []
+    # Generate creativity scores
+    run = await ranking_agent.run(
+        "Provide the creativity scores for each response.",
+        model_settings=ModelSettings(temperature=1.0),
+    )
+    scores: CreativityScores = run.output
     for i in range(3):
-        score = await ranking_agent.run(
-            f"Provide the creativity score for Response {i + 1} only.",
-            model_settings=ModelSettings(temperature=1.0),
-        )
-        logger.debug(f"Creativity score for Response {i + 1}: {score.output}")
-        creativity.append(score.output)
+        logger.debug(f"Score {i + 1}: {scores.scores[i].score}")
 
-    max_index = max(range(len(creativity)), key=lambda i: creativity[i].score)
-    result_most_creative = results[max_index]
-    logger.debug(f"Most creative response: {result_most_creative.output}")
+    max_index = max(range(len(scores.scores)), key=lambda i: scores.scores[i].score)
+    logger.debug(f"Most creative response: {results[max_index].output}")
 
-    assert all(0.0 <= c.score <= 1.0 for c in creativity)
-    assert result_most_creative.output is not None
+    assert all(0.0 <= s.score <= 1.0 for s in scores.scores)
+    assert results[max_index].output is not None
 
 
 @pytest.mark.example
