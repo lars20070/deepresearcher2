@@ -152,8 +152,9 @@ async def test_pydanticai_temperature() -> None:
     logger.info("Test B: Using ranking for single most creative response")
 
     t = 1.5
+    n = 3  # Number of generated responses
     results = []
-    for i in range(3):
+    for i in range(n):
         result = await agent.run(prompt, model_settings=ModelSettings(temperature=t))
         results.append(result)
         logger.debug(f"Response {i + 1}: {result.output}")
@@ -188,9 +189,9 @@ async def test_pydanticai_temperature() -> None:
     class CreativityScores(BaseModel):
         scores: list[CreativityScore] = Field(
             ...,
-            min_length=3,
-            max_length=3,
-            description="List of 3 creativity scores",
+            min_length=n,
+            max_length=n,
+            description=f"List of {n} creativity scores",
         )
 
     ranking_agent = Agent(
@@ -207,7 +208,7 @@ async def test_pydanticai_temperature() -> None:
         model_settings=ModelSettings(temperature=1.0),
     )
     scores: CreativityScores = run.output
-    for i in range(3):
+    for i in range(n):
         logger.debug(f"Score {i + 1}: {scores.scores[i].score}")
 
     max_index = max(range(len(scores.scores)), key=lambda i: scores.scores[i].score)
