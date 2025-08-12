@@ -54,6 +54,7 @@ def config_for_testing(monkeypatch: pytest.MonkeyPatch) -> Generator[None, None,
     monkeypatch.setattr(config, "max_web_search_results", 2)
     monkeypatch.setattr(config, "search_engine", SearchEngine.serper)
     monkeypatch.setattr(config, "model", Model.llama33)
+    monkeypatch.setattr(config, "model_timeout", 600)
     monkeypatch.setattr(config, "reports_folder", "tests/reports/")
     monkeypatch.setattr(config, "logs2logfire", False)
 

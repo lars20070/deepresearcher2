@@ -58,7 +58,7 @@ class WebSearch(BaseNode[DeepState]):
                 user_prompt=prompt,
                 model_settings=ModelSettings(
                     temperature=config.temperature_query,
-                    timeout=600,
+                    timeout=config.model_timeout,
                 ),
             )
             ctx.state.search_query = result.output
@@ -120,7 +120,7 @@ class SummarizeSearchResults(BaseNode[DeepState]):
                 user_prompt=f"Please summarize the provided web search results for the topic <TOPIC>{ctx.state.topic}</TOPIC>.",
                 model_settings=ModelSettings(
                     temperature=config.temperature_summary,
-                    timeout=600,
+                    timeout=config.model_timeout,
                 ),
             )
             result.output = remove_reasoning_tags(result.output)
@@ -177,7 +177,7 @@ class ReflectOnSearch(BaseNode[DeepState]):
                     user_prompt=f"Please reflect on the provided web search summaries for the topic <TOPIC>{ctx.state.topic}</TOPIC>.",
                     model_settings=ModelSettings(
                         temperature=config.temperature_reflection,
-                        timeout=600,
+                        timeout=config.model_timeout,
                     ),
                 )
                 logger.debug(f"Reflection knowledge gaps:\n{reflection.output.knowledge_gaps}")
@@ -221,7 +221,7 @@ class FinalizeSummary(BaseNode[DeepState]):
                 user_prompt=f"Please summarize all web search summaries for the topic <TOPIC>{ctx.state.topic}</TOPIC>.",
                 model_settings=ModelSettings(
                     temperature=config.temperature_final_summary,
-                    timeout=600,
+                    timeout=config.model_timeout,
                 ),
             )
             logger.debug(f"Final summary:\n{final_summary.output.summary}")

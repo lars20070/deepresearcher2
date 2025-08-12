@@ -32,14 +32,15 @@ class Config(BaseSettings):
     """
 
     # Workflow settings
-    topic: str = Field(default="petrichor", description="topic to be researched", min_length=2)
-    max_research_loops: int = Field(default=3, description="number of search-summary-reflection loops")
-    max_web_search_results: int = Field(default=2, description="number of results in a single web search")
-    search_engine: SearchEngine = Field(default=SearchEngine.searxng, description="search engine for the web searches")
+    topic: str = Field(default="petrichor", description="Topic to be researched", min_length=2)
+    max_research_loops: int = Field(default=3, description="Number of search-summary-reflection loops")
+    max_web_search_results: int = Field(default=2, description="Number of results in a single web search")
+    search_engine: SearchEngine = Field(default=SearchEngine.searxng, description="Search engine for the web searches")
     ollama_host: str = Field(default="http://localhost:11434", description="Ollama host URL")
     searxng_host: str = Field(default="http://localhost:8080", description="SearXNG host URL")
-    model: Model = Field(default=Model.llama33, description="model to be used by all agents")
-    reports_folder: str = Field(default="reports/", description="output directory for the final reports")
+    model: Model = Field(default=Model.llama33, description="Model to be used by all agents")
+    model_timeout: int = Field(default=600, description="Timeout in seconds for the model requests")
+    reports_folder: str = Field(default="reports/", description="Output directory for the final reports")
     logs2logfire: bool = Field(default=False, description="Post all logs to Logfire. If false, some logs are written to a local log file.")
     temperature_query: float = Field(default=1.0, description="Temperature for the model generating the web queries")
     temperature_summary: float = Field(default=1.0, description="Temperature for the model generating the summaries of the web search results")
