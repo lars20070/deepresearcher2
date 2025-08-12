@@ -63,7 +63,7 @@ class WebSearch(BaseNode[DeepState]):
             )
             ctx.state.search_query = result.output
             # Exclude PDF files from search results. We cannot fetch the content anyway.
-            if ctx.state.search_query is not None and getattr(ctx.state.search_query, "query", None) is not None:
+            if ctx.state.search_query is not None and hasattr(ctx.state.search_query, "query") and ctx.state.search_query.query is not None:
                 ctx.state.search_query.query += " -filetype:pdf"
             else:
                 logger.warning("search_query or search_query.query is None; skipping PDF exclusion.")
