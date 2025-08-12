@@ -18,7 +18,7 @@ from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 from pydantic import BaseModel, EmailStr, Field
 from pydantic_ai import Agent, ModelRetry, RunContext, format_as_xml
-from pydantic_ai.mcp import MCPServerHTTP, MCPServerStdio
+from pydantic_ai.mcp import MCPServerSSE, MCPServerStdio
 
 if TYPE_CHECKING:
     from pydantic_ai.messages import ModelMessage
@@ -574,7 +574,7 @@ async def test_mcp_sse_client() -> None:
     # )
 
     # MCP server providing run_python_code tool
-    mcp_server = MCPServerHTTP(url="http://localhost:3001/sse")
+    mcp_server = MCPServerSSE(url="http://localhost:3001/sse")
     agent = Agent(
         model="openai:gpt-4o",
         # model=ollama_model,
