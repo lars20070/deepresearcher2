@@ -52,7 +52,7 @@ class WebSearch(BaseNode[DeepState]):
                 return query_instructions_without_reflection
 
         # Generate the query
-        async with query_agent.run_mcp_servers():
+        async with query_agent:
             prompt = f"Please generate a web search query for the following topic: <TOPIC>{topic}</TOPIC>"
             result = await query_agent.run(
                 user_prompt=prompt,
@@ -115,7 +115,7 @@ class SummarizeSearchResults(BaseNode[DeepState]):
             return f"List of web search results:\n{xml}"
 
         # Generate the summary
-        async with summary_agent.run_mcp_servers():
+        async with summary_agent:
             result = await summary_agent.run(
                 user_prompt=f"Please summarize the provided web search results for the topic <TOPIC>{ctx.state.topic}</TOPIC>.",
                 model_settings=ModelSettings(
@@ -172,7 +172,7 @@ class ReflectOnSearch(BaseNode[DeepState]):
                 return f"List of search summaries:\n{xml}"
 
             # Reflect on the summaries so far
-            async with reflection_agent.run_mcp_servers():
+            async with reflection_agent:
                 reflection = await reflection_agent.run(
                     user_prompt=f"Please reflect on the provided web search summaries for the topic <TOPIC>{ctx.state.topic}</TOPIC>.",
                     model_settings=ModelSettings(
@@ -216,7 +216,7 @@ class FinalizeSummary(BaseNode[DeepState]):
             return f"List of search summaries:\n{xml}"
 
         # Finalize the summary of the entire report
-        async with final_summary_agent.run_mcp_servers():
+        async with final_summary_agent:
             final_summary = await final_summary_agent.run(
                 user_prompt=f"Please summarize all web search summaries for the topic <TOPIC>{ctx.state.topic}</TOPIC>.",
                 model_settings=ModelSettings(

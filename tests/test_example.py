@@ -582,7 +582,7 @@ async def test_mcp_sse_client() -> None:
         instrument=True,
     )
 
-    async with agent.run_mcp_servers():
+    async with agent:
         result = await agent.run("How many days between 2000-01-01 and 2025-03-18?")
         logger.debug(f"Result: {result.output}")
 
@@ -627,7 +627,7 @@ async def test_mcp_stdio_client() -> None:
         instrument=True,
     )
 
-    async with agent.run_mcp_servers():
+    async with agent:
         result = await agent.run("How many days between 2000-01-01 and 2025-03-18?")
         logger.debug(f"Result: {result.output}")
 
