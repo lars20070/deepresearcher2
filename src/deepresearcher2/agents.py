@@ -30,7 +30,7 @@ mcp_server_duckduckgo = MCPServerStdio("uvx", args=["duckduckgo-mcp-server"])
 # TODO: Check whether this improves the queries or is just a waste of time.
 query_agent = Agent(
     model=model,
-    # mcp_servers=[mcp_server_duckduckgo],
+    # toolsets=[mcp_server_duckduckgo],
     output_type=WebSearchQuery,
     system_prompt="",
     retries=5,
@@ -42,7 +42,7 @@ query_agent = Agent(
 # Sometimes the model fails to reply with JSON. In this case, the model tries to google for a fix. Better switch off the internet access.
 summary_agent = Agent(
     model=model,
-    # mcp_servers=[mcp_server_duckduckgo],
+    # toolsets=[mcp_server_duckduckgo],
     output_type=str,
     system_prompt=summary_instructions,
     retries=5,

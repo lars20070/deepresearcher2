@@ -578,7 +578,7 @@ async def test_mcp_sse_client() -> None:
     agent = Agent(
         model="openai:gpt-4o",
         # model=ollama_model,
-        mcp_servers=[mcp_server],
+        toolsets=[mcp_server],
         instrument=True,
     )
 
@@ -623,7 +623,7 @@ async def test_mcp_stdio_client() -> None:
     agent = Agent(
         model="openai:gpt-4o",
         # model=ollama_model,
-        mcp_servers=[mcp_server],
+        toolsets=[mcp_server],
         instrument=True,
     )
 
