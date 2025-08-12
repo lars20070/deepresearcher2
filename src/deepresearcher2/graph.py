@@ -6,6 +6,7 @@ from dataclasses import dataclass
 
 from dotenv import load_dotenv
 from pydantic_ai import format_as_xml
+from pydantic_ai.settings import ModelSettings
 from pydantic_graph import BaseNode, End, Graph, GraphRunContext
 
 from .agents import final_summary_agent, query_agent, reflection_agent, summary_agent
@@ -53,7 +54,13 @@ class WebSearch(BaseNode[DeepState]):
         # Generate the query
         async with query_agent.run_mcp_servers():
             prompt = f"Please generate a web search query for the following topic: <TOPIC>{topic}</TOPIC>"
-            result = await query_agent.run(prompt)
+            result = await query_agent.run(
+                user_prompt=prompt,
+                model_settings=ModelSettings(
+                    temperature=config.temperature_query,
+                    timeout=600,
+                ),
+            )
             ctx.state.search_query = result.output
             # Exclude PDF files from search results. We cannot fetch the content anyway.
             if ctx.state.search_query is not None and getattr(ctx.state.search_query, "query", None) is not None:
@@ -110,7 +117,11 @@ class SummarizeSearchResults(BaseNode[DeepState]):
         # Generate the summary
         async with summary_agent.run_mcp_servers():
             result = await summary_agent.run(
-                user_prompt=f"Please summarize the provided web search results for the topic <TOPIC>{ctx.state.topic}</TOPIC>."
+                user_prompt=f"Please summarize the provided web search results for the topic <TOPIC>{ctx.state.topic}</TOPIC>.",
+                model_settings=ModelSettings(
+                    temperature=config.temperature_summary,
+                    timeout=600,
+                ),
             )
             result.output = remove_reasoning_tags(result.output)
             # logger.debug(f"Web search summary:\n{result.output}")
@@ -163,7 +174,11 @@ class ReflectOnSearch(BaseNode[DeepState]):
             # Reflect on the summaries so far
             async with reflection_agent.run_mcp_servers():
                 reflection = await reflection_agent.run(
-                    user_prompt=f"Please reflect on the provided web search summaries for the topic <TOPIC>{ctx.state.topic}</TOPIC>."
+                    user_prompt=f"Please reflect on the provided web search summaries for the topic <TOPIC>{ctx.state.topic}</TOPIC>.",
+                    model_settings=ModelSettings(
+                        temperature=config.temperature_reflection,
+                        timeout=600,
+                    ),
                 )
                 logger.debug(f"Reflection knowledge gaps:\n{reflection.output.knowledge_gaps}")
                 logger.debug(f"Reflection covered topics:\n{reflection.output.covered_topics}")
@@ -203,7 +218,11 @@ class FinalizeSummary(BaseNode[DeepState]):
         # Finalize the summary of the entire report
         async with final_summary_agent.run_mcp_servers():
             final_summary = await final_summary_agent.run(
-                user_prompt=f"Please summarize all web search summaries for the topic <TOPIC>{ctx.state.topic}</TOPIC>."
+                user_prompt=f"Please summarize all web search summaries for the topic <TOPIC>{ctx.state.topic}</TOPIC>.",
+                model_settings=ModelSettings(
+                    temperature=config.temperature_final_summary,
+                    timeout=600,
+                ),
             )
             logger.debug(f"Final summary:\n{final_summary.output.summary}")
 
