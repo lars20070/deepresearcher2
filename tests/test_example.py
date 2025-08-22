@@ -651,6 +651,14 @@ async def test_pydantic_evals_llmjudge() -> None:
     )
     logger.debug(f"Complete evaluation report:\n{report}")
 
+    # Access the generated recipes
+    for case in report.cases:
+        order: CustomerOrder = case.inputs
+        recipe: Recipe = case.output
+        assert len(recipe.ingredients) > 0
+        assert len(recipe.steps) > 0
+        logger.debug(f"Generated recipe for {order.dish_name}:\n{recipe}")
+
 
 @pytest.mark.skip(reason="Requires MCP server to be started first.")
 @pytest.mark.paid
