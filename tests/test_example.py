@@ -11,6 +11,9 @@ from io import StringIO
 from typing import TYPE_CHECKING, Any
 from unittest.mock import patch
 
+if TYPE_CHECKING:
+    from pathlib import Path
+
 import logfire
 import pytest
 from httpx import AsyncClient
@@ -557,7 +560,7 @@ async def test_pydantic_evals() -> None:
 @pytest.mark.example
 @pytest.mark.ollama
 @pytest.mark.asyncio
-async def test_pydantic_evals_llmjudge() -> None:
+async def test_pydantic_evals_llmjudge(tmp_path: Path) -> None:
     """
     Test the functionality of the LLMJudge class
     https://ai.pydantic.dev/evals/#evaluation-with-llmjudge
@@ -641,6 +644,23 @@ async def test_pydantic_evals_llmjudge() -> None:
     assert dataset.cases[0].inputs.dietary_restriction == "vegetarian"
     assert dataset.cases[1].inputs.dish_name == "Chocolate Cake"
     assert dataset.cases[1].inputs.dietary_restriction == "gluten-free"
+
+    # Serialize the benchmark dataset
+    path = tmp_path / "benchmark.json"
+    path_schema = tmp_path / "benchmark_schema.json"
+    dataset.to_file(path)  # A corresponding schema file is written as well.
+
+    assert path.exists()
+    assert path.is_file()
+    assert path.stat().st_size > 0
+
+    assert path_schema.exists()
+    assert path_schema.is_file()
+    assert path_schema.stat().st_size > 0
+
+    # Deserialize the benchmark dataset again
+    dataset2 = Dataset[CustomerOrder, Recipe, Any].from_file(path)
+    assert dataset2.model_dump(mode="json", by_alias=True, exclude_none=True) == dataset.model_dump(mode="json", by_alias=True, exclude_none=True)
 
     # Run the evaluation
     report = await dataset.evaluate(transform_recipe)
