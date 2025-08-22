@@ -533,7 +533,7 @@ async def test_pydanticai_evals() -> None:
             MyEvaluator(),  # Custom evaluator
         ],
     )
-    logger.debug(f"Complete evals dataset: {dataset}")
+    logger.debug(f"Complete evals dataset:\n{dataset}")
 
     # Check structure of test dataset
     assert dataset.cases[0].inputs == "What is the capital of France?"
@@ -551,7 +551,7 @@ async def test_pydanticai_evals() -> None:
         include_output=True,
         include_durations=False,
     )
-    logger.debug(f"Complete evaluation report: {report}")
+    logger.debug(f"Complete evaluation report:\n{report}")
 
 
 @pytest.mark.skip(reason="Requires MCP server to be started first.")

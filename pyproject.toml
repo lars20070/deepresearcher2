@@ -64,7 +64,7 @@ lint.ignore = [
 lint.pydocstyle.convention = "google"
 
 [tool.pytest.ini_options]
-addopts = ["-m", "not paid"] # Skip tests that require a paid API key
+# addopts = ["-m", "not paid"] # Skip tests that require a paid API key
 asyncio_default_fixture_loop_scope = "function" # Use "session" for a single event loop for all tests or "function" for a new event loop for every test (more isolation).
 markers = [
   "paid: tests requiring paid APIs",
