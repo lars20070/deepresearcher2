@@ -28,7 +28,7 @@ from pydantic_ai.models.openai import OpenAIModel
 from pydantic_ai.providers.openai import OpenAIProvider
 from pydantic_ai.settings import ModelSettings
 from pydantic_evals import Case, Dataset
-from pydantic_evals.evaluators import Evaluator, EvaluatorContext, IsInstance
+from pydantic_evals.evaluators import Evaluator, EvaluatorContext, IsInstance, LLMJudge
 from pydantic_graph import BaseNode, End, Graph, GraphRunContext
 
 from deepresearcher2.config import config
@@ -492,7 +492,7 @@ async def test_agent_delegation() -> None:
 
 @pytest.mark.example
 @pytest.mark.asyncio
-async def test_pydanticai_evals() -> None:
+async def test_pydantic_evals() -> None:
     """
     Test the functionality of pydantic-evals.
     We evaluate and score the response of the model, see evaluate() method.
@@ -546,6 +546,104 @@ async def test_pydanticai_evals() -> None:
         return "Paris"
 
     report = await dataset.evaluate(guess_city)
+    report.print(
+        include_input=True,
+        include_output=True,
+        include_durations=False,
+    )
+    logger.debug(f"Complete evaluation report:\n{report}")
+
+
+@pytest.mark.example
+@pytest.mark.ollama
+@pytest.mark.asyncio
+async def test_pydantic_evals_llmjudge() -> None:
+    """
+    Test the functionality of the LLMJudge class
+    https://ai.pydantic.dev/evals/#evaluation-with-llmjudge
+
+    The benchmark dataset contains two cases for evaluating recipe generation: a vegetarian recipe and a gluten-free recipe.
+    Each response is checked with three different evaluators:
+    * IsInstance() checks that the output is a valid Recipe object.
+    * a general LLMJudge() checks ingredients and steps.
+    * a specific LLMJudge() checks for dietary restrictions.
+    """
+
+    class CustomerOrder(BaseModel):
+        dish_name: str
+        dietary_restriction: str | None = None
+
+    class Recipe(BaseModel):
+        ingredients: list[str]
+        steps: list[str]
+
+    # Model for both recipe and judge
+    model = "llama3.3"
+    # model = "qwq:32b"
+    # model = "qwen2.5:72b"
+    ollama_model = OpenAIModel(
+        model_name=model,
+        provider=OpenAIProvider(
+            base_url=f"{config.ollama_host}/v1",
+        ),
+    )
+
+    # Agent for recipe generation
+    recipe_agent = Agent(
+        ollama_model,
+        output_type=Recipe,
+        system_prompt="Generate a recipe to cook the dish that meets the dietary restrictions.",
+    )
+
+    async def transform_recipe(customer_order: CustomerOrder) -> Recipe:
+        r = await recipe_agent.run(format_as_xml(customer_order))
+        return r.output
+
+    dataset = Dataset[CustomerOrder, Recipe, Any](
+        cases=[
+            Case(
+                name="vegetarian_recipe",
+                inputs=CustomerOrder(dish_name="Spaghetti Bolognese", dietary_restriction="vegetarian"),
+                expected_output=None,
+                metadata={"focus": "vegetarian"},
+                evaluators=(
+                    LLMJudge(
+                        rubric="Recipe should not contain meat or animal products",
+                        model=ollama_model,
+                    ),
+                ),
+            ),
+            Case(
+                name="gluten_free_recipe",
+                inputs=CustomerOrder(dish_name="Chocolate Cake", dietary_restriction="gluten-free"),
+                expected_output=None,
+                metadata={"focus": "gluten-free"},
+                evaluators=(
+                    LLMJudge(
+                        rubric="Recipe should not contain gluten or wheat products",
+                        model=ollama_model,
+                    ),
+                ),
+            ),
+        ],
+        evaluators=[
+            IsInstance(type_name="Recipe"),
+            LLMJudge(
+                rubric="Recipe should have clear steps and relevant ingredients",
+                include_input=True,
+                model=ollama_model,
+            ),
+        ],
+    )
+    logger.debug(f"Complete recipe dataset:\n{dataset}")
+
+    assert dataset.cases[0].inputs.dish_name == "Spaghetti Bolognese"
+    assert dataset.cases[0].inputs.dietary_restriction == "vegetarian"
+    assert dataset.cases[1].inputs.dish_name == "Chocolate Cake"
+    assert dataset.cases[1].inputs.dietary_restriction == "gluten-free"
+
+    # Run the evaluation
+    report = await dataset.evaluate(transform_recipe)
     report.print(
         include_input=True,
         include_output=True,
@@ -660,7 +758,7 @@ async def test_mcp_server() -> None:
 
 @pytest.mark.example
 @pytest.mark.asyncio
-async def test_pydanticai_graph() -> None:
+async def test_pydantic_graph() -> None:
     """
     Define a simple graph and test its traversal.
     See flow chart in tests/README.md
