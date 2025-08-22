@@ -492,7 +492,7 @@ async def test_agent_delegation() -> None:
 
 @pytest.mark.example
 @pytest.mark.asyncio
-async def test_pydantic_evals() -> None:
+async def test_pydanticai_evals() -> None:
     """
     Test the functionality of pydantic-evals.
     We evaluate and score the response of the model, see evaluate() method.
@@ -660,7 +660,7 @@ async def test_mcp_server() -> None:
 
 @pytest.mark.example
 @pytest.mark.asyncio
-async def test_pydantic_graph() -> None:
+async def test_pydanticai_graph() -> None:
     """
     Define a simple graph and test its traversal.
     See flow chart in tests/README.md
