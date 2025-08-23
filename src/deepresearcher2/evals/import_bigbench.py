@@ -81,13 +81,51 @@ def import_bigbench_darkhumordetection(path: Path = Path("../BIG-bench")) -> Non
     dataset.to_file(out_path)
 
 
+def import_bigbench_rephrase(path: Path = Path("../BIG-bench")) -> None:
+    """
+    Import BIG-bench dataset and convert it to PydanticAI format.
+    https://github.com/google/BIG-bench
+
+    Args:
+        path (Path): Path to the BIG-bench repository.
+    """
+    logger.info("Importing BIG-bench dataset.")
+    path = path / "bigbench/benchmark_tasks/rephrase/task.json"
+    data = json.loads(path.read_text(encoding="utf-8"))
+    data: list[dict[str, Any]] = data.get("examples", [])
+
+    logger.info("Converting BIG-bench dataset to PydanticAI format.")
+    cases: list[Case[str, list[str], Any]] = []
+    for idx, example in enumerate(data):
+        text = example.get("input", "")
+        targets = example.get("target", "")
+        if isinstance(targets, str):
+            targets = [targets]
+        logger.debug(f"Case {idx:02d}: {text[:50]} ...    Targets: {targets}")
+
+        case = Case(
+            name=f"rephrase_{idx:02d}",
+            inputs=text,
+            expected_output=targets,
+        )
+        cases.append(case)
+
+    dataset: Dataset[str, list[str], Any] = Dataset[str, list[str], Any](cases=cases)
+
+    logger.info("Serializing benchmark dataset to file.")
+    out_path = Path("data/rephrase/task.json")
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    dataset.to_file(out_path)
+
+
 def main() -> None:
     """
     Main function containing all import workflows.
     """
     logger.info("Starting import workflow.")
-    import_bigbench_codenames()
+    # import_bigbench_codenames()
     # import_bigbench_darkhumordetection()
+    import_bigbench_rephrase()
 
 
 if __name__ == "__main__":
