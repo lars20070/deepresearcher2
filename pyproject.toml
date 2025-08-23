@@ -36,6 +36,7 @@ chat = "deepresearcher2.examples:basic_chat"
 mcpserver = "deepresearcher2.examples:mcp_server"
 research = "deepresearcher2.graph:main"
 import = "deepresearcher2.evals.import_bigbench:main"
+eval = "deepresearcher2.evals.runners:main"
 
 [tool.ruff]
 line-length = 150
