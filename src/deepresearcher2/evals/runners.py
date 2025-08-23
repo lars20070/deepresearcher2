@@ -9,9 +9,18 @@ from pydantic_ai import Agent
 from pydantic_ai.models.openai import OpenAIModel
 from pydantic_ai.providers.openai import OpenAIProvider
 from pydantic_evals import Dataset
+from pydantic_evals.evaluators import Evaluator, EvaluatorContext, IsInstance
 
 from deepresearcher2.config import config
 from deepresearcher2.logger import logger
+
+
+class ExactMatch(Evaluator[str, bool]):
+    async def evaluate(self, ctx: EvaluatorContext[bool, bool]) -> float:
+        if ctx.output == ctx.expected_output:
+            return 1.0
+        else:
+            return 0.0
 
 
 async def run() -> None:
@@ -44,6 +53,13 @@ async def run() -> None:
 
     path = Path("data/dark_humor_detection/task.json")
     dataset = Dataset[str, bool, Any].from_file(path)
+    dataset = Dataset[str, bool, Any](
+        cases=dataset.cases,
+        evaluators=[
+            IsInstance(type_name=bool),
+            ExactMatch(),
+        ],
+    )
 
     # Run the evaluation
     report = await dataset.evaluate(transform_text)

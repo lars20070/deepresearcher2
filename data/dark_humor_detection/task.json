@@ -401,11 +401,5 @@
       "inputs": "Why can't orphans play baseball? They don't know where the stadiums are.",
       "expected_output": false
     }
-  ],
-  "evaluators": [
-    {
-      "IsInstance": "<class 'bool'>"
-    },
-    "ExactMatch"
   ]
 }
