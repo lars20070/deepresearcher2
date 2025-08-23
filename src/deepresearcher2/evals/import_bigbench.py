@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Any
 
 from pydantic_evals import Case, Dataset
+from pydantic_evals.evaluators import Evaluator, EvaluatorContext, IsInstance
 
 from deepresearcher2.logger import logger
 
@@ -45,6 +46,14 @@ def import_codenames(path: Path = Path("../BIG-bench")) -> None:
     dataset.to_file(out_path)
 
 
+class ExactMatch(Evaluator[str, bool]):
+    async def evaluate(self, ctx: EvaluatorContext[bool, bool]) -> float:
+        if ctx.output == ctx.expected_output:
+            return 1.0
+        else:
+            return 0.0
+
+
 def import_darkhumordetection(path: Path = Path("../BIG-bench")) -> None:
     """
     Import BIG-bench dataset and convert it to PydanticAI format.
@@ -73,7 +82,14 @@ def import_darkhumordetection(path: Path = Path("../BIG-bench")) -> None:
         )
         cases.append(case)
 
-    dataset: Dataset[str, bool, Any] = Dataset[str, bool, Any](cases=cases)
+    logger.info("Add evaluators.")
+    dataset: Dataset[str, bool, Any] = Dataset[str, bool, Any](
+        cases=cases,
+        evaluators=[
+            IsInstance(type_name=bool),
+            ExactMatch(),
+        ],
+    )
 
     logger.info("Serializing benchmark dataset to file.")
     out_path = Path("data/dark_humor_detection/task.json")
