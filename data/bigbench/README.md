@@ -1,1 +1,0 @@
-LLM benchmarks copied from Google [BIG-bench](https://github.com/google/BIG-bench) 2022.
