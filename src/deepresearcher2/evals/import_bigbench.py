@@ -10,7 +10,7 @@ from pydantic_evals import Case, Dataset
 from deepresearcher2.logger import logger
 
 
-def import_bigbench_codenames(path: Path = Path("../BIG-bench")) -> None:
+def import_codenames(path: Path = Path("../BIG-bench")) -> None:
     """
     Import BIG-bench dataset and convert it to PydanticAI format.
     https://github.com/google/BIG-bench
@@ -45,7 +45,7 @@ def import_bigbench_codenames(path: Path = Path("../BIG-bench")) -> None:
     dataset.to_file(out_path)
 
 
-def import_bigbench_darkhumordetection(path: Path = Path("../BIG-bench")) -> None:
+def import_darkhumordetection(path: Path = Path("../BIG-bench")) -> None:
     """
     Import BIG-bench dataset and convert it to PydanticAI format.
     https://github.com/google/BIG-bench
@@ -81,7 +81,7 @@ def import_bigbench_darkhumordetection(path: Path = Path("../BIG-bench")) -> Non
     dataset.to_file(out_path)
 
 
-def import_bigbench_rephrase(path: Path = Path("../BIG-bench")) -> None:
+def import_rephrase(path: Path = Path("../BIG-bench")) -> None:
     """
     Import BIG-bench dataset and convert it to PydanticAI format.
     https://github.com/google/BIG-bench
@@ -122,10 +122,10 @@ def main() -> None:
     """
     Main function containing all import workflows.
     """
-    logger.info("Starting import workflow.")
-    # import_bigbench_codenames()
-    # import_bigbench_darkhumordetection()
-    import_bigbench_rephrase()
+    logger.info("Starting import of benchmark datasets.")
+    import_codenames()
+    import_darkhumordetection()
+    import_rephrase()
 
 
 if __name__ == "__main__":
