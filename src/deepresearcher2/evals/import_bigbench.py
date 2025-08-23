@@ -69,7 +69,6 @@ def import_darkhumordetection(path: Path = Path("../BIG-bench")) -> None:
     for idx, example in enumerate(data):
         text = example.get("input", "")
         scores = example.get("target_scores", {})
-        # joke = bool(scores.get("joke", 0))
         joke: Response = Response.joke if scores.get("joke", 0) else Response.nojoke
         logger.debug(f"Case {idx:02d}: {text[:50]} ...    Response: {joke.value}")
 

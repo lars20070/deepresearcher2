@@ -31,9 +31,9 @@ async def run() -> None:
     logger.info("Run dark humor detection.")
 
     # Model for both recipe and judge
-    model = "llama3.3"
+    # model = "llama3.3"
     # model = "qwq:32b"
-    # model = "qwen2.5:72b"
+    model = "qwen2.5:72b"
     ollama_model = OpenAIModel(
         model_name=model,
         provider=OpenAIProvider(
