@@ -12,11 +12,12 @@ from pydantic_evals import Dataset
 from pydantic_evals.evaluators import Evaluator, EvaluatorContext, IsInstance
 
 from deepresearcher2.config import config
+from deepresearcher2.evals.import_bigbench import Response
 from deepresearcher2.logger import logger
 
 
-class ExactMatch(Evaluator[str, bool]):
-    async def evaluate(self, ctx: EvaluatorContext[bool, bool]) -> float:
+class ExactMatch(Evaluator):
+    async def evaluate(self, ctx: EvaluatorContext[Response, Response]) -> float:
         if ctx.output == ctx.expected_output:
             return 1.0
         else:
@@ -43,20 +44,20 @@ async def run() -> None:
     # Agent for recipe generation
     joke_detector = Agent(
         ollama_model,
-        output_type=bool,
-        system_prompt="Determine whether the text is a joke or not.",
+        output_type=Response,
+        system_prompt="Determine whether the text is a joke or not. Respond with 'joke' or 'no joke' in JSON format.",
     )
 
-    async def transform_text(text: str) -> bool:
+    async def transform_text(text: str) -> Response:
         r = await joke_detector.run(text)
         return r.output
 
     path = Path("data/dark_humor_detection/task.json")
-    dataset = Dataset[str, bool, Any].from_file(path)
-    dataset = Dataset[str, bool, Any](
+    dataset = Dataset[str, Response, Any].from_file(path)
+    dataset = Dataset[str, Response, Any](
         cases=dataset.cases,
         evaluators=[
-            IsInstance(type_name=bool),
+            IsInstance(type_name=Response),
             ExactMatch(),
         ],
     )

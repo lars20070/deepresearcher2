@@ -2,6 +2,7 @@
 from __future__ import annotations as _annotations
 
 import json
+from enum import Enum
 from pathlib import Path
 from typing import Any
 
@@ -45,6 +46,11 @@ def import_codenames(path: Path = Path("../BIG-bench")) -> None:
     dataset.to_file(out_path)
 
 
+class Response(str, Enum):
+    joke = "joke"
+    nojoke = "no joke"
+
+
 def import_darkhumordetection(path: Path = Path("../BIG-bench")) -> None:
     """
     Import BIG-bench dataset and convert it to PydanticAI format.
@@ -59,12 +65,13 @@ def import_darkhumordetection(path: Path = Path("../BIG-bench")) -> None:
     data: list[dict[str, Any]] = data.get("examples", [])
 
     logger.info("Converting BIG-bench dataset to PydanticAI format.")
-    cases: list[Case[str, bool, Any]] = []
+    cases: list[Case[str, Response, Any]] = []
     for idx, example in enumerate(data):
         text = example.get("input", "")
         scores = example.get("target_scores", {})
-        joke = bool(scores.get("joke", 0))
-        logger.debug(f"Case {idx:02d}: {text[:50]} ...    Joke: {joke}")
+        # joke = bool(scores.get("joke", 0))
+        joke: Response = Response.joke if scores.get("joke", 0) else Response.nojoke
+        logger.debug(f"Case {idx:02d}: {text[:50]} ...    Response: {joke.value}")
 
         case = Case(
             name=f"dark_humor_detection_{idx:02d}",
@@ -74,7 +81,7 @@ def import_darkhumordetection(path: Path = Path("../BIG-bench")) -> None:
         cases.append(case)
 
     logger.info("Add evaluators.")
-    dataset: Dataset[str, bool, Any] = Dataset[str, bool, Any](cases=cases)
+    dataset: Dataset[str, Response, Any] = Dataset[str, Response, Any](cases=cases)
 
     logger.info("Serializing benchmark dataset to file.")
     out_path = Path("data/dark_humor_detection/task.json")

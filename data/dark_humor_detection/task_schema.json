@@ -32,14 +32,13 @@
         "expected_output": {
           "anyOf": [
             {
-              "type": "boolean"
+              "$ref": "#/$defs/Response"
             },
             {
               "type": "null"
             }
           ],
-          "default": null,
-          "title": "Expected Output"
+          "default": null
         },
         "evaluators": {
           "default": [],
@@ -468,6 +467,14 @@
       },
       "title": "OutputConfig",
       "type": "object"
+    },
+    "Response": {
+      "enum": [
+        "joke",
+        "no joke"
+      ],
+      "title": "Response",
+      "type": "string"
     },
     "SpanQuery": {
       "description": "A serializable query for filtering SpanNodes based on various conditions.\n\nAll fields are optional and combined with AND logic by default.",
