@@ -10,7 +10,42 @@ from pydantic_evals import Case, Dataset
 from deepresearcher2.logger import logger
 
 
-def import_bigbench(path: Path = Path("../BIG-bench")) -> None:
+def import_bigbench_codenames(path: Path = Path("../BIG-bench")) -> None:
+    """
+    Import BIG-bench dataset and convert it to PydanticAI format.
+    https://github.com/google/BIG-bench
+
+    Args:
+        path (Path): Path to the BIG-bench repository.
+    """
+    logger.info("Importing BIG-bench dataset.")
+    path = path / "bigbench/benchmark_tasks/codenames/task.json"
+    data = json.loads(path.read_text(encoding="utf-8"))
+    data: list[dict[str, Any]] = data.get("examples", [])
+
+    logger.info("Converting BIG-bench dataset to PydanticAI format.")
+    cases: list[Case[str, str, Any]] = []
+    for idx, example in enumerate(data):
+        text = example.get("input", "")
+        target = example.get("target", "")
+        logger.debug(f"Case {idx:02d}: {text[:50]} ...    Target: {target}")
+
+        case = Case(
+            name=f"codenames{idx:02d}",
+            inputs=text,
+            expected_output=target,
+        )
+        cases.append(case)
+
+    dataset: Dataset[str, str, Any] = Dataset[str, str, Any](cases=cases)
+
+    logger.info("Serializing benchmark dataset to file.")
+    out_path = Path("data/codenames/task.json")
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    dataset.to_file(out_path)
+
+
+def import_bigbench_darkhumordetection(path: Path = Path("../BIG-bench")) -> None:
     """
     Import BIG-bench dataset and convert it to PydanticAI format.
     https://github.com/google/BIG-bench
@@ -51,7 +86,8 @@ def main() -> None:
     Main function containing all import workflows.
     """
     logger.info("Starting import workflow.")
-    import_bigbench()
+    import_bigbench_codenames()
+    # import_bigbench_darkhumordetection()
 
 
 if __name__ == "__main__":
