@@ -32,8 +32,10 @@ async def run() -> None:
 
     # Model for both recipe and judge
     # model = "llama3.3"
-    # model = "qwq:32b"
+    # model = "qwq:32b"  # Not reliable. Does not respond with conform JSON. Let the model respond with free form `str` instead.
     model = "qwen2.5:72b"
+    # model = "qwen3:30b"
+    # model = "magistral:latest"  # Not reliable.
     ollama_model = OpenAIModel(
         model_name=model,
         provider=OpenAIProvider(
