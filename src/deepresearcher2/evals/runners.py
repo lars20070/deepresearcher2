@@ -17,11 +17,65 @@ from deepresearcher2.logger import logger
 
 
 class ExactMatch(Evaluator):
-    async def evaluate(self, ctx: EvaluatorContext[Response, Response]) -> float:
-        if ctx.output == ctx.expected_output:
-            return 1.0
-        else:
-            return 0.0
+    async def evaluate(self, ctx: EvaluatorContext[Any, Any]) -> float:
+        return float(ctx.output == ctx.expected_output)
+
+
+async def eval_codenames(model: str = "qwen2.5:72b", max_cases: int | None = None) -> None:
+    """
+    Runs evaluation for codenames benchmark.
+
+    Args:
+        model (str): The model to use for evaluation.
+        max_cases (int | None): The maximum number of cases to evaluate. Defaults to None.
+
+    Returns:
+        float: The evaluation score.
+    """
+    logger.info("Runs evaluation for codenames benchmark.")
+
+    ollama_model = OpenAIModel(
+        model_name=model,
+        provider=OpenAIProvider(
+            base_url=f"{config.ollama_host}/v1",
+        ),
+    )
+
+    # Agent for word detection
+    word_detector = Agent(
+        ollama_model,
+        output_type=str,
+        system_prompt="Find the associated word or words described below. Respond with a comma-separated list of small caps words.",
+    )
+
+    async def transform_text(text: str) -> Response:
+        r = await word_detector.run(text)
+        return r.output
+
+    # Load the benchmark cases
+    path = Path("data/codenames/task.json")
+    dataset = Dataset[str, str, Any].from_file(path)
+    cases = dataset.cases
+    if max_cases is not None:
+        cases = cases[:max_cases]
+    # Add the benchmark evaluators
+    dataset = Dataset[str, str, Any](
+        cases=cases,
+        evaluators=[
+            IsInstance(type_name="str"),  # Pointless here since the evaluation crashes anyhow if the output type is incorrect.
+            ExactMatch(),
+        ],
+    )
+
+    # Run the evaluation
+    report = await dataset.evaluate(transform_text)
+    # report.print(include_input=True, include_output=True, include_durations=True)
+    logger.debug(f"Complete evaluation report:\n{report}")
+
+    score = report.averages().scores.get("ExactMatch", 0)
+    logger.info(f"Evaluation score: {score}")
+
+    return score
 
 
 async def eval_darkhurmordetection(model: str = "qwen2.5:72b", max_cases: int | None = None) -> None:
@@ -51,7 +105,7 @@ async def eval_darkhurmordetection(model: str = "qwen2.5:72b", max_cases: int | 
         ),
     )
 
-    # Agent for recipe generation
+    # Agent for joke detection
     joke_detector = Agent(
         ollama_model,
         output_type=Response,
@@ -72,7 +126,7 @@ async def eval_darkhurmordetection(model: str = "qwen2.5:72b", max_cases: int | 
     dataset = Dataset[str, Response, Any](
         cases=cases,
         evaluators=[
-            IsInstance(type_name="Response"),
+            IsInstance(type_name="Response"),  # Pointless here since the evaluation crashes anyhow if the output type is incorrect.
             ExactMatch(),
         ],
     )
@@ -95,12 +149,8 @@ def main() -> None:
     logger.info("Run evaluation.")
     model = "qwen2.5:72b"
     max_cases = 10
-    asyncio.run(
-        eval_darkhurmordetection(
-            model=model,
-            max_cases=max_cases,
-        )
-    )
+    asyncio.run(eval_codenames(model=model, max_cases=max_cases))
+    asyncio.run(eval_darkhurmordetection(model=model, max_cases=max_cases))
 
 
 if __name__ == "__main__":
