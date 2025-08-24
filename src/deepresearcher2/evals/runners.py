@@ -59,7 +59,7 @@ async def run() -> None:
     dataset = Dataset[str, Response, Any](
         cases=dataset.cases,
         evaluators=[
-            IsInstance(type_name=Response),
+            IsInstance(type_name="Response"),
             ExactMatch(),
         ],
     )
