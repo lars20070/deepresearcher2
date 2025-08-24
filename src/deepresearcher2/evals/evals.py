@@ -21,6 +21,11 @@ class ExactMatch(Evaluator):
         return float(ctx.output == ctx.expected_output)
 
 
+class ExactMatchAny(Evaluator[Any, list[Any]]):
+    async def evaluate(self, ctx: EvaluatorContext[Any, list[Any]]) -> float:
+        return float(ctx.output in ctx.expected_output)
+
+
 async def eval_codenames(model: str = "qwen2.5:72b", max_cases: int | None = None) -> None:
     """
     Runs evaluation for codenames benchmark.
@@ -53,7 +58,7 @@ async def eval_codenames(model: str = "qwen2.5:72b", max_cases: int | None = Non
         return r.output
 
     # Load the benchmark cases
-    path = Path("data/codenames/task.json")
+    path = Path("benchmarks/codenames/task.json")
     dataset = Dataset[str, str, Any].from_file(path)
     cases = dataset.cases
     if max_cases is not None:
@@ -117,7 +122,7 @@ async def eval_darkhurmordetection(model: str = "qwen2.5:72b", max_cases: int | 
         return r.output
 
     # Load the benchmark cases
-    path = Path("data/dark_humor_detection/task.json")
+    path = Path("benchmarks/dark_humor_detection/task.json")
     dataset = Dataset[str, Response, Any].from_file(path)
     cases = dataset.cases
     if max_cases is not None:
@@ -142,6 +147,65 @@ async def eval_darkhurmordetection(model: str = "qwen2.5:72b", max_cases: int | 
     return score
 
 
+async def eval_rephrase(model: str = "qwen2.5:72b", max_cases: int | None = None) -> None:
+    """
+    Runs evaluation for rephrase benchmark
+
+    Args:
+        model (str): The model to use for evaluation.
+        max_cases (int | None): The maximum number of cases to evaluate. Defaults to None.
+
+    Returns:
+        float: The evaluation score.
+    """
+    logger.info("Runs evaluation for rephrase benchmark.")
+
+    ollama_model = OpenAIModel(
+        model_name=model,
+        provider=OpenAIProvider(
+            base_url=f"{config.ollama_host}/v1",
+        ),
+    )
+
+    # Agent for rephrasing
+    rephraser = Agent(
+        ollama_model,
+        output_type=str,
+        system_prompt=(
+            "Rephrase the given sentence so that it retains its meaning, but contains the given keyword. Answer ONLY with the rephrased sentence."
+        ),
+    )
+
+    async def transform_text(text: str) -> str:
+        r = await rephraser.run(text)
+        return r.output
+
+    # Load the benchmark cases
+    path = Path("benchmarks/rephrase/task.json")
+    dataset = Dataset[str, list[str], Any].from_file(path)
+    cases = dataset.cases
+    if max_cases is not None:
+        cases = cases[:max_cases]
+    # Add the benchmark evaluators
+    dataset = Dataset[str, list[str], Any](
+        cases=cases,
+        evaluators=[
+            IsInstance(type_name="str"),  # Pointless here since the evaluation crashes anyhow if the output type is incorrect.
+            ExactMatchAny(),
+        ],
+    )
+
+    # Run the evaluation
+    report = await dataset.evaluate(transform_text)
+    # report.print(include_input=True, include_output=True, include_durations=True)
+    logger.debug(f"Complete evaluation report:\n{report}")
+
+    score = report.averages().scores.get("ExactMatchAny", 0)
+    logger.info(f"Evaluation score: {score}")
+
+    return score
+
+
 def main() -> None:
     """
     Main function running evaluations.
@@ -151,6 +215,7 @@ def main() -> None:
     max_cases = 10
     asyncio.run(eval_codenames(model=model, max_cases=max_cases))
     asyncio.run(eval_darkhurmordetection(model=model, max_cases=max_cases))
+    asyncio.run(eval_rephrase(model=model, max_cases=max_cases))
 
 
 if __name__ == "__main__":
