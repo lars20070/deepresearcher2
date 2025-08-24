@@ -24,18 +24,26 @@ class ExactMatch(Evaluator):
             return 0.0
 
 
-async def run() -> None:
+async def eval_darkhurmordetection(model: str = "qwen2.5:72b", max_cases: int | None = None) -> None:
     """
-    Run dark humor detection.
-    """
-    logger.info("Run dark humor detection.")
+    Runs evaluation for dark humor detection.
 
-    # Model for both recipe and judge
-    # model = "llama3.3"
-    # model = "qwq:32b"  # Not reliable. Does not respond with conform JSON. Let the model respond with free form `str` instead.
-    model = "qwen2.5:72b"
-    # model = "qwen3:30b"
-    # model = "magistral:latest"  # Not reliable.
+    Tested with the following models:
+    * llama3.3
+    * qwq:32b  # Not reliable. Does not respond with conform JSON. Let the model respond with free form `str` instead.
+    * qwen2.5:72b
+    * qwen3:30b
+    * magistral:latest  # Not reliable.
+
+    Args:
+        model (str): The model to use for evaluation.
+        max_cases (int | None): The maximum number of cases to evaluate. Defaults to None.
+
+    Returns:
+        float: The evaluation score.
+    """
+    logger.info("Runs evaluation for dark humor detection.")
+
     ollama_model = OpenAIModel(
         model_name=model,
         provider=OpenAIProvider(
@@ -54,10 +62,15 @@ async def run() -> None:
         r = await joke_detector.run(text)
         return r.output
 
+    # Load the benchmark cases
     path = Path("data/dark_humor_detection/task.json")
     dataset = Dataset[str, Response, Any].from_file(path)
+    cases = dataset.cases
+    if max_cases is not None:
+        cases = cases[:max_cases]
+    # Add the benchmark evaluators
     dataset = Dataset[str, Response, Any](
-        cases=dataset.cases,
+        cases=cases,
         evaluators=[
             IsInstance(type_name="Response"),
             ExactMatch(),
@@ -66,12 +79,13 @@ async def run() -> None:
 
     # Run the evaluation
     report = await dataset.evaluate(transform_text)
-    report.print(
-        include_input=True,
-        include_output=True,
-        include_durations=True,
-    )
+    # report.print(include_input=True, include_output=True, include_durations=True)
     logger.debug(f"Complete evaluation report:\n{report}")
+
+    score = report.averages().scores.get("ExactMatch", 0)
+    logger.info(f"Evaluation score: {score}")
+
+    return score
 
 
 def main() -> None:
@@ -79,7 +93,14 @@ def main() -> None:
     Main function running evaluations.
     """
     logger.info("Run evaluation.")
-    asyncio.run(run())
+    model = "qwen2.5:72b"
+    max_cases = 10
+    asyncio.run(
+        eval_darkhurmordetection(
+            model=model,
+            max_cases=max_cases,
+        )
+    )
 
 
 if __name__ == "__main__":
