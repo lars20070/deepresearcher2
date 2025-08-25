@@ -213,8 +213,8 @@ def main() -> None:
     logger.info("Run evaluation.")
     # model = "llama3.3"
     model = "qwen2.5:72b"
-    max_cases = 10
-    # max_cases = None
+    # max_cases = 10
+    max_cases = None
     asyncio.run(eval_codenames(model=model, max_cases=max_cases))
     asyncio.run(eval_darkhurmordetection(model=model, max_cases=max_cases))
     asyncio.run(eval_rephrase(model=model, max_cases=max_cases))

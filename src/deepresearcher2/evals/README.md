@@ -6,3 +6,10 @@ The folder contains scripts for evaluating models on various benchmarks. Any ben
 |----------------------|-------------|
 | `import_bigbench.py` | Imports the three datasets `codenames`, `dark_humor_detection`, and `rephrase` from the 2022 Google [BIG-bench](https://github.com/google/BIG-bench) benchmark to `benchmarks/`. |
 | `evals.py`            | Runs evaluations on models. |
+
+Run the following commands to set up and run the evaluations:
+
+```bash
+uv run import   # Import BIG-bench datasets
+uv run evals    # Run evaluations on models
+```
