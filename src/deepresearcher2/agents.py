@@ -7,7 +7,7 @@ from pydantic_ai.providers.openai import OpenAIProvider
 
 from .config import config
 from .models import FinalSummary, Reflection, WebSearchQuery
-from .prompts import final_summary_instructions, reflection_instructions, summary_instructions
+from .prompts import final_summary_instructions, reflection_instructions, summary_instructions, summary_instructions_evals
 
 load_dotenv()
 
@@ -45,6 +45,16 @@ summary_agent = Agent(
     # toolsets=[mcp_server_duckduckgo],
     output_type=str,
     system_prompt=summary_instructions,
+    retries=5,
+    instrument=True,
+)
+
+# This agent is specifically for the generation of the knowledge_gap benchmark. Not used for production.
+summary_agent_evals = Agent(
+    model=model,
+    # toolsets=[mcp_server_duckduckgo],
+    output_type=str,
+    system_prompt=summary_instructions_evals,
     retries=5,
     instrument=True,
 )
