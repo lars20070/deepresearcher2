@@ -41,7 +41,7 @@ def import_codenames(path: Path = Path("../BIG-bench")) -> None:
     dataset: Dataset[str, str, Any] = Dataset[str, str, Any](cases=cases)
 
     logger.info("Serializing benchmark dataset to file.")
-    out_path = Path("data/codenames/task.json")
+    out_path = Path("benchmarks/codenames/task.json")
     out_path.parent.mkdir(parents=True, exist_ok=True)
     dataset.to_file(out_path)
 
@@ -83,7 +83,7 @@ def import_darkhumordetection(path: Path = Path("../BIG-bench")) -> None:
     dataset: Dataset[str, Response, Any] = Dataset[str, Response, Any](cases=cases)
 
     logger.info("Serializing benchmark dataset to file.")
-    out_path = Path("data/dark_humor_detection/task.json")
+    out_path = Path("benchmarks/dark_humor_detection/task.json")
     out_path.parent.mkdir(parents=True, exist_ok=True)
     dataset.to_file(out_path)
 
@@ -120,7 +120,7 @@ def import_rephrase(path: Path = Path("../BIG-bench")) -> None:
     dataset: Dataset[str, list[str], Any] = Dataset[str, list[str], Any](cases=cases)
 
     logger.info("Serializing benchmark dataset to file.")
-    out_path = Path("data/rephrase/task.json")
+    out_path = Path("benchmarks/rephrase/task.json")
     out_path.parent.mkdir(parents=True, exist_ok=True)
     dataset.to_file(out_path)
 
