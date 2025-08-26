@@ -19,6 +19,7 @@ class SearchEngine(str, Enum):
 
 class Model(str, Enum):
     llama33 = "llama3.3"
+    qwen25_72b = "qwen2.5:72b"
     qwen3_8b = "qwen3:8b"
     qwen3_32b = "qwen3:32b"
     gptoss = "gpt-oss"
