@@ -1,0 +1,26 @@
+{
+  "$schema": "task_schema.json",
+  "cases": [
+    {
+      "name": "knowledge_gap_000",
+      "inputs": "Space debris mitigation is a critical effort to preserve near-Earth space for future missions. The European Space Agency (ESA) has adopted a \"Zero Debris approach\" aimed at significantly reducing the production of debris in Earth and lunar orbits by 2030. This initiative includes stricter guidelines for ESA missions, such as ensuring safe disposal through atmospheric reentry or reorbiting with over 90% success probability and integrating interfaces to facilitate removal if self-disposal fails.\n\nNASA was the first space agency to issue comprehensive orbital debris mitigation guidelines in 1995, followed by the U.S. Government's Orbital Debris Mitigation Standard Practices two years later. Other countries and organizations, including Japan, France, Russia, and ESA, have also developed their own guidelines. In 2002, the Inter-Agency Space Debris Coordination Committee (IADC) adopted a consensus set of guidelines to mitigate debris growth, which were endorsed by the United Nations in 2007.\n\nA structured approach to space debris mitigation involves designing spacecraft for impact resistance, implementing advanced remote tracking and monitoring systems, integrating onboard detection and avoidance mechanisms, and developing strategies to minimize damage from impacts. These efforts are essential to controlling the growth of the orbital debris population and ensuring the sustainability of space activities.",
+      "metadata": {
+        "topic": "space debris mitigation"
+      }
+    },
+    {
+      "name": "knowledge_gap_001",
+      "inputs": "Magnetoreception, the ability to detect Earth's magnetic field, has been identified in diverse animals ranging from molluscs and insects to sea turtles and birds. This sensory capability helps animals navigate over various distances by providing compass-like directionality or map-like location information. For instance, sea turtles use magnetic cues for long-distance migrations and to assess their approximate positions during transoceanic routes, akin to a low-resolution biological GPS system. Despite mounting evidence of magnetoreception in animals, the exact mechanisms and cellular receptors responsible remain largely unidentified. The challenge in locating these receptors stems from the unique properties of magnetic fields, which pass through biological tissues without resistance, making it difficult to pinpoint specific sensory structures. As research progresses, understanding how animals detect and utilize Earth's magnetic field continues to be an exciting frontier in sensory physiology.",
+      "metadata": {
+        "topic": "magnetoreception in animals"
+      }
+    },
+    {
+      "name": "knowledge_gap_002",
+      "inputs": "Deep sea mining involves extracting valuable minerals from the ocean floor at depths greater than 200 meters. The primary targets are polymetallic nodules, found predominantly in the abyssal plain at depths of 4 to 6 kilometers, especially in the Clarion–Clipperton zone (CCZ). These nodules contain significant amounts of copper, nickel, cobalt, and manganese. The global ocean floor is estimated to hold over 120 million tons of cobalt, far exceeding terrestrial reserves.\n\nAs of July 2024, only exploratory licenses have been issued by the International Seabed Authority (ISA), which regulates all mineral-related activities in international waters. The ISA has granted 31 exploration licenses: 19 for polymetallic nodules, mostly in the CCZ; 7 for polymetallic sulphides in mid-ocean ridges; and 5 for cobalt-rich crusts in the Western Pacific Ocean. Commercial-scale deep sea mining is expected to commence by 2025 when ISA regulations are finalized.\n\nHowever, concerns about environmental impacts are significant. Research suggests that deep-sea mining could destroy habitats and wipe out species, with potential long-term consequences for marine biodiversity and ecosystem services such as food provision and carbon sequestration. Advocates argue that comprehensive studies and effective regulation are necessary before any mining activities proceed to ensure the protection of these delicate ecosystems.",
+      "metadata": {
+        "topic": "deep sea mining"
+      }
+    }
+  ]
+}
