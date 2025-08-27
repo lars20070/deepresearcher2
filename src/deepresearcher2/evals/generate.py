@@ -42,8 +42,8 @@ async def generate_search_summaries(
 
     # Loop over topics
     cases: list[Case[str, str, Any]] = []
-    for idx, topic in enumerate(topics[:3]):
-        # for idx, topic in enumerate(topics):
+    # for idx, topic in enumerate(topics[:3]):
+    for idx, topic in enumerate(topics):
         logger.info(f"Case {idx}/{len(topics)} with topic: {topic}")
 
         # Run web search
