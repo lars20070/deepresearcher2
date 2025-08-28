@@ -22,9 +22,15 @@ class ExactMatch(Evaluator):
         return float(ctx.output == ctx.expected_output)
 
 
-class ExactMatchAny(Evaluator[Any, list[Any]]):
-    async def evaluate(self, ctx: EvaluatorContext[Any, list[Any]]) -> float:
-        return float(ctx.output in ctx.expected_output)
+class ExactMatchAny(Evaluator[str, list[str], Any]):
+    async def evaluate(self, ctx: EvaluatorContext[str, list[str]]) -> float:
+        """
+        We simply check that the output is in the list of expected outputs.
+        Note that the `out` list is always of length 1.
+        """
+        out = ctx.output or []
+        exp_out = ctx.expected_output or []
+        return float(any(o in exp_out for o in out))
 
 
 async def eval_codenames(model: str = "qwen2.5:72b", max_cases: int | None = None) -> float:
@@ -177,9 +183,9 @@ async def eval_rephrase(model: str = "qwen2.5:72b", max_cases: int | None = None
         ),
     )
 
-    async def transform_text(text: str) -> str:
+    async def transform_text(text: str) -> list[str]:
         r = await rephraser.run(text)
-        return r.output
+        return [r.output]
 
     # Load the benchmark cases
     path = Path("benchmarks/rephrase/task.json")
@@ -191,7 +197,7 @@ async def eval_rephrase(model: str = "qwen2.5:72b", max_cases: int | None = None
     dataset = Dataset[str, list[str], Any](
         cases=cases,
         evaluators=[
-            IsInstance(type_name="str"),  # Pointless here since the evaluation crashes anyhow if the output type is incorrect.
+            IsInstance(type_name="list[str]"),  # Pointless here since the evaluation crashes anyhow if the output type is incorrect.
             ExactMatchAny(),
         ],
     )
@@ -310,12 +316,12 @@ async def eval_knowledge_gap(model: str = "qwen2.5:72b", max_cases: int | None =
 
     # Load the benchmark cases
     path = Path("benchmarks/knowledge_gap/task.json")
-    dataset = Dataset[dict[str, str], type[None], Any].from_file(path)
+    dataset = Dataset[dict[str, str], str, Any].from_file(path)
     cases = dataset.cases
     if max_cases is not None:
         cases = cases[:max_cases]
     # Add the benchmark evaluators
-    dataset = Dataset[dict[str, str], type[None], Any](
+    dataset = Dataset[dict[str, str], str, Any](
         cases=cases,
         evaluators=[
             IsInstance(type_name="str"),
