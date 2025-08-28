@@ -27,7 +27,7 @@ class ExactMatchAny(Evaluator[Any, list[Any]]):
         return float(ctx.output in ctx.expected_output)
 
 
-async def eval_codenames(model: str = "qwen2.5:72b", max_cases: int | None = None) -> None:
+async def eval_codenames(model: str = "qwen2.5:72b", max_cases: int | None = None) -> float:
     """
     Runs evaluation for codenames benchmark.
 
@@ -84,7 +84,7 @@ async def eval_codenames(model: str = "qwen2.5:72b", max_cases: int | None = Non
     return score
 
 
-async def eval_darkhurmordetection(model: str = "qwen2.5:72b", max_cases: int | None = None) -> None:
+async def eval_darkhurmordetection(model: str = "qwen2.5:72b", max_cases: int | None = None) -> float:
     """
     Runs evaluation for dark humor detection.
 
@@ -148,7 +148,7 @@ async def eval_darkhurmordetection(model: str = "qwen2.5:72b", max_cases: int | 
     return score
 
 
-async def eval_rephrase(model: str = "qwen2.5:72b", max_cases: int | None = None) -> None:
+async def eval_rephrase(model: str = "qwen2.5:72b", max_cases: int | None = None) -> float:
     """
     Runs evaluation for rephrase benchmark
 
