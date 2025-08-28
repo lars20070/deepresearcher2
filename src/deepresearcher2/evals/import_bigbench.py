@@ -21,8 +21,8 @@ def import_codenames(path: Path = Path("../BIG-bench")) -> None:
     """
     logger.info("Importing BIG-bench dataset.")
     path = path / "bigbench/benchmark_tasks/codenames/task.json"
-    data = json.loads(path.read_text(encoding="utf-8"))
-    data: list[dict[str, Any]] = data.get("examples", [])
+    data_json = json.loads(path.read_text(encoding="utf-8"))
+    data: list[dict[str, Any]] = data_json.get("examples", [])
 
     logger.info("Converting BIG-bench dataset to PydanticAI format.")
     cases: list[Case[str, str, Any]] = []
@@ -61,8 +61,8 @@ def import_darkhumordetection(path: Path = Path("../BIG-bench")) -> None:
     """
     logger.info("Importing BIG-bench dataset.")
     path = path / "bigbench/benchmark_tasks/dark_humor_detection/task.json"
-    data = json.loads(path.read_text(encoding="utf-8"))
-    data: list[dict[str, Any]] = data.get("examples", [])
+    data_json = json.loads(path.read_text(encoding="utf-8"))
+    data: list[dict[str, Any]] = data_json.get("examples", [])
 
     logger.info("Converting BIG-bench dataset to PydanticAI format.")
     cases: list[Case[str, Response, Any]] = []
@@ -98,8 +98,8 @@ def import_rephrase(path: Path = Path("../BIG-bench")) -> None:
     """
     logger.info("Importing BIG-bench dataset.")
     path = path / "bigbench/benchmark_tasks/rephrase/task.json"
-    data = json.loads(path.read_text(encoding="utf-8"))
-    data: list[dict[str, Any]] = data.get("examples", [])
+    data_json = json.loads(path.read_text(encoding="utf-8"))
+    data: list[dict[str, Any]] = data_json.get("examples", [])
 
     logger.info("Converting BIG-bench dataset to PydanticAI format.")
     cases: list[Case[str, list[str], Any]] = []

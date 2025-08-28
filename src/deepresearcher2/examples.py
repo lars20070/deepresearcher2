@@ -70,7 +70,7 @@ def mcp_server() -> None:
     )
 
     @server.tool()
-    async def poet(theme: str) -> str:
+    async def poet(theme: str) -> str:  # pyright: ignore[reportUnusedFunction]
         """Poem generator"""
         r = await server_agent.run(f"Write a poem about {theme}.")
         return r.output
