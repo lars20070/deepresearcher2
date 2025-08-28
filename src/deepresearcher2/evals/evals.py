@@ -8,6 +8,7 @@ from typing import Any
 from pydantic_ai import Agent
 from pydantic_ai.models.openai import OpenAIModel
 from pydantic_ai.providers.openai import OpenAIProvider
+from pydantic_ai.settings import ModelSettings
 from pydantic_evals import Dataset
 from pydantic_evals.evaluators import Evaluator, EvaluatorContext, IsInstance
 
@@ -206,6 +207,100 @@ async def eval_rephrase(model: str = "qwen2.5:72b", max_cases: int | None = None
     return score
 
 
+async def eval_knowledge_gap(model: str = "qwen2.5:72b", max_cases: int | None = None) -> None:
+    """
+    Runs evaluation for knowledge gap benchmark
+
+    Args:
+        model (str): The model to use for evaluation.
+        max_cases (int | None): The maximum number of cases to evaluate. Defaults to None.
+
+    Returns:
+        float: The evaluation score.
+    """
+    logger.info("Runs evaluation for knowledge gap benchmark.")
+
+    ollama_model = OpenAIModel(
+        model_name=model,
+        provider=OpenAIProvider(
+            base_url=f"{config.ollama_host}/v1",
+        ),
+    )
+
+    # Agent for knowledge gap generation
+    generator_prompt = """
+    You are diligent research assistant working on a specific research topic. You are given a summary of a web search.
+    Based on the provided summary, generate a single subtopic which is relevant to the main topic but not sufficiently covered
+    in the summary. The new subtopic will be the basis for the next web search query. You can think of the new subtopic as
+    a 'knowledge gap' in the current summary.
+
+    <OUTPUT_FORMAT>
+    - Respond with a single phrase containing the new subtopic.
+    - The subtopic should be five or less words long.
+    - Avoid XML tags and markdown formatting.
+    </OUTPUT_FORMAT>
+    """
+    generator = Agent(
+        ollama_model,
+        output_type=str,
+        system_prompt=generator_prompt,
+    )
+    temperature = 1.0
+    timeout = 600
+
+    async def transform_text(text: str) -> str:
+        r = await generator.run(text)
+        return r.output
+
+    # Load the benchmark cases
+    path = Path("benchmarks/knowledge_gap/task.json")
+    dataset = Dataset[str, list[str], Any].from_file(path)
+    cases = dataset.cases
+    if max_cases is not None:
+        cases = cases[:max_cases]
+    # Add the benchmark evaluators
+    dataset = Dataset[str, list[str], Any](
+        cases=cases,
+        evaluators=[
+            IsInstance(type_name="str"),  # Pointless here since the evaluation crashes anyhow if the output type is incorrect.
+            ExactMatchAny(),
+        ],
+    )
+    logger.debug(f"Loaded dataset with {len(dataset.cases)} cases.")
+
+    for case in dataset.cases:
+        topic = case.metadata.get("topic", "")
+        summary = case.inputs
+        logger.debug(f"Evaluating case: {case.name} with topic: {topic}")
+
+        prompt = (
+            f"Please come up with a new subtopic for the topic <TOPIC>{topic}</TOPIC>.\n"
+            f"Base your response on the following summary:\n<SUMMARY>{summary}</SUMMARY>\n"
+            "Respond with a single phrase containing the new subtopic."
+        )
+
+        async with generator:
+            result = await generator.run(
+                user_prompt=prompt,
+                model_settings=ModelSettings(
+                    temperature=temperature,
+                    timeout=timeout,
+                ),
+            )
+
+            logger.debug(f"New subtopic for {topic}:\n{result.output}")
+
+    # # Run the evaluation
+    # report = await dataset.evaluate(transform_text)
+    # # report.print(include_input=True, include_output=True, include_durations=True)
+    # logger.debug(f"Complete evaluation report:\n{report}")
+
+    # score = report.averages().scores.get("ExactMatchAny", 0)
+    # logger.info(f"Evaluation score: {score}")
+
+    # return score
+
+
 def main() -> None:
     """
     Main function running evaluations.
@@ -213,11 +308,12 @@ def main() -> None:
     logger.info("Run evaluation.")
     # model = "llama3.3"
     model = "qwen2.5:72b"
-    # max_cases = 10
-    max_cases = None
-    asyncio.run(eval_codenames(model=model, max_cases=max_cases))
-    asyncio.run(eval_darkhurmordetection(model=model, max_cases=max_cases))
-    asyncio.run(eval_rephrase(model=model, max_cases=max_cases))
+    max_cases = 3
+    # max_cases = None
+    # asyncio.run(eval_codenames(model=model, max_cases=max_cases))
+    # asyncio.run(eval_darkhurmordetection(model=model, max_cases=max_cases))
+    # asyncio.run(eval_rephrase(model=model, max_cases=max_cases))
+    asyncio.run(eval_knowledge_gap(model=model, max_cases=max_cases))
 
 
 if __name__ == "__main__":
