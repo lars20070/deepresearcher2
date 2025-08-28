@@ -197,7 +197,7 @@ class FinalizeSummary(BaseNode[DeepState]):
     Finalize Summary node.
     """
 
-    async def run(self, ctx: GraphRunContext[DeepState]) -> End:
+    async def run(self, ctx: GraphRunContext[DeepState]) -> End:  # pyright: ignore[reportIncompatibleMethodOverride]
         logger.debug("Running Finalize Summary.")
 
         topic = ctx.state.topic
@@ -238,7 +238,7 @@ class FinalizeSummary(BaseNode[DeepState]):
         # Export the report
         export_report(report=report, topic=topic, output_dir=config.reports_folder)
 
-        return End("End of deep research workflow.\n\n")
+        return End(None)
 
 
 # Workflow
