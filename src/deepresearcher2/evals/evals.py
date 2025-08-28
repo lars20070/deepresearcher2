@@ -10,7 +10,7 @@ from pydantic_ai.models.openai import OpenAIModel
 from pydantic_ai.providers.openai import OpenAIProvider
 from pydantic_ai.settings import ModelSettings
 from pydantic_evals import Dataset
-from pydantic_evals.evaluators import Evaluator, EvaluatorContext, IsInstance
+from pydantic_evals.evaluators import Evaluator, EvaluatorContext, IsInstance, LLMJudge
 
 from deepresearcher2.config import config
 from deepresearcher2.evals.import_bigbench import Response
@@ -207,6 +207,65 @@ async def eval_rephrase(model: str = "qwen2.5:72b", max_cases: int | None = None
     return score
 
 
+def make_knowledge_gap_agent(model_name: str = "qwen2.5:72b") -> Agent:
+    """
+    Generates an agent for identifying knowledge gaps in research summaries.
+
+    Args:
+        model_name (str): The name of the model to use.
+    """
+    ollama_model = OpenAIModel(
+        model_name=model_name,
+        provider=OpenAIProvider(base_url=f"{config.ollama_host}/v1"),
+    )
+
+    prompt = """
+    You are diligent research assistant working on a specific research topic. You are given a summary of a web search.
+    Based on the provided summary, generate a single subtopic which is relevant to the main topic but not sufficiently covered
+    in the summary. The new subtopic will be the basis for the next web search query. You can think of the new subtopic as
+    a 'knowledge gap' in the current summary.
+
+    <OUTPUT_FORMAT>
+    - Respond with a single phrase containing the new subtopic.
+    - The subtopic should be five or less words long.
+    - Avoid XML tags and markdown formatting.
+    </OUTPUT_FORMAT>
+    """
+
+    return Agent(
+        model=ollama_model,
+        output_type=str,
+        system_prompt=prompt,
+    )
+
+
+async def generate_knowledge_gap(topic: str, summary: str, generator: Agent, settings: ModelSettings) -> str:
+    """
+    Generates a knowledge gap.
+
+    Args:
+        topic (str): The main research topic.
+        summary (str): Summary of web search results.
+        generator (Agent): The agent to use for generation.
+        settings (ModelSettings): The settings to use for the model.
+
+    Returns:
+        str: The generated knowledge gap.
+    """
+
+    prompt = (
+        f"Please come up with a new subtopic for the topic <TOPIC>{topic}</TOPIC>.\n"
+        f"Base your response on the following summary:\n<SUMMARY>{summary}</SUMMARY>\n"
+        "Respond with a single phrase containing the new subtopic."
+    )
+
+    async with generator:
+        result = await generator.run(user_prompt=prompt, model_settings=settings)
+        logger.debug(f"New subtopic for {topic}:\n{result.output}")
+
+    return result.output
+
+
 async def eval_knowledge_gap(model: str = "qwen2.5:72b", max_cases: int | None = None) -> None:
     """
     Runs evaluation for knowledge gap benchmark
@@ -220,85 +279,57 @@ async def eval_knowledge_gap(model: str = "qwen2.5:72b", max_cases: int | None =
     """
     logger.info("Runs evaluation for knowledge gap benchmark.")
 
+    # Create the knowledge gap generator
+    generator = make_knowledge_gap_agent("qwen2.5:72b")
+    generator_settings = ModelSettings(temperature=1.0, timeout=600)
+
+    # Create the judge
+    # model = "llama3.3"
+    # model = "qwq:32b"
+    model = "qwen2.5:72b"
     ollama_model = OpenAIModel(
         model_name=model,
         provider=OpenAIProvider(
             base_url=f"{config.ollama_host}/v1",
         ),
     )
-
-    # Agent for knowledge gap generation
-    generator_prompt = """
-    You are diligent research assistant working on a specific research topic. You are given a summary of a web search.
-    Based on the provided summary, generate a single subtopic which is relevant to the main topic but not sufficiently covered
-    in the summary. The new subtopic will be the basis for the next web search query. You can think of the new subtopic as
-    a 'knowledge gap' in the current summary.
-
-    <OUTPUT_FORMAT>
-    - Respond with a single phrase containing the new subtopic.
-    - The subtopic should be five or less words long.
-    - Avoid XML tags and markdown formatting.
-    </OUTPUT_FORMAT>
-    """
-    generator = Agent(
-        ollama_model,
-        output_type=str,
-        system_prompt=generator_prompt,
+    judge = LLMJudge(
+        rubric="The new subtopic should identify a clear gap in the information contained in the summary.",
+        include_input=True,
+        model=ollama_model,
     )
-    temperature = 1.0
-    timeout = 600
 
-    async def transform_text(text: str) -> str:
-        r = await generator.run(text)
-        return r.output
+    async def transform_knowledge_gap(summary: str) -> str:
+        knowledge_gap = await generate_knowledge_gap(topic="topic", summary=summary, generator=generator, settings=generator_settings)
+        return knowledge_gap
 
     # Load the benchmark cases
     path = Path("benchmarks/knowledge_gap/task.json")
-    dataset = Dataset[str, list[str], Any].from_file(path)
+    dataset = Dataset[str, str, Any].from_file(path)
     cases = dataset.cases
     if max_cases is not None:
         cases = cases[:max_cases]
     # Add the benchmark evaluators
-    dataset = Dataset[str, list[str], Any](
+    dataset = Dataset[str, str, Any](
         cases=cases,
         evaluators=[
-            IsInstance(type_name="str"),  # Pointless here since the evaluation crashes anyhow if the output type is incorrect.
-            ExactMatchAny(),
+            IsInstance(type_name="str"),
+            judge,
         ],
     )
     logger.debug(f"Loaded dataset with {len(dataset.cases)} cases.")
 
-    for case in dataset.cases:
-        topic = case.metadata.get("topic", "")
-        summary = case.inputs
-        logger.debug(f"Evaluating case: {case.name} with topic: {topic}")
+    # # Generate knowledge gaps only
+    # for case in dataset.cases:
+    #     topic = case.metadata.get("topic", "")
+    #     summary = case.inputs
+    #     logger.debug(f"Evaluating case: {case.name} with topic: {topic}")
 
-        prompt = (
-            f"Please come up with a new subtopic for the topic <TOPIC>{topic}</TOPIC>.\n"
-            f"Base your response on the following summary:\n<SUMMARY>{summary}</SUMMARY>\n"
-            "Respond with a single phrase containing the new subtopic."
-        )
+    #     await generate_knowledge_gap(topic, summary)
 
-        async with generator:
-            result = await generator.run(
-                user_prompt=prompt,
-                model_settings=ModelSettings(
-                    temperature=temperature,
-                    timeout=timeout,
-                ),
-            )
-
-            logger.debug(f"New subtopic for {topic}:\n{result.output}")
-
-    # # Run the evaluation
-    # report = await dataset.evaluate(transform_text)
-    # # report.print(include_input=True, include_output=True, include_durations=True)
-    # logger.debug(f"Complete evaluation report:\n{report}")
-
-    # score = report.averages().scores.get("ExactMatchAny", 0)
-    # logger.info(f"Evaluation score: {score}")
-
-    # return score
+    # Run evaluation
+    report = await dataset.evaluate(transform_knowledge_gap)
+    logger.debug(f"Complete evaluation report:\n{report}")
 
 
 def main() -> None:
