@@ -227,11 +227,11 @@ class FinalizeSummary(BaseNode[DeepState]):
         # Compile the final report
         report = f"# {topic}\n\n"
         report += f"{final_summary.output.summary}\n\n"  # Overall summary
-        for summary in ctx.state.search_summaries:  # Summaries of individual searches
+        for summary in ctx.state.search_summaries or []:  # Summaries of individual searches
             report += f"\n## {summary.aspect}\n\n"
             report += f"{summary.summary}\n\n"
             report += "### References\n"
-            for ref in summary.references:
+            for ref in summary.references or []:
                 report += f"- {ref.title} [{ref.url}]({ref.url})\n"
             report += "\n"
 
