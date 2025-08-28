@@ -41,7 +41,7 @@ async def generate_search_summaries(
     topics = json.loads(path.read_text(encoding="utf-8"))
 
     # Loop over topics
-    cases: list[Case[str, str, Any]] = []
+    cases: list[Case[dict[str, str], type[None], Any]] = []
     # for idx, topic in enumerate(topics[:3]):
     for idx, topic in enumerate(topics):
         logger.info(f"Case {idx}/{len(topics)} with topic: {topic}")
@@ -76,11 +76,13 @@ async def generate_search_summaries(
         logger.info("Adding new case to the benchmark dataset.")
         case = Case(
             name=f"knowledge_gap_{idx:03d}",
-            inputs=result.output,
-            metadata={"topic": topic},
+            inputs={
+                "topic": topic,
+                "summary": result.output,
+            },
         )
         cases.append(case)
-        dataset: Dataset[str, str, Any] = Dataset[str, str, Any](cases=cases)
+        dataset: Dataset[dict[str, str], type[None], Any] = Dataset[dict[str, str], type[None], Any](cases=cases)
 
         logger.info("Serializing benchmark dataset to file.")
         path_out.parent.mkdir(parents=True, exist_ok=True)

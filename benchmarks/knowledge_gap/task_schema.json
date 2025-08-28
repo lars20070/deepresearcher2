@@ -16,8 +16,11 @@
           "title": "Name"
         },
         "inputs": {
+          "additionalProperties": {
+            "type": "string"
+          },
           "title": "Inputs",
-          "type": "string"
+          "type": "object"
         },
         "metadata": {
           "anyOf": [
@@ -31,9 +34,7 @@
         },
         "expected_output": {
           "anyOf": [
-            {
-              "type": "string"
-            },
+            {},
             {
               "type": "null"
             }
