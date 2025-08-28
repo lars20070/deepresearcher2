@@ -54,7 +54,7 @@ async def eval_codenames(model: str = "qwen2.5:72b", max_cases: int | None = Non
         system_prompt="Find the associated word or words described below. Respond with a comma-separated list of small caps words.",
     )
 
-    async def transform_text(text: str) -> Response:
+    async def transform_text(text: str) -> str:
         r = await word_detector.run(text)
         return r.output
 
@@ -299,18 +299,23 @@ async def eval_knowledge_gap(model: str = "qwen2.5:72b", max_cases: int | None =
         model=ollama_model,
     )
 
-    async def transform_knowledge_gap(summary: str) -> str:
-        knowledge_gap = await generate_knowledge_gap(topic="topic", summary=summary, generator=generator, settings=generator_settings)
+    async def transform_knowledge_gap(payload: dict[str, str]) -> str:
+        knowledge_gap = await generate_knowledge_gap(
+            topic=payload.get("topic", ""),
+            summary=payload.get("summary", ""),
+            generator=generator,
+            settings=generator_settings,
+        )
         return knowledge_gap
 
     # Load the benchmark cases
     path = Path("benchmarks/knowledge_gap/task.json")
-    dataset = Dataset[str, str, Any].from_file(path)
+    dataset = Dataset[dict[str, str], type[None], Any].from_file(path)
     cases = dataset.cases
     if max_cases is not None:
         cases = cases[:max_cases]
     # Add the benchmark evaluators
-    dataset = Dataset[str, str, Any](
+    dataset = Dataset[dict[str, str], type[None], Any](
         cases=cases,
         evaluators=[
             IsInstance(type_name="str"),
