@@ -41,7 +41,7 @@ class WebSearch(BaseNode[DeepState]):
         topic = ctx.state.topic
 
         @query_agent.system_prompt
-        def add_reflection() -> str:
+        def add_reflection() -> str:  # pyright: ignore[reportUnusedFunction]
             """
             Add reflection from the previous loop to the system prompt.
             """
@@ -63,10 +63,7 @@ class WebSearch(BaseNode[DeepState]):
             )
             ctx.state.search_query = result.output
             # Exclude PDF files from search results. We cannot fetch the content anyway.
-            if ctx.state.search_query is not None and hasattr(ctx.state.search_query, "query") and ctx.state.search_query.query is not None:
-                ctx.state.search_query.query += " -filetype:pdf"
-            else:
-                logger.warning("search_query or search_query.query is None; skipping PDF exclusion.")
+            ctx.state.search_query.query += " -filetype:pdf"
             logger.debug(f"Web search query:\n{ctx.state.search_query.model_dump_json(indent=2)}")
 
         # Run the search
@@ -76,17 +73,17 @@ class WebSearch(BaseNode[DeepState]):
             "max_content_length": 12000,
         }
         if config.search_engine == SearchEngine.duckduckgo:
-            ctx.state.search_results = duckduckgo_search(**search_params)
+            ctx.state.search_results = duckduckgo_search(**search_params)  # pyright: ignore[reportArgumentType]
         elif config.search_engine == SearchEngine.tavily:
-            ctx.state.search_results = tavily_search(**search_params)
+            ctx.state.search_results = tavily_search(**search_params)  # pyright: ignore[reportArgumentType]
         elif config.search_engine == SearchEngine.perplexity:
             ctx.state.search_results = perplexity_search(ctx.state.search_query.query)
         elif config.search_engine == SearchEngine.brave:
-            ctx.state.search_results = brave_search(**search_params)
+            ctx.state.search_results = brave_search(**search_params)  # pyright: ignore[reportArgumentType]
         elif config.search_engine == SearchEngine.serper:
-            ctx.state.search_results = serper_search(**search_params)
+            ctx.state.search_results = serper_search(**search_params)  # pyright: ignore[reportArgumentType]
         elif config.search_engine == SearchEngine.searxng:
-            ctx.state.search_results = searxng_search(**search_params)
+            ctx.state.search_results = searxng_search(**search_params)  # pyright: ignore[reportArgumentType]
         else:
             message = f"Unsupported search engine: {config.search_engine}"
             logger.error(message)
@@ -107,7 +104,7 @@ class SummarizeSearchResults(BaseNode[DeepState]):
         logger.debug(f"Running Summarize Search Results with count number {ctx.state.count}.")
 
         @summary_agent.system_prompt
-        def add_web_search_results() -> str:
+        def add_web_search_results() -> str:  # pyright: ignore[reportUnusedFunction]
             """
             Add web search results to the system prompt.
             """
@@ -127,14 +124,15 @@ class SummarizeSearchResults(BaseNode[DeepState]):
             # logger.debug(f"Web search summary:\n{result.output}")
 
             # Transfer search result references to the summary
-            references = []
-            for ref in ctx.state.search_results:
+            references: list[Reference] = []
+            for ref in ctx.state.search_results or []:
                 if ref.title and ref.url:
                     references.append(Reference(title=ref.title, url=ref.url))
 
+            aspect = ctx.state.search_query.aspect if ctx.state.search_query is not None else "General"
             summary = WebSearchSummary(
                 summary=result.output,  # Summary from the agent
-                aspect=ctx.state.search_query.aspect,  # Aspect from the search query
+                aspect=aspect,  # Aspect from the search query
                 references=references,  # References from the search results
             )
             # logger.debug(f"Summary result:\n{format_as_xml(summary, root_tag='single_search_summary')}")
@@ -164,7 +162,7 @@ class ReflectOnSearch(BaseNode[DeepState]):
             # logger.debug(f"Search summaries:\n{xml}")
 
             @reflection_agent.system_prompt
-            def add_search_summaries() -> str:
+            def add_search_summaries() -> str:  # pyright: ignore[reportUnusedFunction]
                 """
                 Add search summaries to the system prompt.
                 """
@@ -208,7 +206,7 @@ class FinalizeSummary(BaseNode[DeepState]):
         logger.debug(f"Search summaries:\n{xml}")
 
         @final_summary_agent.system_prompt
-        def add_search_summaries() -> str:
+        def add_search_summaries() -> str:  # pyright: ignore[reportUnusedFunction]
             """
             Add search summaries to the system prompt.
             """
