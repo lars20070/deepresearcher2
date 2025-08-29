@@ -272,12 +272,12 @@ async def generate_knowledge_gap(topic: str, summary: str, generator: Agent, set
     return result.output
 
 
-async def eval_knowledge_gap(model: str = "qwen2.5:72b", max_cases: int | None = None) -> None:
+async def eval_knowledge_gap(models: list[str] | None = None, max_cases: int | None = None) -> None:
     """
     Runs evaluation for knowledge gap benchmark
 
     Args:
-        model (str): The model to use for evaluation.
+        models (list[str] | None): The models to use for evaluation.
         max_cases (int | None): The maximum number of cases to evaluate. Defaults to None.
 
     Returns:
@@ -289,21 +289,25 @@ async def eval_knowledge_gap(model: str = "qwen2.5:72b", max_cases: int | None =
     generator = make_knowledge_gap_agent("qwen2.5:72b")
     generator_settings = ModelSettings(temperature=1.0, timeout=600)
 
-    # Create the judge
-    # model = "llama3.3"
-    # model = "qwq:32b"
-    model = "qwen2.5:72b"
-    ollama_model = OpenAIModel(
-        model_name=model,
-        provider=OpenAIProvider(
-            base_url=f"{config.ollama_host}/v1",
-        ),
-    )
-    judge = LLMJudge(
-        rubric="The new subtopic should identify a clear gap in the information contained in the summary.",
-        include_input=True,
-        model=ollama_model,
-    )
+    # Create the judges
+    # Two independent judges with two different models.
+    if models is None:
+        models = ["qwen2.5:72b"]
+    judges: list[LLMJudge] = []
+    for model in models:
+        ollama_model = OpenAIModel(
+            model_name=model,
+            provider=OpenAIProvider(
+                base_url=f"{config.ollama_host}/v1",
+            ),
+        )
+        judges.append(
+            LLMJudge(
+                rubric="The new subtopic should point to a research area which is clearly missing in the summary.",
+                include_input=True,
+                model=ollama_model,
+            )
+        )
 
     async def transform_knowledge_gap(payload: dict[str, str]) -> str:
         knowledge_gap = await generate_knowledge_gap(
@@ -325,7 +329,7 @@ async def eval_knowledge_gap(model: str = "qwen2.5:72b", max_cases: int | None =
         cases=cases,
         evaluators=[
             IsInstance(type_name="str"),
-            judge,
+            *judges,
         ],
     )
     logger.debug(f"Loaded dataset with {len(dataset.cases)} cases.")
@@ -349,13 +353,14 @@ def main() -> None:
     """
     logger.info("Run evaluation.")
     # model = "llama3.3"
-    model = "qwen2.5:72b"
+    # model = "qwen2.5:72b"
+    models = ["llama3.3", "qwen2.5:72b"]
     max_cases = 3
     # max_cases = None
     # asyncio.run(eval_codenames(model=model, max_cases=max_cases))
     # asyncio.run(eval_darkhurmordetection(model=model, max_cases=max_cases))
     # asyncio.run(eval_rephrase(model=model, max_cases=max_cases))
-    asyncio.run(eval_knowledge_gap(model=model, max_cases=max_cases))
+    asyncio.run(eval_knowledge_gap(models=models, max_cases=max_cases))
 
 
 if __name__ == "__main__":
