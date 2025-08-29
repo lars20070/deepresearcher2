@@ -64,6 +64,7 @@ lint.ignore = [
   "PLR0915", # Allow long functions
   "PLR0912", # Allow many branches
   "PLR0913", # Allow many arguments
+  "TC006",   # Allow type casting without strings
 ]
 lint.pydocstyle.convention = "google"
 

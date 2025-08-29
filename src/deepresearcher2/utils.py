@@ -12,7 +12,7 @@ import pypandoc
 import requests
 from bs4 import BeautifulSoup
 from duckduckgo_search import DDGS
-from pydantic import HttpUrl
+from pydantic import HttpUrl, ValidationError
 from tavily import TavilyClient
 from tenacity import retry, stop_after_attempt, wait_exponential
 
@@ -191,7 +191,7 @@ def duckduckgo_search(query: str, max_results: int = 2, max_content_length: int 
     # Convert to pydantic objects
     results = []
     for r in ddgs_results:
-        title = r.get("title")
+        title = r.get("title", "")
         url = r.get("href")
         content = r.get("body")
 
@@ -200,7 +200,15 @@ def duckduckgo_search(query: str, max_results: int = 2, max_content_length: int 
 
         # Only fetch if necessary
         if should_fetch:
-            full_content = fetch_full_page_content(url)
+            if url is not None:
+                try:
+                    valid_url = HttpUrl(url)
+                    full_content = fetch_full_page_content(valid_url)
+                except ValidationError:
+                    logger.error(f"Invalid URL: {url}")
+                    full_content = ""
+            else:
+                full_content = ""
             if content is None or len(full_content) > len(content):
                 content = full_content
 
@@ -208,7 +216,7 @@ def duckduckgo_search(query: str, max_results: int = 2, max_content_length: int 
         if max_content_length is not None and content is not None:
             content = content[:max_content_length]
 
-        result = WebSearchResult(title=title, url=str(url), content=content)
+        result = WebSearchResult(title=title, url=str(url), summary="", content=content)
         results.append(result)
 
     return results
@@ -321,7 +329,7 @@ def perplexity_search(query: str) -> list[WebSearchResult]:
     url = perplexity_results["citations"][0]  # TODO: A list of URLs is returned, but we cannot press them into WebSearchResult.
     content = perplexity_results["choices"][0]["message"]["content"]
 
-    result = WebSearchResult(title=title, url=url, content=content)
+    result = WebSearchResult(title=title, url=url, summary="", content=content)
     return [result]
 
 
