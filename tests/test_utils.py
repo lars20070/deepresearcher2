@@ -2,6 +2,7 @@
 
 import pytest
 from dotenv import load_dotenv
+from pydantic import HttpUrl, ValidationError
 
 from deepresearcher2.config import config
 from deepresearcher2.logger import logger
@@ -24,7 +25,13 @@ def test_fetch_full_page_content() -> None:
     """
 
     url = "https://en.wikipedia.org/wiki/Daniel_Noboa"
-    content = fetch_full_page_content(url)
+
+    try:
+        validated_url = HttpUrl(url)
+        content = fetch_full_page_content(validated_url)
+    except ValidationError as err:
+        raise ValueError(f"Invalid URL: {url}") from err
+
     assert "Daniel Noboa" in content
 
     # TODO: Workaround for 403 Access Denied
@@ -50,14 +57,14 @@ def test_duckduckgo_search() -> None:
 
     assert len(results) <= n
     for r in results:
+        assert r.title is not None
+        assert r.url is not None
+        assert r.content is not None
+        assert r.summary is None  # DuckDuckGo does not provide a summary.
+        assert isinstance(r.url, str)
         logger.debug(f"search result title: {r.title}")
         logger.debug(f"search result url: {r.url}")
         logger.debug(f"search result content length: {len(r.content)}")
-        assert r.title is not None
-        assert r.url is not None
-        assert r.summary is None  # DuckDuckGo does not provide a summary.
-        assert r.content is not None
-        assert isinstance(r.url, str)
 
     # Restricted content length
     m = 100  # Max content length
@@ -69,6 +76,7 @@ def test_duckduckgo_search() -> None:
 
     assert len(results2) <= n
     for r in results2:
+        assert r.content is not None
         assert len(r.content) <= m
 
 
@@ -112,6 +120,7 @@ def test_tavily_search() -> None:
 
     assert len(results2) <= n
     for r in results2:
+        assert r.content is not None
         assert len(r.content) <= m
 
 
