@@ -52,6 +52,8 @@ jobs:
       run: uv build
     - name: Lint the package
       run: uvx ruff check .
+    - name: Type check the package
+      run: uvx pyright .
     - name: Run unit tests
       # -v                verbose
       # -m "not paid"     skip tests requiring paid API keys
