@@ -136,7 +136,7 @@ def test_perplexity_search() -> None:
 
     assert result.title is not None
     assert result.url is not None
-    assert result.summary is None
+    assert result.summary is not None and result.summary == ""  # Perplexity does not provide a summary.
     assert result.content is not None
     logger.debug(f"search result title: {result.title}")
     logger.debug(f"search result url: {result.url}")
