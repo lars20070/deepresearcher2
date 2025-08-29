@@ -11,7 +11,7 @@ If you do, you must add the required API keys to the `.env` file.
 ## Getting started
 1. Install [Ollama](https://ollama.com) and download a model.
    ```bash
-   ollama pull qwen3:8b
+   ollama pull qwen2.5:72b
    ```
 2. Start [SearXNG](https://docs.searxng.org).
    ```bash
