@@ -414,7 +414,7 @@ async def test_weather_agent() -> None:
         result = await weather_agent.run("What is the weather like in Zurich and in Wiltshire?", deps=deps)
         logger.debug(f"Response from weather agent: {result.output}")
 
-    assert weather_agent.model.model_name == "gpt-4o"
+    assert getattr(weather_agent.model, "model_name", None) == "gpt-4o"
     assert "Zurich" in result.output
 
 
@@ -522,7 +522,7 @@ async def test_pydantic_evals() -> None:
             if ctx.output == ctx.expected_output:
                 # Exact match
                 return 1.0
-            elif isinstance(ctx.output, str) and ctx.expected_output.lower() in ctx.output.lower():
+            elif isinstance(ctx.output, str) and isinstance(ctx.expected_output, str) and ctx.expected_output.lower() in ctx.output.lower():
                 # Expected output is a substring of the output
                 return 0.8
             else:
@@ -774,7 +774,7 @@ async def test_mcp_server() -> None:
     server_params = StdioServerParameters(
         command="uv",
         args=["run", "mcpserver"],
-        env=os.environ,
+        env=dict(os.environ),
     )
 
     async with stdio_client(server_params) as (read, write), ClientSession(read, write) as session:
@@ -820,10 +820,10 @@ async def test_pydantic_graph() -> None:
 
         track_number: int = 0
 
-        async def run(self, ctx: GraphRunContext) -> NodeC | End:
+        async def run(self, ctx: GraphRunContext) -> NodeC | End[str]:
             logger.debug("Running Node B.")
             if self.track_number > 5:
-                return End(f"Stop at Node B with track number {self.track_number}")
+                return End[str](f"Stop at Node B with track number {self.track_number}")
             else:
                 return NodeC(self.track_number)
 
@@ -835,9 +835,9 @@ async def test_pydantic_graph() -> None:
 
         track_number: int = 0
 
-        async def run(self, ctx: GraphRunContext) -> End:
+        async def run(self, ctx: GraphRunContext) -> End[str]:
             logger.info("Running Node C.")
-            return End(f"Stop at Node C with track number {self.track_number}")
+            return End[str](f"Stop at Node C with track number {self.track_number}")
 
     logger.info("Testing Pydantic Graph")
 
@@ -845,11 +845,11 @@ async def test_pydantic_graph() -> None:
     graph = Graph(nodes=[NodeA, NodeB, NodeC])
 
     # Run the agent graph
-    result_1 = await graph.run(start_node=NodeA(track_number=1))
+    result_1 = await graph.run(start_node=NodeA(track_number=1), state=1)
     logger.debug(f"Result: {result_1.output}")
     assert "Node C" in result_1.output
 
-    result_2 = await graph.run(start_node=NodeA(track_number=6))
+    result_2 = await graph.run(start_node=NodeA(track_number=6), state=1)
     logger.debug(f"Result: {result_2.output}")
     assert "Node B" in result_2.output
 

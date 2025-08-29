@@ -89,6 +89,8 @@ reportOptionalSubscript = "error"
 reportOptionalCall = "error"
 reportGeneralTypeIssues = "error"
 reportReturnType = "error"
+# Grey Area
+reportAttributeAccessIssue = "warning"
 # Noisy Rules
 reportUnknownParameterType = false
 reportUnknownVariableType = false
