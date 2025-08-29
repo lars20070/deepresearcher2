@@ -96,7 +96,7 @@ async def test_pydanticai_ollama() -> None:
     usage = result.usage()
     logger.debug(f"Usage statistics: {usage}")
     assert usage.requests == 1
-    assert usage.total_tokens > 0
+    assert usage.total_tokens is not None and usage.total_tokens > 0
 
 
 @pytest.mark.example

@@ -68,28 +68,34 @@ lint.ignore = [
 lint.pydocstyle.convention = "google"
 
 [tool.pyright]
-typeCheckingMode = "strict"
+# Core Settings
+typeCheckingMode = "basic"  # next step: "standard"
 pythonVersion = "3.12"
-include = ["src"]
-extraPaths = ["src"]
 venvPath = "."
 venv = ".venv"
+# Paths
+include = ["src", "tests"]
 exclude = [
   ".git",
   ".venv",
   "dist",
-  "build",
-  "coverage",
   "uml",
+  "**/__pycache__",
 ]
+strict = []  # If you really really want strict checking for parts of the code
+# High-value Rules
+reportOptionalMemberAccess = "error"
+reportOptionalSubscript = "error"  
+reportOptionalCall = "error"
+reportGeneralTypeIssues = "error"
+reportReturnType = "error"
+# Noisy Rules
+reportUnknownParameterType = false
+reportUnknownVariableType = false
+reportMissingParameterType = false
+reportMissingTypeStubs = false
+reportPrivateUsage = false
 
-# Useful diagnostics (strict already enables many)
-reportMissingImports = "error"
-reportMissingTypeStubs = "warning"
-reportUnknownMemberType = "warning"
-reportUnknownArgumentType = "warning"
-reportUnknownVariableType = "warning"
-reportPrivateUsage = "warning"
 [tool.pytest.ini_options]
 addopts = ["-m", "not paid"] # Skip tests that require a paid API key
 asyncio_default_fixture_loop_scope = "function" # Use "session" for a single event loop for all tests or "function" for a new event loop for every test (more isolation).
