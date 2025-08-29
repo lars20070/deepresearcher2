@@ -301,13 +301,12 @@ async def eval_knowledge_gap(models: list[str] | None = None, max_cases: int | N
                 base_url=f"{config.ollama_host}/v1",
             ),
         )
-        judges.append(
-            LLMJudge(
-                rubric="The new subtopic should point to a research area which is clearly missing in the summary.",
-                include_input=True,
-                model=ollama_model,
-            )
+        judge = LLMJudge(
+            rubric="The new subtopic should point to a research area which is clearly missing in the summary.",
+            include_input=True,
+            model=ollama_model,
         )
+        judges.append(judge)
 
     async def transform_knowledge_gap(payload: dict[str, str]) -> str:
         knowledge_gap = await generate_knowledge_gap(
@@ -344,6 +343,7 @@ async def eval_knowledge_gap(models: list[str] | None = None, max_cases: int | N
 
     # Run evaluation
     report = await dataset.evaluate(transform_knowledge_gap)
+    report.print(include_input=False, include_output=True, include_durations=True)
     logger.debug(f"Complete evaluation report:\n{report}")
 
 
