@@ -603,6 +603,7 @@ async def test_pydantic_evals_llmjudge(tmp_path: Path) -> None:
         return r.output
 
     dataset = Dataset[CustomerOrder, Recipe, Any](
+        name="Recipes",
         cases=[
             Case(
                 name="vegetarian_recipe",
