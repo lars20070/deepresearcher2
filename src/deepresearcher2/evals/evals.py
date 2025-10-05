@@ -152,7 +152,11 @@ async def eval_darkhurmordetection(model: str = "qwen2.5:72b", max_cases: int | 
     # report.print(include_input=True, include_output=True, include_durations=True)
     logger.debug(f"Complete evaluation report:\n{report}")
 
-    score = report.averages().scores.get("ExactMatch", 0)
+    averages = report.averages()
+    if averages is not None:
+        score = averages.scores.get("ExactMatch", 0)
+    else:
+        score = 0.0
     logger.info(f"Evaluation score: {score}")
 
     return score
@@ -211,7 +215,11 @@ async def eval_rephrase(model: str = "qwen2.5:72b", max_cases: int | None = None
     # report.print(include_input=True, include_output=True, include_durations=True)
     logger.debug(f"Complete evaluation report:\n{report}")
 
-    score = report.averages().scores.get("ExactMatchAny", 0)
+    averages = report.averages()
+    if averages is not None:
+        score = averages.scores.get("ExactMatch", 0)
+    else:
+        score = 0.0
     logger.info(f"Evaluation score: {score}")
 
     return score
