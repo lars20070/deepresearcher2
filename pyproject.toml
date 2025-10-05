@@ -59,7 +59,6 @@ lint.select = [
 ]
 lint.ignore = [
   "SIM108",  # Ignore ternary operators rule i.e. allow if-else blocks
-  "PD901",   # Allow variable name `df` for dataframes
   "PLR2004", # Allow magic values
   "PLR0915", # Allow long functions
   "PLR0912", # Allow many branches
