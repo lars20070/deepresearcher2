@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Any
 
 from pydantic_ai import Agent
-from pydantic_ai.models.openai import OpenAIModel
+from pydantic_ai.models.openai import OpenAIChatModel
 from pydantic_ai.providers.openai import OpenAIProvider
 from pydantic_ai.settings import ModelSettings
 from pydantic_evals import Dataset
@@ -46,7 +46,7 @@ async def eval_codenames(model: str = "qwen2.5:72b", max_cases: int | None = Non
     """
     logger.info("Runs evaluation for codenames benchmark.")
 
-    ollama_model = OpenAIModel(
+    ollama_model = OpenAIChatModel(
         model_name=model,
         provider=OpenAIProvider(
             base_url=f"{config.ollama_host}/v1",
@@ -114,7 +114,7 @@ async def eval_darkhurmordetection(model: str = "qwen2.5:72b", max_cases: int | 
     """
     logger.info("Runs evaluation for dark humor detection.")
 
-    ollama_model = OpenAIModel(
+    ollama_model = OpenAIChatModel(
         model_name=model,
         provider=OpenAIProvider(
             base_url=f"{config.ollama_host}/v1",
@@ -175,7 +175,7 @@ async def eval_rephrase(model: str = "qwen2.5:72b", max_cases: int | None = None
     """
     logger.info("Runs evaluation for rephrase benchmark.")
 
-    ollama_model = OpenAIModel(
+    ollama_model = OpenAIChatModel(
         model_name=model,
         provider=OpenAIProvider(
             base_url=f"{config.ollama_host}/v1",
@@ -232,7 +232,7 @@ def make_knowledge_gap_agent(model_name: str = "qwen2.5:72b") -> Agent:
     Args:
         model_name (str): The name of the model to use.
     """
-    ollama_model = OpenAIModel(
+    ollama_model = OpenAIChatModel(
         model_name=model_name,
         provider=OpenAIProvider(base_url=f"{config.ollama_host}/v1"),
     )
@@ -307,7 +307,7 @@ async def eval_knowledge_gap(models: list[str] | None = None, max_cases: int | N
         models = ["qwen2.5:72b"]
     judges: list[LLMJudge] = []
     for model in models:
-        ollama_model = OpenAIModel(
+        ollama_model = OpenAIChatModel(
             model_name=model,
             provider=OpenAIProvider(
                 base_url=f"{config.ollama_host}/v1",

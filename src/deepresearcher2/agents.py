@@ -2,7 +2,7 @@
 from dotenv import load_dotenv
 from pydantic_ai import Agent
 from pydantic_ai.mcp import MCPServerStdio
-from pydantic_ai.models.openai import OpenAIModel
+from pydantic_ai.models.openai import OpenAIChatModel
 from pydantic_ai.providers.openai import OpenAIProvider
 
 from .config import config
@@ -17,7 +17,7 @@ if "openai" in config.model.value:
     model = config.model.value
 else:
     # Local Ollama model
-    model = OpenAIModel(
+    model = OpenAIChatModel(
         model_name=config.model.value,
         provider=OpenAIProvider(base_url=f"{config.ollama_host}/v1"),
     )

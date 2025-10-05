@@ -27,7 +27,7 @@ if TYPE_CHECKING:
     from pydantic_ai.messages import ModelMessage
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
-from pydantic_ai.models.openai import OpenAIModel
+from pydantic_ai.models.openai import OpenAIChatModel
 from pydantic_ai.providers.openai import OpenAIProvider
 from pydantic_ai.settings import ModelSettings
 from pydantic_evals import Case, Dataset
@@ -77,7 +77,7 @@ async def test_pydanticai_ollama() -> None:
     model = "llama3.3"
     # model = "qwq:32b"
     # model = "qwen2.5:72b"
-    ollama_model = OpenAIModel(
+    ollama_model = OpenAIChatModel(
         model_name=model,
         provider=OpenAIProvider(
             base_url=f"{config.ollama_host}/v1",
@@ -119,7 +119,7 @@ async def test_pydanticai_temperature() -> None:
 
     model = "llama3.3"
     # model = "gpt-oss"  # Really good answers.
-    ollama_model = OpenAIModel(
+    ollama_model = OpenAIChatModel(
         model_name=model,
         provider=OpenAIProvider(
             base_url=f"{config.ollama_host}/v1",
@@ -297,7 +297,7 @@ async def test_weather_agent() -> None:
     # TODO: Replace GPT-4o by any Ollama model
     # Model response is <|python_tag|>get_lat_lng(args=["Zurich"])
     # Maybe look into this issue. https://github.com/pydantic/pydantic-ai/issues/437
-    # ollama_model = OpenAIModel(
+    # ollama_model = OpenAIChatModel(
     #     model_name="llama3.3",
     #     provider=OpenAIProvider(base_url=f"{config.ollama_host}/v1"),
     # )
@@ -437,7 +437,7 @@ async def test_agent_delegation() -> None:
     """
 
     # model = "llama3.3"
-    # ollama_model = OpenAIModel(
+    # ollama_model = OpenAIChatModel(
     #     model_name=model,
     #     provider=OpenAIProvider(
     #         base_url=f"{config.ollama_host}/v1",
@@ -584,7 +584,7 @@ async def test_pydantic_evals_llmjudge(tmp_path: Path) -> None:
     model = "llama3.3"
     # model = "qwq:32b"
     # model = "qwen2.5:72b"
-    ollama_model = OpenAIModel(
+    ollama_model = OpenAIChatModel(
         model_name=model,
         provider=OpenAIProvider(
             base_url=f"{config.ollama_host}/v1",
@@ -695,7 +695,7 @@ async def test_mcp_sse_client() -> None:
     """
 
     # model = "llama3.3"
-    # ollama_model = OpenAIModel(
+    # ollama_model = OpenAIChatModel(
     #     model_name=model,
     #     provider=OpenAIProvider(base_url=f"{config.ollama_host}/v1"),
     # )
@@ -729,7 +729,7 @@ async def test_mcp_stdio_client() -> None:
     """
 
     # model = "llama3.3"
-    # ollama_model = OpenAIModel(
+    # ollama_model = OpenAIChatModel(
     #     model_name=model,
     #     provider=OpenAIProvider(base_url=f"{config.ollama_host}/v1"),
     # )
@@ -902,7 +902,7 @@ async def test_email() -> None:
         pass
 
     # Agents
-    ollama_model = OpenAIModel(
+    ollama_model = OpenAIChatModel(
         model_name="llama3.3",
         provider=OpenAIProvider(base_url=f"{config.ollama_host}/v1"),
     )
@@ -1003,7 +1003,7 @@ async def test_structured_input() -> None:
     class MyOutput(BaseModel):
         greeting: str
 
-    ollama_model = OpenAIModel(
+    ollama_model = OpenAIChatModel(
         model_name="llama3.3",
         provider=OpenAIProvider(base_url=f"{config.ollama_host}/v1"),
     )
