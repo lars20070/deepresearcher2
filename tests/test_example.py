@@ -4,12 +4,12 @@ from __future__ import annotations as _annotations
 import os
 import random
 import re
-import urllib
 from dataclasses import dataclass, field
 from datetime import date
 from io import StringIO
 from typing import TYPE_CHECKING, Any
 from unittest.mock import patch
+from urllib.request import Request, urlopen
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -19,6 +19,7 @@ import pytest
 from httpx import AsyncClient
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
+from mcp.types import TextContent
 from pydantic import BaseModel, EmailStr, Field
 from pydantic_ai import Agent, ModelRetry, RunContext, format_as_xml
 from pydantic_ai.mcp import MCPServerSSE, MCPServerStdio
@@ -781,8 +782,13 @@ async def test_mcp_server() -> None:
     async with stdio_client(server_params) as (read, write), ClientSession(read, write) as session:
         await session.initialize()
         result = await session.call_tool("poet", {"theme": "socks"})
-        logger.debug(f"Complete poem:\n{result.content[0].text}")
-        assert "socks" in result.content[0].text
+        content = result.content[0]
+        if isinstance(content, TextContent):
+            text = content.text
+        else:
+            text = str(content)
+        logger.debug(f"Complete poem:\n{text}")
+        assert "socks" in text
 
 
 @pytest.mark.example
@@ -1045,8 +1051,8 @@ def test_beautifulsoup() -> None:
     }
 
     # Read raw html
-    request = urllib.request.Request(url, headers=headers)
-    response = urllib.request.urlopen(request)
+    request = Request(url, headers=headers)
+    response = urlopen(request)
     html = response.read()
     logger.debug(f"Raw html response:\n{html}")
 
