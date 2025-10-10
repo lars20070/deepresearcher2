@@ -2,6 +2,7 @@
 from __future__ import annotations as _annotations
 
 import asyncio
+import json
 from pathlib import Path
 from typing import Any
 
@@ -347,19 +348,35 @@ async def eval_knowledge_gap(models: list[str] | None = None, max_cases: int | N
     )
     logger.debug(f"Loaded dataset with {len(dataset.cases)} cases.")
 
-    # Generate knowledge gaps only
-    for case in dataset.cases:
-        topic = case.inputs.get("topic", "")
-        summary = case.inputs.get("summary", "")
-        logger.debug(f"Generating knowledge gap for case: {case.name} with topic: {topic}")
+    # # Generate knowledge gaps
+    # gaps: list[str] = []
+    # for case in dataset.cases:
+    #     topic = case.inputs.get("topic", "")
+    #     summary = case.inputs.get("summary", "")
+    #     logger.debug(f"Generating knowledge gap for case: {case.name} with topic: {topic}")
 
-        gap = await generate_knowledge_gap(
-            topic=topic,
-            summary=summary,
-            generator=generator,
-            settings=generator_settings,
-        )
-        logger.debug(f"Generated knowledge gap: {gap}")
+    #     gap = await generate_knowledge_gap(
+    #         topic=topic,
+    #         summary=summary,
+    #         generator=generator,
+    #         settings=generator_settings,
+    #     )
+    #     gaps.append(gap)
+
+    # # Serialize the knowledge gaps to a file
+    # output_path = Path("benchmarks/knowledge_gap/knowledge_gaps.json")
+    # output_path.parent.mkdir(parents=True, exist_ok=True)
+    # with output_path.open("w", encoding="utf-8") as f:
+    #     json.dump(gaps, f, indent=2, ensure_ascii=False)
+
+    # Deserialize knowledge gaps from file
+    input_path = Path("benchmarks/knowledge_gap/knowledge_gaps.json")
+    if not input_path.exists():
+        logger.error(f"File not found: {input_path}")
+        raise FileNotFoundError(f"Cannot find the file: {input_path}")
+    with input_path.open("r", encoding="utf-8") as f:
+        gaps: list[str] = json.load(f)
+    logger.info(f"Loaded {len(gaps)} knowledge gaps from {input_path}")
 
     # # Run evaluation
     # report = await dataset.evaluate(transform_knowledge_gap)
@@ -375,7 +392,7 @@ def main() -> None:
     # model = "llama3.3"
     # model = "qwen2.5:72b"
     models = ["llama3.3", "qwen2.5:72b"]
-    max_cases = 3
+    max_cases = None
     # max_cases = None
     # asyncio.run(eval_codenames(model=model, max_cases=max_cases))
     # asyncio.run(eval_darkhurmordetection(model=model, max_cases=max_cases))
