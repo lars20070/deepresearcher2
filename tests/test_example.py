@@ -568,9 +568,9 @@ async def test_pydantic_evals_llmjudge(tmp_path: Path) -> None:
 
     The benchmark dataset contains two cases for evaluating recipe generation: a vegetarian recipe and a gluten-free recipe.
     Each response is checked with three different evaluators:
-    * IsInstance() checks that the output is a valid Recipe object.
-    * a general LLMJudge() checks ingredients and steps.
-    * a specific LLMJudge() checks for dietary restrictions.
+    (1) IsInstance() checks that the output is a valid Recipe object.
+    (2) A general LLMJudge() checks ingredients and steps.
+    (3) A specific LLMJudge() checks for dietary restrictions defined in the cases.
     """
 
     class CustomerOrder(BaseModel):
@@ -650,6 +650,7 @@ async def test_pydantic_evals_llmjudge(tmp_path: Path) -> None:
     # Serialize the benchmark dataset
     path = tmp_path / "benchmark.json"
     path_schema = tmp_path / "benchmark_schema.json"
+    logger.info(f"Serialize benchmark dataset to {path}")
     dataset.to_file(path)  # A corresponding schema file is written as well.
 
     assert path.exists()
@@ -661,10 +662,12 @@ async def test_pydantic_evals_llmjudge(tmp_path: Path) -> None:
     assert path_schema.stat().st_size > 0
 
     # Deserialize the benchmark dataset again
+    logger.info(f"Deserialize benchmark dataset from {path}")
     dataset2 = Dataset[CustomerOrder, Recipe, Any].from_file(path)
     assert dataset2.model_dump(mode="json", by_alias=True, exclude_none=True) == dataset.model_dump(mode="json", by_alias=True, exclude_none=True)
 
     # Run the evaluation
+    logger.info("Run the evaluation ofthe recipe dataset")
     report = await dataset.evaluate(transform_recipe)
     report.print(
         include_input=True,
