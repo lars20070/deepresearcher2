@@ -288,8 +288,10 @@ async def eval_knowledge_gap(models: list[str] | None = None, max_cases: int | N
     """
     Runs evaluation for knowledge gap benchmark
 
+    We use multiple judges with different underlying models to score the generated knowledge gaps.
+
     Args:
-        models (list[str] | None): The models to use for evaluation.
+        models (list[str] | None): The models to use for scoring the knowledge gaps.
         max_cases (int | None): The maximum number of cases to evaluate. Defaults to None.
 
     Returns:
@@ -345,18 +347,24 @@ async def eval_knowledge_gap(models: list[str] | None = None, max_cases: int | N
     )
     logger.debug(f"Loaded dataset with {len(dataset.cases)} cases.")
 
-    # # Generate knowledge gaps only
-    # for case in dataset.cases:
-    #     topic = case.metadata.get("topic", "")
-    #     summary = case.inputs
-    #     logger.debug(f"Evaluating case: {case.name} with topic: {topic}")
+    # Generate knowledge gaps only
+    for case in dataset.cases:
+        topic = case.inputs.get("topic", "")
+        summary = case.inputs.get("summary", "")
+        logger.debug(f"Generating knowledge gap for case: {case.name} with topic: {topic}")
 
-    #     await generate_knowledge_gap(topic, summary)
+        gap = await generate_knowledge_gap(
+            topic=topic,
+            summary=summary,
+            generator=generator,
+            settings=generator_settings,
+        )
+        logger.debug(f"Generated knowledge gap: {gap}")
 
-    # Run evaluation
-    report = await dataset.evaluate(transform_knowledge_gap)
-    report.print(include_input=False, include_output=True, include_durations=True)
-    logger.debug(f"Complete evaluation report:\n{report}")
+    # # Run evaluation
+    # report = await dataset.evaluate(transform_knowledge_gap)
+    # report.print(include_input=False, include_output=True, include_durations=True)
+    # logger.debug(f"Complete evaluation report:\n{report}")
 
 
 def main() -> None:
