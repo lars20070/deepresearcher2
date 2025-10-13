@@ -1158,3 +1158,18 @@ def test_bradley_terry_expectation_propagation() -> None:
     # Check that the scores are in the expected order
     assert mean[0] > mean[1] > mean[2] > mean[3] > mean[4]
     # Same result as in the classical Bradley-Terry model with MLE, see test_bradley_terry_maximum_likelihood_estimation().
+
+    # Add more games which are further evidence for the ranking.
+    games = games + [
+        (0, 2),
+        (0, 2),
+        (0, 2),
+        (0, 4),
+        (0, 4),
+        (0, 4),
+        (0, 4),
+    ]
+
+    _, cov_2 = choix.ep_pairwise(n, games, 0.1, model="logit")
+    logger.debug(f"New total variance: {np.trace(cov_2):0.4f}")
+    assert np.trace(cov_2) < np.trace(cov)  # More games should lead to less variance.
