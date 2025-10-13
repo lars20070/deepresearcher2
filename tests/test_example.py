@@ -1106,9 +1106,15 @@ def test_bradley_terry() -> None:
         (4, 3),  # Player 4 beats Player 3
     ]
 
-    scores = choix.ilsr_pairwise(n, games)
+    scores = choix.ilsr_pairwise(n, games, alpha=0.01)
     for i in range(n):
-        logger.debug(f"Bradley-Terry score for Player {i}: {scores[i]:0.4f}")
+        logger.debug(f"Score for Player {i}: {scores[i]:0.4f}")
 
     # Check that the scores are in the expected order
     assert scores[0] > scores[1] > scores[2] > scores[3] > scores[4]
+
+    # Player 1 is more likely to win against Player 4.
+    prob_1_wins, prob_4_wins = choix.probabilities([1, 4], scores)
+    logger.debug(f"Probability that Player 1 beats Player 4: {prob_1_wins:0.4f}")
+    logger.debug(f"Probability that Player 4 beats Player 1: {prob_4_wins:0.4f}")
+    assert prob_1_wins > prob_4_wins
