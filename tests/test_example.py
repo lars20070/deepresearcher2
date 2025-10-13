@@ -15,8 +15,8 @@ import choix
 
 if TYPE_CHECKING:
     from pathlib import Path
-
 import logfire
+import numpy as np
 import pytest
 from httpx import AsyncClient
 from mcp import ClientSession, StdioServerParameters
@@ -1083,11 +1083,14 @@ def test_beautifulsoup() -> None:
 
 
 @pytest.mark.example
-def test_bradley_terry() -> None:
+def test_bradley_terry_maximum_likelihood_estimation() -> None:
     """
     Test the Bradley-Terry model from the choix package.
     https://en.wikipedia.org/wiki/Bradley–Terry_model
     The model ranks items i.e. players based on pairwise comparisons.
+
+    The classical Bradley-Terry model is using Maximum Likelihood Estimation (MLE).
+    The approach is fast but less stable.
 
     In the example, we have 5 players who have played six games.
     In order of strength from strongest to weakest, the players are:
@@ -1118,3 +1121,40 @@ def test_bradley_terry() -> None:
     logger.debug(f"Probability that Player 1 beats Player 4: {prob_1_wins:0.4f}")
     logger.debug(f"Probability that Player 4 beats Player 1: {prob_4_wins:0.4f}")
     assert prob_1_wins > prob_4_wins
+
+
+@pytest.mark.example
+def test_bradley_terry_expectation_propagation() -> None:
+    """
+    Test the Bradley-Terry model with Expectation Propagation from the choix package.
+
+    Bayesian Inference using Expectation Propagation.
+    The approach is slower but more stable than MLE. Good for sparse data.
+
+    In the example, we have 5 players who have played six games.
+    In order of strength from strongest to weakest, the players are:
+    Player 0, Player 1, Player 2, Player 3 and Player 4.
+    """
+
+    logger.info("Testing Bradley-Terry model with Expectation Propagation.")
+
+    n = 5
+    games = [
+        (1, 0),  # Player 1 beats Player 0
+        (0, 4),  # Player 0 beats Player 4
+        (3, 1),  # Player 3 beats Player 1
+        (0, 2),  # Player 0 beats Player 2
+        (2, 4),  # Player 2 beats Player 4
+        (4, 3),  # Player 4 beats Player 3
+    ]
+
+    mean, cov = choix.ep_pairwise(n, games, 0.1, model="logit")  # Logit observation model
+
+    for i in range(n):
+        logger.debug(f"Score for Player {i}: {mean[i]:0.4f}")  # Mean of the posterior distribution over each player's strength score
+    logger.debug(f"Covariance matrix:\n{cov}")
+    logger.debug(f"Total variance: {np.trace(cov):0.4f}")
+
+    # Check that the scores are in the expected order
+    assert mean[0] > mean[1] > mean[2] > mean[3] > mean[4]
+    # Same result as in the classical Bradley-Terry model with MLE, see test_bradley_terry_maximum_likelihood_estimation().

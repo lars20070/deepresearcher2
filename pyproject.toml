@@ -30,6 +30,7 @@ dependencies = [
   "pydantic-settings>=2.8.1",
   "pyright>=1.1.404",
   "choix>=0.4.1",
+  "numpy>=2.3.3",
 ]
 
 [project.scripts]
