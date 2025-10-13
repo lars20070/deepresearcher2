@@ -11,6 +11,8 @@ from typing import TYPE_CHECKING, Any
 from unittest.mock import patch
 from urllib.request import Request, urlopen
 
+import choix
+
 if TYPE_CHECKING:
     from pathlib import Path
 
@@ -1078,3 +1080,35 @@ def test_beautifulsoup() -> None:
     clean_text = clean_text.replace("\xa0", " ")  # replace non-breaking spaces
 
     logger.debug(f"Cleaned up text:\n{clean_text[:10000]}")
+
+
+@pytest.mark.example
+def test_bradley_terry() -> None:
+    """
+    Test the Bradley-Terry model from the choix package.
+    https://en.wikipedia.org/wiki/Bradley–Terry_model
+    The model ranks items i.e. players based on pairwise comparisons.
+
+    In the example, we have 5 players who have played six games.
+    In order of strength from strongest to weakest, the players are:
+    Player 0, Player 1, Player 2, Player 3 and Player 4.
+    """
+
+    logger.info("Testing Bradley-Terry model.")
+
+    n = 5
+    games = [
+        (1, 0),  # Player 1 beats Player 0
+        (0, 4),  # Player 0 beats Player 4
+        (3, 1),  # Player 3 beats Player 1
+        (0, 2),  # Player 0 beats Player 2
+        (2, 4),  # Player 2 beats Player 4
+        (4, 3),  # Player 4 beats Player 3
+    ]
+
+    scores = choix.ilsr_pairwise(n, games)
+    for i in range(n):
+        logger.debug(f"Bradley-Terry score for Player {i}: {scores[i]:0.4f}")
+
+    # Check that the scores are in the expected order
+    assert scores[0] > scores[1] > scores[2] > scores[3] > scores[4]
