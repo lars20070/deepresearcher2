@@ -13,6 +13,7 @@ from pydantic_ai.settings import ModelSettings
 from pydantic_evals import Dataset
 from pydantic_evals.evaluators import Evaluator, EvaluatorContext, IsInstance, LLMJudge
 
+from deepresearcher2.agents import evaluation_agent
 from deepresearcher2.config import config
 from deepresearcher2.evals.import_bigbench import Response
 from deepresearcher2.logger import logger
@@ -378,10 +379,22 @@ async def eval_knowledge_gap(models: list[str] | None = None, max_cases: int | N
         gaps: list[str] = json.load(f)
     logger.info(f"Loaded {len(gaps)} knowledge gaps from {input_path}")
 
-    # # Run evaluation
-    # report = await dataset.evaluate(transform_knowledge_gap)
-    # report.print(include_input=False, include_output=True, include_durations=True)
-    # logger.debug(f"Complete evaluation report:\n{report}")
+    # Run evaluation
+    prompt = """
+    <QUESTION> Which of the two books is a better present for a history enthusiast? </QUESTION>
+
+    <A> 'Sapiens: A Brief History of Humankind' by Yuval Noah Harari </A>
+
+    <B> 'Solaris' by Stanislaw Lem </B>
+    """
+    async with evaluation_agent:
+        result = await evaluation_agent.run(
+            user_prompt=prompt,
+            model_settings=ModelSettings(
+                timeout=config.model_timeout,
+            ),
+        )
+        logger.debug(f"Game result: {result.output.value}")
 
 
 def main() -> None:

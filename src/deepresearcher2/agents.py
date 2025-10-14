@@ -6,8 +6,8 @@ from pydantic_ai.models.openai import OpenAIChatModel
 from pydantic_ai.providers.openai import OpenAIProvider
 
 from .config import config
-from .models import FinalSummary, Reflection, WebSearchQuery
-from .prompts import final_summary_instructions, reflection_instructions, summary_instructions, summary_instructions_evals
+from .models import FinalSummary, GameResult, Reflection, WebSearchQuery
+from .prompts import evaluation_instructions, final_summary_instructions, reflection_instructions, summary_instructions, summary_instructions_evals
 
 load_dotenv()
 
@@ -71,6 +71,14 @@ final_summary_agent = Agent(
     model=model,
     output_type=FinalSummary,
     system_prompt=final_summary_instructions,
+    retries=5,
+    instrument=True,
+)
+
+evaluation_agent = Agent(
+    model=model,
+    output_type=GameResult,
+    system_prompt=evaluation_instructions,
     retries=5,
     instrument=True,
 )

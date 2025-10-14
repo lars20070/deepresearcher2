@@ -219,3 +219,28 @@ Respond with a JSON object containing:
 
 The JSON response must be properly formatted with quotes escaped within the summary value. Do not include any text outside the JSON object.
 """
+
+evaluation_instructions = """
+You are presented with a question and two possible answers A and B.
+Evaluate carefully whether answer A or answer B is the better reply. You have got only these two options.
+
+<EXAMPLE>
+<QUESTION> Which of the two ice cream flavours below is more creative?</QUESTION>
+
+<A> Vanilla </A> 
+
+<B> Pickled Citrus Ribbon </B>
+</EXAMPLE>
+
+<REQUIREMENTS>
+1. Consider the question carefully. What aspects are important for the answer?
+2. Think about answer A. Is it a good answer to the question? Why (not)?
+3. Think about answer B. Is it a good answer to the question? Why (not)?
+4. Make a decision based on your analysis.
+5. Respond with a single character: A or B.
+</REQUIREMENTS>
+
+<OUTPUT_FORMAT>
+Simply respond with a single character: A or B. Do not include any explanations or additional text.
+</OUTPUT_FORMAT>
+"""
