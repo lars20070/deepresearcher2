@@ -3,6 +3,8 @@ from __future__ import annotations as _annotations
 
 import asyncio
 import json
+import random
+import textwrap
 from pathlib import Path
 from typing import Any
 
@@ -379,22 +381,74 @@ async def eval_knowledge_gap(models: list[str] | None = None, max_cases: int | N
         gaps: list[str] = json.load(f)
     logger.info(f"Loaded {len(gaps)} knowledge gaps from {input_path}")
 
-    # Run evaluation
-    prompt = """
-    <QUESTION> Which of the two books is a better present for a history enthusiast? </QUESTION>
+    # # Run evaluation
+    # prompt = """
+    # <QUESTION> Which of the two books is a better present for a history enthusiast? </QUESTION>
 
-    <A> 'Sapiens: A Brief History of Humankind' by Yuval Noah Harari </A>
+    # <A> 'Sapiens: A Brief History of Humankind' by Yuval Noah Harari </A>
 
-    <B> 'Solaris' by Stanislaw Lem </B>
-    """
-    async with evaluation_agent:
-        result = await evaluation_agent.run(
-            user_prompt=prompt,
-            model_settings=ModelSettings(
-                timeout=config.model_timeout,
-            ),
-        )
-        logger.debug(f"Game result: {result.output.value}")
+    # <B> 'Solaris' by Stanislaw Lem </B>
+    # """
+    # async with evaluation_agent:
+    #     result = await evaluation_agent.run(
+    #         user_prompt=prompt,
+    #         model_settings=ModelSettings(
+    #             timeout=config.model_timeout,
+    #         ),
+    #     )
+    #     logger.debug(f"Game result: {result.output.value}")
+
+    # Loop over knowledge gaps
+    for idx in range(len(dataset.cases)):
+        gap = gaps[idx]
+
+        # Pick a random second case for comparison
+        idx_2 = random.randrange(len(dataset.cases))
+        gap_2 = gaps[idx_2]
+
+        logger.debug(f"Index 1: {idx} vs Index 2: {idx_2}")
+
+        prompt = textwrap.dedent(f"""
+            <QUESTION>
+            Which of the two search queries (A or B) shows more genuine curiosity and creativity, and is less formulaic?
+            </QUESTION>
+
+            <A> {gap} </A>
+
+            <B> {gap_2} </B>
+        """)
+        # logger.debug(f"Prompt for evaluation:\n{prompt}")
+
+        async with evaluation_agent:
+            result = await evaluation_agent.run(
+                user_prompt=prompt,
+                model_settings=ModelSettings(
+                    temperature=1.0,
+                    timeout=config.model_timeout,
+                ),
+            )
+            logger.debug(f"Game result: {result.output.value}")
+
+        prompt_reverse = textwrap.dedent(f"""
+            <QUESTION>
+            Which of the two search queries (A or B) shows more genuine curiosity and creativity, and is less formulaic?
+            </QUESTION>
+
+            <A> {gap_2} </A>
+
+            <B> {gap} </B>
+        """)
+        # logger.debug(f"Prompt for evaluation:\n{prompt}")
+
+        async with evaluation_agent:
+            result = await evaluation_agent.run(
+                user_prompt=prompt_reverse,
+                model_settings=ModelSettings(
+                    temperature=1.0,
+                    timeout=config.model_timeout,
+                ),
+            )
+            logger.debug(f"Game result reverse: {result.output.value}\n")
 
 
 def main() -> None:
