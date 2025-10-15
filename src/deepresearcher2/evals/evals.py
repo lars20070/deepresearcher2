@@ -8,6 +8,8 @@ import textwrap
 from pathlib import Path
 from typing import Any
 
+import choix
+import numpy as np
 from pydantic_ai import Agent
 from pydantic_ai.models.openai import OpenAIChatModel
 from pydantic_ai.providers.openai import OpenAIProvider
@@ -399,6 +401,7 @@ async def eval_knowledge_gap(models: list[str] | None = None, max_cases: int | N
     #     logger.debug(f"Game result: {result.output.value}")
 
     # Loop over knowledge gaps
+    games = []
     for idx in range(len(dataset.cases)):
         gap = gaps[idx]
 
@@ -406,7 +409,7 @@ async def eval_knowledge_gap(models: list[str] | None = None, max_cases: int | N
         idx_2 = random.randrange(len(dataset.cases))
         gap_2 = gaps[idx_2]
 
-        logger.debug(f"Index 1: {idx} vs Index 2: {idx_2}")
+        logger.debug(f"Gap {idx} vs Gap {idx_2}")
 
         prompt = textwrap.dedent(f"""
             <QUESTION>
@@ -429,7 +432,12 @@ async def eval_knowledge_gap(models: list[str] | None = None, max_cases: int | N
             )
             logger.debug(f"Game result: {result.output.value}")
 
-        prompt_reverse = textwrap.dedent(f"""
+        if result.output.value == "A":
+            games.append((idx, idx_2))
+        else:
+            games.append((idx_2, idx))
+
+        prompt = textwrap.dedent(f"""
             <QUESTION>
             Which of the two search queries (A or B) shows more genuine curiosity and creativity, and is less formulaic?
             </QUESTION>
@@ -442,13 +450,31 @@ async def eval_knowledge_gap(models: list[str] | None = None, max_cases: int | N
 
         async with evaluation_agent:
             result = await evaluation_agent.run(
-                user_prompt=prompt_reverse,
+                user_prompt=prompt,
                 model_settings=ModelSettings(
                     temperature=1.0,
                     timeout=config.model_timeout,
                 ),
             )
-            logger.debug(f"Game result reverse: {result.output.value}\n")
+            logger.debug(f"Game result: {result.output.value}")
+
+        if result.output.value == "B":
+            games.append((idx, idx_2))
+        else:
+            games.append((idx_2, idx))
+
+        logger.debug(f"Current games:\n{games}")
+
+    # Calculate Bradley-Terry scores
+    scores = choix.ilsr_pairwise(len(dataset.cases), games, alpha=0.01)
+    idx_sorted = np.argsort(scores)
+    gaps_sorted = [gaps[i] for i in idx_sorted]
+    for i in range(len(dataset.cases)):
+        logger.debug(f"Score for Gap {i}: {scores[i]:0.4f}")
+    logger.debug(f"Sorted indices: {idx_sorted}")
+    logger.debug("Sorted gaps (from worst to best):")
+    for i in range(len(gaps_sorted)):
+        logger.debug(gaps_sorted[i])
 
 
 def main() -> None:
@@ -459,7 +485,7 @@ def main() -> None:
     # model = "llama3.3"
     # model = "qwen2.5:72b"
     models = ["llama3.3", "qwen2.5:72b"]
-    max_cases = None
+    max_cases = 10
     # max_cases = None
     # asyncio.run(eval_codenames(model=model, max_cases=max_cases))
     # asyncio.run(eval_darkhurmordetection(model=model, max_cases=max_cases))
