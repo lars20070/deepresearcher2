@@ -10,6 +10,7 @@ from typing import Any
 
 import choix
 import numpy as np
+from pydantic import BaseModel, Field
 from pydantic_ai import Agent
 from pydantic_ai.models.openai import OpenAIChatModel
 from pydantic_ai.providers.openai import OpenAIProvider
@@ -290,6 +291,42 @@ async def generate_knowledge_gap(topic: str, summary: str, generator: Agent, set
     return result.output
 
 
+class EvalPlayer(BaseModel):
+    idx: int = Field(..., description="unique identifier for the player")
+    item: str = Field(..., description="item to be scored")
+    score: float | None = Field(None, description="Bradley-Terry strength score")
+
+
+class EvalGame(BaseModel):
+    criterion: str = Field(..., description="evaluation criterion on which players should be judged")
+    agent: Agent = Field(..., description="agent performing the evaluation")
+    model_settings: ModelSettings = Field(..., description="model settings for the evaluation")
+
+    async def run(self, players: tuple[EvalPlayer, EvalPlayer]) -> tuple[int, int]:
+        prompt = textwrap.dedent(f"""
+            <QUESTION> {self.criterion} </QUESTION>
+            <A> {players[0].item} </A>
+            <B> {players[1].item} </B>
+        """)
+
+        async with self.agent:
+            result = await self.agent.run(
+                user_prompt=prompt,
+                model_settings=self.model_settings,
+            )
+
+        if result.output == "A":
+            return (players[0].idx, players[1].idx)
+        else:
+            return (players[1].idx, players[0].idx)
+
+
+class EvalTournament(BaseModel):
+    game: EvalGame = Field(..., description="game to be played in the tournament")
+    players: list[EvalPlayer] = Field(..., description="players participating in the tournament")
+    scoreboard: list[tuple[int, int]] = Field(..., description="results of the games played")
+
+
 async def eval_knowledge_gap(models: list[str] | None = None, max_cases: int | None = None) -> None:
     """
     Runs evaluation for knowledge gap benchmark
@@ -401,12 +438,14 @@ async def eval_knowledge_gap(models: list[str] | None = None, max_cases: int | N
     #     logger.debug(f"Game result: {result.output.value}")
 
     # Loop over knowledge gaps
-    games = []
+    game_results = []
     for idx in range(len(dataset.cases)):
         gap = gaps[idx]
 
         # Pick a random second case for comparison
         idx_2 = random.randrange(len(dataset.cases))
+        while idx_2 == idx:
+            idx_2 = random.randrange(len(dataset.cases))
         gap_2 = gaps[idx_2]
 
         logger.debug(f"Gap {idx} vs Gap {idx_2}")
@@ -433,9 +472,9 @@ async def eval_knowledge_gap(models: list[str] | None = None, max_cases: int | N
             logger.debug(f"Game result: {result.output.value}")
 
         if result.output.value == "A":
-            games.append((idx, idx_2))
+            game_results.append((idx, idx_2))
         else:
-            games.append((idx_2, idx))
+            game_results.append((idx_2, idx))
 
         prompt = textwrap.dedent(f"""
             <QUESTION>
@@ -459,14 +498,14 @@ async def eval_knowledge_gap(models: list[str] | None = None, max_cases: int | N
             logger.debug(f"Game result: {result.output.value}")
 
         if result.output.value == "B":
-            games.append((idx, idx_2))
+            game_results.append((idx, idx_2))
         else:
-            games.append((idx_2, idx))
+            game_results.append((idx_2, idx))
 
-        logger.debug(f"Current games:\n{games}")
+        logger.debug(f"Current games:\n{game_results}")
 
     # Calculate Bradley-Terry scores
-    scores = choix.ilsr_pairwise(len(dataset.cases), games, alpha=0.01)
+    scores = choix.ilsr_pairwise(len(dataset.cases), game_results, alpha=0.01)
     idx_sorted = np.argsort(scores)
     gaps_sorted = [gaps[i] for i in idx_sorted]
     for i in range(len(dataset.cases)):
@@ -485,7 +524,7 @@ def main() -> None:
     # model = "llama3.3"
     # model = "qwen2.5:72b"
     models = ["llama3.3", "qwen2.5:72b"]
-    max_cases = 10
+    max_cases = None
     # max_cases = None
     # asyncio.run(eval_codenames(model=model, max_cases=max_cases))
     # asyncio.run(eval_darkhurmordetection(model=model, max_cases=max_cases))
