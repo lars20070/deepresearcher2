@@ -294,25 +294,23 @@ async def generate_knowledge_gap(topic: str, summary: str, generator: Agent, set
 class EvalPlayer(BaseModel):
     idx: int = Field(..., description="unique identifier for the player")
     item: str = Field(..., description="item to be scored")
-    score: float | None = Field(None, description="Bradley-Terry strength score")
+    score: float | None = Field(default=None, description="Bradley-Terry strength score for the item")
 
 
 class EvalGame(BaseModel):
     criterion: str = Field(..., description="evaluation criterion on which players should be judged")
-    agent: Agent = Field(..., description="agent performing the evaluation")
-    model_settings: ModelSettings = Field(..., description="model settings for the evaluation")
 
-    async def run(self, players: tuple[EvalPlayer, EvalPlayer]) -> tuple[int, int]:
+    async def run(self, players: tuple[EvalPlayer, EvalPlayer], agent: Agent, model_settings: ModelSettings) -> tuple[int, int]:
         prompt = textwrap.dedent(f"""
             <QUESTION> {self.criterion} </QUESTION>
             <A> {players[0].item} </A>
             <B> {players[1].item} </B>
         """)
 
-        async with self.agent:
-            result = await self.agent.run(
+        async with agent:
+            result = await agent.run(
                 user_prompt=prompt,
-                model_settings=self.model_settings,
+                model_settings=model_settings,
             )
 
         if result.output == "A":
@@ -324,7 +322,7 @@ class EvalGame(BaseModel):
 class EvalTournament(BaseModel):
     game: EvalGame = Field(..., description="game to be played in the tournament")
     players: list[EvalPlayer] = Field(..., description="players participating in the tournament")
-    scoreboard: list[tuple[int, int]] = Field(..., description="results of the games played")
+    scoreboard: list[tuple[int, int]] | None = Field(default=None, description="results of the games played")
 
 
 async def eval_knowledge_gap(models: list[str] | None = None, max_cases: int | None = None) -> None:
