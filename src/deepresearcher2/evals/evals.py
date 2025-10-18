@@ -16,7 +16,7 @@ from pydantic_ai.models.openai import OpenAIChatModel
 from pydantic_ai.providers.openai import OpenAIProvider
 from pydantic_ai.settings import ModelSettings
 from pydantic_evals import Dataset
-from pydantic_evals.evaluators import Evaluator, EvaluatorContext, IsInstance, LLMJudge
+from pydantic_evals.evaluators import Evaluator, EvaluatorContext, IsInstance
 
 from deepresearcher2.agents import evaluation_agent
 from deepresearcher2.config import config
@@ -324,9 +324,17 @@ class EvalTournament(BaseModel):
     players: list[EvalPlayer] = Field(..., description="players participating in the tournament")
     scoreboard: list[tuple[int, int]] = Field(default_factory=list, description="results of the games played")
 
+    def get_player_by_idx(self, idx: int) -> EvalPlayer:
+        for player in self.players:
+            if player.idx == idx:
+                return player
+        raise ValueError(f"Player with idx {idx} not found.")
+
     async def run(self, agent: Agent, model_settings: ModelSettings) -> list[EvalPlayer]:
+        number_of_rounds = 2
+
         # Start with round robin
-        for _ in range(5):
+        for _ in range(number_of_rounds):
             for player in self.players:
                 # Pick a random second player for the game
                 idx = random.randrange(len(self.players))
@@ -367,38 +375,6 @@ async def eval_knowledge_gap(models: list[str] | None = None, max_cases: int | N
     """
     logger.info("Runs evaluation for knowledge gap benchmark.")
 
-    # Create the knowledge gap generator
-    generator = make_knowledge_gap_agent("qwen2.5:72b")
-    generator_settings = ModelSettings(temperature=1.0, timeout=600)
-
-    # Create the judges
-    # Two independent judges with two different models.
-    if models is None:
-        models = ["qwen2.5:72b"]
-    judges: list[LLMJudge] = []
-    for model in models:
-        ollama_model = OpenAIChatModel(
-            model_name=model,
-            provider=OpenAIProvider(
-                base_url=f"{config.ollama_host}/v1",
-            ),
-        )
-        judge = LLMJudge(
-            rubric="The new subtopic should point to a research area which is clearly missing in the summary.",
-            include_input=True,
-            model=ollama_model,
-        )
-        judges.append(judge)
-
-    async def transform_knowledge_gap(payload: dict[str, str]) -> str:
-        knowledge_gap = await generate_knowledge_gap(
-            topic=payload.get("topic", ""),
-            summary=payload.get("summary", ""),
-            generator=generator,
-            settings=generator_settings,
-        )
-        return knowledge_gap
-
     # Load the benchmark cases
     path = Path("benchmarks/knowledge_gap/task.json")
     dataset = Dataset[dict[str, str], str, Any].from_file(path)
@@ -408,14 +384,13 @@ async def eval_knowledge_gap(models: list[str] | None = None, max_cases: int | N
     # Add the benchmark evaluators
     dataset = Dataset[dict[str, str], str, Any](
         cases=cases,
-        evaluators=[
-            IsInstance(type_name="str"),
-            *judges,
-        ],
+        evaluators=[IsInstance(type_name="str")],
     )
     logger.debug(f"Loaded dataset with {len(dataset.cases)} cases.")
 
     # # Generate knowledge gaps
+    # generator = make_knowledge_gap_agent("qwen2.5:72b")
+    # generator_settings = ModelSettings(temperature=1.0, timeout=600)
     # gaps: list[str] = []
     # for case in dataset.cases:
     #     topic = case.inputs.get("topic", "")
@@ -443,102 +418,36 @@ async def eval_knowledge_gap(models: list[str] | None = None, max_cases: int | N
         raise FileNotFoundError(f"Cannot find the file: {input_path}")
     with input_path.open("r", encoding="utf-8") as f:
         gaps: list[str] = json.load(f)
+    if max_cases is not None:
+        gaps = gaps[:max_cases]
     logger.info(f"Loaded {len(gaps)} knowledge gaps from {input_path}")
 
-    # # Run evaluation
-    # prompt = """
-    # <QUESTION> Which of the two books is a better present for a history enthusiast? </QUESTION>
+    # Create players and tournament
+    players = [EvalPlayer(idx=i, item=gap) for i, gap in enumerate(gaps)]
+    tournament = EvalTournament(
+        players=players,
+        game=EvalGame(criterion="Which of the two search queries (A or B) shows more genuine curiosity and creativity, and is less formulaic?"),
+    )
 
-    # <A> 'Sapiens: A Brief History of Humankind' by Yuval Noah Harari </A>
+    # Run the tournament
+    players_scored = await tournament.run(
+        agent=evaluation_agent,
+        model_settings=ModelSettings(
+            temperature=1.0,
+            timeout=config.model_timeout,
+        ),
+    )
 
-    # <B> 'Solaris' by Stanislaw Lem </B>
-    # """
-    # async with evaluation_agent:
-    #     result = await evaluation_agent.run(
-    #         user_prompt=prompt,
-    #         model_settings=ModelSettings(
-    #             timeout=config.model_timeout,
-    #         ),
-    #     )
-    #     logger.debug(f"Game result: {result.output.value}")
+    # Print the scores
+    for player in players_scored:
+        logger.debug(f"Score for Player {player.idx}: {player.score:0.4f}")
 
-    # Loop over knowledge gaps
-    game_results = []
-    for idx in range(len(dataset.cases)):
-        gap = gaps[idx]
-
-        # Pick a random second case for comparison
-        idx_2 = random.randrange(len(dataset.cases))
-        while idx_2 == idx:
-            idx_2 = random.randrange(len(dataset.cases))
-        gap_2 = gaps[idx_2]
-
-        logger.debug(f"Gap {idx} vs Gap {idx_2}")
-
-        prompt = textwrap.dedent(f"""
-            <QUESTION>
-            Which of the two search queries (A or B) shows more genuine curiosity and creativity, and is less formulaic?
-            </QUESTION>
-
-            <A> {gap} </A>
-
-            <B> {gap_2} </B>
-        """)
-        # logger.debug(f"Prompt for evaluation:\n{prompt}")
-
-        async with evaluation_agent:
-            result = await evaluation_agent.run(
-                user_prompt=prompt,
-                model_settings=ModelSettings(
-                    temperature=1.0,
-                    timeout=config.model_timeout,
-                ),
-            )
-            logger.debug(f"Game result: {result.output.value}")
-
-        if result.output.value == "A":
-            game_results.append((idx, idx_2))
-        else:
-            game_results.append((idx_2, idx))
-
-        prompt = textwrap.dedent(f"""
-            <QUESTION>
-            Which of the two search queries (A or B) shows more genuine curiosity and creativity, and is less formulaic?
-            </QUESTION>
-
-            <A> {gap_2} </A>
-
-            <B> {gap} </B>
-        """)
-        # logger.debug(f"Prompt for evaluation:\n{prompt}")
-
-        async with evaluation_agent:
-            result = await evaluation_agent.run(
-                user_prompt=prompt,
-                model_settings=ModelSettings(
-                    temperature=1.0,
-                    timeout=config.model_timeout,
-                ),
-            )
-            logger.debug(f"Game result: {result.output.value}")
-
-        if result.output.value == "B":
-            game_results.append((idx, idx_2))
-        else:
-            game_results.append((idx_2, idx))
-
-        logger.debug(f"Current games:\n{game_results}")
-
-    # Calculate Bradley-Terry scores
-    scores = choix.ilsr_pairwise(len(dataset.cases), game_results, alpha=0.01)
+    # Print players sorted by score
+    scores = [player.score for player in players_scored if player.score is not None]
     idx_sorted = np.argsort(scores)
-    gaps_sorted = [gaps[i] for i in idx_sorted]
-    for i in range(len(dataset.cases)):
-        logger.debug(f"Score for Gap {i}: {scores[i]:0.4f}")
-    logger.debug(f"Sorted indices: {idx_sorted}")
-    logger.debug("Sorted gaps (from worst to best):")
-    for i in range(len(gaps_sorted)):
-        logger.debug(gaps_sorted[i])
+    for i in idx_sorted:
+        player = tournament.get_player_by_idx(i)
+        logger.debug(f"Player {player.idx:2d}   score: {player.score:7.4f}   item: {player.item}")
 
 
 def main() -> None:
@@ -549,7 +458,7 @@ def main() -> None:
     # model = "llama3.3"
     # model = "qwen2.5:72b"
     models = ["llama3.3", "qwen2.5:72b"]
-    max_cases = None
+    max_cases = 20
     # max_cases = None
     # asyncio.run(eval_codenames(model=model, max_cases=max_cases))
     # asyncio.run(eval_darkhurmordetection(model=model, max_cases=max_cases))

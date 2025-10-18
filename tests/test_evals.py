@@ -71,6 +71,11 @@ async def test_evaltournament() -> None:
     assert len(tournament.players) == 3
     assert tournament.game.criterion == "Which of the two ice cream flavours A or B is more creative?"
 
+    # Test player retrieval
+    player = tournament.get_player_by_idx(1)
+    assert player is not None
+    assert player.item == "toasted rice & miso caramel ice cream"
+
     players_with_scores = await tournament.run(
         agent=evaluation_agent,
         model_settings=ModelSettings(
@@ -80,8 +85,8 @@ async def test_evaltournament() -> None:
     )
     assert isinstance(players_with_scores, list)
     for player in players_with_scores:
-        # assert isinstance(player, EvalPlayer)
-        # assert hasattr(player, "score")
-        # assert isinstance(player.score, float)
+        assert isinstance(player, EvalPlayer)
+        assert hasattr(player, "score")
+        assert isinstance(player.score, float)
         assert player.score is not None
         logger.debug(f"Player {player.idx} score: {player.score}")
