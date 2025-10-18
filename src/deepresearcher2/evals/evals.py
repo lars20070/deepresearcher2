@@ -320,7 +320,10 @@ class EvalGame(BaseModel):
             return (players[1].idx, players[0].idx)
 
 
-TournamentStrategy = Callable[[list[EvalPlayer], EvalGame, Agent, ModelSettings], Awaitable[list[EvalPlayer]]]
+TournamentStrategy = Callable[
+    [list[EvalPlayer], EvalGame, Agent, ModelSettings],
+    Awaitable[list[EvalPlayer]],
+]
 
 
 async def round_robin_strategy(
@@ -331,30 +334,30 @@ async def round_robin_strategy(
     number_of_rounds: int = 2,
 ) -> list[EvalPlayer]:
     """
-    Round-robin tournament strategy with Bradley-Terry scoring.
+    Round-robin tournament strategy.
 
-    Each player plays against randomly selected opponents for the specified
-    number of rounds. Uses standard Bradley-Terry algorithm for scoring.
+    Each player plays against a randomly selected opponent for a given number of rounds.
+    The scores are calculated from the game outcomes using the Bradley-Terry algorithm.
 
     Args:
         players: List of players in the tournament.
-        game: Game configuration for pairwise comparisons.
-        agent: PydanticAI agent for evaluation.
-        model_settings: Model settings for agent execution.
-        num_rounds: Number of rounds each player participates in.
+        game: Game defining the pairwise comparisons.
+        agent: Agent for the game.
+        model_settings: Model settings for the game.
+        number_of_rounds: Number of rounds.
 
     Returns:
-        List of players with updated Bradley-Terry scores.
+        List of players with Bradley-Terry scores.
     """
     scoreboard: list[tuple[int, int]] = []
 
     logger.info(f"Round-robin strategy: {len(players)} players, {number_of_rounds} rounds")
 
     for n in range(number_of_rounds):
-        logger.debug(f"Starting round {n + 1}/{number_of_rounds}")
+        logger.debug(f"Starting round {n + 1} / {number_of_rounds}")
 
         for player in players:
-            # Pick random opponent (excluding self)
+            # Pick a random opponent (excluding self)
             idx = random.randrange(len(players))
             while idx == player.idx:
                 idx = random.randrange(len(players))
@@ -368,7 +371,7 @@ async def round_robin_strategy(
                 model_settings=model_settings,
             )
             scoreboard.append(result)
-            logger.debug(f"Game result: {result}")
+            logger.debug(f"Result: {result}")
 
     # Calculate Bradley-Terry scores and update players
     scores = choix.ilsr_pairwise(len(players), scoreboard, alpha=0.01)
@@ -383,29 +386,38 @@ class EvalTournament(BaseModel):
     players: list[EvalPlayer] = Field(..., description="players participating in the tournament")
 
     def get_player_by_idx(self, idx: int) -> EvalPlayer:
+        """
+        Return player with unique identifier idx
+
+        Args:
+            idx: Unique identifier of the player.
+
+        Returns:
+            Player with the specified unique identifier.
+        """
         for player in self.players:
             if player.idx == idx:
                 return player
-        raise ValueError(f"Player with idx {idx} not found.")
+        raise ValueError(f"Player with unique identifier {idx} not found.")
 
     async def run(
         self,
         agent: Agent,
         model_settings: ModelSettings,
         strategy: TournamentStrategy | None = None,
-        **strategy_kwargs: int,
+        **strategy_kwargs: Any,  # noqa: ANN401
     ) -> list[EvalPlayer]:
         """
         Runs the evaluation tournament using the specified strategy.
 
-        The strategy function handles game sampling, game execution and scoring,
+        The strategy function handles game sampling, game execution and scoring
         allowing complete flexibility in the tournament algorithms.
 
         Args:
-            agent: Agent for an evaluation game.
-            model_settings: Model settings for an evaluation game.
+            agent: Agent for the evaluation game.
+            model_settings: Model settings for the evaluation game.
             strategy: Function with the tournament algorithm.
-            **strategy_kwargs: Additional arguments passed to the strategy.
+            **strategy_kwargs: Additional arguments passed to the strategy function.
 
         Returns:
             List of players with scores.
@@ -505,6 +517,7 @@ async def eval_knowledge_gap(models: list[str] | None = None, max_cases: int | N
             temperature=1.0,
             timeout=config.model_timeout,
         ),
+        number_of_rounds=5,
     )
 
     # Print the scores
