@@ -326,22 +326,23 @@ class EvalTournament(BaseModel):
 
     async def run(self, agent: Agent, model_settings: ModelSettings) -> list[EvalPlayer]:
         # Start with round robin
-        for player in self.players:
-            # Pick a random second player for the game
-            idx = random.randrange(len(self.players))
-            while idx == player.idx:
+        for _ in range(5):
+            for player in self.players:
+                # Pick a random second player for the game
                 idx = random.randrange(len(self.players))
-            player_2 = self.players[idx]
-            logger.debug(f"Playing game between Player {player.idx} and Player {player_2.idx}")
+                while idx == player.idx:
+                    idx = random.randrange(len(self.players))
+                player_2 = self.players[idx]
+                logger.debug(f"Playing game between Player {player.idx} and Player {player_2.idx}")
 
-            # Play the game
-            result = await self.game.run(
-                players=(player, player_2),
-                agent=agent,
-                model_settings=model_settings,
-            )
-            self.scoreboard.append(result)
-            logger.debug(f"Game result: {result}")
+                # Play the game
+                result = await self.game.run(
+                    players=(player, player_2),
+                    agent=agent,
+                    model_settings=model_settings,
+                )
+                self.scoreboard.append(result)
+                logger.debug(f"Game result: {result}")
 
         # Calculate Bradley-Terry scores and update players
         scores = choix.ilsr_pairwise(len(self.players), self.scoreboard, alpha=0.01)
