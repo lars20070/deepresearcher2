@@ -52,7 +52,9 @@ async def test_evalgame() -> None:
     assert all(isinstance(r, int) for r in result)
 
 
-def test_evaltournament() -> None:
+@pytest.mark.ollama
+@pytest.mark.asyncio
+async def test_evaltournament() -> None:
     """
     Test the EvalTournament class.
     """
@@ -68,3 +70,18 @@ def test_evaltournament() -> None:
 
     assert len(tournament.players) == 3
     assert tournament.game.criterion == "Which of the two ice cream flavours A or B is more creative?"
+
+    players_with_scores = await tournament.run(
+        agent=evaluation_agent,
+        model_settings=ModelSettings(
+            temperature=1.0,
+            timeout=300,
+        ),
+    )
+    assert isinstance(players_with_scores, list)
+    for player in players_with_scores:
+        # assert isinstance(player, EvalPlayer)
+        # assert hasattr(player, "score")
+        # assert isinstance(player.score, float)
+        assert player.score is not None
+        logger.debug(f"Player {player.idx} score: {player.score}")
