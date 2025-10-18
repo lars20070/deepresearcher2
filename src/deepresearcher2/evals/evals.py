@@ -5,6 +5,7 @@ import asyncio
 import json
 import random
 import textwrap
+from collections.abc import Awaitable, Callable
 from pathlib import Path
 from typing import Any
 
@@ -319,10 +320,67 @@ class EvalGame(BaseModel):
             return (players[1].idx, players[0].idx)
 
 
+TournamentStrategy = Callable[[list[EvalPlayer], EvalGame, Agent, ModelSettings], Awaitable[list[EvalPlayer]]]
+
+
+async def round_robin_strategy(
+    players: list[EvalPlayer],
+    game: EvalGame,
+    agent: Agent,
+    model_settings: ModelSettings,
+    number_of_rounds: int = 2,
+) -> list[EvalPlayer]:
+    """
+    Round-robin tournament strategy with Bradley-Terry scoring.
+
+    Each player plays against randomly selected opponents for the specified
+    number of rounds. Uses standard Bradley-Terry algorithm for scoring.
+
+    Args:
+        players: List of players in the tournament.
+        game: Game configuration for pairwise comparisons.
+        agent: PydanticAI agent for evaluation.
+        model_settings: Model settings for agent execution.
+        num_rounds: Number of rounds each player participates in.
+
+    Returns:
+        List of players with updated Bradley-Terry scores.
+    """
+    scoreboard: list[tuple[int, int]] = []
+
+    logger.info(f"Round-robin strategy: {len(players)} players, {number_of_rounds} rounds")
+
+    for n in range(number_of_rounds):
+        logger.debug(f"Starting round {n + 1}/{number_of_rounds}")
+
+        for player in players:
+            # Pick random opponent (excluding self)
+            idx = random.randrange(len(players))
+            while idx == player.idx:
+                idx = random.randrange(len(players))
+            player_2 = players[idx]
+            logger.debug(f"Game: Player {player.idx} vs Player {player_2.idx}")
+
+            # Play the game
+            result = await game.run(
+                players=(player, player_2),
+                agent=agent,
+                model_settings=model_settings,
+            )
+            scoreboard.append(result)
+            logger.debug(f"Game result: {result}")
+
+    # Calculate Bradley-Terry scores and update players
+    scores = choix.ilsr_pairwise(len(players), scoreboard, alpha=0.01)
+    for i, player in enumerate(players):
+        player.score = float(scores[i])
+
+    return players
+
+
 class EvalTournament(BaseModel):
     game: EvalGame = Field(..., description="game to be played in the tournament")
     players: list[EvalPlayer] = Field(..., description="players participating in the tournament")
-    scoreboard: list[tuple[int, int]] = Field(default_factory=list, description="results of the games played")
 
     def get_player_by_idx(self, idx: int) -> EvalPlayer:
         for player in self.players:
@@ -330,33 +388,44 @@ class EvalTournament(BaseModel):
                 return player
         raise ValueError(f"Player with idx {idx} not found.")
 
-    async def run(self, agent: Agent, model_settings: ModelSettings) -> list[EvalPlayer]:
-        number_of_rounds = 2
+    async def run(
+        self,
+        agent: Agent,
+        model_settings: ModelSettings,
+        strategy: TournamentStrategy | None = None,
+        **strategy_kwargs: int,
+    ) -> list[EvalPlayer]:
+        """
+        Runs the evaluation tournament using the specified strategy.
 
-        # Start with round robin
-        for _ in range(number_of_rounds):
-            for player in self.players:
-                # Pick a random second player for the game
-                idx = random.randrange(len(self.players))
-                while idx == player.idx:
-                    idx = random.randrange(len(self.players))
-                player_2 = self.players[idx]
-                logger.debug(f"Playing game between Player {player.idx} and Player {player_2.idx}")
+        The strategy function handles game sampling, game execution and scoring,
+        allowing complete flexibility in the tournament algorithms.
 
-                # Play the game
-                result = await self.game.run(
-                    players=(player, player_2),
-                    agent=agent,
-                    model_settings=model_settings,
-                )
-                self.scoreboard.append(result)
-                logger.debug(f"Game result: {result}")
+        Args:
+            agent: Agent for an evaluation game.
+            model_settings: Model settings for an evaluation game.
+            strategy: Function with the tournament algorithm.
+            **strategy_kwargs: Additional arguments passed to the strategy.
 
-        # Calculate Bradley-Terry scores and update players
-        scores = choix.ilsr_pairwise(len(self.players), self.scoreboard, alpha=0.01)
-        for i, player in enumerate(self.players):
-            player.score = scores[i]
+        Returns:
+            List of players with scores.
+        """
+        # Use default strategy if none provided
+        if strategy is None:
+            strategy = round_robin_strategy
 
+        logger.info(f"Starting tournament with {len(self.players)} players using {strategy.__name__}")
+
+        # Run the tournament strategy (returns players with scores)
+        self.players = await strategy(
+            self.players,
+            self.game,
+            agent,
+            model_settings,
+            **strategy_kwargs,
+        )
+
+        logger.info(f"Tournament complete using {strategy.__name__}")
         return self.players
 
 
@@ -458,7 +527,7 @@ def main() -> None:
     # model = "llama3.3"
     # model = "qwen2.5:72b"
     models = ["llama3.3", "qwen2.5:72b"]
-    max_cases = 20
+    max_cases = 10
     # max_cases = None
     # asyncio.run(eval_codenames(model=model, max_cases=max_cases))
     # asyncio.run(eval_darkhurmordetection(model=model, max_cases=max_cases))
