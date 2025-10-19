@@ -24,6 +24,7 @@ from deepresearcher2.agents import evaluation_agent
 from deepresearcher2.config import config
 from deepresearcher2.evals.import_bigbench import Response
 from deepresearcher2.logger import logger
+from deepresearcher2.models import GameResult
 
 
 class ExactMatch(Evaluator):
@@ -315,7 +316,7 @@ class EvalGame(BaseModel):
                 model_settings=model_settings,
             )
 
-        if result.output == "A":
+        if result.output == GameResult.A:
             return (players[0].idx, players[1].idx)
         else:
             return (players[1].idx, players[0].idx)
@@ -468,13 +469,13 @@ async def adaptive_uncertainty_strategy(
         We stop when the standard deviation sqrt(Var(s_i - s_j)) of the most uncertain pair drops below
         the threshold max_standard_deviation, or when all possible pairs have been played.
 
-    Comment max_standard_deviation parameter:
+    Comment on max_standard_deviation parameter:
         Typically, a standard deviation below 1.0 is a good stopping condition. However, the uncertainty
         depends greatly on the evaluation problem. For a problem such as "Which of the following ice cream
         flavours is the most creative one? Vanilla or Chocolate or Strawberry?", the uncertainty will remain
         high even after many games.
 
-    Comment alpha parameter:
+    Comment on alpha parameter:
         The alpha parameter is the prior strength for the Bradley-Terry model. Higher alpha (e.g. 0.8) is a
         strong prior towards equal player strengths. The games have a smaller influence on the scores, and
         the scores remain close to the mean of 0. Lower alpha (e.g. 0.1) on the other hand lets the games
@@ -738,7 +739,7 @@ def main() -> None:
     # model = "llama3.3"
     # model = "qwen2.5:72b"
     models = ["llama3.3", "qwen2.5:72b"]
-    max_cases = 20
+    max_cases = None
     # max_cases = None
     # asyncio.run(eval_codenames(model=model, max_cases=max_cases))
     # asyncio.run(eval_darkhurmordetection(model=model, max_cases=max_cases))

@@ -224,11 +224,25 @@ evaluation_instructions = """
 You are presented with a question and two possible answers A and B.
 Evaluate carefully whether answer A or answer B is the better reply. You have got only these two options.
 
-<EXAMPLE>
-<QUESTION> Which of the two ice cream flavours below is more creative?</QUESTION>
+<EXAMPLES>
+Example 1:
+<QUESTION> Which of the two ice cream flavours below is more creative? </QUESTION>
 <A> Vanilla </A> 
 <B> Pickled Citrus Ribbon </B>
-</EXAMPLE>
+Expected output: {"result": "B"}
+
+Example 2:
+<QUESTION> Which search query shows more genuine curiosity? </QUESTION>
+<A> effect of ocean acidification feedback loops on Arctic methane release </A> 
+<B> climate change effects </B>
+Expected output: {"result": "A"}
+
+Example 3:
+<QUESTION> Which reply is more insulting? </QUESTION>
+<A> Your argument lacks logical coherence and fails to address the core issue at hand. </A> 
+<B> That's an interesting perspective, though I see it differently. </B>
+Expected output: {"result": "A"}
+</EXAMPLES>
 
 <REQUIREMENTS>
 1. Consider the question carefully. What aspects are important for the answer?
@@ -236,4 +250,14 @@ Evaluate carefully whether answer A or answer B is the better reply. You have go
 3. Think about answer B. Is it a good answer to the question? Why (not)?
 4. Make a decision based on your analysis.
 </REQUIREMENTS>
+
+<OUTPUT_FORMAT>
+You must respond with valid JSON containing exactly one field called "response" with value "A" or "B":
+
+{"response": "A"}
+or
+{"response": "B"}
+
+Do NOT include explanations, reasoning, or any other fields.
+</OUTPUT_FORMAT>
 """

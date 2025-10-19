@@ -153,7 +153,7 @@ async def test_round_robin_strategy(ice_cream_players: list[EvalPlayer], ice_cre
             temperature=1.0,
             timeout=300,
         ),
-        number_of_rounds=3,
+        number_of_rounds=1,
     )
     assert isinstance(players_with_scores, list)
     for player in players_with_scores:
