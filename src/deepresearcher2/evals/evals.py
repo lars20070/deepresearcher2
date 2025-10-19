@@ -383,11 +383,70 @@ async def round_robin_strategy(
     return players
 
 
+async def random_sampling_strategy(
+    players: list[EvalPlayer],
+    game: EvalGame,
+    agent: Agent,
+    model_settings: ModelSettings,
+    fraction_of_games: float | None = None,
+) -> list[EvalPlayer]:
+    """
+    Random sampling tournament strategy.
+
+    In a tournament with n players, there are n*(n-1) possible pairwise games. We consider
+    (i, j) and (j, i) as different games in order to ensure that the evaluation agent does
+    not introduce any ordering bias. The strategy plays all possible games in random order.
+    The strategy is simple but not efficient.
+
+    Args:
+        players: List of players in the tournament.
+        game: Game defining the pairwise comparisons.
+        agent: Agent for the game.
+        model_settings: Model settings for the game.
+        fraction_of_games: Fraction of games to be played. Between 0 and 1. If None, all games are played.
+
+    Returns:
+        List of players with Bradley-Terry scores.
+    """
+    scoreboard: list[tuple[int, int]] = []
+
+    # Generate all possible games
+    n = len(players)
+    matches = [(i, j) for i in range(n) for j in range(n) if i != j]
+    random.shuffle(matches)
+    if fraction_of_games is not None and 0 < fraction_of_games <= 1:
+        number_of_games = int(len(matches) * fraction_of_games)
+        matches = matches[:number_of_games]
+    logger.info(f"Random sampling strategy: {n} players playing {len(matches)} games")
+
+    # Play all games
+    for i, match in enumerate(matches):
+        player_1, player_2 = players[match[0]], players[match[1]]
+        logger.debug(f"Game {i + 1} / {len(matches)}: Player {player_1.idx} vs Player {player_2.idx}")
+
+        result = await game.run(
+            players=(player_1, player_2),
+            agent=agent,
+            model_settings=model_settings,
+        )
+        scoreboard.append(result)
+        logger.debug(f"Result: {result}")
+
+    # Calculate Bradley-Terry scores and update players
+    scores = choix.ilsr_pairwise(len(players), scoreboard, alpha=0.01)
+    for i, player in enumerate(players):
+        player.score = float(scores[i])
+
+    return players
+
+
 async def adaptive_uncertainty_strategy(
     players: list[EvalPlayer],
     game: EvalGame,
     agent: Agent,
     model_settings: ModelSettings,
+    target_games: int = 50,
+    convergence_threshold: float = 0.05,
 ) -> list[EvalPlayer]:
     """
     Adaptive uncertainty tournament strategy.
@@ -401,9 +460,62 @@ async def adaptive_uncertainty_strategy(
     Returns:
         List of players with Bradley-Terry scores.
     """
+    scoreboard: list[tuple[int, int]] = []
+    number_of_players = len(players)
+    previous_scores: np.ndarray | None = None
 
-    logger.info(f"Adaptive uncertainty strategy: {len(players)} players")
+    logger.info(f"Adaptive uncertainty strategy: {number_of_players} players, target {target_games} games")
 
+    for game_num in range(target_games):
+        # Calculate current scores and covariance matrix
+        if len(scoreboard) >= number_of_players - 1:  # Need minimum games for estimation
+            logger.debug("Optimization phase")
+            scores = choix.ilsr_pairwise(number_of_players, scoreboard, alpha=0.01)
+            _, cov_matrix = choix.ep_pairwise(number_of_players, scoreboard, alpha=0.01)
+
+            # Check for convergence
+            if previous_scores is not None:
+                max_change = np.max(np.abs(scores - previous_scores))
+                if max_change < convergence_threshold:
+                    logger.info(f"Converged after {game_num} games (max change: {max_change:.6f})")
+                    break
+            previous_scores = scores
+
+            # Find pair with highest uncertainty (sum of variances)
+            max_uncertainty = -1.0
+            best_pair = (0, 1)
+
+            for i in range(number_of_players):
+                for j in range(i + 1, number_of_players):
+                    # Uncertainty is sum of diagonal elements (variances)
+                    uncertainty = cov_matrix[i, i] + cov_matrix[j, j]
+                    if uncertainty > max_uncertainty:
+                        max_uncertainty = uncertainty
+                        best_pair = (i, j)
+
+            player_1, player_2 = players[best_pair[0]], players[best_pair[1]]
+        else:
+            # Bootstrap phase: sample uniformly until we have enough data
+            logger.debug("Bootstrap phase")
+            i, j = random.sample(range(number_of_players), 2)
+            player_1, player_2 = players[i], players[j]
+
+        logger.debug(f"Game {game_num + 1}: Player {player_1.idx} vs Player {player_2.idx}")
+
+        # Play the game
+        result = await game.run(
+            players=(player_1, player_2),
+            agent=agent,
+            model_settings=model_settings,
+        )
+        scoreboard.append(result)
+
+    # Final score calculation
+    scores = choix.ilsr_pairwise(number_of_players, scoreboard, alpha=0.01)
+    for i, player in enumerate(players):
+        player.score = float(scores[i])
+
+    logger.info(f"Completed {len(scoreboard)} games")
     return players
 
 
@@ -543,7 +655,8 @@ async def eval_knowledge_gap(models: list[str] | None = None, max_cases: int | N
             temperature=1.0,
             timeout=config.model_timeout,
         ),
-        number_of_rounds=5,
+        strategy=random_sampling_strategy,
+        fraction_of_games=0.3,
     )
 
     # Print the scores
@@ -566,7 +679,7 @@ def main() -> None:
     # model = "llama3.3"
     # model = "qwen2.5:72b"
     models = ["llama3.3", "qwen2.5:72b"]
-    max_cases = None
+    max_cases = 10
     # max_cases = None
     # asyncio.run(eval_codenames(model=model, max_cases=max_cases))
     # asyncio.run(eval_darkhurmordetection(model=model, max_cases=max_cases))

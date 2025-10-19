@@ -5,7 +5,7 @@ import pytest
 from pydantic_ai.settings import ModelSettings
 
 from deepresearcher2.agents import evaluation_agent
-from deepresearcher2.evals.evals import EvalGame, EvalPlayer, EvalTournament, adaptive_uncertainty_strategy
+from deepresearcher2.evals.evals import EvalGame, EvalPlayer, EvalTournament, adaptive_uncertainty_strategy, random_sampling_strategy
 from deepresearcher2.logger import logger
 
 
@@ -94,6 +94,51 @@ async def test_evaltournament(ice_cream_players: list[EvalPlayer], ice_cream_gam
         strategy=adaptive_uncertainty_strategy,
     )
     assert isinstance(players_with_scores, list)
+
+
+@pytest.mark.ollama
+@pytest.mark.asyncio
+async def test_random_sampling_strategy(ice_cream_players: list[EvalPlayer], ice_cream_game: EvalGame) -> None:
+    """
+    Test the random sampling tournament strategy.
+    """
+    logger.info("Testing random_sampling_strategy()")
+
+    players_with_scores = await random_sampling_strategy(
+        players=ice_cream_players,
+        game=ice_cream_game,
+        agent=evaluation_agent,
+        model_settings=ModelSettings(
+            temperature=1.0,
+            timeout=300,
+        ),
+    )
+    assert isinstance(players_with_scores, list)
+    for player in players_with_scores:
+        assert isinstance(player, EvalPlayer)
+        assert hasattr(player, "score")
+        assert isinstance(player.score, float)
+        assert player.score is not None
+        logger.debug(f"Player {player.idx} score: {player.score}")
+
+    # Test with a fraction of games
+    players_with_scores = await random_sampling_strategy(
+        players=ice_cream_players,
+        game=ice_cream_game,
+        agent=evaluation_agent,
+        model_settings=ModelSettings(
+            temperature=1.0,
+            timeout=300,
+        ),
+        fraction_of_games=0.8,
+    )
+    assert isinstance(players_with_scores, list)
+    for player in players_with_scores:
+        assert isinstance(player, EvalPlayer)
+        assert hasattr(player, "score")
+        assert isinstance(player.score, float)
+        assert player.score is not None
+        logger.debug(f"Player {player.idx} score: {player.score}")
 
 
 @pytest.mark.ollama
