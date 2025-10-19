@@ -539,7 +539,7 @@ async def adaptive_uncertainty_strategy(
             for j in range(i + 1, n):
                 # Check if the pair has already been played.
                 # Here we assume that games are symmetric which is not quite correct but good enough.
-                if (players[i].idx, players[j].idx) in scoreboard or (players[j].idx, players[i].idx) in set(scoreboard):
+                if (players[i].idx, players[j].idx) in scoreboard or (players[j].idx, players[i].idx) in scoreboard:
                     continue
 
                 # Uncertainty of the pair
