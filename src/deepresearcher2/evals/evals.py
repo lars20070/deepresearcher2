@@ -3,6 +3,7 @@ from __future__ import annotations as _annotations
 
 import asyncio
 import json
+import math
 import random
 import textwrap
 from collections.abc import Awaitable, Callable
@@ -396,14 +397,15 @@ async def random_sampling_strategy(
     In a tournament with n players, there are n*(n-1) possible pairwise games. We consider
     (i, j) and (j, i) as different games in order to ensure that the evaluation agent does
     not introduce any ordering bias. The strategy plays all possible games in random order.
-    The strategy is simple but not efficient.
+    The strategy is simple and not efficient. But when all games are played, it returns the
+    best possible scores.
 
     Args:
         players: List of players in the tournament.
         game: Game defining the pairwise comparisons.
         agent: Agent for the game.
         model_settings: Model settings for the game.
-        fraction_of_games: Fraction of games to be played. Between 0 and 1. If None, all games are played.
+        fraction_of_games: Fraction of all possible games to be played. Between 0 and 1. If None, all games are played.
 
     Returns:
         List of players with Bradley-Terry scores.
@@ -445,77 +447,139 @@ async def adaptive_uncertainty_strategy(
     game: EvalGame,
     agent: Agent,
     model_settings: ModelSettings,
-    target_games: int = 50,
-    convergence_threshold: float = 0.05,
+    max_standard_deviation: float = 2.0,
+    alpha: float = 0.1,
 ) -> list[EvalPlayer]:
     """
     Adaptive uncertainty tournament strategy.
+
+    The strategy consists of two phases:
+    (1) Bootstrap phase: The Bradley-Terry model requires the comparison graph to be strongly connected i.e.
+        there must be a path between any two players. We therefore start by playing 2*n random games where
+        n is the number of players. With fewer games, the scores are most likely unreliable.
+    (2) Optimization phase: In this phase, we iteratively calculate the Bradley-Terry scores and their
+        covariance matrix, and play the game for which the player scores are the most uncertain.
+
+        Let s_i and s_j the Bradley-Terry scores of players i and j respectively. The uncertainty in their
+        relative strength is then given by
+
+        Var(s_i - s_j) = Var(s_i) + Var(s_j) - 2*Cov(s_i, s_j)
+
+        We stop when the standard deviation sqrt(Var(s_i - s_j)) of the most uncertain pair drops below
+        the threshold max_standard_deviation, or when all possible pairs have been played.
+
+    Comment max_standard_deviation parameter:
+        Typically, a standard deviation below 1.0 is a good stopping condition. However, the uncertainty
+        depends greatly on the evaluation problem. For a problem such as "Which of the following ice cream
+        flavours is the most creative one? Vanilla or Chocolate or Strawberry?", the uncertainty will remain
+        high even after many games.
+
+    Comment alpha parameter:
+        The alpha parameter is the prior strength for the Bradley-Terry model. Higher alpha (e.g. 0.8) is a
+        strong prior towards equal player strengths. The games have a smaller influence on the scores, and
+        the scores remain close to the mean of 0. Lower alpha (e.g. 0.1) on the other hand lets the games
+        influence the scores more strongly. However, for a sparse comparison graph, the scores can become
+        less stable. Typical values are between 0.1 and 0.3.
 
     Args:
         players: List of players in the tournament.
         game: Game defining the pairwise comparisons.
         agent: Agent for the game.
         model_settings: Model settings for the game.
+        max_standard_deviation: Maximum standard deviation for the most uncertain pair. See also above.
+        alpha: Prior strength for the Bradley-Terry model. Between 0 and 1. See also above.
 
     Returns:
         List of players with Bradley-Terry scores.
     """
     scoreboard: list[tuple[int, int]] = []
-    number_of_players = len(players)
-    previous_scores: np.ndarray | None = None
+    n = len(players)
 
-    logger.info(f"Adaptive uncertainty strategy: {number_of_players} players, target {target_games} games")
+    logger.info(f"Adaptive uncertainty strategy: {n} players")
 
-    for game_num in range(target_games):
-        # Calculate current scores and covariance matrix
-        if len(scoreboard) >= number_of_players - 1:  # Need minimum games for estimation
-            logger.debug("Optimization phase")
-            scores = choix.ilsr_pairwise(number_of_players, scoreboard, alpha=0.01)
-            _, cov_matrix = choix.ep_pairwise(number_of_players, scoreboard, alpha=0.01)
+    # (1) Bootstrap phase
+    number_of_bootstrap_games = 2 * n  # Fixed. No need to tune this parameter.
+    matches = [(i, j) for i in range(n) for j in range(n) if i != j]
+    random.shuffle(matches)
+    matches = matches[:number_of_bootstrap_games]
+    for idx, match in enumerate(matches):
+        player_1, player_2 = players[match[0]], players[match[1]]
+        logger.debug(f"Bootstrap game {idx + 1} / {len(matches)}: Player {player_1.idx} vs Player {player_2.idx}")
 
-            # Check for convergence
-            if previous_scores is not None:
-                max_change = np.max(np.abs(scores - previous_scores))
-                if max_change < convergence_threshold:
-                    logger.info(f"Converged after {game_num} games (max change: {max_change:.6f})")
-                    break
-            previous_scores = scores
-
-            # Find pair with highest uncertainty (sum of variances)
-            max_uncertainty = -1.0
-            best_pair = (0, 1)
-
-            for i in range(number_of_players):
-                for j in range(i + 1, number_of_players):
-                    # Uncertainty is sum of diagonal elements (variances)
-                    uncertainty = cov_matrix[i, i] + cov_matrix[j, j]
-                    if uncertainty > max_uncertainty:
-                        max_uncertainty = uncertainty
-                        best_pair = (i, j)
-
-            player_1, player_2 = players[best_pair[0]], players[best_pair[1]]
-        else:
-            # Bootstrap phase: sample uniformly until we have enough data
-            logger.debug("Bootstrap phase")
-            i, j = random.sample(range(number_of_players), 2)
-            player_1, player_2 = players[i], players[j]
-
-        logger.debug(f"Game {game_num + 1}: Player {player_1.idx} vs Player {player_2.idx}")
-
-        # Play the game
         result = await game.run(
             players=(player_1, player_2),
             agent=agent,
             model_settings=model_settings,
         )
         scoreboard.append(result)
+        logger.debug(f"Result: {result}")
 
-    # Final score calculation
-    scores = choix.ilsr_pairwise(number_of_players, scoreboard, alpha=0.01)
-    for i, player in enumerate(players):
-        player.score = float(scores[i])
+    # (2) Optimization phase
+    max_number_of_games = int(n * (n - 1) / 2.0)
+    previous_scores: np.ndarray | None = None
+    for idx in range(max_number_of_games):
+        logger.debug(f"Optimization game {idx + 1} / {max_number_of_games}")
 
-    logger.info(f"Completed {len(scoreboard)} games")
+        # Calculate the Bradley-Terry scores and covariance matrix
+        scores, cov_matrix = choix.ep_pairwise(
+            n_items=n,
+            data=scoreboard,
+            alpha=alpha,
+            model="logit",
+        )
+
+        # Update player scores
+        for i, player in enumerate(players):
+            player.score = float(scores[i])
+
+        # For monitoring only, check the absolute score changes.
+        # Note that this change is not decreasing monotonically.
+        if previous_scores is not None:
+            absolute_change = np.abs(scores - previous_scores)
+            max_change = np.max(absolute_change)
+            logger.debug(f"Maximum absolute change in the scores since last iteration: {max_change}")
+        previous_scores = scores.copy()
+
+        # Find most uncertain pair which has not yet been played.
+        max_uncertainty = -1.0
+        next_pair = (0, 0)  # Start with an invalid pair
+        for i in range(n):
+            for j in range(i + 1, n):
+                # Check if the pair has already been played.
+                # Here we assume that games are symmetric which is not quite correct but good enough.
+                if (players[i].idx, players[j].idx) in scoreboard or (players[j].idx, players[i].idx) in scoreboard:
+                    continue
+
+                # Uncertainty of the pair
+                uncertainty = cov_matrix[i, i] + cov_matrix[j, j] - 2 * cov_matrix[i, j]
+                if uncertainty > max_uncertainty:
+                    max_uncertainty = uncertainty
+                    next_pair = (i, j)
+        logger.debug(
+            f"Most uncertain pair: Player {players[next_pair[0]].idx} vs Player {players[next_pair[1]].idx} (uncertainty: {max_uncertainty})"
+        )
+
+        # Terminate optimization phase?
+        if next_pair == (0, 0):
+            logger.info("All pairs have been played. Ending optimization phase.")
+            break
+        if math.sqrt(max_uncertainty) < max_standard_deviation:
+            logger.info(
+                f"The standard deviation of the most uncertain pair {math.sqrt(max_uncertainty)} is below the threshold {max_standard_deviation}. "
+                f"Ending optimization phase."
+            )
+            break
+
+        # Play the most uncertain pair
+        player_1, player_2 = players[next_pair[0]], players[next_pair[1]]
+        result = await game.run(
+            players=(player_1, player_2),
+            agent=agent,
+            model_settings=model_settings,
+        )
+        scoreboard.append(result)
+        logger.debug(f"Result: {result}")
+
     return players
 
 
@@ -655,8 +719,7 @@ async def eval_knowledge_gap(models: list[str] | None = None, max_cases: int | N
             temperature=1.0,
             timeout=config.model_timeout,
         ),
-        strategy=random_sampling_strategy,
-        fraction_of_games=0.3,
+        strategy=adaptive_uncertainty_strategy,
     )
 
     # Print the scores
@@ -679,7 +742,7 @@ def main() -> None:
     # model = "llama3.3"
     # model = "qwen2.5:72b"
     models = ["llama3.3", "qwen2.5:72b"]
-    max_cases = 10
+    max_cases = 20
     # max_cases = None
     # asyncio.run(eval_codenames(model=model, max_cases=max_cases))
     # asyncio.run(eval_darkhurmordetection(model=model, max_cases=max_cases))
