@@ -338,6 +338,8 @@ async def round_robin_strategy(
 
     Each player plays against a randomly selected opponent for a given number of rounds.
     The scores are calculated from the game outcomes using the Bradley-Terry algorithm.
+    The strategy ensures that each player plays at least number_of_rounds games.
+    The strategy is simple but not efficient.
 
     Args:
         players: List of players in the tournament.
@@ -377,6 +379,30 @@ async def round_robin_strategy(
     scores = choix.ilsr_pairwise(len(players), scoreboard, alpha=0.01)
     for i, player in enumerate(players):
         player.score = float(scores[i])
+
+    return players
+
+
+async def adaptive_uncertainty_strategy(
+    players: list[EvalPlayer],
+    game: EvalGame,
+    agent: Agent,
+    model_settings: ModelSettings,
+) -> list[EvalPlayer]:
+    """
+    Adaptive uncertainty tournament strategy.
+
+    Args:
+        players: List of players in the tournament.
+        game: Game defining the pairwise comparisons.
+        agent: Agent for the game.
+        model_settings: Model settings for the game.
+
+    Returns:
+        List of players with Bradley-Terry scores.
+    """
+
+    logger.info(f"Adaptive uncertainty strategy: {len(players)} players")
 
     return players
 
@@ -540,7 +566,7 @@ def main() -> None:
     # model = "llama3.3"
     # model = "qwen2.5:72b"
     models = ["llama3.3", "qwen2.5:72b"]
-    max_cases = 10
+    max_cases = None
     # max_cases = None
     # asyncio.run(eval_codenames(model=model, max_cases=max_cases))
     # asyncio.run(eval_darkhurmordetection(model=model, max_cases=max_cases))

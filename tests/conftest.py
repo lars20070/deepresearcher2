@@ -6,6 +6,7 @@ from collections.abc import Generator
 import pytest
 
 from deepresearcher2.config import Model, SearchEngine, config
+from deepresearcher2.evals.evals import EvalGame, EvalPlayer
 from deepresearcher2.logger import logger
 
 
@@ -73,3 +74,23 @@ def cleanup_reports_folder(config_for_testing: Generator[None, None, None]) -> N
                 logger.debug(f"Removed file {f}")
             except OSError as e:
                 logger.error(f"Error removing file {f}: {e}")
+
+
+@pytest.fixture
+def ice_cream_players() -> list[EvalPlayer]:
+    """
+    Provide a list of EvalPlayer instances with ice cream flavours.
+    """
+    return [
+        EvalPlayer(idx=0, item="vanilla"),
+        EvalPlayer(idx=1, item="chocolate"),
+        EvalPlayer(idx=2, item="toasted rice & miso caramel ice cream"),
+    ]
+
+
+@pytest.fixture
+def ice_cream_game() -> EvalGame:
+    """
+    Provide an EvalGame instance for ice cream flavour comparison.
+    """
+    return EvalGame(criterion="Which of the two ice cream flavours A or B is more creative?")
