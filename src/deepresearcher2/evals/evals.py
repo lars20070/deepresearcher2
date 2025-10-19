@@ -626,7 +626,7 @@ class EvalTournament(BaseModel):
         """
         # Use default strategy if none provided
         if strategy is None:
-            strategy = round_robin_strategy
+            strategy = adaptive_uncertainty_strategy
 
         logger.info(f"Starting tournament with {len(self.players)} players using {strategy.__name__}")
 

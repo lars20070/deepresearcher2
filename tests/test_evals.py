@@ -5,7 +5,14 @@ import pytest
 from pydantic_ai.settings import ModelSettings
 
 from deepresearcher2.agents import evaluation_agent
-from deepresearcher2.evals.evals import EvalGame, EvalPlayer, EvalTournament, adaptive_uncertainty_strategy, random_sampling_strategy
+from deepresearcher2.evals.evals import (
+    EvalGame,
+    EvalPlayer,
+    EvalTournament,
+    adaptive_uncertainty_strategy,
+    random_sampling_strategy,
+    round_robin_strategy,
+)
 from deepresearcher2.logger import logger
 
 
@@ -35,7 +42,7 @@ async def test_evalgame(ice_cream_players: list[EvalPlayer]) -> None:
     assert game.criterion == "Which of the two ice cream flavours A or B is more creative?"
 
     result = await game.run(
-        players=(ice_cream_players[0], ice_cream_players[2]),
+        players=(ice_cream_players[0], ice_cream_players[4]),
         agent=evaluation_agent,
         model_settings=ModelSettings(
             temperature=1.0,
@@ -47,7 +54,7 @@ async def test_evalgame(ice_cream_players: list[EvalPlayer]) -> None:
     assert isinstance(result, tuple)
     assert len(result) == 2
     assert all(isinstance(r, int) for r in result)
-    assert result[0] == 2  # Toasted rice & miso caramel ice cream flavour is more creative.
+    assert result[0] == 4  # Toasted rice & miso caramel ice cream flavour is more creative.
 
 
 @pytest.mark.ollama
@@ -84,16 +91,23 @@ async def test_evaltournament(ice_cream_players: list[EvalPlayer], ice_cream_gam
         assert player.score is not None
         logger.debug(f"Player {player.idx} score: {player.score}")
 
-    # Test the adaptive uncertainty strategy
+    # Test the random sampling strategy
     players_with_scores = await tournament.run(
         agent=evaluation_agent,
         model_settings=ModelSettings(
             temperature=1.0,
             timeout=300,
         ),
-        strategy=adaptive_uncertainty_strategy,
+        strategy=random_sampling_strategy,
+        fraction_of_games=0.8,
     )
     assert isinstance(players_with_scores, list)
+    for player in players_with_scores:
+        assert isinstance(player, EvalPlayer)
+        assert hasattr(player, "score")
+        assert isinstance(player.score, float)
+        assert player.score is not None
+        logger.debug(f"Player {player.idx} score: {player.score}")
 
 
 @pytest.mark.ollama
@@ -112,6 +126,7 @@ async def test_random_sampling_strategy(ice_cream_players: list[EvalPlayer], ice
             temperature=1.0,
             timeout=300,
         ),
+        fraction_of_games=0.8,
     )
     assert isinstance(players_with_scores, list)
     for player in players_with_scores:
@@ -121,8 +136,16 @@ async def test_random_sampling_strategy(ice_cream_players: list[EvalPlayer], ice
         assert player.score is not None
         logger.debug(f"Player {player.idx} score: {player.score}")
 
-    # Test with a fraction of games
-    players_with_scores = await random_sampling_strategy(
+
+@pytest.mark.ollama
+@pytest.mark.asyncio
+async def test_round_robin_strategy(ice_cream_players: list[EvalPlayer], ice_cream_game: EvalGame) -> None:
+    """
+    Test the round robin tournament strategy.
+    """
+    logger.info("Testing round_robin_strategy()")
+
+    players_with_scores = await round_robin_strategy(
         players=ice_cream_players,
         game=ice_cream_game,
         agent=evaluation_agent,
@@ -130,7 +153,7 @@ async def test_random_sampling_strategy(ice_cream_players: list[EvalPlayer], ice
             temperature=1.0,
             timeout=300,
         ),
-        fraction_of_games=0.8,
+        number_of_rounds=3,
     )
     assert isinstance(players_with_scores, list)
     for player in players_with_scores:
@@ -157,11 +180,13 @@ async def test_adaptive_uncertainty_strategy(ice_cream_players: list[EvalPlayer]
             temperature=1.0,
             timeout=300,
         ),
+        max_standard_deviation=1.0,
+        alpha=0.01,
     )
     assert isinstance(players_with_scores, list)
     for player in players_with_scores:
         assert isinstance(player, EvalPlayer)
-        # assert hasattr(player, "score")
-        # assert isinstance(player.score, float)
-        # assert player.score is not None
-        # logger.debug(f"Player {player.idx} score: {player.score}")
+        assert hasattr(player, "score")
+        assert isinstance(player.score, float)
+        assert player.score is not None
+        logger.debug(f"Player {player.idx} score: {player.score}")

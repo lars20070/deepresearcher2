@@ -84,7 +84,9 @@ def ice_cream_players() -> list[EvalPlayer]:
     return [
         EvalPlayer(idx=0, item="vanilla"),
         EvalPlayer(idx=1, item="chocolate"),
-        EvalPlayer(idx=2, item="toasted rice & miso caramel ice cream"),
+        EvalPlayer(idx=2, item="strawberry"),
+        EvalPlayer(idx=3, item="peach"),
+        EvalPlayer(idx=4, item="toasted rice & miso caramel ice cream"),
     ]
 
 
