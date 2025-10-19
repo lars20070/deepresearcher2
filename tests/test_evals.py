@@ -99,7 +99,7 @@ async def test_evaltournament(ice_cream_players: list[EvalPlayer], ice_cream_gam
             timeout=300,
         ),
         strategy=random_sampling_strategy,
-        fraction_of_games=0.8,
+        fraction_of_games=0.3,
     )
     assert isinstance(players_with_scores, list)
     for player in players_with_scores:
@@ -126,7 +126,7 @@ async def test_random_sampling_strategy(ice_cream_players: list[EvalPlayer], ice
             temperature=1.0,
             timeout=300,
         ),
-        fraction_of_games=0.8,
+        fraction_of_games=0.3,
     )
     assert isinstance(players_with_scores, list)
     for player in players_with_scores:

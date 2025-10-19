@@ -455,7 +455,7 @@ async def adaptive_uncertainty_strategy(
 
     The strategy consists of two phases:
     (1) Bootstrap phase: The Bradley-Terry model requires the comparison graph to be strongly connected i.e.
-        there must be a path between any two players. We therefore start by playing 2*n random games where
+        there must be a path between any two players. We therefore start by playing n/2*log(n) random games where
         n is the number of players. With fewer games, the scores are most likely unreliable.
     (2) Optimization phase: In this phase, we iteratively calculate the Bradley-Terry scores and their
         covariance matrix, and play the game for which the player scores are the most uncertain.
@@ -498,7 +498,7 @@ async def adaptive_uncertainty_strategy(
     logger.info(f"Adaptive uncertainty strategy: {n} players")
 
     # (1) Bootstrap phase
-    number_of_bootstrap_games = 2 * n  # Fixed. No need to tune this parameter.
+    number_of_bootstrap_games = max(2 * n, int(n / 2 * np.log(n)))
     matches = [(i, j) for i in range(n) for j in range(n) if i != j]
     random.shuffle(matches)
     matches = matches[:number_of_bootstrap_games]
@@ -521,16 +521,7 @@ async def adaptive_uncertainty_strategy(
         logger.debug(f"Optimization game {idx + 1} / {max_number_of_games}")
 
         # Calculate the Bradley-Terry scores and covariance matrix
-        scores, cov_matrix = choix.ep_pairwise(
-            n_items=n,
-            data=scoreboard,
-            alpha=alpha,
-            model="logit",
-        )
-
-        # Update player scores
-        for i, player in enumerate(players):
-            player.score = float(scores[i])
+        scores, cov_matrix = choix.ep_pairwise(n_items=n, data=scoreboard, alpha=alpha, model="logit")
 
         # For monitoring only, check the absolute score changes.
         # Note that this change is not decreasing monotonically.
@@ -542,12 +533,12 @@ async def adaptive_uncertainty_strategy(
 
         # Find most uncertain pair which has not yet been played.
         max_uncertainty = -1.0
-        next_pair = (0, 0)  # Start with an invalid pair
+        next_pair: tuple[int, int] | None = None
         for i in range(n):
             for j in range(i + 1, n):
                 # Check if the pair has already been played.
                 # Here we assume that games are symmetric which is not quite correct but good enough.
-                if (players[i].idx, players[j].idx) in scoreboard or (players[j].idx, players[i].idx) in scoreboard:
+                if (players[i].idx, players[j].idx) in scoreboard or (players[j].idx, players[i].idx) in set(scoreboard):
                     continue
 
                 # Uncertainty of the pair
@@ -555,12 +546,9 @@ async def adaptive_uncertainty_strategy(
                 if uncertainty > max_uncertainty:
                     max_uncertainty = uncertainty
                     next_pair = (i, j)
-        logger.debug(
-            f"Most uncertain pair: Player {players[next_pair[0]].idx} vs Player {players[next_pair[1]].idx} (uncertainty: {max_uncertainty})"
-        )
 
         # Terminate optimization phase?
-        if next_pair == (0, 0):
+        if next_pair is None:
             logger.info("All pairs have been played. Ending optimization phase.")
             break
         if math.sqrt(max_uncertainty) < max_standard_deviation:
@@ -571,6 +559,9 @@ async def adaptive_uncertainty_strategy(
             break
 
         # Play the most uncertain pair
+        logger.debug(
+            f"Most uncertain pair: Player {players[next_pair[0]].idx} vs Player {players[next_pair[1]].idx} (uncertainty: {max_uncertainty})"
+        )
         player_1, player_2 = players[next_pair[0]], players[next_pair[1]]
         result = await game.run(
             players=(player_1, player_2),
@@ -579,6 +570,11 @@ async def adaptive_uncertainty_strategy(
         )
         scoreboard.append(result)
         logger.debug(f"Result: {result}")
+
+    # Final calculation of Bradley-Terry scores and update players
+    scores, _ = choix.ep_pairwise(n_items=n, data=scoreboard, alpha=alpha, model="logit")
+    for i, player in enumerate(players):
+        player.score = float(scores[i])
 
     return players
 
