@@ -457,7 +457,7 @@ async def adaptive_uncertainty_strategy(
     The strategy consists of two phases:
     (1) Bootstrap phase: The Bradley-Terry model requires the comparison graph to be strongly connected i.e.
         there must be a path between any two players. We therefore start by playing n/2*log(n) random games where
-        n is the number of players. With fewer games, the scores are most likely unreliable.
+        n is the number of players. With fewer games, any scores are likely to be unreliable.
     (2) Optimization phase: In this phase, we iteratively calculate the Bradley-Terry scores and their
         covariance matrix, and play the game for which the player scores are the most uncertain.
 
@@ -728,7 +728,7 @@ async def eval_knowledge_gap(models: list[str] | None = None, max_cases: int | N
     idx_sorted = np.argsort(scores)
     for i in idx_sorted:
         player = tournament.get_player_by_idx(i)
-        logger.debug(f"Player {player.idx:2d}   score: {player.score:7.4f}   item: {player.item}")
+        logger.debug(f"Player {player.idx:4d}   score: {player.score:7.4f}   item: {player.item}")
 
 
 def main() -> None:
