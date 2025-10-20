@@ -1,5 +1,7 @@
 # Deep Researcher 2
 
+[![License](https://img.shields.io/github/license/lars20070/deepresearcher2)](https://github.com/lars20070/deepresearcher2/blob/main/LICENSE)
+
 A fully local web research and report writing assistant that protects your privacy.
 The AI models run locally using Ollama, and web searches are performed locally with SearXNG.
 By default, no API keys are needed.
