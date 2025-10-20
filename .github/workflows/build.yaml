@@ -72,6 +72,7 @@ jobs:
         with:
           file: ./coverage.xml
           fail_ci_if_error: false
+          token: ${{ secrets.CODECOV_TOKEN }}
       - name: Install Graphviz for UML diagrams
         if: runner.os == 'Linux'
         run: |
