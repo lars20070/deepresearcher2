@@ -9,7 +9,8 @@ __pycache__/
 .env
 .env.backup
 *.log
-.coverage*
+.coverage
+coverage*
 *.dot
 codeql-custom-queries-python/
 
