@@ -1,5 +1,6 @@
 # Deep Researcher 2
 
+[![codecov](https://codecov.io/gh/lars20070/deepresearcher2/branch/master/graph/badge.svg)](https://codecov.io/gh/lars20070/deepresearcher2)
 [![Build](https://github.com/lars20070/deepresearcher2/actions/workflows/build.yaml/badge.svg)](https://github.com/lars20070/deepresearcher2/actions/workflows/build.yaml)
 [![Python Version](https://img.shields.io/badge/dynamic/toml?url=https://raw.githubusercontent.com/lars20070/deepresearcher2/master/pyproject.toml&query=project.requires-python&label=python)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/github/license/lars20070/deepresearcher2)](https://github.com/lars20070/deepresearcher2/blob/main/LICENSE)
