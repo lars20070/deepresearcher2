@@ -2,8 +2,10 @@
 import glob
 import os
 from collections.abc import Generator
+from unittest.mock import MagicMock
 
 import pytest
+from pytest_mock import MockerFixture
 
 from deepresearcher2.config import Model, SearchEngine, config
 from deepresearcher2.evals.evals import EvalGame, EvalPlayer
@@ -96,3 +98,56 @@ def ice_cream_game() -> EvalGame:
     Provide an EvalGame instance for ice cream flavour comparison.
     """
     return EvalGame(criterion="Which of the two ice cream flavours A or B is more creative?")
+
+
+@pytest.fixture
+def mock_fetch_full_page_content(mocker: MockerFixture) -> MagicMock:
+    """
+    Mocks the fetch_full_page_content function.
+    """
+    return mocker.patch(
+        "deepresearcher2.utils.fetch_full_page_content",
+        return_value="Mocked long page content for testing purposes.",
+    )
+
+
+@pytest.fixture
+def mock_ddgs(mocker: MockerFixture) -> MagicMock:
+    """
+    Mocks the DDGS class to test duckduckgo_search.
+
+    Note that we need to define both class and context manager behavior!
+    See in duckduckgo_search, `with DDGS() as ddgs:`
+
+    mock_ddgs_context_manager is the context manager returned by DDGS()
+    mock_ddgs_instance is the class instance ddgs used within the 'with' block
+
+    Returns:
+        The mock `ddgs` instance that is yielded by the context manager.
+    """
+    mock_ddgs_instance = mocker.MagicMock()
+    mock_ddgs_instance.text.return_value = [
+        {
+            "title": "Mocked Title 1",
+            "href": "http://example.com/1",
+            "body": "Short body for test 1",
+        },
+        {
+            "title": "Mocked Title 2",
+            "href": "http://example.com/2",
+            "body": "Short body for test 2",
+        },
+        {
+            "title": "Mocked Title 3",
+            "href": "http://example.com/3",
+            "body": "Short body for test 3",
+        },
+    ]
+
+    mock_ddgs_context_manager = mocker.MagicMock()
+    mock_ddgs_context_manager.__enter__.return_value = mock_ddgs_instance
+    mock_ddgs_context_manager.__exit__.return_value = None
+
+    mocker.patch("deepresearcher2.utils.DDGS", return_value=mock_ddgs_context_manager)
+
+    return mock_ddgs_instance

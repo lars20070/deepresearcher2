@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+from unittest.mock import MagicMock
+
 import pytest
 from dotenv import load_dotenv
 from pydantic import HttpUrl, ValidationError
@@ -40,10 +42,11 @@ def test_fetch_full_page_content() -> None:
     # assert "Curtis Yarvin's Ideas" in content2
 
 
-@pytest.mark.skip(reason="DuckDuckGo aggressively rate limited.")
-def test_duckduckgo_search() -> None:
+def test_duckduckgo_search(mock_ddgs: MagicMock, mock_fetch_full_page_content: MagicMock) -> None:
     """
     Test the duckduckgo_search() search function
+
+    Both external dependency DDGS and internal fetch_full_page_content are mocked.
     """
     logger.info("Testing duckduckgo_search().")
 
@@ -55,11 +58,11 @@ def test_duckduckgo_search() -> None:
         max_results=n,
     )
 
-    assert len(results) <= n
+    assert len(results) == n
     for r in results:
         assert r.title is not None
         assert r.url is not None
-        assert r.content is not None
+        assert r.content == "Mocked long page content for testing purposes."  # Mocked content from fetch_full_page_content
         assert r.summary == ""  # DuckDuckGo does not provide a summary.
         assert isinstance(r.url, str)
         logger.debug(f"search result title: {r.title}")
@@ -67,17 +70,18 @@ def test_duckduckgo_search() -> None:
         logger.debug(f"search result content length: {len(r.content)}")
 
     # Restricted content length
-    m = 100  # Max content length
+    m = 10  # Rather short max content length
     results2 = duckduckgo_search(
         topic,
         max_results=n,
         max_content_length=m,
     )
 
-    assert len(results2) <= n
+    assert len(results2) == n
     for r in results2:
         assert r.content is not None
         assert len(r.content) <= m
+        assert r.content == "Short body"  # Mocked content from ddgs
 
 
 @pytest.mark.paid
