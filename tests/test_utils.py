@@ -41,7 +41,7 @@ def test_fetch_full_page_content() -> None:
 
 
 @pytest.mark.skip(reason="DuckDuckGo aggressively rate limited.")
-def test_duckduckgo_search() -> None:
+def test_duckduckgo_search(topic: str) -> None:
     """
     Test the duckduckgo_search() search function
     """
@@ -49,7 +49,6 @@ def test_duckduckgo_search() -> None:
 
     # Full content length
     n = 3  # Number of results
-    topic = config.topic
     results = duckduckgo_search(
         topic,
         max_results=n,
@@ -60,7 +59,7 @@ def test_duckduckgo_search() -> None:
         assert r.title is not None
         assert r.url is not None
         assert r.content is not None
-        assert r.summary is None  # DuckDuckGo does not provide a summary.
+        assert r.summary == ""  # DuckDuckGo does not provide a summary.
         assert isinstance(r.url, str)
         logger.debug(f"search result title: {r.title}")
         logger.debug(f"search result url: {r.url}")

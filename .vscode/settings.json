@@ -79,6 +79,7 @@
     "gptoss",
     "pyright",
     "choix",
+    "ddgs",
   ],
   "cSpell.languageSettings": [
     {
