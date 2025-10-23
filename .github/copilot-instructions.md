@@ -125,7 +125,8 @@ deepresearcher2/
 ### Testing Requirements
 - Write unit tests for all agent tools and utility functions
 - Use pytest fixtures for agent setup and teardown
-- Mock external services (Ollama, SearXNG) in tests
+- Mock external services (Ollama, SearXNG) in tests using pytest-mock
+- Or use VCR recordings with pytest-recording
 - Test both success and failure paths for agent workflows
 - Maintain test coverage above 80% for core functionality
 
