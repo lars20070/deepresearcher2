@@ -30,7 +30,7 @@ def test_evalplayer() -> None:
     assert player.item == "toasted rice & miso caramel ice cream"
 
 
-@pytest.mark.ollama
+@pytest.mark.vcr()
 @pytest.mark.asyncio
 async def test_evalgame(ice_cream_players: list[EvalPlayer]) -> None:
     """

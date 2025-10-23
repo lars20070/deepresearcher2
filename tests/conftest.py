@@ -109,3 +109,18 @@ def mock_fetch_full_page_content(mocker: MockerFixture) -> MagicMock:
         "deepresearcher2.utils.fetch_full_page_content",
         return_value="Mocked long page content for testing purposes.",
     )
+
+
+@pytest.fixture
+def vcr_config() -> dict[str, object]:
+    """
+    Configure VCR recordings for tests with @pytest.mark.vcr() decorator.
+
+    Returns:
+        dict[str, object]: VCR configuration settings.
+    """
+    return {
+        "ignore_localhost": False,  # We want to record local SearXNG and Ollama requests
+        "filter_headers": ["authorization", "x-api-key"],
+        "decode_compressed_response": True,
+    }
