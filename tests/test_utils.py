@@ -215,7 +215,6 @@ def test_perplexity_search(mocker: MockerFixture) -> None:
     # logger.debug(f"search result content: {result.content}")
 
 
-# @pytest.mark.paid
 # Brave API is generous. 2,000 free requests per month. Hence, we always run the test and do not mock.
 def test_brave_search() -> None:
     topic = config.topic
@@ -234,7 +233,6 @@ def test_brave_search() -> None:
     # logger.debug(f"search result content: {result.content}")
 
 
-# @pytest.mark.paid
 # Serper API is generous. 2,500 free requests per month. Hence, we always run the test and do not mock.
 def test_serper_search() -> None:
     topic = config.topic
