@@ -41,7 +41,7 @@ def test_fetch_full_page_content() -> None:
 
 
 @pytest.mark.skip(reason="DuckDuckGo aggressively rate limited.")
-def test_duckduckgo_search(topic: str) -> None:
+def test_duckduckgo_search() -> None:
     """
     Test the duckduckgo_search() search function
     """
@@ -49,6 +49,7 @@ def test_duckduckgo_search(topic: str) -> None:
 
     # Full content length
     n = 3  # Number of results
+    topic = config.topic
     results = duckduckgo_search(
         topic,
         max_results=n,
