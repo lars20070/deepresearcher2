@@ -57,7 +57,7 @@ async def test_evalgame(ice_cream_players: list[EvalPlayer]) -> None:
     assert result[0] == 4  # Toasted rice & miso caramel ice cream flavour is more creative.
 
 
-@pytest.mark.ollama
+@pytest.mark.vcr()
 @pytest.mark.asyncio
 async def test_evaltournament(ice_cream_players: list[EvalPlayer], ice_cream_game: EvalGame) -> None:
     """

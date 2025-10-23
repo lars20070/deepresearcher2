@@ -120,7 +120,7 @@ def vcr_config() -> dict[str, object]:
         dict[str, object]: VCR configuration settings.
     """
     return {
-        "ignore_localhost": False,  # We want to record local SearXNG and Ollama requests
+        "ignore_localhost": False,  # We want to record local SearXNG and Ollama requests.
         "filter_headers": ["authorization", "x-api-key"],
         "decode_compressed_response": True,
     }
