@@ -5,6 +5,7 @@ from unittest.mock import MagicMock
 import pytest
 from dotenv import load_dotenv
 from pydantic import HttpUrl, ValidationError
+from pytest_mock import MockerFixture
 
 from deepresearcher2.config import config
 from deepresearcher2.logger import logger
@@ -42,12 +43,38 @@ def test_fetch_full_page_content() -> None:
     # assert "Curtis Yarvin's Ideas" in content2
 
 
-def test_duckduckgo_search(mock_ddgs: MagicMock, mock_fetch_full_page_content: MagicMock) -> None:
+def test_duckduckgo_search(mocker: MockerFixture, mock_fetch_full_page_content: MagicMock) -> None:
     """
     Test the duckduckgo_search() search function
 
-    Both external dependency DDGS and internal fetch_full_page_content are mocked.
+    Both external dependency `DDGS` and internal `fetch_full_page_content` method are mocked.
     """
+    # Mock both the DDGS context manager and its instance
+    mock_ddgs_instance = mocker.MagicMock()  # Class instance ddgs used within the 'with' block
+    mock_ddgs_instance.text.return_value = [
+        {
+            "title": "Mocked Title 1",
+            "href": "http://example.com/1",
+            "body": "Short body for test 1",
+        },
+        {
+            "title": "Mocked Title 2",
+            "href": "http://example.com/2",
+            "body": "Short body for test 2",
+        },
+        {
+            "title": "Mocked Title 3",
+            "href": "http://example.com/3",
+            "body": "Short body for test 3",
+        },
+    ]
+
+    mock_ddgs_context_manager = mocker.MagicMock()  # Context manager returned by DDGS()
+    mock_ddgs_context_manager.__enter__.return_value = mock_ddgs_instance
+    mock_ddgs_context_manager.__exit__.return_value = None
+
+    mocker.patch("deepresearcher2.utils.DDGS", return_value=mock_ddgs_context_manager)
+
     logger.info("Testing duckduckgo_search().")
 
     # Full content length
