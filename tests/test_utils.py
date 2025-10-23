@@ -111,11 +111,39 @@ def test_duckduckgo_search(mocker: MockerFixture, mock_fetch_full_page_content: 
         assert r.content == "Short body"  # Mocked content from ddgs
 
 
-@pytest.mark.paid
-def test_tavily_search() -> None:
+def test_tavily_search(mocker: MockerFixture, mock_fetch_full_page_content: MagicMock) -> None:
     """
     Test the tavily_search() search function
+
+    Both external dependency `TavilyClient` and internal `fetch_full_page_content` method are mocked.
     """
+    # Mock TavilyClient
+    mock_tavily_client_instance = mocker.MagicMock()
+    mock_tavily_client_instance.search.return_value = {
+        "results": [
+            {
+                "title": "Mocked Title 1",
+                "url": "http://example.com/1",
+                "content": "Mocked summary 1",
+                "raw_content": "Mocked raw content 1",
+            },
+            {
+                "title": "Mocked Title 2",
+                "url": "http://example.com/2",
+                "content": "Mocked summary 2",
+                "raw_content": "Mocked raw content 2",
+            },
+            {
+                "title": "Mocked Title 3",
+                "url": "http://example.com/3",
+                "content": "Mocked summary 3",
+                "raw_content": "Mocked raw content 3",
+            },
+        ]
+    }
+    mocker.patch("deepresearcher2.utils.TavilyClient", return_value=mock_tavily_client_instance)
+
+    logger.info("Testing tavily_search().")
 
     # Full content length
     n = 3  # Number of results
@@ -125,12 +153,12 @@ def test_tavily_search() -> None:
         max_results=n,
     )
 
-    assert len(results) <= n
+    assert len(results) == n
     for r in results:
         assert r.title is not None
         assert r.url is not None
         assert r.summary is not None
-        assert r.content is not None
+        assert r.content == "Mocked long page content for testing purposes."  # Mocked content from fetch_full_page_content
         assert isinstance(r.url, str)
         logger.debug(f"search result title: {r.title}")
         logger.debug(f"search result url: {r.url}")
@@ -142,17 +170,18 @@ def test_tavily_search() -> None:
     # logger.debug(f"Tavily search results:\n{results_json}")
 
     # Restricted content length
-    m = 100  # Max content length
+    m = 10  # Max content length
     results2 = tavily_search(
         topic,
         max_results=n,
         max_content_length=m,
     )
 
-    assert len(results2) <= n
+    assert len(results2) == n
     for r in results2:
         assert r.content is not None
         assert len(r.content) <= m
+        assert r.content.startswith("Mocked raw")
 
 
 @pytest.mark.paid
