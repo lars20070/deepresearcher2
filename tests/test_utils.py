@@ -184,20 +184,31 @@ def test_tavily_search(mocker: MockerFixture, mock_fetch_full_page_content: Magi
         assert r.content.startswith("Mocked raw")
 
 
-@pytest.mark.paid
-def test_perplexity_search() -> None:
+def test_perplexity_search(mocker: MockerFixture) -> None:
     """
     Test the perplexity_search() search function
+
+    The external dependency `requests.post` is mocked.
     """
+    # Mock requests.post
+    mock_response = mocker.MagicMock()
+    mock_response.json.return_value = {
+        "choices": [{"message": {"content": "Mocked Perplexity content."}}],
+        "citations": ["http://example.com/perplexity"],
+    }
+    mock_response.raise_for_status.return_value = None
+    mocker.patch("requests.post", return_value=mock_response)
+
+    logger.info("Testing perplexity_search().")
 
     topic = config.topic
     results = perplexity_search(topic)
     result = results[0]  # Perplexity search returns only a single result
 
-    assert result.title is not None
-    assert result.url is not None
+    assert result.title == topic
+    assert result.url == "http://example.com/perplexity"
     assert result.summary is not None and result.summary == ""  # Perplexity does not provide a summary.
-    assert result.content is not None
+    assert result.content == "Mocked Perplexity content."
     logger.debug(f"search result title: {result.title}")
     logger.debug(f"search result url: {result.url}")
     logger.debug(f"search result content length: {len(result.content)}")
@@ -205,7 +216,7 @@ def test_perplexity_search() -> None:
 
 
 # @pytest.mark.paid
-# Brave API is generous. 2,000 free requests per month. Hence, we always run the test.
+# Brave API is generous. 2,000 free requests per month. Hence, we always run the test and do not mock.
 def test_brave_search() -> None:
     topic = config.topic
     results = brave_search(topic, max_results=3)
@@ -224,7 +235,7 @@ def test_brave_search() -> None:
 
 
 # @pytest.mark.paid
-# Serper API is generous. 2,500 free requests per month. Hence, we always run the test.
+# Serper API is generous. 2,500 free requests per month. Hence, we always run the test and do not mock.
 def test_serper_search() -> None:
     topic = config.topic
     results = serper_search(topic, max_results=3)
