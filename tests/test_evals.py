@@ -45,7 +45,7 @@ async def test_evalgame(ice_cream_players: list[EvalPlayer]) -> None:
         players=(ice_cream_players[0], ice_cream_players[4]),
         agent=evaluation_agent,
         model_settings=ModelSettings(
-            temperature=1.0,
+            temperature=0.0,
             timeout=300,
         ),
     )
@@ -79,7 +79,7 @@ async def test_evaltournament(ice_cream_players: list[EvalPlayer], ice_cream_gam
     players_with_scores = await tournament.run(
         agent=evaluation_agent,
         model_settings=ModelSettings(
-            temperature=1.0,
+            temperature=0.0,
             timeout=300,
         ),
     )
@@ -95,7 +95,7 @@ async def test_evaltournament(ice_cream_players: list[EvalPlayer], ice_cream_gam
     players_with_scores = await tournament.run(
         agent=evaluation_agent,
         model_settings=ModelSettings(
-            temperature=1.0,
+            temperature=0.0,
             timeout=300,
         ),
         strategy=random_sampling_strategy,
@@ -110,7 +110,7 @@ async def test_evaltournament(ice_cream_players: list[EvalPlayer], ice_cream_gam
         logger.debug(f"Player {player.idx} score: {player.score}")
 
 
-@pytest.mark.ollama
+@pytest.mark.vcr()
 @pytest.mark.asyncio
 async def test_random_sampling_strategy(ice_cream_players: list[EvalPlayer], ice_cream_game: EvalGame) -> None:
     """
@@ -123,7 +123,7 @@ async def test_random_sampling_strategy(ice_cream_players: list[EvalPlayer], ice
         game=ice_cream_game,
         agent=evaluation_agent,
         model_settings=ModelSettings(
-            temperature=1.0,
+            temperature=0.0,
             timeout=300,
         ),
         fraction_of_games=0.3,
@@ -137,7 +137,7 @@ async def test_random_sampling_strategy(ice_cream_players: list[EvalPlayer], ice
         logger.debug(f"Player {player.idx} score: {player.score}")
 
 
-@pytest.mark.ollama
+@pytest.mark.vcr()
 @pytest.mark.asyncio
 async def test_round_robin_strategy(ice_cream_players: list[EvalPlayer], ice_cream_game: EvalGame) -> None:
     """
@@ -150,7 +150,7 @@ async def test_round_robin_strategy(ice_cream_players: list[EvalPlayer], ice_cre
         game=ice_cream_game,
         agent=evaluation_agent,
         model_settings=ModelSettings(
-            temperature=1.0,
+            temperature=0.0,
             timeout=300,
         ),
         number_of_rounds=1,
@@ -164,7 +164,7 @@ async def test_round_robin_strategy(ice_cream_players: list[EvalPlayer], ice_cre
         logger.debug(f"Player {player.idx} score: {player.score}")
 
 
-@pytest.mark.ollama
+@pytest.mark.vcr()
 @pytest.mark.asyncio
 async def test_adaptive_uncertainty_strategy(ice_cream_players: list[EvalPlayer], ice_cream_game: EvalGame) -> None:
     """
@@ -177,7 +177,7 @@ async def test_adaptive_uncertainty_strategy(ice_cream_players: list[EvalPlayer]
         game=ice_cream_game,
         agent=evaluation_agent,
         model_settings=ModelSettings(
-            temperature=1.0,
+            temperature=0.0,
             timeout=300,
         ),
         max_standard_deviation=1.0,
