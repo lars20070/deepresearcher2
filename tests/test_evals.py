@@ -195,8 +195,18 @@ async def test_evaltournament_usecase(tmp_path: Path) -> None:
     """
     Use case for EvalTournament, EvalGame and EvalPlayer classes.
 
-    The code demonstrates how the evaluation framework can be used in practice.
-    It is not intended as test for individual components.
+    The code demonstrates how the evaluation framework can be used in practice. It is not intended as test for individual components.
+    In this use case, we are provided with a list of topics. The objective is to generate creative web search queries for these topics.
+    We have a basline implementation in the `main` branch and a novel implementation in some `feature` branch. In this simple example,
+    the implementations differ merely in the prompt: `prompt_baseline` vs. `prompt_novel`. We want to check whether the novel implementation
+    does indeed generate more creative queries.
+
+    The use case proceeds in three steps:
+    (1) We generate an evaluation `Dataset` containing the topics.
+    (2) We run the baseline implementation and store the generated queries in the dataset. This code could be run as part of the
+        CI/CD pipeline whenever the `main` branch changes.
+    (3) We run the novel implementation, score both baseline and novel queries in one go using a Bradley-Terry tournament,
+        and check whether the scores have improved.
     """
 
     # Path to store the evaluation dataset
@@ -249,10 +259,10 @@ async def test_evaltournament_usecase(tmp_path: Path) -> None:
     for case in dataset.cases:
         logger.info(f"Case {case.name} with topic: {case.inputs['topic']}")
 
-        prompt = f"Please generate a query for the research topic: <TOPIC>{case.inputs['topic']}</TOPIC>"
+        prompt_baseline = f"Please generate a query for the research topic: <TOPIC>{case.inputs['topic']}</TOPIC>"
         async with query_agent:
             result = await query_agent.run(
-                user_prompt=prompt,
+                user_prompt=prompt_baseline,
                 model_settings=MODEL_SETTINGS,
             )
 
@@ -272,13 +282,13 @@ async def test_evaltournament_usecase(tmp_path: Path) -> None:
     for idx, case in enumerate(dataset.cases):
         logger.info(f"Case {case.name} with topic: {case.inputs['topic']}")
 
-        prompt = (
+        prompt_novel = (
             f"Please generate a very creative search query for the research topic: <TOPIC>{case.inputs['topic']}</TOPIC>\n"
             "The query should show genuine originality and interest in the topic. AVOID any generic or formulaic phrases."
         )
         async with query_agent:
             result = await query_agent.run(
-                user_prompt=prompt,
+                user_prompt=prompt_novel,
                 model_settings=MODEL_SETTINGS,  # Ideally, we want to use non-zero temperature here. But for VCR testing we need determinism.
             )
 
@@ -297,18 +307,15 @@ async def test_evaltournament_usecase(tmp_path: Path) -> None:
         model_settings=MODEL_SETTINGS,
     )
 
-    # Print the scores
-    for player in players_scored:
-        logger.debug(f"Score for Player {player.idx}: {player.score:0.4f}")
-
-    # Print players sorted by score
+    # Players sorted by score
     players_sorted = sorted(players_scored, key=lambda p: p.score if p.score is not None else float("-inf"))
     for player in players_sorted:
         logger.debug(f"Player {player.idx:4d}   score: {player.score:7.4f}   item: {player.item}")
 
-    # Average score for baseline queries
+    # Average score for both baseline and novel queries
     scores_baseline = [tournament.get_player_by_idx(idx=i).score or 0.0 for i in range(len(dataset.cases))]
     scores_novel = [tournament.get_player_by_idx(idx=i + len(dataset.cases)).score or 0.0 for i in range(len(dataset.cases))]
     logger.debug(f"Average score for baseline queries: {np.mean(scores_baseline):0.4f}")
     logger.debug(f"Average score for novel queries:    {np.mean(scores_novel):0.4f}")
+    # Not every novel query will have scored higher than the baseline case.But on average the novel queries should have improved scores.
     assert np.mean(scores_novel) > np.mean(scores_baseline)
