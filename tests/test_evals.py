@@ -7,6 +7,9 @@ if TYPE_CHECKING:
     from pathlib import Path
 
 import pytest
+from pydantic_ai import Agent
+from pydantic_ai.models.openai import OpenAIChatModel
+from pydantic_ai.providers.openai import OpenAIProvider
 from pydantic_ai.settings import ModelSettings
 from pydantic_evals import Case, Dataset
 
@@ -193,6 +196,22 @@ async def test_evaltournament_usecase(tmp_path: Path) -> None:
     The code demonstrates how the evaluation framework can be used in practice.
     It is not intended as test for individual components.
     """
+
+    # Path to store the evaluation dataset
+    path_out = tmp_path / "dataset.json"
+
+    # Agent for generating search queries using a local Ollama server
+    query_agent = Agent(
+        model=OpenAIChatModel(
+            model_name="qwen2.5:72b",
+            provider=OpenAIProvider(base_url="http://localhost:11434/v1"),
+        ),
+        output_type=str,
+        system_prompt="Please generate a concise web search query for the given research topic. Reply with ONLY the query string.",
+        retries=5,
+        instrument=True,
+    )
+
     logger.info("Use case for EvalTournament, EvalGame and EvalPlayer classes.")
 
     # (1) Generate Cases and serialise them
@@ -219,11 +238,30 @@ async def test_evaltournament_usecase(tmp_path: Path) -> None:
         )
         cases.append(case)
     dataset: Dataset[dict[str, str], type[None], Any] = Dataset[dict[str, str], type[None], Any](cases=cases)
-    path_out = tmp_path / "dataset.json"
     dataset.to_file(path_out)
 
     # (2) Generate base line model outputs
 
     dataset = Dataset[dict[str, str], type[None], Any].from_file(path_out)
+    cases_new: list[Case[dict[str, str], type[None], Any]] = []
     for case in dataset.cases:
         logger.info(f"Case {case.name} with topic: {case.inputs['topic']}")
+
+        prompt = f"Please generate a query for the research topic: {case.inputs['topic']}"
+        async with query_agent:
+            result = await query_agent.run(
+                user_prompt=prompt,
+                model_settings=ModelSettings(
+                    temperature=0.0,
+                    timeout=300,
+                ),
+            )
+
+        logger.debug(f"Generated query: {result.output}")
+        case_new = Case(
+            name=case.name,
+            inputs={"topic": case.inputs["topic"], "query": result.output},
+        )
+        cases_new.append(case_new)
+    dataset_new: Dataset[dict[str, str], type[None], Any] = Dataset[dict[str, str], type[None], Any](cases=cases_new)
+    dataset_new.to_file(path_out)
