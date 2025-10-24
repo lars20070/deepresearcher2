@@ -188,6 +188,7 @@ async def test_adaptive_uncertainty_strategy(ice_cream_players: list[EvalPlayer]
         logger.debug(f"Player {player.idx} score: {player.score}")
 
 
+@pytest.mark.ollama
 @pytest.mark.asyncio
 async def test_evaltournament_usecase(tmp_path: Path) -> None:
     """
@@ -265,3 +266,9 @@ async def test_evaltournament_usecase(tmp_path: Path) -> None:
         cases_new.append(case_new)
     dataset_new: Dataset[dict[str, str], type[None], Any] = Dataset[dict[str, str], type[None], Any](cases=cases_new)
     dataset_new.to_file(path_out)
+
+    # (3) Generate novel model outputs and score them
+
+    dataset = Dataset[dict[str, str], type[None], Any].from_file(path_out)
+    for case in dataset.cases:
+        logger.info(f"Case {case.name} with topic: {case.inputs['topic']} and query: {case.inputs['query']}")
