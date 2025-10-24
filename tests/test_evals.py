@@ -15,6 +15,11 @@ from deepresearcher2.evals.evals import (
 )
 from deepresearcher2.logger import logger
 
+EVAL_MODEL_SETTINGS = ModelSettings(
+    temperature=0.0,  # Model needs to be deterministic for VCR recording to work.
+    timeout=300,
+)
+
 
 def test_evalplayer() -> None:
     """
@@ -44,10 +49,7 @@ async def test_evalgame(ice_cream_players: list[EvalPlayer]) -> None:
     result = await game.run(
         players=(ice_cream_players[0], ice_cream_players[4]),
         agent=evaluation_agent,
-        model_settings=ModelSettings(
-            temperature=0.0,
-            timeout=300,
-        ),
+        model_settings=EVAL_MODEL_SETTINGS,
     )
     logger.debug(f"Game result: {result}")
 
@@ -78,10 +80,7 @@ async def test_evaltournament(ice_cream_players: list[EvalPlayer], ice_cream_gam
     # Test the default strategy
     players_with_scores = await tournament.run(
         agent=evaluation_agent,
-        model_settings=ModelSettings(
-            temperature=0.0,
-            timeout=300,
-        ),
+        model_settings=EVAL_MODEL_SETTINGS,
     )
     assert isinstance(players_with_scores, list)
     for player in players_with_scores:
@@ -94,10 +93,7 @@ async def test_evaltournament(ice_cream_players: list[EvalPlayer], ice_cream_gam
     # Test the random sampling strategy
     players_with_scores = await tournament.run(
         agent=evaluation_agent,
-        model_settings=ModelSettings(
-            temperature=0.0,
-            timeout=300,
-        ),
+        model_settings=EVAL_MODEL_SETTINGS,
         strategy=random_sampling_strategy,
         fraction_of_games=0.3,
     )
@@ -122,10 +118,7 @@ async def test_random_sampling_strategy(ice_cream_players: list[EvalPlayer], ice
         players=ice_cream_players,
         game=ice_cream_game,
         agent=evaluation_agent,
-        model_settings=ModelSettings(
-            temperature=0.0,
-            timeout=300,
-        ),
+        model_settings=EVAL_MODEL_SETTINGS,
         fraction_of_games=0.3,
     )
     assert isinstance(players_with_scores, list)
@@ -149,10 +142,7 @@ async def test_round_robin_strategy(ice_cream_players: list[EvalPlayer], ice_cre
         players=ice_cream_players,
         game=ice_cream_game,
         agent=evaluation_agent,
-        model_settings=ModelSettings(
-            temperature=0.0,
-            timeout=300,
-        ),
+        model_settings=EVAL_MODEL_SETTINGS,
         number_of_rounds=1,
     )
     assert isinstance(players_with_scores, list)
@@ -176,10 +166,7 @@ async def test_adaptive_uncertainty_strategy(ice_cream_players: list[EvalPlayer]
         players=ice_cream_players,
         game=ice_cream_game,
         agent=evaluation_agent,
-        model_settings=ModelSettings(
-            temperature=0.0,
-            timeout=300,
-        ),
+        model_settings=EVAL_MODEL_SETTINGS,
         max_standard_deviation=1.0,
         alpha=0.01,
     )
