@@ -1,6 +1,6 @@
 [project]
 name = "deepresearcher2"
-version = "0.1.5"
+version = "0.1.6"
 description = "fully local web research and report writing assistant"
 readme = "README.md"
 authors = [{ name = "Lars Nilse", email = "l.nilse@dunelm.org.uk" }]
