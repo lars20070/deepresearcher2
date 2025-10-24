@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Any
 if TYPE_CHECKING:
     from pathlib import Path
 
+import numpy as np
 import pytest
 from pydantic_ai import Agent
 from pydantic_ai.models.openai import OpenAIChatModel
@@ -24,7 +25,7 @@ from deepresearcher2.evals.evals import (
 )
 from deepresearcher2.logger import logger
 
-EVAL_MODEL_SETTINGS = ModelSettings(
+MODEL_SETTINGS = ModelSettings(
     temperature=0.0,  # Model needs to be deterministic for VCR recording to work.
     timeout=300,
 )
@@ -58,7 +59,7 @@ async def test_evalgame(ice_cream_players: list[EvalPlayer]) -> None:
     result = await game.run(
         players=(ice_cream_players[0], ice_cream_players[4]),
         agent=evaluation_agent,
-        model_settings=EVAL_MODEL_SETTINGS,
+        model_settings=MODEL_SETTINGS,
     )
     logger.debug(f"Game result: {result}")
 
@@ -89,7 +90,7 @@ async def test_evaltournament(ice_cream_players: list[EvalPlayer], ice_cream_gam
     # Test the default strategy
     players_with_scores = await tournament.run(
         agent=evaluation_agent,
-        model_settings=EVAL_MODEL_SETTINGS,
+        model_settings=MODEL_SETTINGS,
     )
     assert isinstance(players_with_scores, list)
     for player in players_with_scores:
@@ -102,7 +103,7 @@ async def test_evaltournament(ice_cream_players: list[EvalPlayer], ice_cream_gam
     # Test the random sampling strategy
     players_with_scores = await tournament.run(
         agent=evaluation_agent,
-        model_settings=EVAL_MODEL_SETTINGS,
+        model_settings=MODEL_SETTINGS,
         strategy=random_sampling_strategy,
         fraction_of_games=0.3,
     )
@@ -127,7 +128,7 @@ async def test_random_sampling_strategy(ice_cream_players: list[EvalPlayer], ice
         players=ice_cream_players,
         game=ice_cream_game,
         agent=evaluation_agent,
-        model_settings=EVAL_MODEL_SETTINGS,
+        model_settings=MODEL_SETTINGS,
         fraction_of_games=0.3,
     )
     assert isinstance(players_with_scores, list)
@@ -151,7 +152,7 @@ async def test_round_robin_strategy(ice_cream_players: list[EvalPlayer], ice_cre
         players=ice_cream_players,
         game=ice_cream_game,
         agent=evaluation_agent,
-        model_settings=EVAL_MODEL_SETTINGS,
+        model_settings=MODEL_SETTINGS,
         number_of_rounds=1,
     )
     assert isinstance(players_with_scores, list)
@@ -175,7 +176,7 @@ async def test_adaptive_uncertainty_strategy(ice_cream_players: list[EvalPlayer]
         players=ice_cream_players,
         game=ice_cream_game,
         agent=evaluation_agent,
-        model_settings=EVAL_MODEL_SETTINGS,
+        model_settings=MODEL_SETTINGS,
         max_standard_deviation=1.0,
         alpha=0.01,
     )
@@ -188,7 +189,7 @@ async def test_adaptive_uncertainty_strategy(ice_cream_players: list[EvalPlayer]
         logger.debug(f"Player {player.idx} score: {player.score}")
 
 
-@pytest.mark.ollama
+@pytest.mark.vcr()
 @pytest.mark.asyncio
 async def test_evaltournament_usecase(tmp_path: Path) -> None:
     """
@@ -208,7 +209,7 @@ async def test_evaltournament_usecase(tmp_path: Path) -> None:
             provider=OpenAIProvider(base_url="http://localhost:11434/v1"),
         ),
         output_type=str,
-        system_prompt="Please generate a concise web search query for the given research topic. Reply with ONLY the query string.",
+        system_prompt="Please generate a concise web search query for the given research topic. Reply with ONLY the query string. Do NOT use quotes.",
         retries=5,
         instrument=True,
     )
@@ -248,14 +249,11 @@ async def test_evaltournament_usecase(tmp_path: Path) -> None:
     for case in dataset.cases:
         logger.info(f"Case {case.name} with topic: {case.inputs['topic']}")
 
-        prompt = f"Please generate a query for the research topic: {case.inputs['topic']}"
+        prompt = f"Please generate a query for the research topic: <TOPIC>{case.inputs['topic']}</TOPIC>"
         async with query_agent:
             result = await query_agent.run(
                 user_prompt=prompt,
-                model_settings=ModelSettings(
-                    temperature=0.0,
-                    timeout=300,
-                ),
+                model_settings=MODEL_SETTINGS,
             )
 
         logger.debug(f"Generated query: {result.output}")
@@ -270,5 +268,47 @@ async def test_evaltournament_usecase(tmp_path: Path) -> None:
     # (3) Generate novel model outputs and score them
 
     dataset = Dataset[dict[str, str], type[None], Any].from_file(path_out)
-    for case in dataset.cases:
-        logger.info(f"Case {case.name} with topic: {case.inputs['topic']} and query: {case.inputs['query']}")
+    players: list[EvalPlayer] = []
+    for idx, case in enumerate(dataset.cases):
+        logger.info(f"Case {case.name} with topic: {case.inputs['topic']}")
+
+        prompt = (
+            f"Please generate a very creative search query for the research topic: <TOPIC>{case.inputs['topic']}</TOPIC>\n"
+            "The query should show genuine originality and interest in the topic. AVOID any generic or formulaic phrases."
+        )
+        async with query_agent:
+            result = await query_agent.run(
+                user_prompt=prompt,
+                model_settings=MODEL_SETTINGS,  # Ideally, we want to use non-zero temperature here. But for VCR testing we need determinism.
+            )
+
+        logger.debug(f"Generated query: {result.output}")
+
+        player_baseline = EvalPlayer(idx=idx, item=case.inputs["query"])
+        player_novel = EvalPlayer(idx=idx + len(dataset.cases), item=result.output)
+        players.append(player_baseline)
+        players.append(player_novel)
+
+    # Run the Bradley-Terry tournament to score both baseline and novel queries
+    game = EvalGame(criterion="Which of the two search queries shows more genuine curiosity and creativity, and is less formulaic?")
+    tournament = EvalTournament(players=players, game=game)
+    players_scored = await tournament.run(
+        agent=evaluation_agent,
+        model_settings=MODEL_SETTINGS,
+    )
+
+    # Print the scores
+    for player in players_scored:
+        logger.debug(f"Score for Player {player.idx}: {player.score:0.4f}")
+
+    # Print players sorted by score
+    players_sorted = sorted(players_scored, key=lambda p: p.score if p.score is not None else float("-inf"))
+    for player in players_sorted:
+        logger.debug(f"Player {player.idx:4d}   score: {player.score:7.4f}   item: {player.item}")
+
+    # Average score for baseline queries
+    scores_baseline = [tournament.get_player_by_idx(idx=i).score or 0.0 for i in range(len(dataset.cases))]
+    scores_novel = [tournament.get_player_by_idx(idx=i + len(dataset.cases)).score or 0.0 for i in range(len(dataset.cases))]
+    logger.debug(f"Average score for baseline queries: {np.mean(scores_baseline):0.4f}")
+    logger.debug(f"Average score for novel queries:    {np.mean(scores_novel):0.4f}")
+    assert np.mean(scores_novel) > np.mean(scores_baseline)
