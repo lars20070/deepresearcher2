@@ -1,8 +1,14 @@
 #!/usr/bin/env python3
 from __future__ import annotations as _annotations
 
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from pathlib import Path
+
 import pytest
 from pydantic_ai.settings import ModelSettings
+from pydantic_evals import Case, Dataset
 
 from deepresearcher2.agents import evaluation_agent
 from deepresearcher2.evals.evals import (
@@ -177,3 +183,47 @@ async def test_adaptive_uncertainty_strategy(ice_cream_players: list[EvalPlayer]
         assert isinstance(player.score, float)
         assert player.score is not None
         logger.debug(f"Player {player.idx} score: {player.score}")
+
+
+@pytest.mark.asyncio
+async def test_evaltournament_usecase(tmp_path: Path) -> None:
+    """
+    Use case for EvalTournament, EvalGame and EvalPlayer classes.
+
+    The code demonstrates how the evaluation framework can be used in practice.
+    It is not intended as test for individual components.
+    """
+    logger.info("Use case for EvalTournament, EvalGame and EvalPlayer classes.")
+
+    # (1) Generate Cases and serialise them
+
+    topics = [
+        "pangolin trafficking networks",
+        "molecular gastronomy",
+        "dark kitchen economics",
+        "kintsugi philosophy",
+        "nano-medicine delivery systems",
+        "Streisand effect dynamics",
+        "social cooling phenomenon",
+        "Anne Brorhilke",
+        "bioconcrete self-healing",
+        "bacteriophage therapy revival",
+    ]
+
+    cases: list[Case[dict[str, str], type[None], Any]] = []
+    for idx, topic in enumerate(topics):
+        logger.info(f"Case {idx + 1} / {len(topics)} with topic: {topic}")
+        case = Case(
+            name=f"case_{idx:03d}",
+            inputs={"topic": topic},
+        )
+        cases.append(case)
+    dataset: Dataset[dict[str, str], type[None], Any] = Dataset[dict[str, str], type[None], Any](cases=cases)
+    path_out = tmp_path / "dataset.json"
+    dataset.to_file(path_out)
+
+    # (2) Generate base line model outputs
+
+    dataset = Dataset[dict[str, str], type[None], Any].from_file(path_out)
+    for case in dataset.cases:
+        logger.info(f"Case {case.name} with topic: {case.inputs['topic']}")
