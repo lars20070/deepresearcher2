@@ -189,7 +189,7 @@ async def test_adaptive_uncertainty_strategy(ice_cream_players: list[EvalPlayer]
         logger.debug(f"Player {player.idx} score: {player.score}")
 
 
-@pytest.mark.vcr()
+@pytest.mark.ollama
 @pytest.mark.asyncio
 async def test_evaltournament_usecase(tmp_path: Path) -> None:
     """
@@ -198,8 +198,8 @@ async def test_evaltournament_usecase(tmp_path: Path) -> None:
     The code demonstrates how the evaluation framework can be used in practice. It is not intended as test for individual components.
     In this use case, we are provided with a list of topics. The objective is to generate creative web search queries for these topics.
     We have a basline implementation in the `main` branch and a novel implementation in some `feature` branch. In this simple example,
-    the implementations differ merely in the prompt: `prompt_baseline` vs. `prompt_novel`. We want to check whether the novel implementation
-    does indeed generate more creative queries.
+    the implementations differ merely in the prompt (`prompt_baseline` vs. `prompt_novel`) and temperature. We want to check whether the
+    novel implementation does indeed generate more creative queries.
 
     The use case proceeds in three steps:
     (1) We generate an evaluation `Dataset` containing the topics.
@@ -289,7 +289,10 @@ async def test_evaltournament_usecase(tmp_path: Path) -> None:
         async with query_agent:
             result = await query_agent.run(
                 user_prompt=prompt_novel,
-                model_settings=MODEL_SETTINGS,  # Ideally, we want to use non-zero temperature here. But for VCR testing we need determinism.
+                model_settings=ModelSettings(
+                    temperature=1.0,
+                    timeout=300,
+                ),
             )
 
         logger.debug(f"Generated query: {result.output}")
