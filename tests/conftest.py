@@ -2,10 +2,13 @@
 import glob
 import os
 from collections.abc import Generator
+from unittest.mock import MagicMock
 
 import pytest
+from pytest_mock import MockerFixture
 
 from deepresearcher2.config import Model, SearchEngine, config
+from deepresearcher2.evals.evals import EvalGame, EvalPlayer
 from deepresearcher2.logger import logger
 
 
@@ -44,7 +47,7 @@ def topic() -> str:
     return "petrichor"
 
 
-@pytest.fixture
+@pytest.fixture(autouse=True)
 def config_for_testing(monkeypatch: pytest.MonkeyPatch) -> Generator[None, None, None]:
     """
     Override the config for unit testing.
@@ -52,8 +55,9 @@ def config_for_testing(monkeypatch: pytest.MonkeyPatch) -> Generator[None, None,
     monkeypatch.setattr(config, "topic", "petrichor")
     monkeypatch.setattr(config, "max_research_loops", 3)
     monkeypatch.setattr(config, "max_web_search_results", 2)
-    monkeypatch.setattr(config, "search_engine", SearchEngine.duckduckgo)
+    monkeypatch.setattr(config, "search_engine", SearchEngine.serper)
     monkeypatch.setattr(config, "model", Model.llama33)
+    monkeypatch.setattr(config, "model_timeout", 600)
     monkeypatch.setattr(config, "reports_folder", "tests/reports/")
     monkeypatch.setattr(config, "logs2logfire", False)
 
@@ -72,3 +76,51 @@ def cleanup_reports_folder(config_for_testing: Generator[None, None, None]) -> N
                 logger.debug(f"Removed file {f}")
             except OSError as e:
                 logger.error(f"Error removing file {f}: {e}")
+
+
+@pytest.fixture
+def ice_cream_players() -> list[EvalPlayer]:
+    """
+    Provide a list of EvalPlayer instances with ice cream flavours.
+    """
+    return [
+        EvalPlayer(idx=0, item="vanilla"),
+        EvalPlayer(idx=1, item="chocolate"),
+        EvalPlayer(idx=2, item="strawberry"),
+        EvalPlayer(idx=3, item="peach"),
+        EvalPlayer(idx=4, item="toasted rice & miso caramel ice cream"),
+    ]
+
+
+@pytest.fixture
+def ice_cream_game() -> EvalGame:
+    """
+    Provide an EvalGame instance for ice cream flavour comparison.
+    """
+    return EvalGame(criterion="Which of the two ice cream flavours A or B is more creative?")
+
+
+@pytest.fixture
+def mock_fetch_full_page_content(mocker: MockerFixture) -> MagicMock:
+    """
+    Mocks the fetch_full_page_content function.
+    """
+    return mocker.patch(
+        "deepresearcher2.utils.fetch_full_page_content",
+        return_value="Mocked long page content for testing purposes.",
+    )
+
+
+@pytest.fixture
+def vcr_config() -> dict[str, object]:
+    """
+    Configure VCR recordings for tests with @pytest.mark.vcr() decorator.
+
+    Returns:
+        dict[str, object]: VCR configuration settings.
+    """
+    return {
+        "ignore_localhost": False,  # We want to record local SearXNG and Ollama requests.
+        "filter_headers": ["authorization", "x-api-key"],
+        "decode_compressed_response": True,
+    }

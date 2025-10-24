@@ -3,6 +3,7 @@ import glob
 import json
 import os
 from collections.abc import Generator
+from typing import cast
 
 import pytest
 from pydantic_graph import End
@@ -10,9 +11,9 @@ from pydantic_graph import End
 from deepresearcher2.config import config
 from deepresearcher2.graph import DeepState, FinalizeSummary, GraphRunContext, ReflectOnSearch, SummarizeSearchResults, WebSearch
 from deepresearcher2.logger import logger
+from deepresearcher2.models import WebSearchResult, WebSearchSummary
 
 
-@pytest.mark.skip(reason="DuckDuckGo aggressively rate limited.")
 @pytest.mark.ollama
 @pytest.mark.asyncio
 async def test_websearch_without_reflection(topic: str) -> None:
@@ -38,6 +39,7 @@ async def test_websearch_without_reflection(topic: str) -> None:
     assert isinstance(result, SummarizeSearchResults)
     search_results = ctx.state.search_results
     assert search_results is not None
+    search_results = cast(list[WebSearchResult], search_results)
     if config.search_engine == "perplexity":
         assert len(search_results) == 1  # Perplexity return only one result
     else:
@@ -55,7 +57,6 @@ async def test_websearch_without_reflection(topic: str) -> None:
     #     f.write(ctx.state.model_dump_json(indent=2))
 
 
-@pytest.mark.skip(reason="DuckDuckGo aggressively rate limited.")
 @pytest.mark.ollama
 @pytest.mark.asyncio
 async def test_websearch_with_reflection(topic: str) -> None:
@@ -130,6 +131,7 @@ async def test_summarizesearchresults() -> None:
     assert isinstance(result, ReflectOnSearch)
     search_summaries = ctx.state.search_summaries
     assert search_summaries is not None
+    search_summaries = cast(list[WebSearchSummary], search_summaries)
     assert len(search_summaries) == 1
     for s in search_summaries:
         assert s.summary is not None

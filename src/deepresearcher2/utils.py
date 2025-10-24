@@ -11,8 +11,8 @@ import brotli
 import pypandoc
 import requests
 from bs4 import BeautifulSoup
-from duckduckgo_search import DDGS
-from pydantic import HttpUrl
+from ddgs import DDGS
+from pydantic import HttpUrl, ValidationError
 from tavily import TavilyClient
 from tenacity import retry, stop_after_attempt, wait_exponential
 
@@ -96,6 +96,7 @@ def fetch_full_page_content(url: HttpUrl, timeout: int = 10) -> str:
         >>> print(content)
     """
     logger.info(f"Fetching content from URL: {str(url)}")
+    text = ""
 
     try:
         # Mimic a browser by setting appropriate headers
@@ -129,19 +130,31 @@ def fetch_full_page_content(url: HttpUrl, timeout: int = 10) -> str:
         # Clean up html
         text = html2text(html)
 
-        return text
-
     except urllib.error.HTTPError as e:
         if e.code in (403, 401):
             logger.error(f"Authentication error for {url}: {e.code}")
-            return ""
         else:
             logger.error(f"HTTP error for {url}: {e.code}")
-            return ""
 
     except urllib.error.URLError as e:
         logger.error(f"Network error for {url}: {str(e)}")
-        return ""
+
+    except (gzip.BadGzipFile, OSError) as e:
+        logger.error(f"Gzip decompression error for {url}: {str(e)}")
+
+    except zlib.error as e:
+        logger.error(f"Deflate decompression error for {url}: {str(e)}")
+
+    except brotli.error as e:
+        logger.error(f"Brotli decompression error for {url}: {str(e)}")
+
+    except UnicodeDecodeError as e:
+        logger.error(f"Unicode decode error for {url}: {str(e)}")
+
+    except Exception as e:
+        logger.error(f"Unexpected error for {url}: {str(e)}")
+
+    return text
 
 
 @retry_with_backoff(retry_min=20, retry_max=2000, retry_attempts=50)
@@ -178,7 +191,7 @@ def duckduckgo_search(query: str, max_results: int = 2, max_content_length: int 
     # Convert to pydantic objects
     results = []
     for r in ddgs_results:
-        title = r.get("title")
+        title = r.get("title", "")
         url = r.get("href")
         content = r.get("body")
 
@@ -187,7 +200,15 @@ def duckduckgo_search(query: str, max_results: int = 2, max_content_length: int 
 
         # Only fetch if necessary
         if should_fetch:
-            full_content = fetch_full_page_content(url)
+            if url is not None:
+                try:
+                    valid_url = HttpUrl(url)
+                    full_content = fetch_full_page_content(valid_url)
+                except ValidationError:
+                    logger.error(f"Invalid URL: {url}")
+                    full_content = ""
+            else:
+                full_content = ""
             if content is None or len(full_content) > len(content):
                 content = full_content
 
@@ -195,7 +216,7 @@ def duckduckgo_search(query: str, max_results: int = 2, max_content_length: int 
         if max_content_length is not None and content is not None:
             content = content[:max_content_length]
 
-        result = WebSearchResult(title=title, url=str(url), content=content)
+        result = WebSearchResult(title=title, url=str(url), summary="", content=content)
         results.append(result)
 
     return results
@@ -308,7 +329,7 @@ def perplexity_search(query: str) -> list[WebSearchResult]:
     url = perplexity_results["citations"][0]  # TODO: A list of URLs is returned, but we cannot press them into WebSearchResult.
     content = perplexity_results["choices"][0]["message"]["content"]
 
-    result = WebSearchResult(title=title, url=url, content=content)
+    result = WebSearchResult(title=title, url=url, summary="", content=content)
     return [result]
 
 
@@ -365,6 +386,8 @@ def brave_search(query: str, max_results: int = 2, max_content_length: int | Non
         url = r.get("url")
         summary = r.get("description")
         content = fetch_full_page_content(url)
+        if not content:
+            content = summary
 
         if max_content_length is not None and content is not None:
             content = content[:max_content_length]
@@ -427,6 +450,8 @@ def serper_search(query: str, max_results: int = 2, max_content_length: int | No
         url = r.get("link")
         summary = r.get("snippet")
         content = fetch_full_page_content(url)
+        if not content:
+            content = summary
 
         if max_content_length is not None and content is not None:
             content = content[:max_content_length]
@@ -486,6 +511,8 @@ def searxng_search(query: str, max_results: int = 2, max_content_length: int | N
         url = r.get("url")
         summary = r.get("content")
         content = fetch_full_page_content(url)
+        if not content:
+            content = summary
 
         if max_content_length is not None and content is not None:
             content = content[:max_content_length]

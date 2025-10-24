@@ -75,6 +75,11 @@
     "markdownify",
     "qwen",
     "searxng",
+    "httpx",
+    "gptoss",
+    "pyright",
+    "choix",
+    "ddgs",
   ],
   "cSpell.languageSettings": [
     {

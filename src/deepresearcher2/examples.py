@@ -4,7 +4,7 @@ import logfire
 from dotenv import load_dotenv
 from mcp.server.fastmcp import FastMCP
 from pydantic_ai import Agent
-from pydantic_ai.models.openai import OpenAIModel
+from pydantic_ai.models.openai import OpenAIChatModel
 from pydantic_ai.providers.openai import OpenAIProvider
 
 from .config import config
@@ -26,7 +26,7 @@ def basic_chat() -> None:
     model = "llama3.3"
     # model = "qwen2.5:72b"
     # model = "qwq:32b"
-    ollama_model = OpenAIModel(
+    ollama_model = OpenAIChatModel(
         model_name=model,
         provider=OpenAIProvider(
             base_url=f"{config.ollama_host}/v1",
@@ -70,7 +70,7 @@ def mcp_server() -> None:
     )
 
     @server.tool()
-    async def poet(theme: str) -> str:
+    async def poet(theme: str) -> str:  # pyright: ignore[reportUnusedFunction]
         """Poem generator"""
         r = await server_agent.run(f"Write a poem about {theme}.")
         return r.output

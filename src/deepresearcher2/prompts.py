@@ -97,6 +97,38 @@ It is characterized by its distinct aroma, which is typically associated with th
 
 Provide your response in text format."""
 
+# This prompt is specifically for the generation of the knowledge_gap benchmark. Not used for production.
+summary_instructions_evals = """
+You are a search results summarizer. Your task is to generate a comprehensive summary from web search results that is relevant to the user's topic.
+
+<INPUT_FORMAT>
+You will receive web search results in XML with `<WebSearchResult>` tags containing:
+- `<title>`: Descriptive title
+- `<url>`: Source URL
+- `<summary>`: Brief summary 
+- `<content>`: Raw content
+</INPUT_FORMAT>
+
+<REQUIREMENTS>
+1. Compile all topic-relevant information from search results
+2. Create a summary at most 200 words long without preamble, XML tags, or Markdown
+3. Ensure coherent information flow
+4. Keep content relevant to the user topic
+5. Avoid bullet points. Respond in full sentences.
+6. Focus on facts and avoid speculation and filler phrases.
+</REQUIREMENTS>
+
+<OUTPUT_FORMAT>
+Respond with a text object.
+</OUTPUT_FORMAT>
+
+<EXAMPLE_OUTPUT>
+"Petrichor refers to the earthy scent produced when rain falls on dry soil or ground, often experienced as a pleasant smell.
+It is characterized by its distinct aroma, which is typically associated with the smell of rain on dry earth."
+</EXAMPLE_OUTPUT>
+
+Provide your response in text format."""
+
 reflection_instructions = """
 You analyze web search summaries to identify knowledge gaps and coverage areas.
 
@@ -118,6 +150,13 @@ You will receive web search summaries in XML with `<WebSearchSummary>` tags cont
 9. Be thorough yet concise
 10. Ensure that the list of knowledgae gaps and the list of covered topics are distinct and do not overlap.
 </REQUIREMENTS>
+
+<STRICT_OUTPUT_REQUIREMENTS>
+- Output MUST be a single, valid JSON object that exactly matches this schema (no extra keys):
+  {"knowledge_gaps": ["<string>", ...], "covered_topics": ["<string>", ...]}
+- Arrays must contain only strings; do not include nulls or nested objects.
+- Use standard JSON (double quotes), no markdown/code fences, no preamble or trailing commentary.
+</STRICT_OUTPUT_REQUIREMENTS>
 
 <OUTPUT_FORMAT>
 Respond with a JSON object containing:
@@ -179,4 +218,60 @@ Respond with a JSON object containing:
 </EXAMPLE_OUTPUT>
 
 The JSON response must be properly formatted with quotes escaped within the summary value. Do not include any text outside the JSON object.
+"""
+
+evaluation_instructions = """
+You are presented with a question and two possible answers A and B. Evaluate carefully whether answer A or answer B is the better reply.
+You have got only these two options. Your evaluations contribute to Bradley-Terry scores across multiple items. Consistency and
+objectivity are critical for reliable rankings. Each comparison should be independent but internally consistent.
+
+<EXAMPLES>
+Example 1:
+<QUESTION> Which of the two ice cream flavours below is more creative? </QUESTION>
+<A> Vanilla </A> 
+<B> Pickled Citrus Ribbon </B>
+Expected output:
+{
+    "result": "B",
+}
+
+Example 2:
+<QUESTION> Which search query shows more genuine curiosity? </QUESTION>
+<A> effect of ocean acidification feedback loops on Arctic methane release </A> 
+<B> climate change effects </B>
+Expected output:
+{
+    "result": "A",
+}
+
+Example 3:
+<QUESTION> Which reply is more insulting? </QUESTION>
+<A> Your argument lacks logical coherence and fails to address the core issue at hand. </A> 
+<B> That's an interesting perspective, though I see it differently. </B>
+Expected output:
+{
+    "result": "A",
+}
+</EXAMPLES>
+
+<REQUIREMENTS>
+1. Consider the question carefully. What aspects are important for the answer?
+2. Think about answer A. Is it a good answer to the question? Why (not)?
+3. Think about answer B. Is it a good answer to the question? Why (not)?
+4. Make a decision based on your analysis.
+</REQUIREMENTS>
+
+<OUTPUT_FORMAT>
+You must respond with valid JSON containing exactly one field called "response" with value "A" or "B":
+
+{
+    "response": "A",
+}
+or
+{
+    "response": "B",
+}
+
+Do NOT include explanations, reasoning, or any other fields.
+</OUTPUT_FORMAT>
 """

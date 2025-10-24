@@ -4,30 +4,37 @@ from __future__ import annotations as _annotations
 import os
 import random
 import re
-import urllib
 from dataclasses import dataclass, field
 from datetime import date
 from io import StringIO
 from typing import TYPE_CHECKING, Any
 from unittest.mock import patch
+from urllib.request import Request, urlopen
 
+import choix
+
+if TYPE_CHECKING:
+    from pathlib import Path
 import logfire
+import numpy as np
 import pytest
 from httpx import AsyncClient
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
-from pydantic import BaseModel, EmailStr
+from mcp.types import TextContent
+from pydantic import BaseModel, EmailStr, Field
 from pydantic_ai import Agent, ModelRetry, RunContext, format_as_xml
-from pydantic_ai.mcp import MCPServerHTTP, MCPServerStdio
+from pydantic_ai.mcp import MCPServerSSE, MCPServerStdio
 
 if TYPE_CHECKING:
     from pydantic_ai.messages import ModelMessage
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
-from pydantic_ai.models.openai import OpenAIModel
+from pydantic_ai.models.openai import OpenAIChatModel
 from pydantic_ai.providers.openai import OpenAIProvider
+from pydantic_ai.settings import ModelSettings
 from pydantic_evals import Case, Dataset
-from pydantic_evals.evaluators import Evaluator, EvaluatorContext, IsInstance
+from pydantic_evals.evaluators import Evaluator, EvaluatorContext, IsInstance, LLMJudge
 from pydantic_graph import BaseNode, End, Graph, GraphRunContext
 
 from deepresearcher2.config import config
@@ -48,7 +55,7 @@ async def test_pydanticai_agent() -> None:
     logger.info("Testing PydanticAI Agent() class with a cloud model")
 
     agent = Agent(
-        model="google-gla:gemini-1.5-flash",
+        model="google-gla:gemini-2.0-flash",
         system_prompt="Be concise, reply with one sentence.",
     )
 
@@ -73,7 +80,7 @@ async def test_pydanticai_ollama() -> None:
     model = "llama3.3"
     # model = "qwq:32b"
     # model = "qwen2.5:72b"
-    ollama_model = OpenAIModel(
+    ollama_model = OpenAIChatModel(
         model_name=model,
         provider=OpenAIProvider(
             base_url=f"{config.ollama_host}/v1",
@@ -92,7 +99,129 @@ async def test_pydanticai_ollama() -> None:
     usage = result.usage()
     logger.debug(f"Usage statistics: {usage}")
     assert usage.requests == 1
-    assert usage.total_tokens > 0
+    assert usage.total_tokens is not None and usage.total_tokens > 0
+
+
+@pytest.mark.example
+@pytest.mark.ollama
+@pytest.mark.asyncio
+async def test_pydanticai_temperature() -> None:
+    """
+    Test the Agent() class with a local Ollama model and different temperatures.
+
+    The temperature parameter ranges from 0.0 to 2.0 with 0.0 being deterministic and 2.0 being very creative.
+    At temperature 0.0, there is no variation of the three answers.
+    At temperature 2.0, the answers are more diverse and creative.
+
+    Note: Even at high temperatures, the first answer might not be that creative. A multi-step approach is necessary, see Test B.
+    (1) Generate a list of possible answers.
+    (2) Rank the answers based on creativity and relevance.
+    (3) Select the top answer for the final response.
+    """
+    logger.info("Testing PydanticAI Agent() class with a local Ollama model with different temperatures.")
+
+    model = "llama3.3"
+    # model = "gpt-oss"  # Really good answers.
+    ollama_model = OpenAIChatModel(
+        model_name=model,
+        provider=OpenAIProvider(
+            base_url=f"{config.ollama_host}/v1",
+        ),
+    )
+
+    agent = Agent(ollama_model)
+
+    prompt = "Describe a new ice cream flavour? Answer in a single short sentence."
+    logger.debug(f"Prompt: {prompt}")
+
+    logger.info("Test A: Effect of temperature on creativity and variance")
+
+    # Run the agent with different temperatures
+    for t in [0.0, 1.0, 2.0]:
+        results = []
+        # Generate multiple responses
+        for _ in range(3):
+            result = await agent.run(prompt, model_settings=ModelSettings(temperature=t))
+            results.append(result)
+
+        # Log the output
+        log_output = "\n".join(r.output for r in results)
+        logger.debug(f"Results from agent (temperature={t}):\n{log_output}")
+
+        # Check the variance of the outputs
+        assert all(r.output is not None for r in results)
+        if t == 0.0:
+            assert all(r.output == results[0].output for r in results)  # All outputs are identical for zero temperature.
+        else:
+            assert len({r.output for r in results}) == len(results)  # All outputs are unique for non-zero temperature.
+
+    logger.info("Test B: Using ranking for single most creative response")
+
+    t = 1.5
+    n = 3  # Number of generated responses
+    results = []
+    for i in range(n):
+        result = await agent.run(prompt, model_settings=ModelSettings(temperature=t))
+        results.append(result)
+        logger.debug(f"Response {i + 1}: {result.output}")
+
+    responses = "\n\n".join([f"Response {i + 1}: {r.output}" for i, r in enumerate(results)])
+    ranking_prompt = f"""
+    Rank the creativity of the following ice cream flavor descriptions on a scale from 0.0 to 1.0 with 0.0 being the least creative
+    and 1.0 being the most creative. Assign DIFFERENT scores to each response, with more creative responses getting higher scores.
+    Do not give the same score to multiple responses.
+
+    {responses}
+
+    <OUTPUT_FORMAT>
+    Return a single JSON object with exactly one key "scores".
+    "scores" must be an array of length {len(results)}, in the same order (Response 1..N).
+    Each item must be an object of the form {{ "score": <float between 0.0 and 1.0> }}.
+    Use standard JSON (double quotes). No extra keys, no markdown/code fences, no explanations before or after the JSON.
+    </OUTPUT_FORMAT>
+
+    <EXAMPLE_OUTPUT>
+    {{"scores": [
+            {{"score": 0.82 }},
+            {{"score": 0.37 }},
+            {{"score": 0.95 }}
+        ]}}
+    </EXAMPLE_OUTPUT>
+    """
+
+    class CreativityScore(BaseModel):
+        score: float = Field(..., ge=0.0, le=1.0, description="Score between 0.0 and 1.0")
+
+    class CreativityScores(BaseModel):
+        scores: list[CreativityScore] = Field(
+            ...,
+            min_length=n,
+            max_length=n,
+            description=f"List of {n} creativity scores",
+        )
+
+    ranking_agent = Agent(
+        model=ollama_model,
+        output_type=CreativityScores,
+        system_prompt=ranking_prompt,
+        retries=5,
+        instrument=True,
+    )
+
+    # Generate creativity scores
+    run = await ranking_agent.run(
+        "Provide the creativity scores for each response.",
+        model_settings=ModelSettings(temperature=1.0),
+    )
+    scores: CreativityScores = run.output
+    for i in range(n):
+        logger.debug(f"Score {i + 1}: {scores.scores[i].score}")
+
+    max_index = max(range(len(scores.scores)), key=lambda i: scores.scores[i].score)
+    logger.debug(f"Most creative response: {results[max_index].output}")
+
+    assert all(0.0 <= s.score <= 1.0 for s in scores.scores)
+    assert results[max_index].output is not None
 
 
 @pytest.mark.example
@@ -171,7 +300,7 @@ async def test_weather_agent() -> None:
     # TODO: Replace GPT-4o by any Ollama model
     # Model response is <|python_tag|>get_lat_lng(args=["Zurich"])
     # Maybe look into this issue. https://github.com/pydantic/pydantic-ai/issues/437
-    # ollama_model = OpenAIModel(
+    # ollama_model = OpenAIChatModel(
     #     model_name="llama3.3",
     #     provider=OpenAIProvider(base_url=f"{config.ollama_host}/v1"),
     # )
@@ -288,7 +417,7 @@ async def test_weather_agent() -> None:
         result = await weather_agent.run("What is the weather like in Zurich and in Wiltshire?", deps=deps)
         logger.debug(f"Response from weather agent: {result.output}")
 
-    assert weather_agent.model.model_name == "gpt-4o"
+    assert getattr(weather_agent.model, "model_name", None) == "gpt-4o"
     assert "Zurich" in result.output
 
 
@@ -311,7 +440,7 @@ async def test_agent_delegation() -> None:
     """
 
     # model = "llama3.3"
-    # ollama_model = OpenAIModel(
+    # ollama_model = OpenAIChatModel(
     #     model_name=model,
     #     provider=OpenAIProvider(
     #         base_url=f"{config.ollama_host}/v1",
@@ -396,7 +525,7 @@ async def test_pydantic_evals() -> None:
             if ctx.output == ctx.expected_output:
                 # Exact match
                 return 1.0
-            elif isinstance(ctx.output, str) and ctx.expected_output.lower() in ctx.output.lower():
+            elif isinstance(ctx.output, str) and isinstance(ctx.expected_output, str) and ctx.expected_output.lower() in ctx.output.lower():
                 # Expected output is a substring of the output
                 return 0.8
             else:
@@ -410,7 +539,7 @@ async def test_pydantic_evals() -> None:
             MyEvaluator(),  # Custom evaluator
         ],
     )
-    logger.debug(f"Complete evals dataset: {dataset}")
+    logger.debug(f"Complete evals dataset:\n{dataset}")
 
     # Check structure of test dataset
     assert dataset.cases[0].inputs == "What is the capital of France?"
@@ -428,7 +557,134 @@ async def test_pydantic_evals() -> None:
         include_output=True,
         include_durations=False,
     )
-    logger.debug(f"Complete evaluation report: {report}")
+    logger.debug(f"Complete evaluation report:\n{report}")
+
+
+@pytest.mark.example
+@pytest.mark.ollama
+@pytest.mark.asyncio
+async def test_pydantic_evals_llmjudge(tmp_path: Path) -> None:
+    """
+    Test the functionality of the LLMJudge class
+    https://ai.pydantic.dev/evals/#evaluation-with-llmjudge
+
+    The benchmark dataset contains two cases for evaluating recipe generation: a vegetarian recipe and a gluten-free recipe.
+    Each response is checked with three different evaluators:
+    (1) IsInstance() checks that the output is a valid Recipe object.
+    (2) A general LLMJudge() checks ingredients and steps.
+    (3) A specific LLMJudge() checks for dietary restrictions defined in the cases.
+    """
+
+    class CustomerOrder(BaseModel):
+        dish_name: str
+        dietary_restriction: str | None = None
+
+    class Recipe(BaseModel):
+        ingredients: list[str]
+        steps: list[str]
+
+    # Model for both recipe and judge
+    model = "llama3.3"
+    # model = "qwq:32b"
+    # model = "qwen2.5:72b"
+    ollama_model = OpenAIChatModel(
+        model_name=model,
+        provider=OpenAIProvider(
+            base_url=f"{config.ollama_host}/v1",
+        ),
+    )
+
+    # Agent for recipe generation
+    recipe_agent = Agent(
+        ollama_model,
+        output_type=Recipe,
+        system_prompt="Generate a recipe to cook the dish that meets the dietary restrictions.",
+    )
+
+    async def transform_recipe(customer_order: CustomerOrder) -> Recipe:
+        r = await recipe_agent.run(format_as_xml(customer_order))
+        return r.output
+
+    dataset = Dataset[CustomerOrder, Recipe, Any](
+        name="Recipes",
+        cases=[
+            Case(
+                name="vegetarian_recipe",
+                inputs=CustomerOrder(dish_name="Spaghetti Bolognese", dietary_restriction="vegetarian"),
+                expected_output=None,
+                metadata={"focus": "vegetarian"},
+                evaluators=(
+                    LLMJudge(
+                        rubric="Recipe should not contain meat or animal products",
+                        model=ollama_model,
+                    ),
+                ),
+            ),
+            Case(
+                name="gluten_free_recipe",
+                inputs=CustomerOrder(dish_name="Chocolate Cake", dietary_restriction="gluten-free"),
+                expected_output=None,
+                metadata={"focus": "gluten-free"},
+                evaluators=(
+                    LLMJudge(
+                        rubric="Recipe should not contain gluten or wheat products",
+                        model=ollama_model,
+                    ),
+                ),
+            ),
+        ],
+        evaluators=[
+            IsInstance(type_name="Recipe"),
+            LLMJudge(
+                rubric="Recipe should have clear steps and relevant ingredients",
+                include_input=True,
+                model=ollama_model,
+            ),
+        ],
+    )
+    logger.debug(f"Complete recipe dataset:\n{dataset}")
+
+    assert dataset.cases[0].inputs.dish_name == "Spaghetti Bolognese"
+    assert dataset.cases[0].inputs.dietary_restriction == "vegetarian"
+    assert dataset.cases[1].inputs.dish_name == "Chocolate Cake"
+    assert dataset.cases[1].inputs.dietary_restriction == "gluten-free"
+
+    # Serialize the benchmark dataset
+    path = tmp_path / "benchmark.json"
+    path_schema = tmp_path / "benchmark_schema.json"
+    logger.info(f"Serialize benchmark dataset to {path}")
+    dataset.to_file(path)  # A corresponding schema file is written as well.
+
+    assert path.exists()
+    assert path.is_file()
+    assert path.stat().st_size > 0
+
+    assert path_schema.exists()
+    assert path_schema.is_file()
+    assert path_schema.stat().st_size > 0
+
+    # Deserialize the benchmark dataset again
+    logger.info(f"Deserialize benchmark dataset from {path}")
+    dataset2 = Dataset[CustomerOrder, Recipe, Any].from_file(path)
+    assert dataset2.model_dump(mode="json", by_alias=True, exclude_none=True) == dataset.model_dump(mode="json", by_alias=True, exclude_none=True)
+
+    # Run the evaluation
+    logger.info("Run the evaluation of the recipe dataset")
+    report = await dataset.evaluate(transform_recipe)
+    report.print(
+        include_input=True,
+        include_output=True,
+        include_durations=False,
+    )
+    logger.debug(f"Complete evaluation report:\n{report}")
+
+    # Access the generated recipes
+    for case in report.cases:
+        order: CustomerOrder = case.inputs
+        recipe: Recipe = case.output
+        assert len(recipe.ingredients) > 0
+        assert len(recipe.steps) > 0
+        logger.debug(f"Generated recipe for {order.dish_name}:\n{recipe}")
 
 
 @pytest.mark.skip(reason="Requires MCP server to be started first.")
@@ -445,21 +701,21 @@ async def test_mcp_sse_client() -> None:
     """
 
     # model = "llama3.3"
-    # ollama_model = OpenAIModel(
+    # ollama_model = OpenAIChatModel(
     #     model_name=model,
     #     provider=OpenAIProvider(base_url=f"{config.ollama_host}/v1"),
     # )
 
     # MCP server providing run_python_code tool
-    mcp_server = MCPServerHTTP(url="http://localhost:3001/sse")
+    mcp_server = MCPServerSSE(url="http://localhost:3001/sse")
     agent = Agent(
         model="openai:gpt-4o",
         # model=ollama_model,
-        mcp_servers=[mcp_server],
+        toolsets=[mcp_server],
         instrument=True,
     )
 
-    async with agent.run_mcp_servers():
+    async with agent:
         result = await agent.run("How many days between 2000-01-01 and 2025-03-18?")
         logger.debug(f"Result: {result.output}")
 
@@ -479,7 +735,7 @@ async def test_mcp_stdio_client() -> None:
     """
 
     # model = "llama3.3"
-    # ollama_model = OpenAIModel(
+    # ollama_model = OpenAIChatModel(
     #     model_name=model,
     #     provider=OpenAIProvider(base_url=f"{config.ollama_host}/v1"),
     # )
@@ -500,11 +756,11 @@ async def test_mcp_stdio_client() -> None:
     agent = Agent(
         model="openai:gpt-4o",
         # model=ollama_model,
-        mcp_servers=[mcp_server],
+        toolsets=[mcp_server],
         instrument=True,
     )
 
-    async with agent.run_mcp_servers():
+    async with agent:
         result = await agent.run("How many days between 2000-01-01 and 2025-03-18?")
         logger.debug(f"Result: {result.output}")
 
@@ -525,14 +781,19 @@ async def test_mcp_server() -> None:
     server_params = StdioServerParameters(
         command="uv",
         args=["run", "mcpserver"],
-        env=os.environ,
+        env=dict(os.environ),
     )
 
     async with stdio_client(server_params) as (read, write), ClientSession(read, write) as session:
         await session.initialize()
         result = await session.call_tool("poet", {"theme": "socks"})
-        logger.debug(f"Complete poem:\n{result.content[0].text}")
-        assert "socks" in result.content[0].text
+        content = result.content[0]
+        if isinstance(content, TextContent):
+            text = content.text
+        else:
+            text = str(content)
+        logger.debug(f"Complete poem:\n{text}")
+        assert "socks" in text
 
 
 @pytest.mark.example
@@ -571,10 +832,10 @@ async def test_pydantic_graph() -> None:
 
         track_number: int = 0
 
-        async def run(self, ctx: GraphRunContext) -> NodeC | End:
+        async def run(self, ctx: GraphRunContext) -> NodeC | End[str]:
             logger.debug("Running Node B.")
             if self.track_number > 5:
-                return End(f"Stop at Node B with track number {self.track_number}")
+                return End[str](f"Stop at Node B with track number {self.track_number}")
             else:
                 return NodeC(self.track_number)
 
@@ -586,9 +847,9 @@ async def test_pydantic_graph() -> None:
 
         track_number: int = 0
 
-        async def run(self, ctx: GraphRunContext) -> End:
+        async def run(self, ctx: GraphRunContext) -> End[str]:
             logger.info("Running Node C.")
-            return End(f"Stop at Node C with track number {self.track_number}")
+            return End[str](f"Stop at Node C with track number {self.track_number}")
 
     logger.info("Testing Pydantic Graph")
 
@@ -596,11 +857,11 @@ async def test_pydantic_graph() -> None:
     graph = Graph(nodes=[NodeA, NodeB, NodeC])
 
     # Run the agent graph
-    result_1 = await graph.run(start_node=NodeA(track_number=1))
+    result_1 = await graph.run(start_node=NodeA(track_number=1), state=1)
     logger.debug(f"Result: {result_1.output}")
     assert "Node C" in result_1.output
 
-    result_2 = await graph.run(start_node=NodeA(track_number=6))
+    result_2 = await graph.run(start_node=NodeA(track_number=6), state=1)
     logger.debug(f"Result: {result_2.output}")
     assert "Node B" in result_2.output
 
@@ -610,6 +871,7 @@ async def test_pydantic_graph() -> None:
     assert "stateDiagram" in mermaid_code
 
 
+@pytest.mark.skip(reason="Sometimes WriteEmail-Feedback loop gets stuck. Not sure why.")
 @pytest.mark.example
 @pytest.mark.ollama
 @pytest.mark.asyncio
@@ -651,7 +913,7 @@ async def test_email() -> None:
         pass
 
     # Agents
-    ollama_model = OpenAIModel(
+    ollama_model = OpenAIChatModel(
         model_name="llama3.3",
         provider=OpenAIProvider(base_url=f"{config.ollama_host}/v1"),
     )
@@ -752,7 +1014,7 @@ async def test_structured_input() -> None:
     class MyOutput(BaseModel):
         greeting: str
 
-    ollama_model = OpenAIModel(
+    ollama_model = OpenAIChatModel(
         model_name="llama3.3",
         provider=OpenAIProvider(base_url=f"{config.ollama_host}/v1"),
     )
@@ -788,10 +1050,14 @@ def test_beautifulsoup() -> None:
     """
 
     url = "https://en.wikipedia.org/wiki/Petrichor"
+    headers = {
+        "User-Agent": ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"),
+        "Accept-Language": "en-US,en;q=0.9",
+    }
 
     # Read raw html
-    request = urllib.request.Request(url)
-    response = urllib.request.urlopen(request)
+    request = Request(url, headers=headers)
+    response = urlopen(request)
     html = response.read()
     logger.debug(f"Raw html response:\n{html}")
 
@@ -814,3 +1080,95 @@ def test_beautifulsoup() -> None:
     clean_text = clean_text.replace("\xa0", " ")  # replace non-breaking spaces
 
     logger.debug(f"Cleaned up text:\n{clean_text[:10000]}")
+
+
+@pytest.mark.example
+def test_bradley_terry_maximum_likelihood_estimation() -> None:
+    """
+    Test the Bradley-Terry model from the choix package.
+    https://en.wikipedia.org/wiki/Bradley–Terry_model
+    The model ranks items i.e. players based on pairwise comparisons.
+
+    The classical Bradley-Terry model is using Maximum Likelihood Estimation (MLE).
+    The approach is fast but less stable.
+
+    In the example, we have 5 players who have played six games.
+    In order of strength from strongest to weakest, the players are:
+    Player 0, Player 1, Player 2, Player 3 and Player 4.
+    """
+
+    logger.info("Testing Bradley-Terry model.")
+
+    n = 5
+    games = [
+        (1, 0),  # Player 1 beats Player 0
+        (0, 4),  # Player 0 beats Player 4
+        (3, 1),  # Player 3 beats Player 1
+        (0, 2),  # Player 0 beats Player 2
+        (2, 4),  # Player 2 beats Player 4
+        (4, 3),  # Player 4 beats Player 3
+    ]
+
+    scores = choix.ilsr_pairwise(n, games, alpha=0.01)
+    for i in range(n):
+        logger.debug(f"Score for Player {i}: {scores[i]:0.4f}")
+
+    # Check that the scores are in the expected order
+    assert scores[0] > scores[1] > scores[2] > scores[3] > scores[4]
+
+    # Player 1 is more likely to win against Player 4.
+    prob_1_wins, prob_4_wins = choix.probabilities([1, 4], scores)
+    logger.debug(f"Probability that Player 1 beats Player 4: {prob_1_wins:0.4f}")
+    logger.debug(f"Probability that Player 4 beats Player 1: {prob_4_wins:0.4f}")
+    assert prob_1_wins > prob_4_wins
+
+
+@pytest.mark.example
+def test_bradley_terry_expectation_propagation() -> None:
+    """
+    Test the Bradley-Terry model with Expectation Propagation from the choix package.
+
+    Bayesian Inference using Expectation Propagation.
+    The approach is slower but more stable than MLE. Good for sparse data.
+
+    In the example, we have 5 players who have played six games.
+    In order of strength from strongest to weakest, the players are:
+    Player 0, Player 1, Player 2, Player 3 and Player 4.
+    """
+
+    logger.info("Testing Bradley-Terry model with Expectation Propagation.")
+
+    n = 5
+    games = [
+        (1, 0),  # Player 1 beats Player 0
+        (0, 4),  # Player 0 beats Player 4
+        (3, 1),  # Player 3 beats Player 1
+        (0, 2),  # Player 0 beats Player 2
+        (2, 4),  # Player 2 beats Player 4
+        (4, 3),  # Player 4 beats Player 3
+    ]
+
+    mean, cov = choix.ep_pairwise(n, games, 0.1, model="logit")  # Logit observation model
+
+    for i in range(n):
+        logger.debug(f"Score for Player {i}: {mean[i]:0.4f}")  # Mean of the posterior distribution over each player's strength score
+    logger.debug(f"Covariance matrix:\n{cov}")
+    logger.debug(f"Total variance: {np.trace(cov):0.4f}")
+
+    # Check that the scores are in the expected order
+    assert mean[0] > mean[1] > mean[2] > mean[3] > mean[4]
+    # Same result as in the classical Bradley-Terry model with MLE, see test_bradley_terry_maximum_likelihood_estimation().
+
+    # Add more games.
+    games = games + [
+        (0, 2),
+        (0, 2),
+        (0, 2),
+        (0, 4),
+        (0, 4),
+        (0, 4),
+        (0, 4),
+    ]
+    _, cov_2 = choix.ep_pairwise(n, games, 0.1, model="logit")
+    logger.debug(f"New total variance: {np.trace(cov_2):0.4f}")
+    assert np.trace(cov_2) < np.trace(cov)  # More games should lead to less variance.

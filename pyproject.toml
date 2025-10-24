@@ -1,6 +1,6 @@
 [project]
 name = "deepresearcher2"
-version = "0.1.4"
+version = "0.1.5"
 description = "fully local web research and report writing assistant"
 readme = "README.md"
 authors = [{ name = "Lars Nilse", email = "l.nilse@dunelm.org.uk" }]
@@ -17,17 +17,22 @@ dependencies = [
   "pytest-asyncio>=0.25.3",
   "pypandoc>=1.15",
   "pydantic-ai[cli,examples,mcp]>=0.0.40",
-  "logfire>=3.10.0",
+  "logfire[httpx]>=3.10.0",
   "python-dotenv>=1.1.0",
   "pydantic-evals[logfire]>=0.0.51",
   "pydantic-ai-slim[mcp]>=0.0.40",
   "duckduckgo-mcp-server>=0.1.1",
   "wordcloud>=1.9.4",
-  "duckduckgo-search>=8.0.1",
   "tenacity>=9.1.2",
   "brotli>=1.1.0",
   "markdownify>=1.1.0",
   "pydantic-settings>=2.8.1",
+  "pyright>=1.1.404",
+  "choix>=0.4.1",
+  "numpy>=2.3.3",
+  "pytest-recording>=0.13.4",
+  "pytest-mock>=3.15.1",
+  "ddgs>=9.6.1",
 ]
 
 [project.scripts]
@@ -35,6 +40,9 @@ uml = "deepresearcher2.cli:uml"
 chat = "deepresearcher2.examples:basic_chat"
 mcpserver = "deepresearcher2.examples:mcp_server"
 research = "deepresearcher2.graph:main"
+import = "deepresearcher2.evals.import_bigbench:main"
+generate = "deepresearcher2.evals.generate:main"
+eval = "deepresearcher2.evals.evals:main"
 
 [tool.ruff]
 line-length = 150
@@ -55,13 +63,44 @@ lint.select = [
 ]
 lint.ignore = [
   "SIM108",  # Ignore ternary operators rule i.e. allow if-else blocks
-  "PD901",   # Allow variable name `df` for dataframes
   "PLR2004", # Allow magic values
   "PLR0915", # Allow long functions
   "PLR0912", # Allow many branches
   "PLR0913", # Allow many arguments
+  "TC006",   # Allow type casting without strings
 ]
 lint.pydocstyle.convention = "google"
+
+[tool.pyright]
+# Core Settings
+typeCheckingMode = "basic"  # next step: "standard"
+pythonVersion = "3.12"
+venvPath = "."
+venv = ".venv"
+# Paths
+include = ["src", "tests"]
+exclude = [
+  ".git",
+  ".venv",
+  "dist",
+  "uml",
+  "**/__pycache__",
+]
+strict = []  # If you really really want strict checking for parts of the code
+# High-value Rules
+reportOptionalMemberAccess = "error"
+reportOptionalSubscript = "error"  
+reportOptionalCall = "error"
+reportGeneralTypeIssues = "error"
+reportReturnType = "error"
+# Grey Area
+reportAttributeAccessIssue = "warning"
+# Noisy Rules
+reportUnknownParameterType = false
+reportUnknownVariableType = false
+reportMissingParameterType = false
+reportMissingTypeStubs = false
+reportPrivateUsage = false
 
 [tool.pytest.ini_options]
 addopts = ["-m", "not paid"] # Skip tests that require a paid API key

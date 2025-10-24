@@ -6,6 +6,7 @@ from dataclasses import dataclass
 
 from dotenv import load_dotenv
 from pydantic_ai import format_as_xml
+from pydantic_ai.settings import ModelSettings
 from pydantic_graph import BaseNode, End, Graph, GraphRunContext
 
 from .agents import final_summary_agent, query_agent, reflection_agent, summary_agent
@@ -40,7 +41,7 @@ class WebSearch(BaseNode[DeepState]):
         topic = ctx.state.topic
 
         @query_agent.system_prompt
-        def add_reflection() -> str:
+        def add_reflection() -> str:  # pyright: ignore[reportUnusedFunction]
             """
             Add reflection from the previous loop to the system prompt.
             """
@@ -51,10 +52,18 @@ class WebSearch(BaseNode[DeepState]):
                 return query_instructions_without_reflection
 
         # Generate the query
-        async with query_agent.run_mcp_servers():
+        async with query_agent:
             prompt = f"Please generate a web search query for the following topic: <TOPIC>{topic}</TOPIC>"
-            result = await query_agent.run(prompt)
+            result = await query_agent.run(
+                user_prompt=prompt,
+                model_settings=ModelSettings(
+                    temperature=config.temperature_query,
+                    timeout=config.model_timeout,
+                ),
+            )
             ctx.state.search_query = result.output
+            # Exclude PDF files from search results. We cannot fetch the content anyway.
+            ctx.state.search_query.query += " -filetype:pdf"
             logger.debug(f"Web search query:\n{ctx.state.search_query.model_dump_json(indent=2)}")
 
         # Run the search
@@ -64,23 +73,23 @@ class WebSearch(BaseNode[DeepState]):
             "max_content_length": 12000,
         }
         if config.search_engine == SearchEngine.duckduckgo:
-            ctx.state.search_results = duckduckgo_search(**search_params)
+            ctx.state.search_results = duckduckgo_search(**search_params)  # pyright: ignore[reportArgumentType]
         elif config.search_engine == SearchEngine.tavily:
-            ctx.state.search_results = tavily_search(**search_params)
+            ctx.state.search_results = tavily_search(**search_params)  # pyright: ignore[reportArgumentType]
         elif config.search_engine == SearchEngine.perplexity:
             ctx.state.search_results = perplexity_search(ctx.state.search_query.query)
         elif config.search_engine == SearchEngine.brave:
-            ctx.state.search_results = brave_search(**search_params)
+            ctx.state.search_results = brave_search(**search_params)  # pyright: ignore[reportArgumentType]
         elif config.search_engine == SearchEngine.serper:
-            ctx.state.search_results = serper_search(**search_params)
+            ctx.state.search_results = serper_search(**search_params)  # pyright: ignore[reportArgumentType]
         elif config.search_engine == SearchEngine.searxng:
-            ctx.state.search_results = searxng_search(**search_params)
+            ctx.state.search_results = searxng_search(**search_params)  # pyright: ignore[reportArgumentType]
         else:
             message = f"Unsupported search engine: {config.search_engine}"
             logger.error(message)
             raise ValueError(message)
 
-        logger.debug(f"Web search results:\n{format_as_xml(ctx.state.search_results, root_tag='search_results')}")
+        # logger.debug(f"Web search results:\n{format_as_xml(ctx.state.search_results, root_tag='search_results')}")
 
         return SummarizeSearchResults()
 
@@ -95,7 +104,7 @@ class SummarizeSearchResults(BaseNode[DeepState]):
         logger.debug(f"Running Summarize Search Results with count number {ctx.state.count}.")
 
         @summary_agent.system_prompt
-        def add_web_search_results() -> str:
+        def add_web_search_results() -> str:  # pyright: ignore[reportUnusedFunction]
             """
             Add web search results to the system prompt.
             """
@@ -103,25 +112,30 @@ class SummarizeSearchResults(BaseNode[DeepState]):
             return f"List of web search results:\n{xml}"
 
         # Generate the summary
-        async with summary_agent.run_mcp_servers():
+        async with summary_agent:
             result = await summary_agent.run(
-                user_prompt=f"Please summarize the provided web search results for the topic <TOPIC>{ctx.state.topic}</TOPIC>."
+                user_prompt=f"Please summarize the provided web search results for the topic <TOPIC>{ctx.state.topic}</TOPIC>.",
+                model_settings=ModelSettings(
+                    temperature=config.temperature_summary,
+                    timeout=config.model_timeout,
+                ),
             )
             result.output = remove_reasoning_tags(result.output)
-            logger.debug(f"Web search summary:\n{result.output}")
+            # logger.debug(f"Web search summary:\n{result.output}")
 
             # Transfer search result references to the summary
-            references = []
-            for ref in ctx.state.search_results:
+            references: list[Reference] = []
+            for ref in ctx.state.search_results or []:
                 if ref.title and ref.url:
                     references.append(Reference(title=ref.title, url=ref.url))
 
+            aspect = ctx.state.search_query.aspect if ctx.state.search_query is not None else "General"
             summary = WebSearchSummary(
                 summary=result.output,  # Summary from the agent
-                aspect=ctx.state.search_query.aspect,  # Aspect from the search query
+                aspect=aspect,  # Aspect from the search query
                 references=references,  # References from the search results
             )
-            logger.debug(f"Summary result:\n{format_as_xml(summary, root_tag='single_search_summary')}")
+            # logger.debug(f"Summary result:\n{format_as_xml(summary, root_tag='single_search_summary')}")
 
             # Append the summary to the list of all search summaries
             ctx.state.search_summaries = ctx.state.search_summaries or []
@@ -144,11 +158,11 @@ class ReflectOnSearch(BaseNode[DeepState]):
         if ctx.state.count < config.max_research_loops:
             ctx.state.count += 1
 
-            xml = format_as_xml(ctx.state.search_summaries, root_tag="search_summaries")
-            logger.debug(f"Search summaries:\n{xml}")
+            # xml = format_as_xml(ctx.state.search_summaries, root_tag="search_summaries")
+            # logger.debug(f"Search summaries:\n{xml}")
 
             @reflection_agent.system_prompt
-            def add_search_summaries() -> str:
+            def add_search_summaries() -> str:  # pyright: ignore[reportUnusedFunction]
                 """
                 Add search summaries to the system prompt.
                 """
@@ -156,9 +170,13 @@ class ReflectOnSearch(BaseNode[DeepState]):
                 return f"List of search summaries:\n{xml}"
 
             # Reflect on the summaries so far
-            async with reflection_agent.run_mcp_servers():
+            async with reflection_agent:
                 reflection = await reflection_agent.run(
-                    user_prompt=f"Please reflect on the provided web search summaries for the topic <TOPIC>{ctx.state.topic}</TOPIC>."
+                    user_prompt=f"Please reflect on the provided web search summaries for the topic <TOPIC>{ctx.state.topic}</TOPIC>.",
+                    model_settings=ModelSettings(
+                        temperature=config.temperature_reflection,
+                        timeout=config.model_timeout,
+                    ),
                 )
                 logger.debug(f"Reflection knowledge gaps:\n{reflection.output.knowledge_gaps}")
                 logger.debug(f"Reflection covered topics:\n{reflection.output.covered_topics}")
@@ -179,7 +197,7 @@ class FinalizeSummary(BaseNode[DeepState]):
     Finalize Summary node.
     """
 
-    async def run(self, ctx: GraphRunContext[DeepState]) -> End:
+    async def run(self, ctx: GraphRunContext[DeepState]) -> End:  # pyright: ignore[reportIncompatibleMethodOverride]
         logger.debug("Running Finalize Summary.")
 
         topic = ctx.state.topic
@@ -188,7 +206,7 @@ class FinalizeSummary(BaseNode[DeepState]):
         logger.debug(f"Search summaries:\n{xml}")
 
         @final_summary_agent.system_prompt
-        def add_search_summaries() -> str:
+        def add_search_summaries() -> str:  # pyright: ignore[reportUnusedFunction]
             """
             Add search summaries to the system prompt.
             """
@@ -196,27 +214,31 @@ class FinalizeSummary(BaseNode[DeepState]):
             return f"List of search summaries:\n{xml}"
 
         # Finalize the summary of the entire report
-        async with final_summary_agent.run_mcp_servers():
+        async with final_summary_agent:
             final_summary = await final_summary_agent.run(
-                user_prompt=f"Please summarize all web search summaries for the topic <TOPIC>{ctx.state.topic}</TOPIC>."
+                user_prompt=f"Please summarize all web search summaries for the topic <TOPIC>{ctx.state.topic}</TOPIC>.",
+                model_settings=ModelSettings(
+                    temperature=config.temperature_final_summary,
+                    timeout=config.model_timeout,
+                ),
             )
             logger.debug(f"Final summary:\n{final_summary.output.summary}")
 
         # Compile the final report
         report = f"# {topic}\n\n"
         report += f"{final_summary.output.summary}\n\n"  # Overall summary
-        for summary in ctx.state.search_summaries:  # Summaries of individual searches
+        for summary in ctx.state.search_summaries or []:  # Summaries of individual searches
             report += f"\n## {summary.aspect}\n\n"
             report += f"{summary.summary}\n\n"
             report += "### References\n"
-            for ref in summary.references:
+            for ref in summary.references or []:
                 report += f"- {ref.title} [{ref.url}]({ref.url})\n"
             report += "\n"
 
         # Export the report
         export_report(report=report, topic=topic, output_dir=config.reports_folder)
 
-        return End("End of deep research workflow.\n\n")
+        return End(None)
 
 
 # Workflow

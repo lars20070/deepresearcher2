@@ -1,5 +1,6 @@
 name: CI
-on: push
+on:
+  push
   # pull_request:
   #   branches:
   #     - main
@@ -22,66 +23,74 @@ jobs:
       run:
         working-directory: .
     steps:
-    - name: Checkout the repository
-      uses: actions/checkout@v4.2.0
-    - name: Create .env file
-      # Define in GitHub repository: Settings -> Secrets and variables -> Actions -> New repository secret
-      run: |
-        echo TAVILY_API_KEY=${{ secrets.TAVILY_API_KEY }} >> .env
-        echo GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }} >> .env
-        echo LOGFIRE_TOKEN=${{ secrets.LOGFIRE_TOKEN }} >> .env
-        echo OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} >> .env
-        echo WEATHER_API_KEY=${{ secrets.WEATHER_API_KEY }} >> .env
-        echo GEO_API_KEY=${{ secrets.GEO_API_KEY }} >> .env
-        echo BRAVE_API_KEY=${{ secrets.BRAVE_API_KEY }} >> .env
-        echo SERPER_API_KEY=${{ secrets.SERPER_API_KEY }} >> .env
-    - name: Install uv package manager
-      uses: astral-sh/setup-uv@v5.2.2
-      with:
-        version: ${{ matrix.uv-version }}
-        enable-cache: true
-    - name: Check uv version
-      run: uv --version
-    - name: Install dependencies
-      run: uv sync
-    - name: Check installed dependencies
-      run: |
-        uv run python --version
-        uv tree
-    - name: Build the package
-      run: uv build
-    - name: Lint the package
-      run: uvx ruff check .
-    - name: Run unit tests
-      # -v                verbose
-      # -m "not paid"     skip tests requiring paid API keys
-      # -p no:warnings    ignore warnings
-      # -n auto           run tests in parallel
-      run: uv run pytest -v -m "not paid" -p no:warnings -n auto
-    - name: Upload logs
-      uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: deepresearcher2-pytest-logs
-        path: deepresearcher2.log
-    - name: Install Graphviz for UML diagrams
-      if: runner.os == 'Linux'
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y graphviz
-    - name: Generate UML diagrams
-      run: |
-        mkdir -p ./uml
-        uv run pyreverse -o png -A -k -d ./uml ./src/deepresearcher2
-    - name: Upload UML class diagram
-      uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: deepresearcher2-uml-classes
-        path: uml/classes.png
-    - name: Upload UML package diagram
-      uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: deepresearcher2-uml-packages
-        path: uml/packages.png
+      - name: Checkout the repository
+        uses: actions/checkout@v4.2.0
+      - name: Create .env file
+        # Define in GitHub repository: Settings -> Secrets and variables -> Actions -> New repository secret
+        run: |
+          echo TAVILY_API_KEY=${{ secrets.TAVILY_API_KEY }} >> .env
+          echo GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }} >> .env
+          echo LOGFIRE_TOKEN=${{ secrets.LOGFIRE_TOKEN }} >> .env
+          echo OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} >> .env
+          echo WEATHER_API_KEY=${{ secrets.WEATHER_API_KEY }} >> .env
+          echo GEO_API_KEY=${{ secrets.GEO_API_KEY }} >> .env
+          echo BRAVE_API_KEY=${{ secrets.BRAVE_API_KEY }} >> .env
+          echo SERPER_API_KEY=${{ secrets.SERPER_API_KEY }} >> .env
+      - name: Install uv package manager
+        uses: astral-sh/setup-uv@v5.2.2
+        with:
+          version: ${{ matrix.uv-version }}
+          enable-cache: true
+      - name: Check uv version
+        run: uv --version
+      - name: Install dependencies
+        run: uv sync
+      - name: Check installed dependencies
+        run: |
+          uv run python --version
+          uv tree
+      - name: Build the package
+        run: uv build
+      - name: Lint the package
+        run: uvx ruff check .
+      - name: Type check the package
+        run: uvx pyright .
+      - name: Run unit tests
+        # -v                verbose
+        # -m "not paid"     skip tests requiring paid API keys
+        # -p no:warnings    ignore warnings
+        # -n auto           run tests in parallel
+        run: uv run pytest -v -m "not paid" -p no:warnings -n auto --cov=deepresearcher2 --cov-report=xml
+      - name: Upload logs
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: deepresearcher2-pytest-logs
+          path: deepresearcher2.log
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          file: ./coverage.xml
+          fail_ci_if_error: false
+          token: ${{ secrets.CODECOV_TOKEN }}
+      - name: Install Graphviz for UML diagrams
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y graphviz
+      - name: Generate UML diagrams
+        run: |
+          mkdir -p ./uml
+          uv run pyreverse -o png -A -k -d ./uml ./src/deepresearcher2
+      - name: Upload UML class diagram
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: deepresearcher2-uml-classes
+          path: uml/classes.png
+      - name: Upload UML package diagram
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: deepresearcher2-uml-packages
+          path: uml/packages.png
