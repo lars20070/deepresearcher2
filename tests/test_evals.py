@@ -197,7 +197,7 @@ async def test_evaltournament_usecase(tmp_path: Path) -> None:
 
     The code demonstrates how the evaluation framework can be used in practice. It is not intended as test for individual components.
     In this use case, we are provided with a list of topics. The objective is to generate creative web search queries for these topics.
-    We have a basline implementation in the `main` branch and a novel implementation in some `feature` branch. In this simple example,
+    We have a baseline implementation in the `main` branch and a novel implementation in some `feature` branch. In this simple example,
     the implementations differ merely in the prompt (`prompt_baseline` vs. `prompt_novel`) and temperature. We want to check whether the
     novel implementation does indeed generate more creative queries.
 
@@ -320,5 +320,5 @@ async def test_evaltournament_usecase(tmp_path: Path) -> None:
     scores_novel = [tournament.get_player_by_idx(idx=i + len(dataset.cases)).score or 0.0 for i in range(len(dataset.cases))]
     logger.debug(f"Average score for baseline queries: {np.mean(scores_baseline):0.4f}")
     logger.debug(f"Average score for novel queries:    {np.mean(scores_novel):0.4f}")
-    # Not every novel query will have scored higher than the baseline case.But on average the novel queries should have improved scores.
+    # Not every novel query will have scored higher than the baseline case. But on average the novel queries should have improved scores.
     assert np.mean(scores_novel) > np.mean(scores_baseline)
