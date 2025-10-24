@@ -669,7 +669,7 @@ async def test_pydantic_evals_llmjudge(tmp_path: Path) -> None:
     assert dataset2.model_dump(mode="json", by_alias=True, exclude_none=True) == dataset.model_dump(mode="json", by_alias=True, exclude_none=True)
 
     # Run the evaluation
-    logger.info("Run the evaluation ofthe recipe dataset")
+    logger.info("Run the evaluation of the recipe dataset")
     report = await dataset.evaluate(transform_recipe)
     report.print(
         include_input=True,
