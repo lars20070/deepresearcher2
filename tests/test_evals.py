@@ -290,7 +290,7 @@ async def test_evaltournament_usecase(tmp_path: Path) -> None:
             result = await query_agent.run(
                 user_prompt=prompt_novel,
                 model_settings=ModelSettings(
-                    temperature=1.5,  # Higher temperature for more creativity
+                    temperature=1.0,  # Non-zero temperature for more creativity
                     timeout=300,
                 ),
             )
