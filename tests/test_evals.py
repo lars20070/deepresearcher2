@@ -247,7 +247,6 @@ async def test_evaltournament_usecase(tmp_path: Path) -> None:
         "kintsugi philosophy",
         "nano-medicine delivery systems",
         "Streisand effect dynamics",
-        "social cooling phenomenon",
         "Anne Brorhilke",
         "bioconcrete self-healing",
         "bacteriophage therapy revival",
@@ -323,12 +322,14 @@ async def test_evaltournament_usecase(tmp_path: Path) -> None:
     # Players sorted by score
     players_sorted = sorted(players_scored, key=lambda p: p.score if p.score is not None else float("-inf"))
     for player in players_sorted:
-        logger.debug(f"Player {player.idx:4d}   score: {player.score:7.4f}   item: {player.item}")
+        logger.debug(f"Player {player.idx:4d}   score: {player.score:7.4f}   query: {player.item}")
 
     # Average score for both baseline and novel queries
     scores_baseline = [tournament.get_player_by_idx(idx=i).score or 0.0 for i in range(len(dataset.cases))]
     scores_novel = [tournament.get_player_by_idx(idx=i + len(dataset.cases)).score or 0.0 for i in range(len(dataset.cases))]
-    logger.debug(f"Average score for baseline queries: {np.mean(scores_baseline):0.4f}")
-    logger.debug(f"Average score for novel queries:    {np.mean(scores_novel):0.4f}")
+    logger.debug(f"Average score for baseline queries (Players 0 to 9): {np.mean(scores_baseline):7.4f}")
+    logger.debug(f"Average score for novel queries  (Players 10 to 19): {np.mean(scores_novel):7.4f}")
     # Not every novel query will have scored higher than the baseline case. But on average the novel queries should have improved scores.
     assert np.mean(scores_novel) > np.mean(scores_baseline)
+    # The sum of all Bradley-Terry scores is zero.
+    assert np.isclose(np.mean(scores_novel) + np.mean(scores_baseline), 0)
