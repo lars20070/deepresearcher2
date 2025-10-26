@@ -13,7 +13,7 @@ from .agents import final_summary_agent, query_agent, reflection_agent, summary_
 from .config import SearchEngine, config
 from .logger import logger
 from .models import DeepState, Reference, Reflection, WebSearchSummary
-from .prompts import query_instructions_with_reflection, query_instructions_without_reflection
+from .prompts import QUERY_INSTRUCTIONS_WITH_REFLECTION, QUERY_INSTRUCTIONS_WITHOUT_REFLECTION
 from .utils import (
     brave_search,
     duckduckgo_search,
@@ -47,9 +47,9 @@ class WebSearch(BaseNode[DeepState]):
             """
             if ctx.state.reflection:
                 xml = format_as_xml(ctx.state.reflection, root_tag="reflection")
-                return query_instructions_with_reflection + f"Reflection on existing knowledge:\n{xml}\n" + "Provide your response in JSON format."
+                return QUERY_INSTRUCTIONS_WITH_REFLECTION + f"Reflection on existing knowledge:\n{xml}\n" + "Provide your response in JSON format."
             else:
-                return query_instructions_without_reflection
+                return QUERY_INSTRUCTIONS_WITHOUT_REFLECTION
 
         # Generate the query
         async with query_agent:

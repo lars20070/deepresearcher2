@@ -7,7 +7,7 @@ from pydantic_ai.providers.openai import OpenAIProvider
 
 from .config import config
 from .models import FinalSummary, GameResult, Reflection, WebSearchQuery
-from .prompts import evaluation_instructions, final_summary_instructions, reflection_instructions, summary_instructions, summary_instructions_evals
+from .prompts import EVALUATION_INSTRUCTIONS, FINAL_SUMMARY_INSTRUCTIONS, REFLECTION_INSTRUCTIONS, SUMMARY_INSTRUCTIONS, SUMMARY_INSTRUCTIONS_EVALS
 
 load_dotenv()
 
@@ -44,7 +44,7 @@ summary_agent = Agent(
     model=model,
     # toolsets=[mcp_server_duckduckgo],
     output_type=str,
-    system_prompt=summary_instructions,
+    system_prompt=SUMMARY_INSTRUCTIONS,
     retries=5,
     instrument=True,
 )
@@ -54,7 +54,7 @@ summary_agent_evals = Agent(
     model=model,
     # toolsets=[mcp_server_duckduckgo],
     output_type=str,
-    system_prompt=summary_instructions_evals,
+    system_prompt=SUMMARY_INSTRUCTIONS_EVALS,
     retries=5,
     instrument=True,
 )
@@ -62,7 +62,7 @@ summary_agent_evals = Agent(
 reflection_agent = Agent(
     model=model,
     output_type=Reflection,
-    system_prompt=reflection_instructions,
+    system_prompt=REFLECTION_INSTRUCTIONS,
     retries=5,
     instrument=True,
 )
@@ -70,7 +70,7 @@ reflection_agent = Agent(
 final_summary_agent = Agent(
     model=model,
     output_type=FinalSummary,
-    system_prompt=final_summary_instructions,
+    system_prompt=FINAL_SUMMARY_INSTRUCTIONS,
     retries=5,
     instrument=True,
 )
@@ -78,7 +78,7 @@ final_summary_agent = Agent(
 evaluation_agent = Agent(
     model=model,
     output_type=GameResult,
-    system_prompt=evaluation_instructions,
+    system_prompt=EVALUATION_INSTRUCTIONS,
     retries=5,
     instrument=True,
 )
