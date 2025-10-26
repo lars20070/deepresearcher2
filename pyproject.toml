@@ -117,7 +117,13 @@ branch = true
 source = ["deepresearcher2"]
 parallel = true
 disable_warnings = ["module-not-measured"]
-omit = ["tests/*", "src/deepresearcher2/cli.py"]
+omit = [
+  "tests/*",
+  "src/deepresearcher2/cli.py",
+  "src/deepresearcher2/examples.py",
+  "src/deepresearcher2/evals/generate.py",
+  "src/deepresearcher2/evals/import_bigbench.py",
+]
 
 [tool.coverage.report]
 show_missing = true  # Show line numbers of missing coverage in terminal
