@@ -457,7 +457,7 @@ async def adaptive_uncertainty_strategy(
     The strategy consists of two phases:
     (1) Bootstrap phase: The Bradley-Terry model requires the comparison graph to be strongly connected i.e.
         there must be a path between any two players. We therefore start by playing n/2*log(n) random games where
-        n is the number of players. With fewer games, any scores are likely to be unreliable.
+        n is the number of players. See Erdős-Rényi 1960. With fewer games, any scores are likely to be unreliable.
     (2) Optimization phase: In this phase, we iteratively calculate the Bradley-Terry scores and their
         covariance matrix, and play the game for which the player scores are the most uncertain.
 
