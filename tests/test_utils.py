@@ -251,7 +251,8 @@ def test_serper_search() -> None:
     # logger.debug(f"search result content: {result.content}")
 
 
-@pytest.mark.searxng
+@pytest.mark.vcr()
+# @pytest.mark.searxng
 def test_searxng_search() -> None:
     topic = config.topic
     results = searxng_search(topic, max_results=3)
