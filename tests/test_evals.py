@@ -239,6 +239,7 @@ async def test_evaltournament_usecase(tmp_path: Path) -> None:
         "Anne Brorhilke",
         "bioconcrete self-healing",
         "bacteriophage therapy revival",
+        "Habsburg jaw genetics",
     ]
 
     cases: list[Case[dict[str, str], type[None], Any]] = []
