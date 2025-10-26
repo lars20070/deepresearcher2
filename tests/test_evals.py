@@ -6,6 +6,8 @@ from typing import TYPE_CHECKING, Any
 if TYPE_CHECKING:
     from pathlib import Path
 
+import random
+
 import numpy as np
 import pytest
 from pydantic_ai import Agent
@@ -75,6 +77,8 @@ async def test_evaltournament(ice_cream_players: list[EvalPlayer], ice_cream_gam
     """
     Test the EvalTournament class.
     """
+    random.seed(42)  # Make test deterministic for VCR recording
+
     logger.info("Testing EvalTournament() class")
 
     tournament = EvalTournament(players=ice_cream_players, game=ice_cream_game)
@@ -122,6 +126,8 @@ async def test_random_sampling_strategy(ice_cream_players: list[EvalPlayer], ice
     """
     Test the random sampling tournament strategy.
     """
+    random.seed(42)  # Make test deterministic for VCR recording
+
     logger.info("Testing random_sampling_strategy()")
 
     players_with_scores = await random_sampling_strategy(
@@ -146,6 +152,8 @@ async def test_round_robin_strategy(ice_cream_players: list[EvalPlayer], ice_cre
     """
     Test the round robin tournament strategy.
     """
+    random.seed(42)  # Make test deterministic for VCR recording
+
     logger.info("Testing round_robin_strategy()")
 
     players_with_scores = await round_robin_strategy(
@@ -170,6 +178,8 @@ async def test_adaptive_uncertainty_strategy(ice_cream_players: list[EvalPlayer]
     """
     Test the adaptive uncertainty tournament strategy.
     """
+    random.seed(42)  # Make test deterministic for VCR recording
+
     logger.info("Testing adaptive_uncertainty_strategy()")
 
     players_with_scores = await adaptive_uncertainty_strategy(
@@ -189,7 +199,7 @@ async def test_adaptive_uncertainty_strategy(ice_cream_players: list[EvalPlayer]
         logger.debug(f"Player {player.idx} score: {player.score}")
 
 
-@pytest.mark.ollama
+@pytest.mark.vcr()
 @pytest.mark.asyncio
 async def test_evaltournament_usecase(tmp_path: Path) -> None:
     """
@@ -208,6 +218,7 @@ async def test_evaltournament_usecase(tmp_path: Path) -> None:
     (3) We run the novel implementation, score both baseline and novel queries in one go using a Bradley-Terry tournament,
         and check whether the scores have improved.
     """
+    random.seed(42)  # Make test deterministic for VCR recording
 
     # Path to store the evaluation dataset
     path_out = tmp_path / "dataset.json"
@@ -290,10 +301,7 @@ async def test_evaltournament_usecase(tmp_path: Path) -> None:
         async with query_agent:
             result = await query_agent.run(
                 user_prompt=prompt_novel,
-                model_settings=ModelSettings(
-                    temperature=1.0,
-                    timeout=300,
-                ),
+                model_settings=MODEL_SETTINGS,  # Ideally, we would run the model at higher temperature. But for VCR recording we need determinism.
             )
 
         logger.debug(f"Generated query: {result.output}")
