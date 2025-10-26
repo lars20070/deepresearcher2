@@ -122,7 +122,8 @@ async def test_evaltournament(ice_cream_players: list[EvalPlayer], ice_cream_gam
 
 @pytest.mark.vcr()
 @pytest.mark.asyncio
-async def test_random_sampling_strategy(ice_cream_players: list[EvalPlayer], ice_cream_game: EvalGame) -> None:
+@pytest.mark.parametrize("fraction_of_games", [None, 0.3, 42.0])  # Last value is non-sensical and will be ignored.
+async def test_random_sampling_strategy(ice_cream_players: list[EvalPlayer], ice_cream_game: EvalGame, fraction_of_games: float | None) -> None:
     """
     Test the random sampling tournament strategy.
     """
@@ -135,7 +136,7 @@ async def test_random_sampling_strategy(ice_cream_players: list[EvalPlayer], ice
         game=ice_cream_game,
         agent=evaluation_agent,
         model_settings=MODEL_SETTINGS,
-        fraction_of_games=0.3,
+        fraction_of_games=fraction_of_games,
     )
     assert isinstance(players_with_scores, list)
     for player in players_with_scores:
