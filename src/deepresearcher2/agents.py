@@ -23,12 +23,12 @@ else:
     )
 
 # MCP serves
-mcp_server_duckduckgo = MCPServerStdio("uvx", args=["duckduckgo-mcp-server"])
+MCP_SERVER_DUCKDUCKGO = MCPServerStdio("uvx", args=["duckduckgo-mcp-server"])
 
 # Agents
 # Note that we provide internet access to the query writing agent. This might be a bit circular.
 # TODO: Check whether this improves the queries or is just a waste of time.
-query_agent = Agent(
+QUERY_AGENT = Agent(
     model=model,
     # toolsets=[mcp_server_duckduckgo],
     output_type=WebSearchQuery,
@@ -40,7 +40,7 @@ query_agent = Agent(
 # Note that we provide internet access to the summary agent. Maybe the agent wants to clarify some facts.
 # TODO: Check whether this improves the queries or is just a waste of time.
 # Sometimes the model fails to reply with JSON. In this case, the model tries to google for a fix. Better switch off the internet access.
-summary_agent = Agent(
+SUMMARY_AGENT = Agent(
     model=model,
     # toolsets=[mcp_server_duckduckgo],
     output_type=str,
@@ -50,7 +50,7 @@ summary_agent = Agent(
 )
 
 # This agent is specifically for the generation of the knowledge_gap benchmark. Not used for production.
-summary_agent_evals = Agent(
+SUMMARY_AGENT_EVALS = Agent(
     model=model,
     # toolsets=[mcp_server_duckduckgo],
     output_type=str,
@@ -59,7 +59,7 @@ summary_agent_evals = Agent(
     instrument=True,
 )
 
-reflection_agent = Agent(
+REFLECTION_AGENT = Agent(
     model=model,
     output_type=Reflection,
     system_prompt=REFLECTION_INSTRUCTIONS,
@@ -67,7 +67,7 @@ reflection_agent = Agent(
     instrument=True,
 )
 
-final_summary_agent = Agent(
+FINAL_SUMMARY_AGENT = Agent(
     model=model,
     output_type=FinalSummary,
     system_prompt=FINAL_SUMMARY_INSTRUCTIONS,
@@ -75,7 +75,7 @@ final_summary_agent = Agent(
     instrument=True,
 )
 
-evaluation_agent = Agent(
+EVALUATION_AGENT = Agent(
     model=model,
     output_type=GameResult,
     system_prompt=EVALUATION_INSTRUCTIONS,

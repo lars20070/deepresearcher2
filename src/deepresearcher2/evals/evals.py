@@ -20,7 +20,7 @@ from pydantic_ai.settings import ModelSettings
 from pydantic_evals import Dataset
 from pydantic_evals.evaluators import Evaluator, EvaluatorContext, IsInstance
 
-from deepresearcher2.agents import evaluation_agent
+from deepresearcher2.agents import EVALUATION_AGENT
 from deepresearcher2.config import config
 from deepresearcher2.evals.import_bigbench import Response
 from deepresearcher2.logger import logger
@@ -711,7 +711,7 @@ async def eval_knowledge_gap(models: list[str] | None = None, max_cases: int | N
 
     # Run the tournament
     players_scored = await tournament.run(
-        agent=evaluation_agent,
+        agent=EVALUATION_AGENT,
         model_settings=ModelSettings(
             temperature=1.0,
             timeout=config.model_timeout,

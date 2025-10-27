@@ -16,7 +16,7 @@ from pydantic_ai.providers.openai import OpenAIProvider
 from pydantic_ai.settings import ModelSettings
 from pydantic_evals import Case, Dataset
 
-from deepresearcher2.agents import evaluation_agent
+from deepresearcher2.agents import EVALUATION_AGENT
 from deepresearcher2.evals.evals import (
     EvalGame,
     EvalPlayer,
@@ -60,7 +60,7 @@ async def test_evalgame(ice_cream_players: list[EvalPlayer]) -> None:
 
     result = await game.run(
         players=(ice_cream_players[0], ice_cream_players[4]),
-        agent=evaluation_agent,
+        agent=EVALUATION_AGENT,
         model_settings=MODEL_SETTINGS,
     )
     logger.debug(f"Game result: {result}")
@@ -93,7 +93,7 @@ async def test_evaltournament(ice_cream_players: list[EvalPlayer], ice_cream_gam
 
     # Test the default strategy
     players_with_scores = await tournament.run(
-        agent=evaluation_agent,
+        agent=EVALUATION_AGENT,
         model_settings=MODEL_SETTINGS,
     )
     assert isinstance(players_with_scores, list)
@@ -106,7 +106,7 @@ async def test_evaltournament(ice_cream_players: list[EvalPlayer], ice_cream_gam
 
     # Test the random sampling strategy
     players_with_scores = await tournament.run(
-        agent=evaluation_agent,
+        agent=EVALUATION_AGENT,
         model_settings=MODEL_SETTINGS,
         strategy=random_sampling_strategy,
         fraction_of_games=0.3,
@@ -134,7 +134,7 @@ async def test_random_sampling_strategy(ice_cream_players: list[EvalPlayer], ice
     players_with_scores = await random_sampling_strategy(
         players=ice_cream_players,
         game=ice_cream_game,
-        agent=evaluation_agent,
+        agent=EVALUATION_AGENT,
         model_settings=MODEL_SETTINGS,
         fraction_of_games=fraction_of_games,
     )
@@ -160,7 +160,7 @@ async def test_round_robin_strategy(ice_cream_players: list[EvalPlayer], ice_cre
     players_with_scores = await round_robin_strategy(
         players=ice_cream_players,
         game=ice_cream_game,
-        agent=evaluation_agent,
+        agent=EVALUATION_AGENT,
         model_settings=MODEL_SETTINGS,
         number_of_rounds=1,
     )
@@ -186,7 +186,7 @@ async def test_adaptive_uncertainty_strategy(ice_cream_players: list[EvalPlayer]
     players_with_scores = await adaptive_uncertainty_strategy(
         players=ice_cream_players,
         game=ice_cream_game,
-        agent=evaluation_agent,
+        agent=EVALUATION_AGENT,
         model_settings=MODEL_SETTINGS,
         max_standard_deviation=1.0,
         alpha=0.01,
@@ -315,7 +315,7 @@ async def test_evaltournament_usecase(tmp_path: Path) -> None:
     game = EvalGame(criterion="Which of the two search queries shows more genuine curiosity and creativity, and is less formulaic?")
     tournament = EvalTournament(players=players, game=game)
     players_scored = await tournament.run(
-        agent=evaluation_agent,
+        agent=EVALUATION_AGENT,
         model_settings=MODEL_SETTINGS,
     )
 
