@@ -33,6 +33,7 @@ dependencies = [
   "pytest-recording>=0.13.4",
   "pytest-mock>=3.15.1",
   "ddgs>=9.6.1",
+  "fastmcp>=2.13.0.1",
 ]
 
 [project.scripts]

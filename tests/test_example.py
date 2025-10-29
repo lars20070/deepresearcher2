@@ -30,6 +30,7 @@ if TYPE_CHECKING:
     from pydantic_ai.messages import ModelMessage
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
+from fastmcp import Client, FastMCP
 from pydantic_ai.models.openai import OpenAIChatModel
 from pydantic_ai.providers.openai import OpenAIProvider
 from pydantic_ai.settings import ModelSettings
@@ -768,7 +769,7 @@ async def test_mcp_stdio_client() -> None:
         assert "9,208 days" in result.output
 
 
-@pytest.mark.paid
+# @pytest.mark.paid
 @pytest.mark.example
 @pytest.mark.asyncio
 async def test_mcp_server() -> None:
@@ -794,6 +795,45 @@ async def test_mcp_server() -> None:
             text = str(content)
         logger.debug(f"Complete poem:\n{text}")
         assert "socks" in text
+
+
+# @pytest.mark.paid
+@pytest.mark.example
+@pytest.mark.asyncio
+async def test_mcp_server_2() -> None:
+    """
+    Test the MCP server functionality using FastMCP.
+    """
+    server = FastMCP("PydanticAI Server")
+    server_agent = Agent(
+        "anthropic:claude-3-5-haiku-latest",
+        system_prompt="Always reply in rhyme.",
+    )
+
+    @server.tool
+    async def poet(theme: str) -> str:
+        """Poem generator"""
+        r = await server_agent.run(f"Write a poem about {theme}.")
+        return r.output
+
+    # Test using in-memory transport
+    client = Client(server)
+
+    async with client:
+        # List all available tools
+        tools = await client.list_tools()
+        logger.debug(f"Available tools on MCP server: {[tool.name for tool in tools]}")
+
+        # Call the poet tool
+        result = await client.call_tool("poet", {"theme": "socks"})
+        content = result.content[0]
+        if isinstance(content, TextContent):
+            text = content.text
+        else:
+            text = str(content)
+
+        logger.debug(f"Complete poem:\n{text}")
+        assert "socks" in text.lower() or "sock" in text.lower()
 
 
 @pytest.mark.example
