@@ -817,20 +817,19 @@ async def test_mcp_server_2() -> None:
         return r.output
 
     # Test using in-memory transport
-    client = Client(server)
-
-    async with client:
+    async with Client(server) as client:
         # List all available tools
         tools = await client.list_tools()
+        assert len(tools) == 1
+        assert tools[0].name == "poet"
         logger.debug(f"Available tools on MCP server: {[tool.name for tool in tools]}")
 
         # Call the poet tool
         result = await client.call_tool("poet", {"theme": "socks"})
+
+        # Extract text from result
         content = result.content[0]
-        if isinstance(content, TextContent):
-            text = content.text
-        else:
-            text = str(content)
+        text = getattr(content, "text", str(content))
 
         logger.debug(f"Complete poem:\n{text}")
         assert "socks" in text.lower() or "sock" in text.lower()
