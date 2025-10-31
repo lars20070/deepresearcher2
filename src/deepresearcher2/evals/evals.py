@@ -20,7 +20,7 @@ from pydantic_ai.settings import ModelSettings
 from pydantic_evals import Dataset
 from pydantic_evals.evaluators import Evaluator, EvaluatorContext, IsInstance
 
-from deepresearcher2.agents import evaluation_agent
+from deepresearcher2.agents import EVALUATION_AGENT
 from deepresearcher2.config import config
 from deepresearcher2.evals.import_bigbench import Response
 from deepresearcher2.logger import logger
@@ -328,63 +328,6 @@ TournamentStrategy = Callable[
 ]
 
 
-async def round_robin_strategy(
-    players: list[EvalPlayer],
-    game: EvalGame,
-    agent: Agent,
-    model_settings: ModelSettings,
-    number_of_rounds: int = 2,
-) -> list[EvalPlayer]:
-    """
-    Round-robin tournament strategy.
-
-    Each player plays against a randomly selected opponent for a given number of rounds.
-    The scores are calculated from the game outcomes using the Bradley-Terry algorithm.
-    The strategy ensures that each player plays at least number_of_rounds games.
-    The strategy is simple but not efficient.
-
-    Args:
-        players: List of players in the tournament.
-        game: Game defining the pairwise comparisons.
-        agent: Agent for the game.
-        model_settings: Model settings for the game.
-        number_of_rounds: Number of rounds.
-
-    Returns:
-        List of players with Bradley-Terry scores.
-    """
-    scoreboard: list[tuple[int, int]] = []
-
-    logger.info(f"Round-robin strategy: {len(players)} players, {number_of_rounds} rounds")
-
-    for n in range(number_of_rounds):
-        logger.debug(f"Starting round {n + 1} / {number_of_rounds}")
-
-        for player in players:
-            # Pick a random opponent (excluding self)
-            idx = random.randrange(len(players))
-            while idx == player.idx:
-                idx = random.randrange(len(players))
-            player_2 = players[idx]
-            logger.debug(f"Game: Player {player.idx} vs Player {player_2.idx}")
-
-            # Play the game
-            result = await game.run(
-                players=(player, player_2),
-                agent=agent,
-                model_settings=model_settings,
-            )
-            scoreboard.append(result)
-            logger.debug(f"Result: {result}")
-
-    # Calculate Bradley-Terry scores and update players
-    scores = choix.ilsr_pairwise(len(players), scoreboard, alpha=0.01)
-    for i, player in enumerate(players):
-        player.score = float(scores[i])
-
-    return players
-
-
 async def random_sampling_strategy(
     players: list[EvalPlayer],
     game: EvalGame,
@@ -443,6 +386,63 @@ async def random_sampling_strategy(
     return players
 
 
+async def round_robin_strategy(
+    players: list[EvalPlayer],
+    game: EvalGame,
+    agent: Agent,
+    model_settings: ModelSettings,
+    number_of_rounds: int = 2,
+) -> list[EvalPlayer]:
+    """
+    Round-robin tournament strategy.
+
+    Each player plays against a randomly selected opponent for a given number of rounds.
+    The scores are calculated from the game outcomes using the Bradley-Terry algorithm.
+    The strategy ensures that each player plays at least number_of_rounds games.
+    The strategy is simple but not efficient.
+
+    Args:
+        players: List of players in the tournament.
+        game: Game defining the pairwise comparisons.
+        agent: Agent for the game.
+        model_settings: Model settings for the game.
+        number_of_rounds: Number of rounds.
+
+    Returns:
+        List of players with Bradley-Terry scores.
+    """
+    scoreboard: list[tuple[int, int]] = []
+
+    logger.info(f"Round-robin strategy: {len(players)} players, {number_of_rounds} rounds")
+
+    for n in range(number_of_rounds):
+        logger.debug(f"Starting round {n + 1} / {number_of_rounds}")
+
+        for player in players:
+            # Pick a random opponent (excluding self)
+            idx = random.randrange(len(players))
+            while idx == player.idx:
+                idx = random.randrange(len(players))
+            player_2 = players[idx]
+            logger.debug(f"Game: Player {player.idx} vs Player {player_2.idx}")
+
+            # Play the game
+            result = await game.run(
+                players=(player, player_2),
+                agent=agent,
+                model_settings=model_settings,
+            )
+            scoreboard.append(result)
+            logger.debug(f"Result: {result}")
+
+    # Calculate Bradley-Terry scores and update players
+    scores = choix.ilsr_pairwise(len(players), scoreboard, alpha=0.01)
+    for i, player in enumerate(players):
+        player.score = float(scores[i])
+
+    return players
+
+
 async def adaptive_uncertainty_strategy(
     players: list[EvalPlayer],
     game: EvalGame,
@@ -457,7 +457,7 @@ async def adaptive_uncertainty_strategy(
     The strategy consists of two phases:
     (1) Bootstrap phase: The Bradley-Terry model requires the comparison graph to be strongly connected i.e.
         there must be a path between any two players. We therefore start by playing n/2*log(n) random games where
-        n is the number of players. With fewer games, any scores are likely to be unreliable.
+        n is the number of players. See Erdős-Rényi 1960. With fewer games, any scores are likely to be unreliable.
     (2) Optimization phase: In this phase, we iteratively calculate the Bradley-Terry scores and their
         covariance matrix, and play the game for which the player scores are the most uncertain.
 
@@ -711,7 +711,7 @@ async def eval_knowledge_gap(models: list[str] | None = None, max_cases: int | N
 
     # Run the tournament
     players_scored = await tournament.run(
-        agent=evaluation_agent,
+        agent=EVALUATION_AGENT,
         model_settings=ModelSettings(
             temperature=1.0,
             timeout=config.model_timeout,
