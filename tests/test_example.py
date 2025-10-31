@@ -769,7 +769,7 @@ async def test_mcp_stdio_client() -> None:
         assert "9,208 days" in result.output
 
 
-# @pytest.mark.paid
+@pytest.mark.paid
 @pytest.mark.example
 @pytest.mark.asyncio
 async def test_mcp_server() -> None:
@@ -797,7 +797,7 @@ async def test_mcp_server() -> None:
         assert "socks" in text
 
 
-# @pytest.mark.paid
+@pytest.mark.paid
 @pytest.mark.example
 @pytest.mark.asyncio
 async def test_mcp_server_2() -> None:
