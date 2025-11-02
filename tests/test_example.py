@@ -834,7 +834,7 @@ async def test_mcp_server_2() -> None:
         content = result.content[0]
         text = getattr(content, "text", str(content))
 
-        logger.debug(f"Complete poem (in-memory):\n{text}")
+        logger.debug(f"Complete poem (in-memory transport):\n{text}")
         assert "socks" in text.lower() or "sock" in text.lower()
 
     # (2) Test using stdio transport
@@ -846,13 +846,21 @@ async def test_mcp_server_2() -> None:
 
     async with stdio_client(server_params) as (read, write), ClientSession(read, write) as session:
         await session.initialize()
+        # List all available tools
+        result = await session.list_tools()
+        tools = result.tools
+        assert len(tools) == 1
+        assert tools[0].name == "poet"
+        logger.debug(f"Available tools on MCP server (stdio transport): {[tool.name for tool in tools]}")
+
+        # Call the poet tool
         result = await session.call_tool("poet", {"theme": "socks"})
+
+        # Extract text from result
         content = result.content[0]
-        if isinstance(content, TextContent):
-            text = content.text
-        else:
-            text = str(content)
-        logger.debug(f"Complete poem (stdio):\n{text}")
+        text = getattr(content, "text", str(content))
+
+        logger.debug(f"Complete poem (stdio transport):\n{text}")
         assert "socks" in text.lower() or "sock" in text.lower()
 
 
