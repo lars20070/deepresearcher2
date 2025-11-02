@@ -74,10 +74,7 @@ jobs:
           fail_ci_if_error: false
           token: ${{ secrets.CODECOV_TOKEN }}
       - name: Install Graphviz for UML diagrams
-        if: runner.os == 'Linux'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y graphviz
+        uses: ts-graphviz/setup-graphviz@v2
       - name: Generate UML diagrams
         run: |
           mkdir -p ./uml
