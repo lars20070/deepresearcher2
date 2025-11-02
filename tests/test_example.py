@@ -800,14 +800,12 @@ async def test_mcp_server() -> None:
 @pytest.mark.paid
 @pytest.mark.example
 @pytest.mark.asyncio
-async def test_mcp_server_2() -> None:
+async def test_mcp_server_in_memory() -> None:
     """
     Test the MCP server functionality using from the FastMCP package.
-
-    Testing both in-memory and stdio transport.
+    Testing both in-memory transport.
     """
 
-    # (1) Test using in-memory transport
     server = FastMCP("PydanticAI Server")
     server_agent = Agent(
         "anthropic:claude-3-5-haiku-latest",
@@ -834,13 +832,22 @@ async def test_mcp_server_2() -> None:
         content = result.content[0]
         text = getattr(content, "text", str(content))
 
-        logger.debug(f"Complete poem (in-memory transport):\n{text}")
+        logger.debug(f"Complete poem:\n{text}")
         assert "socks" in text.lower() or "sock" in text.lower()
 
-    # (2) Test using stdio transport
+
+@pytest.mark.paid
+@pytest.mark.example
+@pytest.mark.asyncio
+async def test_mcp_server_stdio() -> None:
+    """
+    Test the MCP server functionality using from the FastMCP package.
+    Testing both stdio transport.
+    """
+
     server_params = StdioServerParameters(
         command="uv",
-        args=["run", "mcpserver2"],
+        args=["run", "mcpserver_stdio"],
         env=dict(os.environ),
     )
 
@@ -851,7 +858,7 @@ async def test_mcp_server_2() -> None:
         tools = result.tools
         assert len(tools) == 1
         assert tools[0].name == "poet"
-        logger.debug(f"Available tools on MCP server (stdio transport): {[tool.name for tool in tools]}")
+        logger.debug(f"Available tools on MCP server: {[tool.name for tool in tools]}")
 
         # Call the poet tool
         result = await session.call_tool("poet", {"theme": "socks"})
@@ -860,7 +867,7 @@ async def test_mcp_server_2() -> None:
         content = result.content[0]
         text = getattr(content, "text", str(content))
 
-        logger.debug(f"Complete poem (stdio transport):\n{text}")
+        logger.debug(f"Complete poem:\n{text}")
         assert "socks" in text.lower() or "sock" in text.lower()
 
 

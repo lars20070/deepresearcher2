@@ -57,7 +57,7 @@ def basic_chat() -> None:
 
 def mcp_server() -> None:
     """
-    Start the MCP server.
+    Start the MCP server using the `mcp` package.
 
     Creates and runs an MCP server with a Claude 3.5 agent inside.
     https://ai.pydantic.dev/mcp/server/
@@ -71,7 +71,7 @@ def mcp_server() -> None:
     )
 
     @server.tool()
-    async def poet(theme: str) -> str:  # pyright: ignore[reportUnusedFunction]
+    async def poet(theme: str) -> str:
         """Poem generator"""
         r = await server_agent.run(f"Write a poem about {theme}.")
         return r.output
@@ -79,9 +79,12 @@ def mcp_server() -> None:
     server.run()
 
 
-def mcp_server_2() -> None:
+def mcp_server_stdio() -> None:
     """
-    Start the MCP server using the fastmcp package.
+    Start the MCP server using the `fastmcp` package.
+
+    Creates and runs an MCP server with a Claude 3.5 agent inside.
+    Test the response of the server in test_mcp_server_stdio()
     """
     server = fastmcp.FastMCP("PydanticAI Server")
     server_agent = Agent(
@@ -90,8 +93,7 @@ def mcp_server_2() -> None:
     )
 
     @server.tool
-    async def poet(theme: str) -> str:  # pyright: ignore[reportUnusedFunction]
-        """Poem generator"""
+    async def poet(theme: str) -> str:
         r = await server_agent.run(f"Write a poem about {theme}.")
         return r.output
 
