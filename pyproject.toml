@@ -40,6 +40,7 @@ dependencies = [
 uml = "deepresearcher2.cli:uml"
 chat = "deepresearcher2.examples:basic_chat"
 mcpserver = "deepresearcher2.examples:mcp_server"
+mcpserver2 = "deepresearcher2.examples:mcp_server_2"
 research = "deepresearcher2.graph:main"
 import = "deepresearcher2.evals.import_bigbench:main"
 generate = "deepresearcher2.evals.generate:main"

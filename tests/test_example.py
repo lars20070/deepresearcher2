@@ -802,8 +802,12 @@ async def test_mcp_server() -> None:
 @pytest.mark.asyncio
 async def test_mcp_server_2() -> None:
     """
-    Test the MCP server functionality using FastMCP.
+    Test the MCP server functionality using from the FastMCP package.
+
+    Testing both in-memory and stdio transport.
     """
+
+    # (1) Test using in-memory transport
     server = FastMCP("PydanticAI Server")
     server_agent = Agent(
         "anthropic:claude-3-5-haiku-latest",
@@ -816,7 +820,6 @@ async def test_mcp_server_2() -> None:
         r = await server_agent.run(f"Write a poem about {theme}.")
         return r.output
 
-    # Test using in-memory transport
     async with Client(server) as client:
         # List all available tools
         tools = await client.list_tools()
@@ -831,7 +834,25 @@ async def test_mcp_server_2() -> None:
         content = result.content[0]
         text = getattr(content, "text", str(content))
 
-        logger.debug(f"Complete poem:\n{text}")
+        logger.debug(f"Complete poem (in-memory):\n{text}")
+        assert "socks" in text.lower() or "sock" in text.lower()
+
+    # (2) Test using stdio transport
+    server_params = StdioServerParameters(
+        command="uv",
+        args=["run", "mcpserver2"],
+        env=dict(os.environ),
+    )
+
+    async with stdio_client(server_params) as (read, write), ClientSession(read, write) as session:
+        await session.initialize()
+        result = await session.call_tool("poet", {"theme": "socks"})
+        content = result.content[0]
+        if isinstance(content, TextContent):
+            text = content.text
+        else:
+            text = str(content)
+        logger.debug(f"Complete poem (stdio):\n{text}")
         assert "socks" in text.lower() or "sock" in text.lower()
 
 

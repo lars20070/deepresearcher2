@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import fastmcp
 import logfire
 from dotenv import load_dotenv
 from mcp.server.fastmcp import FastMCP
@@ -70,6 +71,25 @@ def mcp_server() -> None:
     )
 
     @server.tool()
+    async def poet(theme: str) -> str:  # pyright: ignore[reportUnusedFunction]
+        """Poem generator"""
+        r = await server_agent.run(f"Write a poem about {theme}.")
+        return r.output
+
+    server.run()
+
+
+def mcp_server_2() -> None:
+    """
+    Start the MCP server using the fastmcp package.
+    """
+    server = fastmcp.FastMCP("PydanticAI Server")
+    server_agent = Agent(
+        "anthropic:claude-3-5-haiku-latest",
+        system_prompt="Always reply in rhyme.",
+    )
+
+    @server.tool
     async def poet(theme: str) -> str:  # pyright: ignore[reportUnusedFunction]
         """Poem generator"""
         r = await server_agent.run(f"Write a poem about {theme}.")
