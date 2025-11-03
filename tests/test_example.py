@@ -286,10 +286,11 @@ class Deps:
     geo_api_key: str | None
 
 
-@pytest.mark.skip(reason="https://geocode.maps.co has strict request limits. '429 Too Many Requests' is likely.")
-@pytest.mark.example
-@pytest.mark.paid
+# @pytest.mark.skip(reason="https://geocode.maps.co has strict request limits. '429 Too Many Requests' is likely.")
+# @pytest.mark.paid
+@pytest.mark.vcr()
 @pytest.mark.asyncio
+@pytest.mark.example
 async def test_weather_agent() -> None:
     """
     Test Ollama agent with two tools.
@@ -429,10 +430,11 @@ class ClientAndKey:
     api_key: str
 
 
-@pytest.mark.skip(reason="Sometimes GPT-4o ends up in an infinite loop. Not sure why.")
-@pytest.mark.paid
-@pytest.mark.example
+# @pytest.mark.skip(reason="Sometimes GPT-4o ends up in an infinite loop. Not sure why.")
+# @pytest.mark.paid
+@pytest.mark.vcr()
 @pytest.mark.asyncio
+@pytest.mark.example
 async def test_agent_delegation() -> None:
     """
     Test the agent delegation functionality
