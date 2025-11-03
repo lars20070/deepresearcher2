@@ -853,14 +853,14 @@ async def test_mcp_server_stdio() -> None:
 
     async with stdio_client(server_params) as (read, write), ClientSession(read, write) as session:
         await session.initialize()
-        # List all available tools
+        # (1a) List and verify available tools
         result = await session.list_tools()
         tools = result.tools
         assert len(tools) == 1
         assert tools[0].name == "poet"
         logger.debug(f"Available tools on MCP server: {[tool.name for tool in tools]}")
 
-        # Call the poet tool
+        # (1b) Call the 'poet' tool
         result = await session.call_tool("poet", {"theme": "socks"})
 
         # Extract text from result
@@ -869,6 +869,21 @@ async def test_mcp_server_stdio() -> None:
 
         logger.debug(f"Complete poem:\n{text}")
         assert "socks" in text.lower() or "sock" in text.lower()
+
+        # (2a) List and verify available prompts
+        prompts_result = await session.list_prompts()
+        prompts = prompts_result.prompts
+        assert len(prompts) == 1
+        assert prompts[0].name == "poem_prompt"
+        logger.debug(f"Available prompts on MCP server: {[prompt.name for prompt in prompts]}")
+
+        # (2b) Call the 'poem_prompt' prompt
+        prompt_result = await session.get_prompt("poem_prompt", arguments={"theme": "socks"})
+        assert len(prompt_result.messages) > 0
+        content = prompt_result.messages[0].content
+        prompt = getattr(content, "text", str(content))
+        assert "socks" in prompt.lower()
+        logger.debug(f"Generated prompt: {prompt}")
 
 
 @pytest.mark.example
