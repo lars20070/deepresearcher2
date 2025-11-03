@@ -86,9 +86,14 @@ def mcp_server_stdio() -> None:
     """
     Start the MCP server using the `fastmcp` package.
 
-    Creates and runs an MCP server with a Claude 3.5 agent inside.
-    Test the response of the server in test_mcp_server_stdio().
-    Or add the MCP server to the Claude Desktop app by changing its config.
+    Creates and runs an MCP server with
+    (1) a tool with a Claude 3.5 agent inside
+    (2) a prompt for a poem
+    (3) a resource serving poetry guidelines
+    https://youtu.be/rnljvmHorQw
+
+    The server is tested in test_mcp_server_stdio().
+    In order to test the server manually in Claude Desktop, please extend the config as below.
     ~/Library/Application Support/Claude/claude_desktop_config.json
 
     {
@@ -104,6 +109,8 @@ def mcp_server_stdio() -> None:
             }
         }
     }
+
+    In Claude Desktop, (1) is available under 'Search and tools' and (2) and (3) under "+".
     """
     server = fastmcp.FastMCP("PydanticAI Server")
     server_agent = Agent(
