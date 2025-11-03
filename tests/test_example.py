@@ -31,6 +31,7 @@ if TYPE_CHECKING:
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 from fastmcp import Client, FastMCP
+from pydantic import AnyUrl
 from pydantic_ai.models.openai import OpenAIChatModel
 from pydantic_ai.providers.openai import OpenAIProvider
 from pydantic_ai.settings import ModelSettings
@@ -884,6 +885,21 @@ async def test_mcp_server_stdio() -> None:
         prompt = getattr(content, "text", str(content))
         assert "socks" in prompt.lower()
         logger.debug(f"Generated prompt: {prompt}")
+
+        # (3a) List and verify available resources
+        resources_result = await session.list_resources()
+        resources = resources_result.resources
+        assert len(resources) == 1
+        assert str(resources[0].uri) == "poetry://guidelines"
+        assert resources[0].name == "poetry_guidelines"
+        logger.debug(f"Available resources on MCP server: {[resource.uri for resource in resources]}")
+
+        # (3b) Read the 'poetry_guidelines' resource
+        guidelines_result = await session.read_resource(AnyUrl("poetry://guidelines"))
+        assert len(guidelines_result.contents) > 0
+        guidelines_content = guidelines_result.contents[0]
+        guidelines_text = getattr(guidelines_content, "text", str(guidelines_content))
+        logger.debug(f"Poetry guidelines (first 500 chars):\n{guidelines_text[:500]}")
 
 
 @pytest.mark.example

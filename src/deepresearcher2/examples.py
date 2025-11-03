@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import textwrap
 
 import fastmcp
 import logfire
@@ -87,7 +88,7 @@ def mcp_server_stdio() -> None:
 
     Creates and runs an MCP server with a Claude 3.5 agent inside.
     Test the response of the server in test_mcp_server_stdio().
-    Or add the MCP server to Claude desktop by changing the config.
+    Or add the MCP server to the Claude Desktop app by changing its config.
     ~/Library/Application Support/Claude/claude_desktop_config.json
 
     {
@@ -123,5 +124,39 @@ def mcp_server_stdio() -> None:
         prompt = f"Write a beautiful poem about {theme} and the Eiffel Tower."
         logger.debug(f"Prompt generated:\n{prompt}")
         return prompt
+
+    @server.resource("poetry://guidelines")
+    def poetry_guidelines() -> str:
+        logger.info("Serving poetry guidelines resource")
+        guidelines = textwrap.dedent("""# Poetry Examples and Guidelines
+
+        ## Example 1: Nature Poem
+        The morning dew upon the grass,
+        Reflects the sun as moments pass,
+        A gentle breeze through trees does flow,
+        Nature's beauty all aglow.
+
+        ## Example 2: Technology Poem
+        In circuits bright and code so clean,
+        The future's built on what we've seen,
+        Through silicon and logic gates,
+        Innovation accelerates.
+
+        ## Poetry Writing Guidelines
+        - Use vivid imagery and sensory details
+        - Maintain consistent rhythm and meter
+        - Employ rhyme schemes (ABAB, AABB, etc.)
+        - Create emotional resonance
+        - Use metaphors and similes effectively
+        - End with a memorable conclusion
+
+        ## Common Themes
+        - Nature and seasons
+        - Love and relationships
+        - Technology and progress
+        - Time and memory
+        - Dreams and aspirations
+        """)
+        return guidelines
 
     server.run()
