@@ -4,6 +4,7 @@ The repository contains many code examples which are unrelated to the Deep Resea
 ```bash
 uv run chat
 uv run mcpserver
+uv run mcpserver_stdio  # Based on FastMCP 2.0
 ```
 <br>
 <br>
