@@ -6,6 +6,7 @@ from unittest.mock import MagicMock
 
 import pytest
 from pytest_mock import MockerFixture
+from vcr.request import Request
 
 from deepresearcher2.config import Model, SearchEngine, config
 from deepresearcher2.evals.evals import EvalGame, EvalPlayer
@@ -123,10 +124,11 @@ def vcr_config() -> dict[str, object]:
     Returns:
         dict[str, object]: VCR configuration settings.
     """
-    def uri_spoofing(request):
-        if request.uri and 'host.docker.internal' in request.uri:
+
+    def uri_spoofing(request: Request) -> Request:
+        if request.uri and "host.docker.internal" in request.uri:
             # Replace host.docker.internal with localhost.
-            request.uri = request.uri.replace('host.docker.internal', 'localhost')
+            request.uri = request.uri.replace("host.docker.internal", "localhost")
         return request
 
     return {
