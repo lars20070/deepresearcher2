@@ -735,6 +735,8 @@ async def test_mcp_stdio_client() -> None:
     """
     Test the Pydantic MCP SSE client.
     https://ai.pydantic.dev/mcp/client/#sse-client
+    Requires local Deno installation.
+    https://github.com/denoland/deno/?tab=readme-ov-file#installation
 
     Note that unlike in the SSE mode, the MCP server starts up automatically.
     """
