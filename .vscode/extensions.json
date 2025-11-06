@@ -3,7 +3,7 @@
     // Python
     "nicohlr.pycharm",
     "ms-python.python",
-    "anysphere.pyright",
+    "anysphere.pyright", // language server pushed by Cursor
     "ms-python.debugpy",
     "charliermarsh.ruff",
     "njpwerner.autodocstring",
