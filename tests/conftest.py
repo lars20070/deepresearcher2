@@ -116,11 +116,22 @@ def vcr_config() -> dict[str, object]:
     """
     Configure VCR recordings for tests with @pytest.mark.vcr() decorator.
 
+    When on bare metal, our host is `localhost`. When in a dev container, our host is `host.docker.internal`.
+    `uri_spoofing` ensures that VCR cassettes are read or recorded as if the host was `localhost`.
+    See ./tests/cassettes/*/*.yaml.
+
     Returns:
         dict[str, object]: VCR configuration settings.
     """
+    def uri_spoofing(request):
+        if request.uri and 'host.docker.internal' in request.uri:
+            # Replace host.docker.internal with localhost.
+            request.uri = request.uri.replace('host.docker.internal', 'localhost')
+        return request
+
     return {
         "ignore_localhost": False,  # We want to record local SearXNG and Ollama requests.
         "filter_headers": ["authorization", "x-api-key"],
         "decode_compressed_response": True,
+        "before_record_request": uri_spoofing,
     }
