@@ -48,6 +48,7 @@
         // Python
         "nicohlr.pycharm",
         "ms-python.python",
+        "ms-python.vscode-pylance",
         "charliermarsh.ruff",
         "njpwerner.autodocstring",
         // yaml + toml
