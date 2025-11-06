@@ -13,6 +13,9 @@
     "ghcr.io/prulloac/devcontainer-features/ollama:1": {},
     "ghcr.io/devcontainers-extra/features/curl-apt-get:1": {},
     "ghcr.io/jsburckhardt/devcontainer-features/uv:1": {},
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "latest"
+    },
     "ghcr.io/devcontainers/features/common-utils:2": {
       "installLsof": true,
       "installBuildTools": true, // This option installs build-essential
