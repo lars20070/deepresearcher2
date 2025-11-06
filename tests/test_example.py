@@ -727,6 +727,7 @@ async def test_mcp_sse_client() -> None:
         assert "9,208 days" in result.output
 
 
+@pytest.mark.skip(reason="Requires `deno` to be installed locally.")
 @pytest.mark.paid
 @pytest.mark.example
 @pytest.mark.asyncio
