@@ -3,6 +3,8 @@
     // Python
     "nicohlr.pycharm",
     "ms-python.python",
+    "anysphere.pyright",
+    "ms-python.debugpy",
     "charliermarsh.ruff",
     "njpwerner.autodocstring",
     "ms-python.vscode-pylance",

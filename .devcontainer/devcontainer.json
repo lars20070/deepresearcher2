@@ -48,6 +48,8 @@
         // Python
         "nicohlr.pycharm",
         "ms-python.python",
+        "anysphere.pyright",
+        "ms-python.debugpy",
         "ms-python.vscode-pylance",
         "charliermarsh.ruff",
         "njpwerner.autodocstring",
