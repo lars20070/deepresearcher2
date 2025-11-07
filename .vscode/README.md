@@ -1,3 +1,6 @@
+## MCP servers
+Check that the MCP servers are running by opening a Copilot chat in `Agent` mode and clicking on the `Configure Tools ...` button in the lower right corner. In the appearing list you can toggle individual MCP servers and tools on or off.
+
 ## Context7 MCP server
 
 In VS Code, the Context7 MCP server needs to be invoked explicitly with `#context7` in the prompts.

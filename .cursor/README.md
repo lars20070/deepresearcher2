@@ -16,5 +16,6 @@ In Cursor, the Context7 MCP server is invoked automatically. Do NOT add `@contex
 
 ## GitHub MCP server
 
+In Cursor, the GitHub MCP server is invoked automatically. Do NOT add `@github` to the prompts.<br>
 Please fill in the `YOUR_GITHUB_PAT` placeholder in `mcp.json` for the [GitHub Personal Access Token](https://github.com/settings/tokens).<br>
 Note: Use the MCP server in `Agent` mode and NOT `Ask` mode.
