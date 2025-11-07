@@ -1,0 +1,45 @@
+---
+description: Pytest testing conventions and patterns
+globs: ["tests/**/*.py"]
+alwaysApply: false
+---
+
+## Testing with Pytest
+
+### Test Structure
+```python
+@pytest.mark.vcr()  # For tests using VCR cassettes
+@pytest.mark.asyncio  # For async tests
+async def test_feature() -> None:
+    """Test description."""
+    # Arrange
+    ...
+    
+    # Act
+    result = await some_function()
+    
+    # Assert
+    assert result is not None
+```
+
+### Running Tests
+```bash
+# Skip tests requiring paid APIs
+uv run pytest -m "not paid"
+
+# Run specific test
+uv run pytest tests/test_utils.py::test_fetch_content -v
+```
+
+### Markers
+- `@pytest.mark.paid` - Requires paid API keys (skipped in CI)
+- `@pytest.mark.ollama` - Requires local Ollama (skipped in CI)
+- `@pytest.mark.searxng` - Requires local SearXNG (skipped in CI)
+- `@pytest.mark.vcr()` - Uses VCR cassettes for HTTP recording
+
+### VCR Cassettes
+- Location: `tests/cassettes/`
+- Record mode: `'none'` (playback only by default)
+- Hostname normalization in `conftest.py` handles `host.docker.internal` → `localhost`
+- Deterministic tests: set `temperature=0.0` in `MODEL_SETTINGS`
+

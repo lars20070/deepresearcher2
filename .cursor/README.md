@@ -1,6 +1,7 @@
-## MDC Files
+## MDC Rules
 * `*.mdc` == metadata + content
 * Markdown file with a preamble. The preamble explain to Cursor when and for which files to apply the rules.
+* Rules should be as modular and specific as possible. For example, `python-testing.mdc` is only applied in the `tests/` folder.
 
 ## MCP servers
 Create a file `mcp.json` and fill in any placeholders.
