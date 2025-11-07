@@ -1,0 +1,13 @@
+---
+description: General project conventions and workflows
+globs: []
+alwaysApply: true
+---
+
+## Product Requirements
+
+See `prd.md` for the full product requirements document.
+
+## MCP Servers
+
+Use the Context7 MCP server to look up documentation when appropriate.
