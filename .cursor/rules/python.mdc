@@ -234,6 +234,22 @@ AGENT_NAME = Agent(
 )
 ```
 
+## Module and Package Structure
+
+### `__init__.py` Files
+`__init__.py` files should be kept minimal. Their primary purpose is to define a package and expose its public API.
+
+- **Good**: Use for imports, `__all__`, and package-level docstrings.
+  ```python
+  # src/deepresearcher2/mcp/__init__.py
+  """MCP server implementations for deepresearcher2."""
+  from .server import date_server
+
+  __all__ = ["date_server"]
+  ```
+
+- **Bad**: Avoid defining functions, classes, or complex logic directly in `__init__.py`. This can lead to import side effects and makes the code harder to navigate. Move such code into separate modules (e.g., `server.py`) and import them.
+
 ## Docstrings
 
 Use Google-style docstrings:
