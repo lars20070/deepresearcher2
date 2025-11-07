@@ -19,4 +19,4 @@ For checking that the Context7 MCP server is connected:
 
 ## GitHub MCP server
 
-Please fill in the `GITHUB_PAT` placeholder in `mcp.json` for the [GitHub Personal Access Token](https://github.com/settings/tokens).
+Please fill in the `YOUR_GITHUB_PAT` placeholder in `mcp.json` for the [GitHub Personal Access Token](https://github.com/settings/tokens).
