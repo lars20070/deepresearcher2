@@ -75,7 +75,7 @@ async def test_wolframscript_server() -> None:
         content = result.content[0]
         text = getattr(content, "text", str(content))
 
-        logger.debug(f"Script output:\n{text}")
+        logger.debug(f"Script output: {text}")
         assert len(text) > 0
 
 

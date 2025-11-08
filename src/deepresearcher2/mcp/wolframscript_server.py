@@ -91,7 +91,7 @@ def wolframscript_server() -> None:
         Returns:
             str: The result of the Wolfram Language script as a string.
         """
-        logger.info(f"Calling 'wolframscript' tool with script:\n{script}")
+        logger.info(f"Calling 'wolframscript' tool with script: {script}")
         try:
             # Write script to a temporary file
             with tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".wl") as tmp_file:
@@ -117,7 +117,7 @@ def wolframscript_server() -> None:
                     raise RuntimeError(error_msg)
 
                 output = stdout.decode().strip()
-                logger.debug(f"'wolframscript' command output:\n{output}")
+                logger.debug(f"Script output: {output}")
                 return output
             finally:
                 # Clean up the temporary file
