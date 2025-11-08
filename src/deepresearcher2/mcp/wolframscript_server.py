@@ -46,11 +46,44 @@ def wolframscript_server() -> None:
     server = fastmcp.FastMCP("WolframScript Server")
 
     @server.tool
-    async def wolframscript(script: str) -> str:
-        """Get the current local date and time by running the `wolframscript` command.
+    async def evaluate(script: str) -> str:
+        """Evaluate a Wolfram Language script by running the `wolframscript -print -file <script>` command.
 
         Documentation for Wolfram Language:
         https://context7.com/websites/reference_wolfram_language/llms.txt
+
+        IMPORTANT: The tool is returning the result of the last line executed in the script, and any expression printed explicitly with `Print[]`.
+
+        <example>
+          <script>
+            Integrate[x*Sin[x], x]
+          </script>
+          <output>
+            -(x*Cos[x]) + Sin[x]
+          </output>
+        </example>
+
+        <example>
+          <script>
+            r = D[Sin[x]^2, x]
+            Integrate[r^2, x]
+          </script>
+          <output>
+            x/2 - Sin[4*x]/8
+          </output>
+        </example>
+
+        <example>
+          <script>
+            r = D[Sin[x]^2, x]
+            Print[r]
+            Integrate[r^2, x]
+          </script>
+          <output>
+            2*Cos[x]*Sin[x]
+            x/2 - Sin[4*x]/8
+          </output>
+        </example>
 
         Arguments:
             script (str): Wolfram Language script to execute.
@@ -69,7 +102,8 @@ def wolframscript_server() -> None:
                 # Run the wolframscript command asynchronously
                 process = await asyncio.create_subprocess_exec(
                     "wolframscript",
-                    "-f",
+                    "-print",
+                    "-file",
                     tmp_file_path,
                     stdout=asyncio.subprocess.PIPE,  # Capture in pipe
                     stderr=asyncio.subprocess.PIPE,  # Capture in pipe
@@ -82,9 +116,9 @@ def wolframscript_server() -> None:
                     logger.error(error_msg)
                     raise RuntimeError(error_msg)
 
-                wolframscript_output = stdout.decode().strip()
-                logger.debug(f"'wolframscript' command output: {wolframscript_output}")
-                return wolframscript_output
+                output = stdout.decode().strip()
+                logger.debug(f"'wolframscript' command output:\n{output}")
+                return output
             finally:
                 # Clean up the temporary file
                 os.unlink(tmp_file_path)
@@ -98,18 +132,12 @@ def wolframscript_server() -> None:
 
     @server.tool
     async def version() -> str:
-        """Get the current local date and time by running the `wolframscript` command.
-
-        Documentation for Wolfram Language:
-        https://context7.com/websites/reference_wolfram_language/llms.txt
-
-        Arguments:
-            script (str): Wolfram Language script to execute.
+        """Get the version of the `wolframscript` tool.
 
         Returns:
-            str: The current local date and time as a string.
+            str: Version of the `wolframscript` tool.
         """
-        logger.info("Calling 'wolframscript' tool")
+        logger.info("Running 'wolframscript --version'")
         try:
             # Run the wolframscript command asynchronously
             process = await asyncio.create_subprocess_exec(
@@ -122,19 +150,19 @@ def wolframscript_server() -> None:
 
             if process.returncode != 0:
                 error = stderr.decode() if stderr else "Unknown error"
-                error_msg = f"'date' command failed: {error}"
+                error_msg = f"'wolframscript' command failed: {error}"
                 logger.error(error_msg)
                 raise RuntimeError(error_msg)
 
-            date_output = stdout.decode().strip()
-            logger.debug(f"'date' command output: {date_output}")
-            return date_output
+            version = stdout.decode().strip()
+            logger.debug(f"WolframScript version: {version}")
+            return version
         except FileNotFoundError:
-            error_msg = "'date' command not found. This tool requires a Unix-like system."
+            error_msg = "'wolframscript' command not found. This tool requires a Unix-like system."
             logger.error(error_msg)
             raise RuntimeError(error_msg) from None
         except Exception as e:
-            logger.error(f"Unexpected error getting date: {e}")
+            logger.error(f"Unexpected error getting version: {e}")
             raise
 
     server.run()

@@ -65,19 +65,18 @@ async def test_wolframscript_server() -> None:
         result = await session.list_tools()
         tools = result.tools
         assert len(tools) == 2
-        assert tools[0].name == "wolframscript"
+        assert tools[0].name == "evaluate"
         logger.debug(f"Available tools on wolframscript server: {[tool.name for tool in tools]}")
 
-        # Call the wolframscript tool
-        result = await session.call_tool("wolframscript", {"script": "Print[Integrate[x*Sin[x], x]]"})
+        # Call the evaluate tool
+        result = await session.call_tool("evaluate", {"script": "Integrate[x*Sin[x], x]"})
 
         # Extract text from result
         content = result.content[0]
         text = getattr(content, "text", str(content))
 
-        logger.debug(f"Date output: {text}")
+        logger.debug(f"Script output:\n{text}")
         assert len(text) > 0
-        # assert any(char.isdigit() for char in text), "Date output should contain digits"
 
 
 @pytest.mark.asyncio
@@ -111,6 +110,6 @@ async def test_wolframscript_server_version() -> None:
         content = result.content[0]
         text = getattr(content, "text", str(content))
 
-        logger.debug(f"Version output: {text}")
+        logger.debug(f"WolframScript version: {text}")
         assert len(text) > 0
-        # assert any(char.isdigit() for char in text), "Date output should contain digits"
+        assert any(char.isdigit() for char in text), "Version should contain digits"
