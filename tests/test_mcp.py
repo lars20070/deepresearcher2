@@ -44,6 +44,7 @@ async def test_date_server() -> None:
         assert any(char.isdigit() for char in text), "Date output should contain digits"
 
 
+@pytest.mark.wolframscript
 @pytest.mark.asyncio
 async def test_wolframscript_server() -> None:
     """
@@ -79,6 +80,7 @@ async def test_wolframscript_server() -> None:
         assert len(text) > 0
 
 
+@pytest.mark.wolframscript
 @pytest.mark.asyncio
 async def test_wolframscript_server_version() -> None:
     """

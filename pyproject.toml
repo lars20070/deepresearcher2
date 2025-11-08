@@ -113,6 +113,7 @@ markers = [
   "paid: tests requiring paid APIs",
   "ollama: tests requiring a local Ollama instance",
   "searxng: tests requiring a local SearXNG instance",
+  "wolframscript: tests requiring a local WolframScript installation",
   "example: examples which are not testing deepresearcher2 functionality",
 ]
 
