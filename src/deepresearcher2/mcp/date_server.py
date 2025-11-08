@@ -47,10 +47,10 @@ def date_server() -> None:
             # Run the date command asynchronously
             process = await asyncio.create_subprocess_exec(
                 "date",
-                stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.PIPE,
+                stdout=asyncio.subprocess.PIPE,  # Capture in pipe
+                stderr=asyncio.subprocess.PIPE,  # Capture in pipe
             )
-            stdout, stderr = await process.communicate()
+            stdout, stderr = await process.communicate()  # Read from both pipes
 
             if process.returncode != 0:
                 error = stderr.decode() if stderr else "Unknown error"

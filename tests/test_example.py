@@ -783,7 +783,7 @@ async def test_mcp_server() -> None:
     Test the MCP server functionality defined in deepresearcher2.examples.mcp_server()
 
     The MCP server wraps a Claude 3.5 agent which generates poems.
-    The MCP server ist started automatically.
+    The MCP server is started automatically.
     """
     server_params = StdioServerParameters(
         command="uv",

@@ -11,10 +11,10 @@ from deepresearcher2.logger import logger
 @pytest.mark.asyncio
 async def test_date_server() -> None:
     """
-    Test the date MCP server functionality using the FastMCP package.
+    Test the date MCP server functionality defined in deepresearcher2.mcp.date_server.date_server()
 
-    Tests the stdio transport for the date server that runs the `date` command
-    to return the current local date and time.
+    The MCP server wraps the 'date' command to return the current local date and time.
+    The MCP server is started automatically.
     """
     server_params = StdioServerParameters(
         command="uv",
@@ -25,14 +25,14 @@ async def test_date_server() -> None:
     async with stdio_client(server_params) as (read, write), ClientSession(read, write) as session:
         await session.initialize()
 
-        # List and verify available tools
+        # List all available tools
         result = await session.list_tools()
         tools = result.tools
         assert len(tools) == 1
         assert tools[0].name == "date"
         logger.debug(f"Available tools on date server: {[tool.name for tool in tools]}")
 
-        # Call the 'date' tool
+        # Call the date tool
         result = await session.call_tool("date", {})
 
         # Extract text from result
@@ -40,9 +40,5 @@ async def test_date_server() -> None:
         text = getattr(content, "text", str(content))
 
         logger.debug(f"Date output: {text}")
-
-        # Verify the output looks like a date string (should contain day/month/year or similar)
-        # The exact format depends on the system, but should be non-empty
         assert len(text) > 0
-        # Common date formats include numbers, spaces, colons, and letters
         assert any(char.isdigit() for char in text), "Date output should contain digits"
