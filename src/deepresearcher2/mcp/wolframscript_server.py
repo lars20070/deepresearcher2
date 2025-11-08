@@ -10,6 +10,45 @@ import fastmcp
 from deepresearcher2.logger import logger
 
 
+async def _run_wolframscript(args: list[str]) -> str:
+    """Run a wolframscript command and return the output.
+
+    Args:
+        args: List of arguments to pass to wolframscript (e.g., ["--version"] or ["-print", "-file", "/path/to/file"]).
+
+    Returns:
+        str: The decoded stdout output from the command.
+
+    Raises:
+        RuntimeError: If the command fails or is not found.
+    """
+    try:
+        # Run the wolframscript command asynchronously
+        process = await asyncio.create_subprocess_exec(
+            "wolframscript",
+            *args,
+            stdout=asyncio.subprocess.PIPE,  # Capture in pipe
+            stderr=asyncio.subprocess.PIPE,  # Capture in pipe
+        )
+        stdout, stderr = await process.communicate()  # Read from both pipes
+
+        if process.returncode != 0:
+            error = stderr.decode() if stderr else "Unknown error"
+            error_msg = f"'wolframscript' command failed: {error}"
+            logger.error(error_msg)
+            raise RuntimeError(error_msg)
+
+        output = stdout.decode().strip()
+        return output
+    except FileNotFoundError:
+        error_msg = "'wolframscript' command not found. This tool requires a Wolfram Engine installation. https://www.wolfram.com/engine/"
+        logger.error(error_msg)
+        raise RuntimeError(error_msg) from None
+    except Exception as e:
+        logger.error(f"Unexpected error running wolframscript: {e}")
+        raise
+
+
 def wolframscript_server() -> None:
     """
     Start an MCP server that wraps WolframScript.
@@ -92,43 +131,18 @@ def wolframscript_server() -> None:
             str: The result of the Wolfram Language script as a string.
         """
         logger.info(f"Calling 'wolframscript' tool with script: {script}")
+        # Write script to a temporary file
+        with tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".wl") as tmp_file:
+            tmp_file.write(script)
+            tmp_file_path = tmp_file.name
+
         try:
-            # Write script to a temporary file
-            with tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".wl") as tmp_file:
-                tmp_file.write(script)
-                tmp_file_path = tmp_file.name
-
-            try:
-                # Run the wolframscript command asynchronously
-                process = await asyncio.create_subprocess_exec(
-                    "wolframscript",
-                    "-print",
-                    "-file",
-                    tmp_file_path,
-                    stdout=asyncio.subprocess.PIPE,  # Capture in pipe
-                    stderr=asyncio.subprocess.PIPE,  # Capture in pipe
-                )
-                stdout, stderr = await process.communicate()  # Read from both pipes
-
-                if process.returncode != 0:
-                    error = stderr.decode() if stderr else "Unknown error"
-                    error_msg = f"'wolframscript' command failed: {error}"
-                    logger.error(error_msg)
-                    raise RuntimeError(error_msg)
-
-                output = stdout.decode().strip()
-                logger.debug(f"Script output: {output}")
-                return output
-            finally:
-                # Clean up the temporary file
-                os.unlink(tmp_file_path)
-        except FileNotFoundError:
-            error_msg = "'wolframscript' command not found. This tool requires a Unix-like system."
-            logger.error(error_msg)
-            raise RuntimeError(error_msg) from None
-        except Exception as e:
-            logger.error(f"Unexpected error getting date: {e}")
-            raise
+            output = await _run_wolframscript(["-print", "-file", tmp_file_path])
+            logger.debug(f"Script output: {output}")
+            return output
+        finally:
+            # Clean up the temporary file
+            os.unlink(tmp_file_path)
 
     @server.tool
     async def version() -> str:
@@ -138,31 +152,8 @@ def wolframscript_server() -> None:
             str: Version of the `wolframscript` tool.
         """
         logger.info("Running 'wolframscript --version'")
-        try:
-            # Run the wolframscript command asynchronously
-            process = await asyncio.create_subprocess_exec(
-                "wolframscript",
-                "--version",
-                stdout=asyncio.subprocess.PIPE,  # Capture in pipe
-                stderr=asyncio.subprocess.PIPE,  # Capture in pipe
-            )
-            stdout, stderr = await process.communicate()  # Read from both pipes
-
-            if process.returncode != 0:
-                error = stderr.decode() if stderr else "Unknown error"
-                error_msg = f"'wolframscript' command failed: {error}"
-                logger.error(error_msg)
-                raise RuntimeError(error_msg)
-
-            version = stdout.decode().strip()
-            logger.debug(f"WolframScript version: {version}")
-            return version
-        except FileNotFoundError:
-            error_msg = "'wolframscript' command not found. This tool requires a Unix-like system."
-            logger.error(error_msg)
-            raise RuntimeError(error_msg) from None
-        except Exception as e:
-            logger.error(f"Unexpected error getting version: {e}")
-            raise
+        version = await _run_wolframscript(["--version"])
+        logger.debug(f"WolframScript version: {version}")
+        return version
 
     server.run()
