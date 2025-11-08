@@ -47,9 +47,9 @@ async def test_date_server() -> None:
 @pytest.mark.asyncio
 async def test_wolframscript_server() -> None:
     """
-    Test the date MCP server functionality defined in deepresearcher2.mcp.date_server.date_server()
+    Test the wolframscript MCP server functionality defined in deepresearcher2.mcp.wolframscript_server.wolframscript_server()
 
-    The MCP server wraps the 'date' command to return the current local date and time.
+    The MCP server wraps the 'wolframscript' command to return the current local date and time.
     The MCP server is started automatically.
     """
     server_params = StdioServerParameters(

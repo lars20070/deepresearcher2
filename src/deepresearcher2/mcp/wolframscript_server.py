@@ -10,12 +10,12 @@ from deepresearcher2.logger import logger
 
 def wolframscript_server() -> None:
     """
-    Start an MCP server that wraps Mathematica.
+    Start an MCP server that wraps WolframScript.
 
-    The server exposes a tool that runs the `date` command on the terminal
+    The server exposes a tool that runs the `wolframscript` command on the terminal
     to return the current local date and time.
 
-    The server is tested in test_date_server().
+    The server is tested in test_wolframscript_server().
     In order to test the server manually in Claude Desktop, please extend the config as below.
     ~/Library/Application Support/Claude/claude_desktop_config.json
 
@@ -33,11 +33,14 @@ def wolframscript_server() -> None:
         }
     }
     """
-    server = fastmcp.FastMCP("Mathematica Server")
+    server = fastmcp.FastMCP("WolframScript Server")
 
     @server.tool
     async def wolframscript() -> str:
         """Get the current local date and time by running the `wolframscript` command.
+
+        Documentation for WolframScript:
+        https://context7.com/websites/reference_wolfram_language/llms.txt
 
         Returns:
             str: The current local date and time as a string.
