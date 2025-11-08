@@ -16,7 +16,7 @@ def date_server() -> None:
     to return the current local date and time.
 
     The server is tested in test_date_server().
-    In order to use the server manually in Claude Desktop, add to config:
+    In order to test the server manually in Claude Desktop, please extend the config as below.
     ~/Library/Application Support/Claude/claude_desktop_config.json
 
     {
@@ -25,7 +25,7 @@ def date_server() -> None:
                 "command": "uv",
                 "args": [
                     "--directory",
-                    "/path/to/deepresearcher2",
+                    "/Users/lars/Code/deepresearcher2",
                     "run",
                     "date_server"
                 ]
@@ -36,11 +36,11 @@ def date_server() -> None:
     server = fastmcp.FastMCP("Date Server")
 
     @server.tool
-    async def get_local_date() -> str:
+    async def date() -> str:
         """Get the current local date and time by running the `date` command.
 
         Returns:
-            The current local date and time as a string.
+            str: The current local date and time as a string.
         """
         logger.info("Calling 'date' tool")
         try:
@@ -53,15 +53,16 @@ def date_server() -> None:
             stdout, stderr = await process.communicate()
 
             if process.returncode != 0:
-                error_msg = stderr.decode() if stderr else "Unknown error"
-                logger.error(f"Date command failed: {error_msg}")
-                raise RuntimeError(f"Failed to get date: {error_msg}")
+                error = stderr.decode() if stderr else "Unknown error"
+                error_msg = f"'date' command failed: {error}"
+                logger.error(error_msg)
+                raise RuntimeError(error_msg)
 
             date_output = stdout.decode().strip()
-            logger.debug(f"Date command output: {date_output}")
+            logger.debug(f"'date' command output: {date_output}")
             return date_output
         except FileNotFoundError:
-            error_msg = "date command not found. This tool requires a Unix-like system."
+            error_msg = "'date' command not found. This tool requires a Unix-like system."
             logger.error(error_msg)
             raise RuntimeError(error_msg) from None
         except Exception as e:

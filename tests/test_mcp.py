@@ -29,11 +29,11 @@ async def test_date_server() -> None:
         result = await session.list_tools()
         tools = result.tools
         assert len(tools) == 1
-        assert tools[0].name == "get_local_date"
+        assert tools[0].name == "date"
         logger.debug(f"Available tools on date server: {[tool.name for tool in tools]}")
 
-        # Call the 'get_local_date' tool
-        result = await session.call_tool("get_local_date", {})
+        # Call the 'date' tool
+        result = await session.call_tool("date", {})
 
         # Extract text from result
         content = result.content[0]
