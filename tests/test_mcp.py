@@ -42,3 +42,39 @@ async def test_date_server() -> None:
         logger.debug(f"Date output: {text}")
         assert len(text) > 0
         assert any(char.isdigit() for char in text), "Date output should contain digits"
+
+
+@pytest.mark.asyncio
+async def test_wolframscript_server() -> None:
+    """
+    Test the date MCP server functionality defined in deepresearcher2.mcp.date_server.date_server()
+
+    The MCP server wraps the 'date' command to return the current local date and time.
+    The MCP server is started automatically.
+    """
+    server_params = StdioServerParameters(
+        command="uv",
+        args=["run", "wolframscript_server"],
+        env=dict(os.environ),
+    )
+
+    async with stdio_client(server_params) as (read, write), ClientSession(read, write) as session:
+        await session.initialize()
+
+        # List all available tools
+        result = await session.list_tools()
+        tools = result.tools
+        assert len(tools) == 1
+        assert tools[0].name == "wolframscript"
+        logger.debug(f"Available tools on wolframscript server: {[tool.name for tool in tools]}")
+
+        # Call the wolframscript tool
+        result = await session.call_tool("wolframscript", {})
+
+        # Extract text from result
+        content = result.content[0]
+        text = getattr(content, "text", str(content))
+
+        logger.debug(f"Date output: {text}")
+        assert len(text) > 0
+        assert any(char.isdigit() for char in text), "Date output should contain digits"
