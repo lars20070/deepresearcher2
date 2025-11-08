@@ -6,6 +6,12 @@ alwaysApply: false
 
 ## Testing with Pytest
 
+## Testing Principles
+
+- **Reuse, Don't Replicate**: Tests should reuse as much functional code as possible. Avoid reimplementing application logic within a test. Import and call the actual functions and classes you intend to test.
+- **Mock Fundamental Processes**: When isolating code for a unit test, mock the most fundamental external interaction. For example, mock the `asyncio.create_subprocess_exec` call for a command-line tool, not a higher-level function that wraps it. This ensures you are testing your application's error handling and response parsing logic.
+- **Cover All Failure Modes**: Every test suite should cover not just the "happy path" but also all conceivable failure modes. Use `pytest.raises` to verify that your code correctly handles non-zero return codes, missing commands (`FileNotFoundError`), network errors, and other exceptional conditions.
+
 ### Test Structure
 ```python
 @pytest.mark.vcr()  # For tests using VCR cassettes
