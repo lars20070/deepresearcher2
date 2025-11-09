@@ -1,0 +1,737 @@
+interactions:
+- request:
+    body: !!binary |
+      H4sIAKVCEGkC/41UTWzcRBTebUrZvG3+ZhvYECEcl0CIgrG9v45UUIQokqX2EFqpVRVZY3t248Ye
+      u55xwhLlBlw5cAPEBSFBDyAhcQAJceIEEncEEpeqghOHCnFkZtdOuksQ+DR+3/fevPe9z4YHVfh2
+      CiyoMZLuBx7RAso4pvLgIxUUv2VYbruDex3DaHaaHctrNw3LM1qtdrdjmjqo8BgnIYkITwca8/e0
+      ENN+hvsEVeBcMuC7MYVVQOMciiOC5mAmTgg9RmAFFsdp+yRlQUxlJUNrdDRdUM4XjQ5rLMBcRvdo
+      fECdPA41qCZp7BHGtETMcLZ+/+spkXehCKYZ5UGU50/Do17e5EV4fJLy0P0NzTC1LlyH5UmST5iX
+      BgmXxDY0R0RlLcIB3VBsTBWjqZi62dpQzMZmo73Z6j6n3HpZqqQYlmZobWUHLsFcMVZx5zqsYavX
+      a5Oea5IGsXTiNlqm77p+02ybZrfZccWr2dM9A31egUUx9cDHoiXveRwgoZeuGS306RmYL7/Xf/NG
+      5f359cr+F9/8evcdVPnl3vJHq3+9fVWtfHBm7YevPlsy16fFxihXxFB62ep+eXmtenm/vlUc7GWA
+      KPZJ6AxVm4HqnQNCTa212TFd+0mAYbZTrPW161eubG3fdLZefeXqNftpWBCogwNtyNJOZ6lQDeN+
+      L0iJFrE+qsHCGC47sy/CQsFhCaYOHyQEzcJ54SI/oH1HBu0XYKkgFfEEp7I94QYE8/rE80bprXKp
+      XCqh3x45Tavau7M/b1/6/kW18uFP9R8f2H/urM97u5grDykgJLvxuzOSrDjYT8FiPrZweYqlP0aj
+      n4OzsoC9BDM5gQ0YJ5G0mfwgcGCvwoUcSsmdjDCuDdX/p/Cz0jYk1bDvp8KUqArTYezhcDdm3EZQ
+      zeEkTjmaqt+9aX9Xhvpok3llKY7oigvboU/K8HH5UO1l1JPtOjyOQ6ZuKrd2NhTVzYKQBxPBOONJ
+      xh1ZUYRUTl7n6kk4dm8TjwuAZmF4Eh6rgMMwPnBkojOCBcDTjBxDQSRsc4L1cMjIkb0HtWLLt5lo
+      lXm7JMLoGmwfqtIWspv8elFJfLNiBzwg8tpD9d8EGIIT2UdHR/az8MTEOsS6hkvNUvEPWSkNnz9e
+      +n8GXRl3urDkpJ/+08OWp4tfgOe5FiaG1TDtZ47NJmyQxJSRUx1TeP1vWzqp1/cFAAA=
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Length:
+      - '905'
+      Content-Type:
+      - application/x-protobuf
+      User-Agent:
+      - OTel-OTLP-Exporter-Python/1.37.0
+    method: POST
+    uri: https://logfire-eu.pydantic.dev/v1/traces
+  response:
+    body:
+      string: ''
+    headers:
+      CF-RAY:
+      - 99bb982e2ae2e864-FRA
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Date:
+      - Sun, 09 Nov 2025 07:28:38 GMT
+      Nel:
+      - '{"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}'
+      Report-To:
+      - '{"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=E83LzLbI5HZjMXBBlaLszjaTkCsJSfjflwiD1Ma2n4SPyo5Ssrdn0wr5m95zNu0f5dF734%2FG1Qt1L11rdyK3IEJlnzGKH6E6UtUcstq44Zw5aY74w7w%3D"}]}'
+      Server:
+      - cloudflare
+      cf-cache-status:
+      - DYNAMIC
+      vary:
+      - origin, access-control-request-method, access-control-request-headers
+      via:
+      - 1.1 google
+    status:
+      code: 200
+      message: OK
+- request:
+    body: !!binary |
+      H4sIAL9CEGkC/82STWgTQRTHs01t4os1zfYr8QO3FaWVOu5ukk1SLYQKHgoGVCpFqXWyO0mXJLPb
+      /WgJpVj8PHjpQUEK3ooUEfGsoJ69iAgieOilaL0I3sSTu5uktKW0N3UOw5uZ37z5v/cfWAnBGz9k
+      oN0kxrQqE6RS08LUDRS2FzglKWTyUgoXUoKQSCVSGVlKCBlZSCaldEoUeeiFLouUSYVYRhWZSgmV
+      MS3auEjYILToVWtSo3AM2M0MxRXChqFV0wldP4Ee6NyMTRPDVDXqZhJQPIV4B9nXEOrliEDYpiWq
+      zdCJ+j60Q0g3NJmYJtKdGpqj3176nXsdjU3DppZaqd/fCwG5LvIodG9FNrwfR4KI0jAKB7dCCjFl
+      Q9UtF5QgUQO5vgpW6QA3giknJDiRF5MDnBgfjEuDyXQ/d/Ws2yVOyCABSdw4DEG4UVbjzRPQhzOF
+      gkQKeZHESYYn+XhSVPJ5JSFKophOpPLOUizwssAuBqHTqbqqYEeSfBKrrNMvHglJdj4IsSKhE1hF
+      cll1mo0srUQosk3XoVPnCTZtg5gctSt5YnBagVOpblscpgqn2ZYbehdMzjaJciAw663mLi4H4L0f
+      YtBaT25WTYtU3Ea5lmIVjkBn/cjZMLDbnVrHW6BZnsSW8yc66oBBpmxiWqiiKaTMtkJoaoZQESUH
+      U2Iejq/ncWTqGjXJ9twhiNS5WoFWVSdsAPZ45UQ+r17K+c9NR2NrpTvNESfoafLVRr83P3uQ5fcP
+      32WC7yLsPMP4/ulgRvws47uCItGuC57q3uCTR6Q7+HPs44k2ZrF48+uPhcCv/uffH99YGRNe1dU6
+      /PKn0Bx4fOwt06OcXip7/K0vr3NrTycnlsavjz8UdH+Nx978YjaresH8/Sx8+K8cPbydo64c71tG
+      xrov72hp9lqWjw7fY4K3fzf9FU93fqHh6cLq6O6eDvnWPW0LhHf39Ixvo6e+XMPTXLaN+QNXMdVE
+      4gUAAA==
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Length:
+      - '745'
+      Content-Type:
+      - application/x-protobuf
+      User-Agent:
+      - OTel-OTLP-Exporter-Python/1.37.0
+    method: POST
+    uri: https://logfire-eu.pydantic.dev/v1/metrics
+  response:
+    body:
+      string: "\n\0"
+    headers:
+      CF-RAY:
+      - 99bb98cb49539201-FRA
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '2'
+      Date:
+      - Sun, 09 Nov 2025 07:29:03 GMT
+      Nel:
+      - '{"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}'
+      Report-To:
+      - '{"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=Av27hPb2KYoGflR6P6Bo8ftm0UqVmUOGHidkuzEI1nJ3dtiSEP1R%2BsPVWhkGdjmB9%2BdYr4whrFikfA7W5a3H3PVRDFz77tYtN4R5oq6famUCc27%2B8Eo%3D"}]}'
+      Server:
+      - cloudflare
+      cf-cache-status:
+      - DYNAMIC
+      vary:
+      - origin, access-control-request-method, access-control-request-headers
+      via:
+      - 1.1 google
+    status:
+      code: 200
+      message: OK
+- request:
+    body: "{\"messages\":[{\"role\":\"system\",\"content\":\"\\nYou are a search results
+      summarizer. Your task is to generate a comprehensive summary from web search
+      results that is relevant to the user's topic.\\n\\n<INPUT_FORMAT>\\nYou will
+      receive web search results in XML with `<WebSearchResult>` tags containing:\\n-
+      `<title>`: Descriptive title\\n- `<url>`: Source URL\\n- `<summary>`: Brief
+      summary \\n- `<content>`: Raw content\\n</INPUT_FORMAT>\\n\\n<REQUIREMENTS>\\n1.
+      Compile all topic-relevant information from search results\\n2. Create a summary
+      at least 1000 words long without preamble, XML tags, or Markdown\\n3. Ensure
+      coherent information flow\\n4. Keep content relevant to the user topic\\n</REQUIREMENTS>\\n\\n<OUTPUT_FORMAT>\\nRespond
+      with a text object.\\n</OUTPUT_FORMAT>\\n\\n<EXAMPLE_OUTPUT>\\n\\\"Petrichor
+      refers to the earthy scent produced when rain falls on dry soil or ground, often
+      experienced as a pleasant smell.\\nIt is characterized by its distinct aroma,
+      which is typically associated with the smell of rain on dry earth.\\\"\\n</EXAMPLE_OUTPUT>\\n\\nProvide
+      your response in text format.\"},{\"role\":\"system\",\"content\":\"List of
+      web search results:\\n<search_results>\\n  <WebSearchResult>\\n    <title>PETRICHOR
+      Definition &amp; Meaning - Merriam-Webster</title>\\n    <url>https://www.merriam-webster.com/dictionary/petrichor</url>\\n
+      \   <summary>null</summary>\\n    <content>Est. 1828\\nEst. 1828\\nEst. 1828\\nDictionary
+      Definition Definition Example Sentences Word History Rhymes Entries Near Related
+      Articles Cite this Entry Citation Share Kids Definition Kids Show more Show
+      more Citation Share Kids Save Word To save this word, you'll need to log in.
+      Log In petrichor noun pe\xB7\u200Btri\xB7\u200Bchor \u02C8pe-tr\u0259-\u02CCk\u022Fr
+      : a distinctive, earthy, usually pleasant odor that is associated with rainfall
+      especially when following a warm, dry period and that arises from a combination
+      of volatile plant oils and geosmin released from the soil into the air and by
+      ozone carried by downdrafts Australian scientists first documented the process
+      of petrichor formation in 1964 \u2026 \u2014 Tim Logan The intensity of the
+      petrichor smell can vary with the type of soil and how heavily the rain is falling.
+      \u2014 John Boyer Examples of petrichor in a Sentence Recent Examples on the
+      Web Examples are automatically compiled from online sources to\\nshow current
+      usage. Read More Opinions expressed in the examples do not represent those of
+      Merriam-Webster or its editors. Send us feedback . Gusto Hist\xF3rico 'Eusebio
+      Santos' mezcal opens with tropical aromas of watermelon, sour cherry, and peach,
+      layered with slate and petrichor . \u2014 Lauren Mowery, Forbes , 28 Feb. 2025
+      On the other hand, its earthy petrichor and oud notes will literally transport
+      you to Count Orlok\u2019s castle on a rainy night. \u2014 Kleigh Balugo, StyleCaster
+      , 22 Jan. 2025 This is called the petrichor effect, which occurs when the smell
+      of rainfall triggers memories or emotions. \u2014 Alyssa Hui, Verywell Health
+      , 19 Apr. 2024 Australian scientists first documented the process of petrichor
+      formation in 1964 and scientists from the Massachusetts Institute of Technology
+      further studied the mechanics of the process in the 2010s. \u2014 Tim Logan,
+      Discover Magazine , 28 Aug. 2018 Scientists have named the aroma petrichor .
+      \u2014 Roger Naylor, The Arizona Republic , 16 Mar. 2023 Could Titan have its
+      own petrichor too? \u2014 Marina Koren, The Atlantic , 14 June 2021 Rain on
+      pavement smells different from rain on trees, but the collective term for the
+      resulting odor is petrichor . \u2014 Avery Hurt, Discover Magazine , 24 Feb.
+      2021 The wine is packed with aromas and flavors of lime zest, blood orange slices,
+      Bees Knees Salted Honey and petrichor , a fragrance that reminds many of a cross
+      between ozone and the wet concrete surrounding a swimming pool in the summertime.
+      \u2014 Michael Alberty | For The Oregonian/oregonlive, oregonlive , 15 Feb.
+      2022 See More Word History Etymology petr(o)- + ichor Note: The word was introduced
+      by the Australian mineral chemists Isabel Joy Bear (born 1927) and Richard Grenfell
+      Thomas (\u20201974) in \\\"Nature of argillaceous odour,\\\" Nature, vol. 201,
+      No. 4923 (March 7, 1964), pp. 993-95. According to the authors, \\\"The diverse
+      nature of the host material has led us to propose the name 'petrichor' for this
+      apparently unique odour which can be regarded as an 'ichor' or 'tenuous essence'
+      derived from rock or stone.\\\" First Known Use 1964, in the meaning defined
+      above Time Traveler The first known use of petrichor was\\nin 1964 See more
+      words from the same year Rhymes for petrichor bicker dicker flicker kicker liquor
+      picker quicker ricker sicker slicker snicker sticker See All Rhymes for petrichor
+      Browse Nearby Words petri- petrichor Petricola See all Nearby Words Articles
+      Related to petrichor We Added New Words to the Dictionary in... More than 640
+      new words, from 'bioabsorbable' to 'bottle episode' Words We're Watching: 'Petrichor'
+      Aka, the scent released when rain hits dry earth Petrichor, Cromulent, and Other
+      Words... The internet loves these words\u2014whether they're in the dictionary
+      or not Cite this Entry Style MLA Chicago APA Merriam-Webster \u201CPetrichor.\u201D
+      Merriam-Webster.com Dictionary , Merriam-Webster, https://www.merriam-webster.com/dictionary/petrichor.
+      Accessed 28 Apr. 2025. Copy Citation Share Kids Definition petrichor noun pe\xB7\u200Btri\xB7\u200Bchor
+      \u02C8pe-tr\u0259-\u02CCk\u022Fr : an earthy odor that is associated with rainfall
+      especially after a warm and dry period Last Updated: 6 Mar 2025 - Updated example
+      sentences Love words? Need even more definitions? Subscribe to America's largest
+      dictionary and get thousands more definitions and advanced search\u2014ad free!
+      Merriam-Webster unabridged More from Merriam-Webster Can you solve 4 words at
+      once? Play Play Can you solve 4 words at once? Play Play Word of the Day alacrity
+      See Definitions and Examples \xBB Get Word of the Day daily email! Popular in
+      Grammar &amp; Usage See More How to Use Em Dashes (\u2014), En Dashes (\u2013)
+      , and Hyphens (-) Words in Disguise: Do these seem familiar? The Difference
+      Between 'i.e.' and 'e.g.' Why is '-ed' sometimes pronounced at the end of a
+      word? Democracy or Republic: What's the difference? See More Popular in Wordplay
+      See More Flower Etymologies For Your Spring Garden More Words with Remarkable
+      Origins Terroir, Oenophile, &amp; Magnum: Ten Words About Wine 8 Words for Lesser-Known
+      Musical Instruments 10 Words from Taylor Swift Songs (Merriam's Version) See
+      More Popular See More How to Use Em Dashes (\u2014), En Dashes (\u2013) , and
+      Hyphens (-) Flower Etymologies For Your Spring Garden More Words with Remarkable
+      Origins See More Games &amp; Quizzes See All Quordle Can you solve 4 words at
+      once? Play Blossom Word Game Pick the best words! Play Missing Letter A daily
+      crossword with a twist Play Quiz: Spot the Anagram! Scramble these words to
+      find new words with the e... Take the quiz See All\\nDictionary Definition Definition
+      Example Sentences Word History Rhymes Entries Near Related Articles Cite this
+      Entry Citation Share Kids Definition Kids Show more Show more Citation Share
+      Kids Save Word To save this word, you'll need to log in. Log In petrichor noun
+      pe\xB7\u200Btri\xB7\u200Bchor \u02C8pe-tr\u0259-\u02CCk\u022Fr : a distinctive,
+      earthy, usually pleasant odor that is associated with rainfall especially when
+      following a warm, dry period and that arises from a combination of volatile
+      plant oils and geosmin released from the soil into the air and by ozone carried
+      by downdrafts Australian scientists first documented the process of petrichor
+      formation in 1964 \u2026 \u2014 Tim Logan The intensity of the petrichor smell
+      can vary with the type of soil and how heavily the rain is falling. \u2014 John
+      Boyer Examples of petrichor in a Sentence Recent Examples on the Web Examples
+      are automatically compiled from online sources to\\nshow current usage. Read
+      More Opinions expressed in the examples do not represent those of Merriam-Webster
+      or its editors. Send us feedback . Gusto Hist\xF3rico 'Eusebio Santos' mezcal
+      opens with tropical aromas of watermelon, sour cherry, and peach, layered with
+      slate and petrichor . \u2014 Lauren Mowery, Forbes , 28 Feb. 2025 On the other
+      hand, its earthy petrichor and oud notes will literally transport you to Count
+      Orlok\u2019s castle on a rainy night. \u2014 Kleigh Balugo, StyleCaster , 22
+      Jan. 2025 This is called the petrichor effect, which occurs when the smell of
+      rainfall triggers memories or emotions. \u2014 Alyssa Hui, Verywell Health ,
+      19 Apr. 2024 Australian scientists first documented the process of petrichor
+      formation in 1964 and scientists from the Massachusetts Institute of Technology
+      further studied the mechanics of the process in the 2010s. \u2014 Tim Logan,
+      Discover Magazine , 28 Aug. 2018 Scientists have named the aroma petrichor .
+      \u2014 Roger Naylor, The Arizona Republic , 16 Mar. 2023 Could Titan have its
+      own petrichor too? \u2014 Marina Koren, The Atlantic , 14 June 2021 Rain on
+      pavement smells different from rain on trees, but the collective term for the
+      resulting odor is petrichor . \u2014 Avery Hurt, Discover Magazine , 24 Feb.
+      2021 The wine is packed with aromas and flavors of lime zest, blood orange slices,
+      Bees Knees Salted Honey and petrichor , a fragrance that reminds many of a cross
+      between ozone and the wet concrete surrounding a swimming pool in the summertime.
+      \u2014 Michael Alberty | For The Oregonian/oregonlive, oregonlive , 15 Feb.
+      2022 See More Word History Etymology petr(o)- + ichor Note: The word was introduced
+      by the Australian mineral chemists Isabel Joy Bear (born 1927) and Richard Grenfell
+      Thomas (\u20201974) in \\\"Nature of argillaceous odour,\\\" Nature, vol. 201,
+      No. 4923 (March 7, 1964), pp. 993-95. According to the authors, \\\"The diverse
+      nature of the host material has led us to propose the name 'petrichor' for this
+      apparently unique odour which can be regarded as an 'ichor' or 'tenuous essence'
+      derived from rock or stone.\\\" First Known Use 1964, in the meaning defined
+      above Time Traveler The first known use of petrichor was\\nin 1964 See more
+      words from the same year Rhymes for petrichor bicker dicker flicker kicker liquor
+      picker quicker ricker sicker slicker snicker sticker See All Rhymes for petrichor
+      Browse Nearby Words petri- petrichor Petricola See all Nearby Words Articles
+      Related to petrichor We Added New Words to the Dictionary in... More than 640
+      new words, from 'bioabsorbable' to 'bottle episode' Words We're Watching: 'Petrichor'
+      Aka, the scent released when rain hits dry earth Petrichor, Cromulent, and Other
+      Words... The internet loves these words\u2014whether they're in the dictionary
+      or not Cite this Entry Style MLA Chicago APA Merriam-Webster \u201CPetrichor.\u201D
+      Merriam-Webster.com Dictionary , Merriam-Webster, https://www.merriam-webster.com/dictionary/petrichor.
+      Accessed 28 Apr. 2025. Copy Citation Share Kids Definition petrichor noun pe\xB7\u200Btri\xB7\u200Bchor
+      \u02C8pe-tr\u0259-\u02CCk\u022Fr : an earthy odor that is associated with rainfall
+      especially after a warm and dry period Last Updated: 6 Mar 2025 - Updated example
+      sentences Love words? Need even more definitions? Subscribe to America's largest
+      dictionary and get thousands more definitions and advanced search\u2014ad free!
+      Merriam-Webster unabridged More from Merriam-Webster Can you solve 4 words at
+      once? Play Play Can you solve 4 words at once? Play Play Word of the Day alacrity
+      See Definitions and Examples \xBB Get Word of the Day daily email! Popular in
+      Grammar &amp; Usage See More How to Use Em Dashes (\u2014), En Dashes (\u2013)
+      , and Hyphens (-) Words in Disguise: Do these seem familiar? The Difference
+      Between 'i.e.' and 'e.g.' Why is '-ed' sometimes pronounced at the end of a
+      word? Democracy or Republic: What's the difference? See More Popular in Wordplay
+      See More Flower Etymologies For Your Spring Garden More Words with Remarkable
+      Origins Terroir, Oenophile, &amp; Magnum: Ten Words About Wine 8 Words for Lesser-Known
+      Musical Instruments 10 Words from Taylor Swift Songs (Merriam's Version) See
+      More Popular See More How to Use Em Dashes (\u2014), En Dashes (\u2013) , and
+      Hyphens (-) Flower Etymologies For Your Spring Garden More Words with Remarkable
+      Origins See More Games &amp; Quizzes See All Quordle Can you solve 4 words at
+      once? Play Blossom Word Game Pick the best words! Play Missing Letter A daily
+      crossword with a twist Play Quiz: Spot the Anagram! Scramble these words to
+      find new words with the e... Take the quiz See All\\nDictionary Definition Definition
+      Example Sentences Word History Rhymes Entries Near Related Articles Cite this
+      Entry Citation Share Kids Definition Kids Show more Show more Citation Share
+      Kids Save Word To save this word, you'll need to log in. Log In petrichor noun
+      pe\xB7\u200Btri\xB7\u200Bchor \u02C8pe-tr\u0259-\u02CCk\u022Fr : a distinctive,
+      earthy, usually pleasant odor that is associated with rainfall especially when
+      following a warm, dry period and that arises from a combination of volatile
+      plant oils and geosmin released from the soil into the air and by ozone carried
+      by downdrafts Australian scientists first documented the process of petrichor
+      formation in 1964 \u2026 \u2014 Tim Logan The intensity of the petrichor smell
+      can vary with the type of soil and how heavily the rain is falling. \u2014 John
+      Boyer Examples of petrichor in a Sentence Recent Examples on the Web Examples
+      are automatically compiled from online sources to\\nshow current usage. Read
+      More Opinions expressed in the examples do not represent those of Merriam-Webster
+      or its editors. Send us feedback . Gusto Hist\xF3rico 'Eusebio Santos' mezcal
+      opens with tropical aromas of watermelon, sour cherry, and peach, layered with
+      slate and petrichor . \u2014 Lau</content>\\n  </WebSearchResult>\\n  <WebSearchResult>\\n
+      \   <title>Petrichor - Wikipedia</title>\\n    <url>https://en.wikipedia.org/wiki/Petrichor</url>\\n
+      \   <summary>null</summary>\\n    <content>\\nFrom Wikipedia, the free encyclopedia
+      Earthy smell when rain falls on dry soil For other uses, see Petrichor (disambiguation)
+      . \\\"Scent of rain\\\" and \\\"Smell of rain\\\" redirect here. For other uses,
+      see Scent of Rain (disambiguation) and Smell of Rain (disambiguation) . Soil
+      and water being splashed by a raindrop Petrichor ( / \u02C8 p \u025B t r \u026A
+      k \u0254\u02D0r / PET -rih-kor ) [ 1 ] is the earthy scent produced when rain
+      falls on dry soil . The word was coined by Isabel Joy Bear and Richard Grenfell
+      Thomas [ 2 ] from Ancient Greek \u03C0\u03AD\u03C4\u03C1\u03B1 ( p\xE9tra )
+      ' rock ' or \u03C0\u03AD\u03C4\u03C1\u03BF\u03C2 ( p\xE9tros ) ' stone ' and
+      \u1F30\u03C7\u03CE\u03C1 ( ikh\u1E53r ) , the ethereal fluid that is the blood
+      of the gods in Greek mythology . Origins [ edit ] A brief note on the phenomenon
+      by Thomas Lambe Phipson [ fr ] (1833\u20131908) appeared in The Chemical News
+      on 17 April 1891 [ 3 ] and was re-published in its entirety, a month later,
+      in The Scientific American , [ 4 ] in which he wrote, \\\"This subject, with
+      which I was occupied more than twenty-five years ago, appears from a paragraph
+      in the last number of the Chemical News [ 3 ] to have recently attracted the
+      attention of Professor Berthelot and [Monsieur G.] Andre.\\\" Phipson was referring
+      to a short paper read by Berthelot and Andr\xE9 at the meeting of the French
+      Acad\xE9mie des Sciences on 23 April 1891, and printed in Volume 112 (1891)
+      of Comptes Rendus , entitled \\\"Sur l'odeur propre de la terre\\\" (\\\"On
+      the earth's own smell\\\"). [ 5 ] [ 6 ] Phipson continues, \\\"I find, on referring
+      to my old notes, which are dated 1865, that it is doubtful whether I ever published
+      the results of  these observations; and as the  distinguished chemists I have
+      just named have not quite solved the problem, I hasten to give the results I
+      obtained so long ago.\\\" He then theorizes that the odour \\\"... was due to
+      the presence of organic substances closely related to the essential oils of
+      plants ...\\\" and that these substances consist of \\\"... the fragrance emitted
+      by thousands of  flowers ...\\\" absorbed into the pores of the soil, and only
+      released when displaced by rain. After attempts to isolate it, he found that
+      it \\\"... appeared to be very similar to, if not identical with, bromo-cedren
+      derived from essence of cedar .\\\" The phenomenon was first scientifically
+      described in a March 1964 paper by Australian researchers Isabel Bear and Dick
+      Thomas , published in the journal Nature . [ 7 ] [ 8 ] [ 9 ] [ 10 ] Thomas coined
+      the term \\\"petrichor\\\" to refer to what had previously been known as \\\"argillaceous
+      odour\\\". [ 11 ] In the article, the authors describe how the smell derives
+      from an oil exuded by certain plants during dry periods, whereupon it is absorbed
+      by clay -based soils and rocks. During rain, the oil is released into the air
+      along with another compound, geosmin , a metabolic by-product of certain actinobacteria
+      , such as Streptomyces , [ 12 ] which is emitted by wet soil, producing the
+      distinctive scent; ozone may also be present if there is lightning. [ 13 ] In
+      a follow-up paper, Bear and Thomas (1965) showed that the oil slows seed germination
+      and early plant growth. [ 14 ] Mechanism [ edit ] A leaf with droplets on damp
+      soil When a raindrop lands on a porous surface, air from the pores forms small
+      bubbles, which float to the surface and release aerosols . [ 15 ] Such aerosols
+      carry the scent, as well as bacteria and viruses from the soil. [ 15 ] Raindrops
+      that move slower tend to produce more aerosols; this explains why petrichor
+      is more common after light rains. Members of the Actinomycetes , gram-positive
+      bacteria, are responsible for producing these aerosols. [ 15 ] [ 12 ] The human
+      nose is sensitive to geosmin and can detect it at concentrations as low as 0.4
+      parts per billion. [ 16 ] Some scientists believe that humans appreciate the
+      rain scent because ancestors may have relied on rainy weather for survival.
+      [ 17 ] Camels in the desert also rely on petrichor to locate sources of water
+      such as oases . [ 18 ] See also [ edit ] Dimethyl sulfide \u2013 One of the
+      molecules responsible for the odour of the sea Mitti attar \u2013 a perfume
+      that recreates the loamy smell of a first rain Citations [ edit ] ^ \\\"petrichor\\\"
+      . Dictionary.com Unabridged (Online). n.d. ^ Nature of Argillaceous Odour. Nature
+      201, 993\u2013995 (1964) ^ a b Phipson, T.L., Cause of the Odour Emitted by
+      the Soil of a Garden after a Summer Shower\\\", The Chemical News , Vol.63,
+      No.1638, (17 April 1891, p.179. ^ Phipson, T.L. (May 16, 1891). \\\"The Odor
+      of the Soil after a Shower\\\". Scientific American . 64 (20): 308. JSTOR 26100386
+      . ^ \\\"Sur l'odeur propre de la terre\\\" [On the earth's own smell]. Comptes
+      rendus de l'Acad\xE9mie des Sciences . 1891/01 (Tome 112): 598\u2013 599. January
+      1891. ^ Logan, Tim (August 27, 2018). \\\"Why You Can Smell Rain\\\" . The Conversation
+      . Retrieved July 14, 2020 . A weather expert explains petrichor \u2013 that
+      pleasant, earthy scent that accompanies a storm's first raindrops. ^ Bear, Isabel
+      Joy; Thomas, Richard G. (March 1964). \\\"Nature of argillaceous odour\\\".
+      Nature . 201 (4923): 993\u2013 995. Bibcode : 1964Natur.201..993B . doi : 10.1038/201993a0
+      . S2CID 4189441 . The diverse nature of the host materials has led us to propose
+      the name 'petrichor' for this apparently unique odour which can be regarded
+      as an 'ichor' or 'tenuous essence' derived from rock or stone [\u2026] it does
+      not imply that petrichor is necessarily a fixed chemical entity but rather it
+      denotes an integral odour, variable within a certain easily recognizable osmic
+      latitude. ^ \\\"The Smell of Rain\\\". Weatherwise . 33 (2): 91. 1980. doi :
+      10.1080/00431672.1980.9931898 . Apparently, the printed text is a copy from
+      CSIRO journal Ecos , issue February 1976, p. 32. ^ Garg, Anu (2007). The Dord,
+      the Diglot, and an Avocado Or Two: The Hidden Lives and Strange Origins of Words
+      . Penguin. p. 399. ISBN 9780452288614 . . ^ Poynton, Howard (March 31, 2015).
+      \\\"The smell of rain: how CSIRO invented a new word\\\" . The Conversation
+      . ^ Ward, Colin (11 April 2014). \\\"Isabel 'Joy' Bear\\\" . CSIROpedia . CSIRO
+      . Retrieved 9 May 2020 . Thomas gave the name 'petrichor' to this odour. ^ a
+      b Becher, Paul G.; Verschut, Vasiliki; Bibb, Maureen J.; Bush, Matthew J.; Moln\xE1r,
+      B\xE9la P.; Barane, Elisabeth; Al-Bassam, Mahmoud M.; Chandra, Govind; Song,
+      Lijiang; Challis, Gregory L.; Buttner, Mark J.; Fl\xE4rdh, Klas (2020-06-01).
+      \\\"Developmentally regulated volatiles geosmin and 2-methylisoborneol attract
+      a soil arthropod to Streptomyces bacteria promoting spore dispersal\\\" . Nature
+      Microbiology . 5 (6): 821\u2013 829. doi : 10.1038/s41564-020-0697-x . ISSN
+      2058-5276 . PMID 32251369 . S2CID 214808046 . Retrieved 2022-01-01 . ^ Yuhas,
+      Daisy (July 18, 2012). \\\"Storm Scents: It's True, You Can Smell Oncoming Summer
+      Rain: Researchers have teased out the aromas associated with a rainstorm and
+      deciphered the olfactory messages they convey\\\" . Scientific American . Retrieved
+      July 20, 2012 . ^ Bear, Isabel Joy; Thomas, Richard G. (September 1965). \\\"Petrichor
+      and plant growth\\\". Nature . 207 (5005): 1415\u2013 1416. Bibcode : 1965Natur.207.1415B
+      . doi : 10.1038/2071415a0 . S2CID 4174301 . ^ a b c Chu, Jennifer (14 January
+      2015). \\\"Rainfall can release aerosols, study finds\\\" . MIT News . Retrieved
+      17 January 2015 . ^ Polak, E.H.; Provasi, J. (1992). \\\"Odor sensitivity to
+      geosmin enantiomers\\\". Chemical Senses . 17 : 23\u2013 26. doi : 10.1093/chemse/17.1.23
+      . ^ Palermo, Elizabeth (21 June 2013). \\\"Why Does Rain Smell Good?\\\" . Live
+      Science . LiveScience.com . Retrieved 17 January 2015 . ^ \\\"Sure can smell
+      the rain\\\" . Soil System Sciences . Retrieved 2023-08-24 . General and cited
+      references [ edit ] Bear, I. J. &amp; Thomas, R. G. (September 1966). \\\"Genesis
+      of Petrichor\\\". Geochimica et Cosmochimica Acta . Vol. 30, No. 9. pp. 869\u2013879.
+      External links [ edit ] Look up petrichor in Wiktionary, the free dictionary.
+      Wikimedia Commons has media related to Petrichor . \\\"Petrichor\\\" at A Word
+      a Day From the Oxford English Dictionary Hansen, Joe (2014-08-18), Where does
+      the smell of rain come from? (3-min YouTube video), It's Okay To Be Smart, PBS
+      Digital Studios, archived from the original on 2021-12-12 , retrieved 2018-01-04
+      Adams, Cecil (2011-11-18), \\\"What's that smell right before it rains?\\\"
+      , The Straight Dope , Sun-Times Media Group , retrieved 2018-01-04 Petrichor,
+      U.K. Met office. Why Is the Smell After It Rains So Appealing? The Petrichor
+      phenomenon Petrichor \u2013 Why we Love the Smell of Rain Retrieved from \\\"
+      https://en.wikipedia.org/w/index.php?title=Petrichor&amp;oldid=1284371291 \\\"
+      Categories : 1964 neologisms Rain Olfaction Precipitation Soil Hidden categories:
+      CS1: long volume value Articles with short description Short description matches
+      Wikidata Commons category link from Wikidata\\nFrom Wikipedia, the free encyclopedia
+      Earthy smell when rain falls on dry soil For other uses, see Petrichor (disambiguation)
+      . \\\"Scent of rain\\\" and \\\"Smell of rain\\\" redirect here. For other uses,
+      see Scent of Rain (disambiguation) and Smell of Rain (disambiguation) . Soil
+      and water being splashed by a raindrop Petrichor ( / \u02C8 p \u025B t r \u026A
+      k \u0254\u02D0r / PET -rih-kor ) [ 1 ] is the earthy scent produced when rain
+      falls on dry soil . The word was coined by Isabel Joy Bear and Richard Grenfell
+      Thomas [ 2 ] from Ancient Greek \u03C0\u03AD\u03C4\u03C1\u03B1 ( p\xE9tra )
+      ' rock ' or \u03C0\u03AD\u03C4\u03C1\u03BF\u03C2 ( p\xE9tros ) ' stone ' and
+      \u1F30\u03C7\u03CE\u03C1 ( ikh\u1E53r ) , the ethereal fluid that is the blood
+      of the gods in Greek mythology . Origins [ edit ] A brief note on the phenomenon
+      by Thomas Lambe Phipson [ fr ] (1833\u20131908) appeared in The Chemical News
+      on 17 April 1891 [ 3 ] and was re-published in its entirety, a month later,
+      in The Scientific American , [ 4 ] in which he wrote, \\\"This subject, with
+      which I was occupied more than twenty-five years ago, appears from a paragraph
+      in the last number of the Chemical News [ 3 ] to have recently attracted the
+      attention of Professor Berthelot and [Monsieur G.] Andre.\\\" Phipson was referring
+      to a short paper read by Berthelot and Andr\xE9 at the meeting of the French
+      Acad\xE9mie des Sciences on 23 April 1891, and printed in Volume 112 (1891)
+      of Comptes Rendus , entitled \\\"Sur l'odeur propre de la terre\\\" (\\\"On
+      the earth's own smell\\\"). [ 5 ] [ 6 ] Phipson continues, \\\"I find, on referring
+      to my old notes, which are dated 1865, that it is doubtful whether I ever published
+      the results of  these observations; and as the  distinguished chemists I have
+      just named have not quite solved the problem, I hasten to give the results I
+      obtained so long ago.\\\" He then theorizes that the odour \\\"... was due to
+      the presence of organic substances closely related to the essential oils of
+      plants ...\\\" and that these substances consist of \\\"... the fragrance emitted
+      by thousands of  flowers ...\\\" absorbed into the pores of the soil, and only
+      released when displaced by rain. After attempts to isolate it, he found that
+      it \\\"... appeared to be very similar to, if not identical with, bromo-cedren
+      derived from essence of cedar .\\\" The phenomenon was first scientifically
+      described in a March 1964 paper by Australian researchers Isabel Bear and Dick
+      Thomas , published in the journal Nature . [ 7 ] [ 8 ] [ 9 ] [ 10 ] Thomas coined
+      the term \\\"petrichor\\\" to refer to what had previously been known as \\\"argillaceous
+      odour\\\". [ 11 ] In the article, the authors describe how the smell derives
+      from an oil exuded by certain plants during dry periods, whereupon it is absorbed
+      by clay -based soils and rocks. During rain, the oil is released into the air
+      along with another compound, geosmin , a metabolic by-product of certain actinobacteria
+      , such as Streptomyces , [ 12 ] which is emitted by wet soil, producing the
+      distinctive scent; ozone may also be present if there is lightning. [ 13 ] In
+      a follow-up paper, Bear and Thomas (1965) showed that the oil slows seed germination
+      and early plant growth. [ 14 ] Mechanism [ edit ] A leaf with droplets on damp
+      soil When a raindrop lands on a porous surface, air from the pores forms small
+      bubbles, which float to the surface and release aerosols . [ 15 ] Such aerosols
+      carry the scent, as well as bacteria and viruses from the soil. [ 15 ] Raindrops
+      that move slower tend to produ</content>\\n  </WebSearchResult>\\n  <WebSearchResult>\\n
+      \   <title>PETRICHOR | English meaning - Cambridge Dictionary</title>\\n    <url>https://dictionary.cambridge.org/dictionary/english/petrichor</url>\\n
+      \   <summary>null</summary>\\n    <content>\\nMeaning of petrichor in English
+      petrichor noun [ U ] environment specialized uk Your browser doesn't support
+      HTML5 audio / \u02C8pet.r\u026A.k\u0254\u02D0 r / us Your browser doesn't support
+      HTML5 audio / \u02C8pet.r\u026A.k\u0254\u02D0r / Add to word list Add to word
+      list the smell produced when rain falls on dry ground , usually experienced
+      as being pleasant Smells &amp; smelling acridly anosmic bergamot deodorize deodorizing
+      fragrant fullness malodorous minging niff olfactory nerve orangey piny pungency
+      pungently redolent scented smelly sniff stink See more results \xBB (Definition
+      of petrichor from the Cambridge Advanced Learner's Dictionary &amp; Thesaurus
+      \xA9 Cambridge University Press) What is the pronunciation of petrichor ? Translations
+      of petrichor in Chinese (Traditional) \u4E0B\u96E8\u6642\u6CE5\u571F\u7684\u82B3\u9999\u2026
+      See more in Chinese (Simplified) \u4E0B\u96E8\u65F6\u6CE5\u571F\u7684\u82B3\u9999\u2026
+      See more in Spanish petricor\u2026 See more in Portuguese petricor\u2026 See
+      more Need a translator? Get a quick, free translation! Translator tool Browse
+      petits fours petits pois petrel Petri dish petrichor petrifaction petrified
+      petrify petrifying Word of the Day fasten UK Your browser doesn't support HTML5
+      audio /\u02C8f\u0251\u02D0.s\u0259n/ US Your browser doesn't support HTML5 audio
+      /\u02C8f\xE6s.\u0259n/ to (cause something to) become firmly fixed together,
+      or in position, or closed About this Blog Did it live up to your expectations?
+      (Talking about disappointment) April 23, 2025 Read More New Words bluesnarfing
+      April 28, 2025 More new words has been added to list To top Contents English
+      Translations\\nMeaning of petrichor in English petrichor noun [ U ] environment
+      specialized uk Your browser doesn't support HTML5 audio / \u02C8pet.r\u026A.k\u0254\u02D0
+      r / us Your browser doesn't support HTML5 audio / \u02C8pet.r\u026A.k\u0254\u02D0r
+      / Add to word list Add to word list the smell produced when rain falls on dry
+      ground , usually experienced as being pleasant Smells &amp; smelling acridly
+      anosmic bergamot deodorize deodorizing fragrant fullness malodorous minging
+      niff olfactory nerve orangey piny pungency pungently redolent scented smelly
+      sniff stink See more results \xBB (Definition of petrichor from the Cambridge
+      Advanced Learner's Dictionary &amp; Thesaurus \xA9 Cambridge University Press)
+      What is the pronunciation of petrichor ? Translations of petrichor in Chinese
+      (Traditional) \u4E0B\u96E8\u6642\u6CE5\u571F\u7684\u82B3\u9999\u2026 See more
+      in Chinese (Simplified) \u4E0B\u96E8\u65F6\u6CE5\u571F\u7684\u82B3\u9999\u2026
+      See more in Spanish petricor\u2026 See more in Portuguese petricor\u2026 See
+      more Need a translator? Get a quick, free translation! Translator tool Browse
+      petits fours petits pois petrel Petri dish petrichor petrifaction petrified
+      petrify petrifying Word of the Day fasten UK Your browser doesn't support HTML5
+      audio /\u02C8f\u0251\u02D0.s\u0259n/ US Your browser doesn't support HTML5 audio
+      /\u02C8f\xE6s.\u0259n/ to (cause something to) become firmly fixed together,
+      or in position, or closed About this Blog Did it live up to your expectations?
+      (Talking about disappointment) April 23, 2025 Read More New Words bluesnarfing
+      April 28, 2025 More new words has been added to list To top Contents English
+      Translations\\nMeaning of petrichor in English petrichor noun [ U ] environment
+      specialized uk Your browser doesn't support HTML5 audio / \u02C8pet.r\u026A.k\u0254\u02D0
+      r / us Your browser doesn't support HTML5 audio / \u02C8pet.r\u026A.k\u0254\u02D0r
+      / Add to word list Add to word list the smell produced when rain falls on dry
+      ground , usually experienced as being pleasant Smells &amp; smelling acridly
+      anosmic bergamot deodorize deodorizing fragrant fullness malodorous minging
+      niff olfactory nerve orangey piny pungency pungently redolent scented smelly
+      sniff stink See more results \xBB (Definition of petrichor from the Cambridge
+      Advanced Learner's Dictionary &amp; Thesaurus \xA9 Cambridge University Press)
+      What is the pronunciation of petrichor ? Translations of petrichor in Chinese
+      (Traditional) \u4E0B\u96E8\u6642\u6CE5\u571F\u7684\u82B3\u9999\u2026 See more
+      in Chinese (Simplified) \u4E0B\u96E8\u65F6\u6CE5\u571F\u7684\u82B3\u9999\u2026
+      See more in Spanish petricor\u2026 See more in Portuguese petricor\u2026 See
+      more Need a translator? Get a quick, free translation! Translator tool Browse
+      petits fours petits pois petrel Petri dish petrichor petrifaction petrified
+      petrify petrifying Word of the Day fasten UK Your browser doesn't support HTML5
+      audio /\u02C8f\u0251\u02D0.s\u0259n/ US Your browser doesn't support HTML5 audio
+      /\u02C8f\xE6s.\u0259n/ to (cause something to) become firmly fixed together,
+      or in position, or closed About this Blog Did it live up to your expectations?
+      (Talking about disappointment) April 23, 2025 Read More New Words bluesnarfing
+      April 28, 2025 More new words\\nMeaning of petrichor in English petrichor noun
+      [ U ] environment specialized uk Your browser doesn't support HTML5 audio /
+      \u02C8pet.r\u026A.k\u0254\u02D0 r / us Your browser doesn't support HTML5 audio
+      / \u02C8pet.r\u026A.k\u0254\u02D0r / Add to word list Add to word list the smell
+      produced when rain falls on dry ground , usually experienced as being pleasant
+      Smells &amp; smelling acridly anosmic bergamot deodorize deodorizing fragrant
+      fullness malodorous minging niff olfactory nerve orangey piny pungency pungently
+      redolent scented smelly sniff stink See more results \xBB (Definition of petrichor
+      from the Cambridge Advanced Learner's Dictionary &amp; Thesaurus \xA9 Cambridge
+      University Press) What is the pronunciation of petrichor ? Translations of petrichor
+      in Chinese (Traditional) \u4E0B\u96E8\u6642\u6CE5\u571F\u7684\u82B3\u9999\u2026
+      See more in Chinese (Simplified) \u4E0B\u96E8\u65F6\u6CE5\u571F\u7684\u82B3\u9999\u2026
+      See more in Spanish petricor\u2026 See more in Portuguese petricor\u2026 See
+      more Need a translator? Get a quick, free translation! Translator tool Browse
+      petits fours petits pois petrel Petri dish petrichor petrifaction petrified
+      petrify petrifying Word of the Day fasten UK Your browser doesn't support HTML5
+      audio /\u02C8f\u0251\u02D0.s\u0259n/ US Your browser doesn't support HTML5 audio
+      /\u02C8f\xE6s.\u0259n/ to (cause something to) become firmly fixed together,
+      or in position, or closed About this Blog Did it live up to your expectations?
+      (Talking about disappointment) April 23, 2025 Read More New Words bluesnarfing
+      April 28, 2025 More new words\\nMeaning of petrichor in English petrichor noun
+      [ U ] environment specialized uk Your browser doesn't support HTML5 audio /
+      \u02C8pet.r\u026A.k\u0254\u02D0 r / us Your browser doesn't support HTML5 audio
+      / \u02C8pet.r\u026A.k\u0254\u02D0r / Add to word list Add to word list the smell
+      produced when rain falls on dry ground , usually experienced as being pleasant
+      Smells &amp; smelling acridly anosmic bergamot deodorize deodorizing fragrant
+      fullness malodorous minging niff olfactory nerve orangey piny pungency pungently
+      redolent scented smelly sniff stink See more results \xBB (Definition of petrichor
+      from the Cambridge Advanced Learner's Dictionary &amp; Thesaurus \xA9 Cambridge
+      University Press) What is the pronunciation of petrichor ? Translations of petrichor
+      in Chinese (Traditional) \u4E0B\u96E8\u6642\u6CE5\u571F\u7684\u82B3\u9999\u2026
+      See more in Chinese (Simplified) \u4E0B\u96E8\u65F6\u6CE5\u571F\u7684\u82B3\u9999\u2026
+      See more in Spanish petricor\u2026 See more in Portuguese petricor\u2026 See
+      more Need a translator? Get a quick, free translation! Translator tool Browse
+      petits fours petits pois petrel Petri dish petrichor petrifaction petrified
+      petrify petrifying\\npetrichor noun [ U ] environment specialized uk Your browser
+      doesn't support HTML5 audio / \u02C8pet.r\u026A.k\u0254\u02D0 r / us Your browser
+      doesn't support HTML5 audio / \u02C8pet.r\u026A.k\u0254\u02D0r / Add to word
+      list Add to word list the smell produced when rain falls on dry ground , usually
+      experienced as being pleasant Smells &amp; smelling acridly anosmic bergamot
+      deodorize deodorizing fragrant fullness malodorous minging niff olfactory nerve
+      orangey piny pungency pungently redolent scented smelly sniff stink See more
+      results \xBB (Definition of petrichor from the Cambridge Advanced Learner's
+      Dictionary &amp; Thesaurus \xA9 Cambridge University Press) What is the pronunciation
+      of petrichor ?\\npetrichor noun [ U ] environment specialized uk Your browser
+      doesn't support HTML5 audio / \u02C8pet.r\u026A.k\u0254\u02D0 r / us Your browser
+      doesn't support HTML5 audio / \u02C8pet.r\u026A.k\u0254\u02D0r / Add to word
+      list Add to word list the smell produced when rain falls on dry ground , usually
+      experienced as being pleasant Smells &amp; smelling acridly anosmic bergamot
+      deodorize deodorizing fragrant fullness malodorous minging niff olfactory nerve
+      orangey piny pungency pungently redolent scented smelly sniff stink See more
+      results \xBB (Definition of petrichor from the Cambridge Advanced Learner's
+      Dictionary &amp; Thesaurus \xA9 Cambridge University Press)\\npetrichor noun
+      [ U ] environment specialized uk Your browser doesn't support HTML5 audio /
+      \u02C8pet.r\u026A.k\u0254\u02D0 r / us Your browser doesn't support HTML5 audio
+      / \u02C8pet.r\u026A.k\u0254\u02D0r / Add to word list Add to word list the smell
+      produced when rain falls on dry ground , usually experienced as being pleasant
+      Smells &amp; smelling acridly anosmic bergamot deodorize deodorizing fragrant
+      fullness malodorous minging niff olfactory nerve orangey piny pungency pungently
+      redolent scented smelly sniff stink See more results \xBB\\npetrichor noun [
+      U ] environment specialized uk Your browser doesn't support HTML5 audio / \u02C8pet.r\u026A.k\u0254\u02D0
+      r / us Your browser doesn't support HTML5 audio / \u02C8pet.r\u026A.k\u0254\u02D0r
+      / Add to word list Add to word list the smell produced when rain falls on dry
+      ground , usually experienced as being pleasant Smells &amp; smelling acridly
+      anosmic bergamot deodorize deodorizing fragrant fullness malodorous minging
+      niff olfactory nerve orangey piny pungency pungently redolent scented smelly
+      sniff stink See more results \xBB\\npetrichor noun [ U ] environment specialized
+      uk Your browser doesn't support HTML5 audio / \u02C8pet.r\u026A.k\u0254\u02D0
+      r / us Your browser doesn't support HTML5 audio / \u02C8pet.r\u026A.k\u0254\u02D0r
+      / Add to word list Add to word list the smell produced when rain falls on dry
+      ground , usually experienced as being pleasant Smells &amp; smelling acridly
+      anosmic bergamot deodorize deodorizing fragrant fullness malodorous minging
+      niff olfactory nerve orangey piny pungency pungently redolent scented smelly
+      sniff stink See more results \xBB\\npetrichor noun [ U ] environment specialized
+      uk Your browser doesn't support HTML5 audio / \u02C8pet.r\u026A.k\u0254\u02D0
+      r / us Your browser doesn't support HTML5 audio / \u02C8pet.r\u026A.k\u0254\u02D0r
+      / Add to word list Add to word list the smell produced when rain falls on dry
+      ground , usually experienced as being pleasant Smells &amp; smelling acridly
+      anosmic bergamot deodorize deodorizing fragrant fullness malodorous minging
+      niff olfactory nerve orangey piny pungency pungently redolent scented smelly
+      sniff stink See more results \xBB\\npetrichor noun [ U ] environment specialized
+      uk Your browser doesn't support HTML5 audio / \u02C8pet.r\u026A.k\u0254\u02D0
+      r / us Your browser doesn't support HTML5 audio / \u02C8pet.r\u026A.k\u0254\u02D0r
+      / Add to word list Add to word list the smell produced when rain falls on dry
+      ground , usually experienced as being pleasant Smells &amp; smelling acridly
+      anosmic bergamot deodorize deodorizing fragrant fullness malodorous minging
+      niff olfactory nerve orangey piny pungency pungently redolent scented smelly
+      sniff stink See more results \xBB\\npetrichor noun [ U ] environment specialized
+      uk Your browser doesn't support HTML5 audio / \u02C8pet.r\u026A.k\u0254\u02D0
+      r / us Your browser doesn't support HTML5 audio / \u02C8pet.r\u026A.k\u0254\u02D0r
+      / Add to word list Add to word list the smell produced when rain falls on dry
+      ground , usually experienced as being pleasant Smells &amp; smelling acridly
+      anosmic bergamot deodorize deodorizing fragrant fullness malodorous minging
+      niff olfactory nerve orangey piny pungency pungently redolent scented smelly
+      sniff stink See more results \xBB\\npetrichor noun [ U ] environment specialized
+      uk Your browser doesn't support HTML5 audio / \u02C8pet.r\u026A.k\u0254\u02D0
+      r / us Your browser doesn't support HTML5 audio / \u02C8pet.r\u026A.k\u0254\u02D0r
+      /\\npetrichor\\nnoun [ U ]\\nYour browser doesn't support HTML5 audio\\nYour
+      browser doesn't support HTML5 audio\\nYour browser doesn't support HTML5 audio\\nYour
+      browser doesn't support HTML5 audio\\nAdd to word list Add to word list the
+      smell produced when rain falls on dry ground , usually experienced as being
+      pleasant Smells &amp; smelling acridly anosmic bergamot deodorize deodorizing
+      fragrant fullness malodorous minging niff olfactory nerve orangey piny pungency
+      pungently redolent scented smelly sniff stink See more results \xBB\\nAdd to
+      word list Add to word list the smell produced when rain falls on dry ground
+      , usually experienced as being pleasant Smells &amp; smelling acridly anosmic
+      bergamot deodorize deodorizing fragrant fullness malodorous minging niff olfactory
+      nerve </content>\\n  </WebSearchResult>\\n</search_results>\"},{\"role\":\"user\",\"content\":\"Please
+      summarize the provided web search results for the topic <TOPIC>petrichor</TOPIC>.\"}],\"model\":\"qwen2.5:72b\",\"stream\":false,\"temperature\":1.0}"
+    headers:
+      accept:
+      - application/json
+      accept-encoding:
+      - gzip, deflate, br
+      connection:
+      - keep-alive
+      content-length:
+      - '38866'
+      content-type:
+      - application/json
+      host:
+      - localhost:11434
+      user-agent:
+      - pydantic-ai/1.0.15
+      x-stainless-arch:
+      - arm64
+      x-stainless-async:
+      - async:asyncio
+      x-stainless-lang:
+      - python
+      x-stainless-os:
+      - MacOS
+      x-stainless-package-version:
+      - 2.1.0
+      x-stainless-read-timeout:
+      - '600'
+      x-stainless-retry-count:
+      - '1'
+      x-stainless-runtime:
+      - CPython
+      x-stainless-runtime-version:
+      - 3.12.8
+    method: POST
+    uri: http://localhost:11434/v1/chat/completions
+  response:
+    body:
+      string: '{"id":"chatcmpl-547","object":"chat.completion","created":1762673504,"model":"qwen2.5:72b","system_fingerprint":"fp_ollama","choices":[{"index":0,"message":{"role":"assistant","content":"Petrichor
+        refers to the earthy scent produced when rain falls on dry soil or ground,
+        a phenomenon often experienced as a pleasant smell after periods of drought
+        or dry weather. The term \"petrichor\" was coined in 1964 by two Australian
+        researchers, Isabel Joy Bear and R. G. Thomas, who published their findings
+        in the journal Nature. They derived the word from the Greek words \"petra,\"
+        meaning stone, and \"ichor,\" which refers to the ethereal fluid that flows
+        through the veins of the gods in Greek mythology.\n\nThe aroma of petrichor
+        is primarily attributed to the release of certain chemicals when raindrops
+        hit porous surfaces like soil and rocks. One key component responsible for
+        this smell is geosmin, a compound produced by actinobacteria, specifically
+        Streptomyces bacteria, which are abundant in soil. Geosmin has a distinct
+        earthy odor that many people find appealing. Other contributing factors include
+        the breakdown of plant oils and volatile organic compounds (VOCs) released
+        from leaves and other vegetation.\n\nThe process begins when raindrops strike
+        the ground and displace tiny air bubbles trapped within the porous materials.
+        As these bubbles rise to the surface, they burst, releasing aerosols that
+        carry geosmin and other aromatic compounds into the air. The fine mist created
+        by this process carries the aroma over long distances, which is why people
+        can often detect petrichor before the rain actually reaches their location.\n\nPetrichor
+        is not just a sensory experience; it also has cultural and emotional significance
+        for many people. In literature and poetry, the smell of rain on dry earth
+        is often used as a metaphor for renewal, rejuvenation, and nostalgia. The
+        term has even found its way into popular culture, inspiring names for perfumes,
+        fragrances, and other scented products.\n\nBeyond its aesthetic appeal, petrichor
+        also plays a role in ecological processes. The release of geosmin and other
+        compounds during rainfall can influence plant growth and soil health. For
+        example, some studies suggest that the presence of geosmin can promote seed
+        germination and root development in certain plants. This may be an evolutionary
+        adaptation to ensure that seeds are more likely to grow in environments where
+        water is available.\n\nThe science behind petrichor has been further explored
+        through various research studies. Scientists have used advanced techniques
+        such as gas chromatography-mass spectrometry (GC-MS) to identify and quantify
+        the chemical compounds responsible for the scent. These studies have revealed
+        that the composition of petrichor can vary depending on factors such as soil
+        type, vegetation cover, and climate conditions.\n\nIn addition to geosmin,
+        other notable compounds found in petrichor include 2-methylisoborneol (MIB),
+        which has a musty odor similar to that of moldy basements, and various terpenes,
+        which are aromatic organic molecules produced by plants. Terpenes contribute
+        to the fresh, pine-like scent often associated with rain, particularly in
+        forested areas.\n\nThe perception of petrichor can also vary among individuals.
+        Some people find the smell intensely pleasant, while others may be more sensitive
+        to its earthy undertones. This variability is influenced by factors such as
+        personal experience, cultural background, and individual olfactory sensitivity.
+        For many, the scent of rain on dry earth evokes feelings of comfort, relief,
+        and a connection to nature.\n\nPetrichor has also been studied in relation
+        to atmospheric processes. Researchers have found that the aerosols released
+        during rainfall can affect air quality and contribute to the formation of
+        secondary organic aerosols (SOAs) in the atmosphere. These aerosols play a
+        role in cloud formation and can influence climate patterns over time.\n\nIn
+        conclusion, petrichor is a multifaceted phenomenon that encompasses both scientific
+        and cultural dimensions. It is a complex interplay of chemical reactions,
+        ecological processes, and human perception. The earthy scent produced when
+        rain falls on dry ground not only enriches our sensory experiences but also
+        contributes to the health and resilience of ecosystems. Whether it evokes
+        memories of childhood, inspires poetic reflection, or serves as a subtle indicator
+        of environmental conditions, petrichor remains a captivating and enduring
+        aspect of our natural world."},"finish_reason":"stop"}],"usage":{"prompt_tokens":260,"completion_tokens":846,"total_tokens":1106}}
+
+        '
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Sun, 09 Nov 2025 07:31:44 GMT
+      Transfer-Encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+version: 1
