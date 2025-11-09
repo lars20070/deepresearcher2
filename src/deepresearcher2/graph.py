@@ -9,11 +9,11 @@ from pydantic_ai import format_as_xml
 from pydantic_ai.settings import ModelSettings
 from pydantic_graph import BaseNode, End, Graph, GraphRunContext
 
-from .agents import final_summary_agent, query_agent, reflection_agent, summary_agent
+from .agents import FINAL_SUMMARY_AGENT, QUERY_AGENT, REFLECTION_AGENT, SUMMARY_AGENT
 from .config import SearchEngine, config
 from .logger import logger
 from .models import DeepState, Reference, Reflection, WebSearchSummary
-from .prompts import query_instructions_with_reflection, query_instructions_without_reflection
+from .prompts import QUERY_INSTRUCTIONS_WITH_REFLECTION, QUERY_INSTRUCTIONS_WITHOUT_REFLECTION
 from .utils import (
     brave_search,
     duckduckgo_search,
@@ -40,21 +40,21 @@ class WebSearch(BaseNode[DeepState]):
 
         topic = ctx.state.topic
 
-        @query_agent.system_prompt
+        @QUERY_AGENT.system_prompt
         def add_reflection() -> str:  # pyright: ignore[reportUnusedFunction]
             """
             Add reflection from the previous loop to the system prompt.
             """
             if ctx.state.reflection:
                 xml = format_as_xml(ctx.state.reflection, root_tag="reflection")
-                return query_instructions_with_reflection + f"Reflection on existing knowledge:\n{xml}\n" + "Provide your response in JSON format."
+                return QUERY_INSTRUCTIONS_WITH_REFLECTION + f"Reflection on existing knowledge:\n{xml}\n" + "Provide your response in JSON format."
             else:
-                return query_instructions_without_reflection
+                return QUERY_INSTRUCTIONS_WITHOUT_REFLECTION
 
         # Generate the query
-        async with query_agent:
+        async with QUERY_AGENT:
             prompt = f"Please generate a web search query for the following topic: <TOPIC>{topic}</TOPIC>"
-            result = await query_agent.run(
+            result = await QUERY_AGENT.run(
                 user_prompt=prompt,
                 model_settings=ModelSettings(
                     temperature=config.temperature_query,
@@ -103,7 +103,7 @@ class SummarizeSearchResults(BaseNode[DeepState]):
     async def run(self, ctx: GraphRunContext[DeepState]) -> ReflectOnSearch:
         logger.debug(f"Running Summarize Search Results with count number {ctx.state.count}.")
 
-        @summary_agent.system_prompt
+        @SUMMARY_AGENT.system_prompt
         def add_web_search_results() -> str:  # pyright: ignore[reportUnusedFunction]
             """
             Add web search results to the system prompt.
@@ -112,8 +112,8 @@ class SummarizeSearchResults(BaseNode[DeepState]):
             return f"List of web search results:\n{xml}"
 
         # Generate the summary
-        async with summary_agent:
-            result = await summary_agent.run(
+        async with SUMMARY_AGENT:
+            result = await SUMMARY_AGENT.run(
                 user_prompt=f"Please summarize the provided web search results for the topic <TOPIC>{ctx.state.topic}</TOPIC>.",
                 model_settings=ModelSettings(
                     temperature=config.temperature_summary,
@@ -161,7 +161,7 @@ class ReflectOnSearch(BaseNode[DeepState]):
             # xml = format_as_xml(ctx.state.search_summaries, root_tag="search_summaries")
             # logger.debug(f"Search summaries:\n{xml}")
 
-            @reflection_agent.system_prompt
+            @REFLECTION_AGENT.system_prompt
             def add_search_summaries() -> str:  # pyright: ignore[reportUnusedFunction]
                 """
                 Add search summaries to the system prompt.
@@ -170,8 +170,8 @@ class ReflectOnSearch(BaseNode[DeepState]):
                 return f"List of search summaries:\n{xml}"
 
             # Reflect on the summaries so far
-            async with reflection_agent:
-                reflection = await reflection_agent.run(
+            async with REFLECTION_AGENT:
+                reflection = await REFLECTION_AGENT.run(
                     user_prompt=f"Please reflect on the provided web search summaries for the topic <TOPIC>{ctx.state.topic}</TOPIC>.",
                     model_settings=ModelSettings(
                         temperature=config.temperature_reflection,
@@ -205,7 +205,7 @@ class FinalizeSummary(BaseNode[DeepState]):
         xml = format_as_xml(ctx.state.search_summaries, root_tag="search_summaries")
         logger.debug(f"Search summaries:\n{xml}")
 
-        @final_summary_agent.system_prompt
+        @FINAL_SUMMARY_AGENT.system_prompt
         def add_search_summaries() -> str:  # pyright: ignore[reportUnusedFunction]
             """
             Add search summaries to the system prompt.
@@ -214,8 +214,8 @@ class FinalizeSummary(BaseNode[DeepState]):
             return f"List of search summaries:\n{xml}"
 
         # Finalize the summary of the entire report
-        async with final_summary_agent:
-            final_summary = await final_summary_agent.run(
+        async with FINAL_SUMMARY_AGENT:
+            final_summary = await FINAL_SUMMARY_AGENT.run(
                 user_prompt=f"Please summarize all web search summaries for the topic <TOPIC>{ctx.state.topic}</TOPIC>.",
                 model_settings=ModelSettings(
                     temperature=config.temperature_final_summary,

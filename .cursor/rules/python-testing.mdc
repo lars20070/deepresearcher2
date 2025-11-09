@@ -1,0 +1,51 @@
+---
+description: Pytest testing conventions and patterns
+globs: ["tests/**/*.py"]
+alwaysApply: false
+---
+
+## Testing with Pytest
+
+## Testing Principles
+
+- **Reuse, Don't Replicate**: Tests should reuse as much functional code as possible. Avoid reimplementing application logic within a test. Import and call the actual functions and classes you intend to test.
+- **Mock Fundamental Processes**: When isolating code for a unit test, mock the most fundamental external interaction. For example, mock the `asyncio.create_subprocess_exec` call for a command-line tool, not a higher-level function that wraps it. This ensures you are testing your application's error handling and response parsing logic.
+- **Cover All Failure Modes**: Every test suite should cover not just the "happy path" but also all conceivable failure modes. Use `pytest.raises` to verify that your code correctly handles non-zero return codes, missing commands (`FileNotFoundError`), network errors, and other exceptional conditions.
+
+### Test Structure
+```python
+@pytest.mark.vcr()  # For tests using VCR cassettes
+@pytest.mark.asyncio  # For async tests
+async def test_feature() -> None:
+    """Test description."""
+    # Arrange
+    ...
+    
+    # Act
+    result = await some_function()
+    
+    # Assert
+    assert result is not None
+```
+
+### Running Tests
+```bash
+# Skip tests requiring paid APIs
+uv run pytest -m "not paid"
+
+# Run specific test
+uv run pytest tests/test_utils.py::test_fetch_content -v
+```
+
+### Markers
+- `@pytest.mark.paid` - Requires paid API keys (skipped in CI)
+- `@pytest.mark.ollama` - Requires local Ollama (skipped in CI)
+- `@pytest.mark.searxng` - Requires local SearXNG (skipped in CI)
+- `@pytest.mark.vcr()` - Uses VCR cassettes for HTTP recording
+
+### VCR Cassettes
+- Location: `tests/cassettes/`
+- Record mode: `'none'` (playback only by default)
+- Hostname normalization in `conftest.py` handles `host.docker.internal` → `localhost`
+- Deterministic tests: set `temperature=0.0` in `MODEL_SETTINGS`
+

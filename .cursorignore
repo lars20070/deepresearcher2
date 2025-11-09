@@ -1,0 +1,22 @@
+# macOS
+.DS_store
+
+# Python
+.venv/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+.env
+.env.backup
+*.log
+coverage/
+uml/
+dist/
+tests/reports/
+tests/cassettes/
+
+# reports
+reports/*.md
+reports/*.pdf
+tests/reports/*.md
+tests/reports/*.pdf

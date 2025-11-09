@@ -1,25 +1,25 @@
 interactions:
 - request:
     body: !!binary |
-      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
+      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
     headers:
       Accept:
       - '*/*'
@@ -30,7 +30,7 @@ interactions:
       Content-Encoding:
       - gzip
       Content-Length:
-      - '1077'
+      - '1070'
       Content-Type:
       - application/x-protobuf
       User-Agent:
@@ -42,17 +42,17 @@ interactions:
       string: ''
     headers:
       CF-RAY:
-      - 9932a2a038e7bbf6-ZRH
+      - 99bb5836590e03f0-FRA
       Connection:
       - keep-alive
       Content-Length:
       - '0'
       Date:
-      - Thu, 23 Oct 2025 16:33:16 GMT
+      - Sun, 09 Nov 2025 06:44:57 GMT
       Nel:
       - '{"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}'
       Report-To:
-      - '{"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=%2FiPHxZs062TjcQ%2BW3aZ9axKHcw2HXCDFZHDCVSRpdlEyLCSzBl0Ag7W5XOTGmqhI4WCrBaCocUmiUqq%2BY94UYzS5b3JIz0w7zRA9zP92oYn01LoS"}]}'
+      - '{"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=Dj3HPioC%2Fm2cDyRMWAm1cJVOxDMIqeoPDShXe%2BJP1bicnwqbcN9J7RQthY27xeM4NBvRzQm7XiFkcVGjbFsXGxfxUuPrJmwYFkav0q6BzoD7W2Y8sQo%3D"}]}'
       Server:
       - cloudflare
       cf-cache-status:
@@ -72,14 +72,14 @@ interactions:
       are critical for reliable rankings. Each comparison should be independent but
       internally consistent.\n\n<EXAMPLES>\nExample 1:\n<QUESTION> Which of the two
       ice cream flavours below is more creative? </QUESTION>\n<A> Vanilla </A> \n<B>
-      Pickled Citrus Ribbon </B>\nExpected output:\n{\n    \"result\": \"B\",\n}\n\nExample
+      Pickled Citrus Ribbon </B>\nExpected output:\n{\n    \"response\": \"B\",\n}\n\nExample
       2:\n<QUESTION> Which search query shows more genuine curiosity? </QUESTION>\n<A>
       effect of ocean acidification feedback loops on Arctic methane release </A>
-      \n<B> climate change effects </B>\nExpected output:\n{\n    \"result\": \"A\",\n}\n\nExample
+      \n<B> climate change effects </B>\nExpected output:\n{\n    \"response\": \"A\",\n}\n\nExample
       3:\n<QUESTION> Which reply is more insulting? </QUESTION>\n<A> Your argument
       lacks logical coherence and fails to address the core issue at hand. </A> \n<B>
       That''s an interesting perspective, though I see it differently. </B>\nExpected
-      output:\n{\n    \"result\": \"A\",\n}\n</EXAMPLES>\n\n<REQUIREMENTS>\n1. Consider
+      output:\n{\n    \"response\": \"A\",\n}\n</EXAMPLES>\n\n<REQUIREMENTS>\n1. Consider
       the question carefully. What aspects are important for the answer?\n2. Think
       about answer A. Is it a good answer to the question? Why (not)?\n3. Think about
       answer B. Is it a good answer to the question? Why (not)?\n4. Make a decision
@@ -98,7 +98,7 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '2376'
+      - '2382'
       content-type:
       - application/json
       host:
@@ -127,60 +127,60 @@ interactions:
     uri: http://localhost:11434/v1/chat/completions
   response:
     body:
-      string: '{"id":"chatcmpl-636","object":"chat.completion","created":1761237199,"model":"qwen2.5:72b","system_fingerprint":"fp_ollama","choices":[{"index":0,"message":{"role":"assistant","content":"{\n    \"response\":
-        \"B\"\n}"},"finish_reason":"stop"}],"usage":{"prompt_tokens":575,"completion_tokens":10,"total_tokens":585}}
+      string: '{"id":"chatcmpl-474","object":"chat.completion","created":1762670701,"model":"qwen2.5:72b","system_fingerprint":"fp_ollama","choices":[{"index":0,"message":{"role":"assistant","content":"{\n    \"response\":
+        \"B\",\n}"},"finish_reason":"stop"}],"usage":{"prompt_tokens":575,"completion_tokens":10,"total_tokens":585}}
 
         '
     headers:
       Content-Length:
-      - '317'
+      - '318'
       Content-Type:
       - application/json
       Date:
-      - Thu, 23 Oct 2025 16:33:19 GMT
+      - Sun, 09 Nov 2025 06:45:01 GMT
     status:
       code: 200
       message: OK
 - request:
     body: !!binary |
-      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
+      H4sIAG04EGkC/+1XT2xcRxmPE1OScVOnm6Z1GgGTTdKmkfPs3bW9thUS2cFUWZE/dWyg6kar2ffm
+      7U793szrm3l2tsGCA1y5gRAXrhQkOHJBioQQZ5BAQpEqeikXxAFx6wHxm3lv12t3C07P8cX7Zr75
+      vu/3fb/vm2/Ih5fJ42NkiZzWPN0WPveE1IZJ+yMolQmtLM4vVmrVYL46G8xVgzZbWpit1qp+uFiv
+      +QtVRsrkZcMjHnOT9jwdbHkRk52MdXjpOHku6ZmukuQSKe2XkSzmpUlyUiVcDnbIeXJmv9g2T7VQ
+      0mqqeLW6NwuR5/uOOh0vkslMbkm1I1vFOjlNJpJU+VxrLwGG8aknT47i3Ev9xTSTRsTF+RPki37h
+      5AXyykGRIfs1r1L1FskmOXdQKODaT0VirOACmcsF6eWYCTlNG0zSyhytzlbnp2m1tlxbWJ5ffIO+
+      c9NGiVaWvIq3QB+Qr5LJPqy+zSvk8lIwG9aW6mGlXvGZz1kQ8HY7aAfhQoUttevIyUK7XmXt0k8u
+      kTNA3QsYXPKvMlFCvGa9ynzp7+fIqbGfdprNv9aebC5u/j744Ie/KR03bG7s51d+9oXy8d/NjP/z
+      ze3v//HKKb/LDH1vh8uqN79cr7Znx5a+t/L4lQ9ubk+tJPGxf9sfja+QMx0uW0x4yFzKLOY8js+R
+      caugcZacLAR0Txse29DZJDPRuEReKrZS/l7GtfFiFfCodJJMDJltfIm8YEPBUw94UwS6NEFORMpn
+      UVdp0yiRiWI7UakpHZv6xduNf42TKaerVWhuJSyFVwahLP15nPxp/FE5zKRv3W0ZpSJdXqbvPJim
+      5XYmIiMOLKrMJJlpWY1YKtu98t6yar/LfYMNmUXR3vJAw6OyDYg9GArJrEs6i4xVsOdU610NT7Tf
+      5TGD5KMyOIV4GsG1+8SZREnN3cfFlIdW3YWZiwEP9cybULKeK93dhVqLWaQ8sMb3Tlogppc4RwqX
+      sYKQChsFFt0bthiySHNsOwPO6JAR+8llFjv9K1bL6j7t2qRCduCLdWaoGOzeRpdTFwbad4zudIXf
+      pVwGmpqu0NRX0lLecakIM09bVnnQCoRvWlu8Z1UNkE3nJl0OTJpZv7VNO6jPoiEwW0IGDr1LkD2G
+      4LOAGVYkb9eiYFGkdlqGP0Rmc8E9DfmeiNHMDmzuNl4nrx5gM9juaiJL0VbOHyn+GufIi5HqhMiQ
+      pxMmHTJbLvajcZ5M9Ddj3SmVyKfKsPHJ5KDmhIQLXoyagEe69NEk+XASfEtVlCfCVVzBNFOQsZ8l
+      i9BuIdwGobJLTfm2yihLOU0QXNuIA7ojTJcy6hAhIZTJgJodRROltWhHHAt6B+miK25r1aNr2yzK
+      mOHUh6YQYe0hxdx0eVrIQlQNfq9SYfPOaZsb5Bm0SKKel3vSZducdpShSkIJhMAWa1s5OmmPQiil
+      PLdnVyx3wIQ2GEONoqspCyLeu7rB07RHta+AijI/hes0BpNFAv8FQgRVN3FcIFzS71kgTZnXiNgW
+      pudCAhajlYK4obJeRoJZ9CmToFUHCtYYWOyrGKEWKGaquyqLAsCioB1HxwsQUArX8A2gKAFg8vtW
+      DSA35bW1b6/cvveNtfvXm3LtIYutf5VlrL+1uXZ/49bdO9fpt1y1qNDFzAYDVwR84yymYcS2ERAN
+      m6CpjWus0nwTOPgNem1moAc6V67TbzIpoohhAx9YWr1O7wl/K0LebwqUkqbrot0GmGszq86lBCHB
+      Zs59OPaoKSn+moNibIJHzfJqszzdlLsWUh9GdRQMzVmKfyCXzU9X7RQug96ZkHA9S4XSyMAI33kY
+      whkbCdy+uFSZLwIRIkOOpiHnGE38LRoplWgQiK6kyKZPUfJdBtXIIGfg0xB0P0JlW95CoMMLA/pp
+      sa98GnttFHZH9EGSMGRZQsrOCKSO5SztZLFlUARUGrA6joy+Ql2BtNxVX8hEpC3zi5vSkcR3+rXO
+      IGNQUzLwhlFvoL+8jrKQOS9tmWMQQePSieM/+h6moazTpbeQL1svFHEOrVWDSv3c4bk2M0R2fK6v
+      vbV5a33t9tqdDbtSKUoyQE+wKAYNaNBVPAQSgJjzU7saFbGdATDzuCK1x/Iuc6OJ7gmkQm5R1oaL
+      g07k0VvaQmLoMyroLyOCwzZvwFKPXpbKvAFNtZGaVj+HpjmP3mZbcJIG3Bd2yKNtcDKwdO25pKNL
+      9NAgPBuuAwHC0t3NjXubG62v312/vbJxPe+ZcaZNcbcWzRvtUQS0cf/uHdceMYXaBPOHzEf+YMpe
+      yBydCnSyhT+csIECcMelzjZuV97L1oH/l2KVHqZDfE3RO3c3wD4/ygKU3cMEo3Dez6eBhKGZwuHp
+      /M6Aw+4mcS7ncTkYhfLuAwwee7dghvHwae7Ap2y27jJbPUy33R7qtnntGcW0LZrU6n2Nxrg4LL8x
+      akVDpvIKs7AeNH48Rl7uD9yu0vZu/++Q94fufqbtxYJSODz0/52qspuOMLsJ3W3lacmHPZVgq/GH
+      MXK6P7kMDbOlX42RX449GjF5HphwR040bqd/lKUp65XtTDk6AJ8h/FnvgH3ihVsYWRuUnC30Z1Zt
+      7hGm+S0uNV4Xj8ch8eo+icHA70SOTpHGa4MJrR/K0U+bi6R0UA4P1BfI83bo83F3XJ2rzzWmyZcP
+      Su1Lgy6RK3hVYYJELt4/8oOxI2NHjpR+dGLUQ+/jX//lb+bjW98tH//tf0794+bRuD7yoffRJ2fd
+      +26l/+PZQ+/ZQ+/ZQ8899LZGN7oNsn6INve03ejQr8oLo16V6CT24YEktQ77upwhZ/si/aPwEiFu
+      oTPZA9VqODvHg7l6fWFxLpg9bK/r96X/Ahinno1gFAAA
     headers:
       Accept:
       - '*/*'
@@ -191,7 +191,7 @@ interactions:
       Content-Encoding:
       - gzip
       Content-Length:
-      - '2159'
+      - '2142'
       Content-Type:
       - application/x-protobuf
       User-Agent:
@@ -203,17 +203,17 @@ interactions:
       string: ''
     headers:
       CF-RAY:
-      - 9932a2b5b8522830-ZRH
+      - 99bb584d5c7b39c8-FRA
       Connection:
       - keep-alive
       Content-Length:
       - '0'
       Date:
-      - Thu, 23 Oct 2025 16:33:20 GMT
+      - Sun, 09 Nov 2025 06:45:01 GMT
       Nel:
       - '{"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}'
       Report-To:
-      - '{"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=2vROkq09ga1GP8ayW7lk%2Bnhcg%2FNtUdFuIApcBOedInzBtssuZlcEvwtKvRz59zv9bLV6ccs7sM%2Fy8DzMbIy9Ji%2FlrOdBjPJygKbdRuAJdFjBwLk%2Bp5s%3D"}]}'
+      - '{"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=0wQbcOgmtWP080KvZcPNPkETOatnAKX0vdQl5TKxpTuTaqceIPMu6WaEg7q7gaVfk0RAaOS7p6trwzobVfE9RIKhyfbyKgkkuHyA%2F7wAsrP8mqWBA74%3D"}]}'
       Server:
       - cloudflare
       cf-cache-status:
@@ -233,14 +233,14 @@ interactions:
       are critical for reliable rankings. Each comparison should be independent but
       internally consistent.\n\n<EXAMPLES>\nExample 1:\n<QUESTION> Which of the two
       ice cream flavours below is more creative? </QUESTION>\n<A> Vanilla </A> \n<B>
-      Pickled Citrus Ribbon </B>\nExpected output:\n{\n    \"result\": \"B\",\n}\n\nExample
+      Pickled Citrus Ribbon </B>\nExpected output:\n{\n    \"response\": \"B\",\n}\n\nExample
       2:\n<QUESTION> Which search query shows more genuine curiosity? </QUESTION>\n<A>
       effect of ocean acidification feedback loops on Arctic methane release </A>
-      \n<B> climate change effects </B>\nExpected output:\n{\n    \"result\": \"A\",\n}\n\nExample
+      \n<B> climate change effects </B>\nExpected output:\n{\n    \"response\": \"A\",\n}\n\nExample
       3:\n<QUESTION> Which reply is more insulting? </QUESTION>\n<A> Your argument
       lacks logical coherence and fails to address the core issue at hand. </A> \n<B>
       That''s an interesting perspective, though I see it differently. </B>\nExpected
-      output:\n{\n    \"result\": \"A\",\n}\n</EXAMPLES>\n\n<REQUIREMENTS>\n1. Consider
+      output:\n{\n    \"response\": \"A\",\n}\n</EXAMPLES>\n\n<REQUIREMENTS>\n1. Consider
       the question carefully. What aspects are important for the answer?\n2. Think
       about answer A. Is it a good answer to the question? Why (not)?\n3. Think about
       answer B. Is it a good answer to the question? Why (not)?\n4. Make a decision
@@ -250,7 +250,7 @@ interactions:
       \"B\",\n}\n\nDo NOT include explanations, reasoning, or any other fields.\n</OUTPUT_FORMAT>\n"},{"role":"user","content":"\n<QUESTION>
       Which of the two ice cream flavours A or B is more creative? </QUESTION>\n<A>
       vanilla </A>\n<B> toasted rice & miso caramel ice cream </B>\n"},{"role":"assistant","content":"{\n    \"response\":
-      \"B\"\n}"},{"role":"user","content":"Validation feedback:\nPlease include your
+      \"B\",\n}"},{"role":"user","content":"Validation feedback:\nPlease include your
       response in a tool call.\n\nFix the errors and try again."}],"model":"qwen2.5:72b","stream":false,"temperature":0.0,"tool_choice":"required","tools":[{"type":"function","function":{"name":"final_result","description":"The
       final response which ends this conversation","parameters":{"properties":{"response":{"$ref":"#/$defs/GameResult"}},"required":["response"],"type":"object","additionalProperties":false,"$defs":{"GameResult":{"enum":["A","B"],"type":"string"}}},"strict":true}}]}'
     headers:
@@ -261,7 +261,7 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '2567'
+      - '2574'
       content-type:
       - application/json
       host:
@@ -290,7 +290,7 @@ interactions:
     uri: http://localhost:11434/v1/chat/completions
   response:
     body:
-      string: '{"id":"chatcmpl-680","object":"chat.completion","created":1761237204,"model":"qwen2.5:72b","system_fingerprint":"fp_ollama","choices":[{"index":0,"message":{"role":"assistant","content":"","tool_calls":[{"id":"call_6moy7t6r","index":0,"type":"function","function":{"name":"final_result","arguments":"{\"response\":\"B\"}"}}]},"finish_reason":"tool_calls"}],"usage":{"prompt_tokens":613,"completion_tokens":20,"total_tokens":633}}
+      string: '{"id":"chatcmpl-250","object":"chat.completion","created":1762670706,"model":"qwen2.5:72b","system_fingerprint":"fp_ollama","choices":[{"index":0,"message":{"role":"assistant","content":"","tool_calls":[{"id":"call_bm6uv6u8","index":0,"type":"function","function":{"name":"final_result","arguments":"{\"response\":\"B\"}"}}]},"finish_reason":"tool_calls"}],"usage":{"prompt_tokens":613,"completion_tokens":20,"total_tokens":633}}
 
         '
     headers:
@@ -299,7 +299,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Thu, 23 Oct 2025 16:33:24 GMT
+      - Sun, 09 Nov 2025 06:45:06 GMT
     status:
       code: 200
       message: OK

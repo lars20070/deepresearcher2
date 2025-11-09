@@ -30,6 +30,8 @@ if TYPE_CHECKING:
     from pydantic_ai.messages import ModelMessage
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
+from fastmcp import Client, FastMCP
+from pydantic import AnyUrl
 from pydantic_ai.models.openai import OpenAIChatModel
 from pydantic_ai.providers.openai import OpenAIProvider
 from pydantic_ai.settings import ModelSettings
@@ -284,10 +286,11 @@ class Deps:
     geo_api_key: str | None
 
 
-@pytest.mark.skip(reason="https://geocode.maps.co has strict request limits. '429 Too Many Requests' is likely.")
-@pytest.mark.example
-@pytest.mark.paid
+# @pytest.mark.skip(reason="https://geocode.maps.co has strict request limits. '429 Too Many Requests' is likely.")
+# @pytest.mark.paid
+@pytest.mark.vcr()
 @pytest.mark.asyncio
+@pytest.mark.example
 async def test_weather_agent() -> None:
     """
     Test Ollama agent with two tools.
@@ -427,10 +430,11 @@ class ClientAndKey:
     api_key: str
 
 
-@pytest.mark.skip(reason="Sometimes GPT-4o ends up in an infinite loop. Not sure why.")
-@pytest.mark.paid
-@pytest.mark.example
+# @pytest.mark.skip(reason="Sometimes GPT-4o ends up in an infinite loop. Not sure why.")
+# @pytest.mark.paid
+@pytest.mark.vcr()
 @pytest.mark.asyncio
+@pytest.mark.example
 async def test_agent_delegation() -> None:
     """
     Test the agent delegation functionality
@@ -723,6 +727,7 @@ async def test_mcp_sse_client() -> None:
         assert "9,208 days" in result.output
 
 
+@pytest.mark.skip(reason="Requires `deno` to be installed locally.")
 @pytest.mark.paid
 @pytest.mark.example
 @pytest.mark.asyncio
@@ -730,6 +735,8 @@ async def test_mcp_stdio_client() -> None:
     """
     Test the Pydantic MCP SSE client.
     https://ai.pydantic.dev/mcp/client/#sse-client
+    Requires local Deno installation.
+    https://github.com/denoland/deno/?tab=readme-ov-file#installation
 
     Note that unlike in the SSE mode, the MCP server starts up automatically.
     """
@@ -776,7 +783,7 @@ async def test_mcp_server() -> None:
     Test the MCP server functionality defined in deepresearcher2.examples.mcp_server()
 
     The MCP server wraps a Claude 3.5 agent which generates poems.
-    The MCP server ist started automatically.
+    The MCP server is started automatically.
     """
     server_params = StdioServerParameters(
         command="uv",
@@ -794,6 +801,110 @@ async def test_mcp_server() -> None:
             text = str(content)
         logger.debug(f"Complete poem:\n{text}")
         assert "socks" in text
+
+
+@pytest.mark.paid
+@pytest.mark.example
+@pytest.mark.asyncio
+async def test_mcp_server_in_memory() -> None:
+    """
+    Test the MCP server functionality using from the FastMCP package.
+    Testing both in-memory transport.
+    """
+
+    server = FastMCP("PydanticAI Server")
+    server_agent = Agent(
+        "anthropic:claude-3-5-haiku-latest",
+        system_prompt="Always reply in rhyme.",
+    )
+
+    @server.tool
+    async def poet(theme: str) -> str:
+        """Poem generator"""
+        r = await server_agent.run(f"Write a poem about {theme}.")
+        return r.output
+
+    async with Client(server) as client:
+        # List all available tools
+        tools = await client.list_tools()
+        assert len(tools) == 1
+        assert tools[0].name == "poet"
+        logger.debug(f"Available tools on MCP server: {[tool.name for tool in tools]}")
+
+        # Call the poet tool
+        result = await client.call_tool("poet", {"theme": "socks"})
+
+        # Extract text from result
+        content = result.content[0]
+        text = getattr(content, "text", str(content))
+
+        logger.debug(f"Complete poem:\n{text}")
+        assert "socks" in text.lower() or "sock" in text.lower()
+
+
+@pytest.mark.paid
+@pytest.mark.example
+@pytest.mark.asyncio
+async def test_mcp_server_stdio() -> None:
+    """
+    Test the MCP server functionality using from the FastMCP package.
+    Testing both stdio transport.
+    """
+
+    server_params = StdioServerParameters(
+        command="uv",
+        args=["run", "mcpserver_stdio"],
+        env=dict(os.environ),
+    )
+
+    async with stdio_client(server_params) as (read, write), ClientSession(read, write) as session:
+        await session.initialize()
+        # (1a) List and verify available tools
+        result = await session.list_tools()
+        tools = result.tools
+        assert len(tools) == 1
+        assert tools[0].name == "poet"
+        logger.debug(f"Available tools on MCP server: {[tool.name for tool in tools]}")
+
+        # (1b) Call the 'poet' tool
+        result = await session.call_tool("poet", {"theme": "socks"})
+
+        # Extract text from result
+        content = result.content[0]
+        text = getattr(content, "text", str(content))
+
+        logger.debug(f"Complete poem:\n{text}")
+        assert "socks" in text.lower() or "sock" in text.lower()
+
+        # (2a) List and verify available prompts
+        prompts_result = await session.list_prompts()
+        prompts = prompts_result.prompts
+        assert len(prompts) == 1
+        assert prompts[0].name == "poem_prompt"
+        logger.debug(f"Available prompts on MCP server: {[prompt.name for prompt in prompts]}")
+
+        # (2b) Call the 'poem_prompt' prompt
+        prompt_result = await session.get_prompt("poem_prompt", arguments={"theme": "socks"})
+        assert len(prompt_result.messages) > 0
+        content = prompt_result.messages[0].content
+        prompt = getattr(content, "text", str(content))
+        assert "socks" in prompt.lower()
+        logger.debug(f"Generated prompt: {prompt}")
+
+        # (3a) List and verify available resources
+        resources_result = await session.list_resources()
+        resources = resources_result.resources
+        assert len(resources) == 1
+        assert str(resources[0].uri) == "poetry://guidelines"
+        assert resources[0].name == "poetry_guidelines"
+        logger.debug(f"Available resources on MCP server: {[resource.uri for resource in resources]}")
+
+        # (3b) Read the 'poetry_guidelines' resource
+        guidelines_result = await session.read_resource(AnyUrl("poetry://guidelines"))
+        assert len(guidelines_result.contents) > 0
+        guidelines_content = guidelines_result.contents[0]
+        guidelines_text = getattr(guidelines_content, "text", str(guidelines_content))
+        logger.debug(f"Poetry guidelines (first 500 chars):\n{guidelines_text[:500]}")
 
 
 @pytest.mark.example

@@ -1,6 +1,6 @@
 [project]
 name = "deepresearcher2"
-version = "0.1.6"
+version = "0.1.7"
 description = "fully local web research and report writing assistant"
 readme = "README.md"
 authors = [{ name = "Lars Nilse", email = "l.nilse@dunelm.org.uk" }]
@@ -33,12 +33,16 @@ dependencies = [
   "pytest-recording>=0.13.4",
   "pytest-mock>=3.15.1",
   "ddgs>=9.6.1",
+  "fastmcp>=2.13.0.1",
 ]
 
 [project.scripts]
 uml = "deepresearcher2.cli:uml"
 chat = "deepresearcher2.examples:basic_chat"
 mcpserver = "deepresearcher2.examples:mcp_server"
+mcpserver_stdio = "deepresearcher2.examples:mcp_server_stdio"
+date_server = "deepresearcher2.mcp.date_server:date_server"
+wolframscript_server = "deepresearcher2.mcp.wolframscript_server:wolframscript_server"
 research = "deepresearcher2.graph:main"
 import = "deepresearcher2.evals.import_bigbench:main"
 generate = "deepresearcher2.evals.generate:main"
@@ -109,6 +113,7 @@ markers = [
   "paid: tests requiring paid APIs",
   "ollama: tests requiring a local Ollama instance",
   "searxng: tests requiring a local SearXNG instance",
+  "wolframscript: tests requiring a local WolframScript installation",
   "example: examples which are not testing deepresearcher2 functionality",
 ]
 
@@ -117,12 +122,25 @@ branch = true
 source = ["deepresearcher2"]
 parallel = true
 disable_warnings = ["module-not-measured"]
-omit = ["tests/*", "src/deepresearcher2/cli.py"]
+omit = [
+  "tests/*",
+  "src/deepresearcher2/cli.py",
+  "src/deepresearcher2/examples.py",
+  "src/deepresearcher2/evals/generate.py",
+  "src/deepresearcher2/evals/import_bigbench.py",
+]
 
 [tool.coverage.report]
 show_missing = true  # Show line numbers of missing coverage in terminal
 skip_covered = false # Show all files, including those with full coverage
 skip_empty = true    # Skip files with no statements
+precision = 1        # Show coverage to 1 decimal place
+exclude_lines = [
+    "pragma: no cover",            # Don't count lines marked to be excluded
+    "raise NotImplementedError",   # Don't count abstract methods
+    "if __name__ == .__main__.:",  # Don't count main entry points
+    "if TYPE_CHECKING:",           # Don't count type checking blocks
+]
 
 [tool.coverage.html]
 directory = "coverage"

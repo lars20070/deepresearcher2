@@ -1,11 +1,15 @@
 #!/usr/bin/env python3
+import textwrap
 
+import fastmcp
 import logfire
 from dotenv import load_dotenv
 from mcp.server.fastmcp import FastMCP
 from pydantic_ai import Agent
 from pydantic_ai.models.openai import OpenAIChatModel
 from pydantic_ai.providers.openai import OpenAIProvider
+
+from deepresearcher2.logger import logger
 
 from .config import config
 
@@ -56,7 +60,7 @@ def basic_chat() -> None:
 
 def mcp_server() -> None:
     """
-    Start the MCP server.
+    Start the MCP server using the `mcp` package.
 
     Creates and runs an MCP server with a Claude 3.5 agent inside.
     https://ai.pydantic.dev/mcp/server/
@@ -70,9 +74,96 @@ def mcp_server() -> None:
     )
 
     @server.tool()
-    async def poet(theme: str) -> str:  # pyright: ignore[reportUnusedFunction]
+    async def poet(theme: str) -> str:
         """Poem generator"""
         r = await server_agent.run(f"Write a poem about {theme}.")
         return r.output
+
+    server.run()
+
+
+def mcp_server_stdio() -> None:
+    """
+    Start the MCP server using the `fastmcp` package.
+
+    Creates and runs an MCP server with
+    (1) a tool with a Claude 3.5 agent inside
+    (2) a prompt for a poem
+    (3) a resource serving poetry guidelines
+    https://youtu.be/rnljvmHorQw
+
+    The server is tested in test_mcp_server_stdio().
+    In order to test the server manually in Claude Desktop, please extend the config as below.
+    ~/Library/Application Support/Claude/claude_desktop_config.json
+
+    {
+        "mcpServers": {
+            "mcpserver_stdio": {
+                "command": "uv",
+                "args": [
+                    "--directory",
+                    "/Users/lars/Code/deepresearcher2",
+                    "run",
+                    "mcpserver_stdio"
+                ]
+            }
+        }
+    }
+
+    In Claude Desktop, (1) is available under 'Search and tools' and (2) and (3) under "+".
+    """
+    server = fastmcp.FastMCP("PydanticAI Server")
+    server_agent = Agent(
+        "anthropic:claude-3-5-haiku-latest",
+        system_prompt="Always reply in rhyme.",
+    )
+
+    @server.tool
+    async def poet(theme: str) -> str:
+        logger.info(f"Calling 'poet' tool with theme: {theme}")
+        r = await server_agent.run(f"Write a poem about {theme} and the Golden Gate Bridge.")
+        logger.debug(f"Poem generated:\n{r.output}")
+        return str(r.output)
+
+    @server.prompt
+    def poem_prompt(theme: str) -> str:
+        logger.info(f"Calling 'poem_prompt' with theme: {theme}")
+        prompt = f"Write a beautiful poem about {theme} and the Eiffel Tower."
+        logger.debug(f"Prompt generated:\n{prompt}")
+        return prompt
+
+    @server.resource("poetry://guidelines")
+    def poetry_guidelines() -> str:
+        logger.info("Serving poetry guidelines resource")
+        guidelines = textwrap.dedent("""# Poetry Examples and Guidelines
+
+        ## Example 1: Nature Poem
+        The morning dew upon the grass,
+        Reflects the sun as moments pass,
+        A gentle breeze through trees does flow,
+        Nature's beauty all aglow.
+
+        ## Example 2: Technology Poem
+        In circuits bright and code so clean,
+        The future's built on what we've seen,
+        Through silicon and logic gates,
+        Innovation accelerates.
+
+        ## Poetry Writing Guidelines
+        - Use vivid imagery and sensory details
+        - Maintain consistent rhythm and meter
+        - Employ rhyme schemes (ABAB, AABB, etc.)
+        - Create emotional resonance
+        - Use metaphors and similes effectively
+        - End with a memorable conclusion
+
+        ## Common Themes
+        - Nature and seasons
+        - Love and relationships
+        - Technology and progress
+        - Time and memory
+        - Dreams and aspirations
+        """)
+        return guidelines
 
     server.run()

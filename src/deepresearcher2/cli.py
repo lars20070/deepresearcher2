@@ -22,6 +22,7 @@ def uml() -> None:
         "-o",
         "dot",
         "-A",
+        "-S",
         "--only-classnames",
         "-d",
         "./uml",

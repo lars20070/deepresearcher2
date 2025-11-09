@@ -3,8 +3,11 @@
     // Python
     "nicohlr.pycharm",
     "ms-python.python",
+    "anysphere.pyright", // language server pushed by Cursor
+    "ms-python.debugpy",
     "charliermarsh.ruff",
     "njpwerner.autodocstring",
+    "ms-python.vscode-pylance",
     // yaml + toml
     "redhat.vscode-yaml",
     "tamasfe.even-better-toml",

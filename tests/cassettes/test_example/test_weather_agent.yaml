@@ -1,0 +1,1271 @@
+interactions:
+- request:
+    body: !!binary |
+      H4sIAGF4CGkC/81Vz2/cRBTOQhSSl+aX04REgTB1QSpR6qy9v6O0UuEAWBxQBRJSiaxZe7xxY4+N
+      PW5YolyQ+AM4ABIXhMSJEwckhHrov1COcOHGDXoCpEhIvPHaiXe7VRHqgUirjN+89+Z73/tmHvyx
+      DPeehg4sJyy+49lM83giKJcLR1GB0IbNHKdqNLu2U290a7TT7bYabtdo6027qTugwqpgPguYiPta
+      4hxqPuW9lPaYMg1TUV8chBxeAmXYh9OAKQswF0aMn+3AJVgZdrvD4sQLucyka7WWVkWXCwXQLMcS
+      LKT8kIdH3MrtsAyzURzaLEm0CGuYXPvs10mMu1gY45QLL8jjZ+AZOwd5GZ4ddSmdX9N0Q2vDO7Ax
+      6uSwxI69SEjHJtQHjuRKQD2+TUzKiV4nRtVobBOjtltr7jbaL5Nbr0qWiN7RdK1J9uEaLBRlFWdu
+      wZVmvduqtljDdjvNVr3TqXUNu9Nyjbbbahvtaou2dMPVq7ry7SKsYNV9hyIk+yr1FOSrqukN5eun
+      YLHyxRur1zbuTt/fubu2+QP9Spn++eC7+7+lP52q07MPfvylotx8fWsGO8YFwaKqlU518/dPv0/F
+      2o1iYa4CBKHDfCtjDfnoReJqPTSfB8gCraKjR4yKAxZbmdV8EZbwv0U9LfvWxnupMOuHPdeLmRYk
+      PWUZlob2JSjzMiwVPklEuSX6EVPm4QIKyPF4z5JGcwfWC6fCHtFYwkMhKLBYHfn7cOLjykRlYkJ5
+      MDeOJvbN5pf3Xpmy1On1d//8pP53ZWNr1j6gggyKR6IWPzodEFUszBdgJa8YtR1TqYpB1VMwKWPN
+      dZjLHZJ+IlggyZTXgHomgYv5VszeT1kitIzzEt0qzEudsFijjhOjCpVFmKdRdhhm0OwwMD8HWBv0
+      Ks8iOUAEAoWlnM7AXzPHqptyW0KzRBj6ibpLbh2rEiWu1B4Tlk/xx3vqNlHPg63bCUYk9gELKDoe
+      q4jBk1mo/1YsqxUek7lc6idMRpaNx6of2hkdVunCZBvD3+oNUjKQ0CWUFKGaBCQ7L/0SEWOD1ZMT
+      tMlKseuOrGT8QfulyLB7m9lClYEjZ+8laRDQuH/9NSYIKpAgEZ5IHUYodxAG7w2+hlHt7RRh7/G9
+      mIk05olclpJfx6q8jHJ0I3bIBT4PCP8RB2DKcjDm2inySgrCFPuRXQHHkmmtQ9ZH+Dz1/e0BMVje
+      LhFxKvuQSBngw0D9UnMOPS7ZOlOCTIttpg4VNE+F/AyrIr+VT1YVVIwTwZsFLch01odxCuBp0EU4
+      so9SrOPSlDv22DwPKwnB5cn/o35yygg+Gk9IMPhkZA9LGg80U5xQiv1/qEcy1k09X3ilZ2Z/cH6U
+      Cku+UTKHYB8I9dyck3uGJzcPZaC+Hx5ZMtAabJ/DHWx5AU6O870M9ol5CMvFeCiJVnkbbh6P9vZh
+      oT7qSc02R5VxcvLvBtZzw5NvDsrz5fHjrMtcR3fcqq4bDaPeNi+dDR+cDVHIEzY6QYqJ9w8DygVv
+      +AkAAA==
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Length:
+      - '1144'
+      Content-Type:
+      - application/x-protobuf
+      User-Agent:
+      - OTel-OTLP-Exporter-Python/1.37.0
+    method: POST
+    uri: https://logfire-eu.pydantic.dev/v1/traces
+  response:
+    body:
+      string: ''
+    headers:
+      CF-RAY:
+      - 998ae802be4e7581-DUS
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Date:
+      - Mon, 03 Nov 2025 09:39:45 GMT
+      Nel:
+      - '{"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}'
+      Report-To:
+      - '{"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=nmRRHz7srJitX97s1j703p4xfJSn28Y0dBhlPH8Mw7MPPV3ENc8jUFopkTEd785%2B0lqNnwRDEmwApD%2Fjr9EhKKkFNLVfPmz73CM%2BEIuf1nWemBML6FU%3D"}]}'
+      Server:
+      - cloudflare
+      cf-cache-status:
+      - DYNAMIC
+      vary:
+      - origin, access-control-request-method, access-control-request-headers
+      via:
+      - 1.1 google
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"messages":[{"role":"system","content":"Be concise, reply with one sentence.
+      Use the `get_lat_lng` tool to get the latitude and longitude of the locations,
+      then use the `get_weather` tool to get the weather."},{"role":"user","content":"What
+      is the weather like in Zurich and in Wiltshire?"}],"model":"gpt-4o","stream":false,"tool_choice":"auto","tools":[{"type":"function","function":{"name":"get_lat_lng","description":"<summary>Get
+      the latitude and longitude of a location.</summary>\n<returns>\n<description>A
+      dictionary containing latitude and longitude.</description>\n</returns>","parameters":{"additionalProperties":false,"properties":{"location_description":{"description":"A
+      description of a location.","type":"string"}},"required":["location_description"],"type":"object"},"strict":true}},{"type":"function","function":{"name":"get_weather","description":"<summary>Get
+      the weather at a location.</summary>\n<returns>\n<description>A dictionary containing
+      temperature and weather description.</description>\n</returns>","parameters":{"additionalProperties":false,"properties":{"lat":{"description":"Latitude
+      of the location.","type":"number"},"lng":{"description":"Longitude of the location.","type":"number"}},"required":["lat","lng"],"type":"object"},"strict":true}}]}'
+    headers:
+      accept:
+      - application/json
+      accept-encoding:
+      - gzip, deflate, br
+      connection:
+      - keep-alive
+      content-length:
+      - '1280'
+      content-type:
+      - application/json
+      host:
+      - api.openai.com
+      user-agent:
+      - pydantic-ai/1.0.15
+      x-stainless-arch:
+      - arm64
+      x-stainless-async:
+      - async:asyncio
+      x-stainless-lang:
+      - python
+      x-stainless-os:
+      - MacOS
+      x-stainless-package-version:
+      - 2.1.0
+      x-stainless-read-timeout:
+      - '600'
+      x-stainless-retry-count:
+      - '0'
+      x-stainless-runtime:
+      - CPython
+      x-stainless-runtime-version:
+      - 3.12.8
+    method: POST
+    uri: https://api.openai.com/v1/chat/completions
+  response:
+    body:
+      string: !!binary |
+        YwBQKgBA/G+q7lqmf2+24tIZbaeUihqWsGkBlPSpU8/jGNGI/aLMDZYuz1oWq2/MlTYV3+oFrUCB
+        Wqsodxiegw8G4LW/CRFkBUYomzyW2ql0+aCOTxcPk+H74TYe9e9mzdX5xUM8633L7w06CRFssRFl
+        RCnsJDHwpDVQcM7lNFGBUX86GfQng+lsAviEtpVQYITaxXRk00FvMEp7s7Q3QUxtrCxFAKPnhIjo
+        99sSEZq/H4FRr/MvToxhgkH8EBG8VQKMkIcgQ8xNRAdCqvS6UUamVQrwWLRW8TJXinD41v79neKr
+        n+ZK8dY/nq8vB3dX7tHv2tX25sw/Xm5PPsiE2KvfjlIkIUYuHALWxwhcIILJNfp31SJylUeuTH2G
+        RBDpw8EIvy+I22HwqtSD77oorXkBoxc8tV6WzQv+QVj7n+jOPxElOeDvSt6vTt+rH13ffG7MsF8c
+        h/ufG7d8GG5xL1UMjfTiJL/br3In1WMBLLlKqVew8q+4EZ48D8rWztsiIBdQBGCLV7d2CCYLhYQy
+        gBpDtBL9Lpy32kUe7VYQ7PVn82cL6jAFQx8PllS3GaTAVg1G/Q6eAi+1sB0k5BjKvGxEhTylCPfz
+        tpIWEJCGZFEBjQrxh3ywqTQ1f6UAE2UpXBQVL/cyy+oUVG5ebEQpJDzN/JPCGuM8SuHBCMYLhED7
+        DlFovpamFt55qY08gLXjk/F4MqpmRT5G8p8YAw==
+    headers:
+      CF-RAY:
+      - 998ae803ac4d1633-DUS
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - br
+      Content-Type:
+      - application/json
+      Date:
+      - Mon, 03 Nov 2025 09:39:48 GMT
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cf_bm=1fVj8mbCq2kAs9UvXZ2udj1X2ECyEqoTIR36Rguc_fo-1762162788-1.0.1.1-mF9svks2_WdOF9_PalCZUaYLjmamZFAe44wJsPr.vTu.kRunG45iVuLRM88tx8AUkJtO8rJjJoGJHurSgMeYOE70kNCotqel82j2aad_uac;
+        path=/; expires=Mon, 03-Nov-25 10:09:48 GMT; domain=.api.openai.com; HttpOnly;
+        Secure; SameSite=None
+      - _cfuvid=Ajs0eTWLrN.3geZiibu0HCW0TDYiVb1nZD6EHUrNxxo-1762162788935-0.0.1.1-604800000;
+        path=/; domain=.api.openai.com; HttpOnly; Secure; SameSite=None
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      X-Content-Type-Options:
+      - nosniff
+      access-control-expose-headers:
+      - X-Request-ID
+      alt-svc:
+      - h3=":443"; ma=86400
+      cf-cache-status:
+      - DYNAMIC
+      openai-organization:
+      - user-go1uahqj1xwugtuyl7fpavtk
+      openai-processing-ms:
+      - '2170'
+      openai-project:
+      - proj_iT53cGFGZImyTUsEPAQ0QFAO
+      openai-version:
+      - '2020-10-01'
+      x-envoy-upstream-service-time:
+      - '2463'
+      x-openai-proxy-wasm:
+      - v0.1
+      x-ratelimit-limit-requests:
+      - '500'
+      x-ratelimit-limit-tokens:
+      - '30000'
+      x-ratelimit-remaining-requests:
+      - '499'
+      x-ratelimit-remaining-tokens:
+      - '29942'
+      x-ratelimit-reset-requests:
+      - 120ms
+      x-ratelimit-reset-tokens:
+      - 116ms
+      x-request-id:
+      - req_63f1b99cd779468b89bbc7aec9811457
+    status:
+      code: 200
+      message: OK
+- request:
+    body: !!binary |
+      H4sIAGV4CGkC/+1YXWwcVxXOOsFZ38Q/GceJjSGdTBsaW/Z4Zvbf2IkSl7aZJs2PnNqhtqZ3Z+6u
+      xzs7s56fuBvLPCBV8AqIVi2qRJVAH5B4hTZAJIoqUFWRIqRQAQEJqVRCAipBgUpInDs/69n1blMh
+      S/DQh1h37j333HO+893vng26O4Fu7UYFNOgQ+6quEl43HRebdKAxHGJxRiWaJkjZoqqlM8UULhSL
+      uUypKOXFrJoVNcShQy4xSJW4dp13tApvYLPs4TJhkqi7VndXLBMdQ0yzjYmrhOlHvVaNmI0VdBQN
+      NZtdJbajWyb1JPKpHC+Ayf4oUN/HAdTvmRXTWjeVcB4Non0121KJ4/A1yGHP8LPv7IF9B6NJ2zNd
+      vRru70F71TDI+9HhVpPY+SlelPg8uoxGW4004qi2XnOpYRalA0P2eBXr5gQrY5MV06wkSJkJVkpN
+      p7LTmfwY++QcRYkVC7zIZ9llNIv6o7SiM8fR8Wy6mBNyJKOWCtlculBIFSW1kCtJ+VIuL+WFHM6J
+      UkkUROZ1Fg1B1nUNQ0jqJNYZwEvgxQzzzhAaSLxw5tDs6M3k7ambw0dewS8xyZHF97+S/ndilEvu
+      +8tbv0swlx4d36euYJct19zJtCUkCgNf/ODr3/Pc4VP/NG6o34eBfB8aKhNTwToPRbMxTTeAsBvt
+      oXvlEdQbGjh1xyVVihqtL9ZlFh0Ml2yy5hHH5auWRgxqEZwoc6iPAkBsHmuaDfAyA6gP1/zDwAOv
+      WlX5OYSG/X1K6EWpYRsicAEx5oMe9I+eDa7kmSoNTXEty3C4afbJDY5GCSOuTFzFwPDPLHMTLLe1
+      WVl1YIejrpAqBsMNDmLQqRdsXLBptq5OqK8SNhxCd8YnNzjDUn04lBgT/IXmb+4UG5tgrRKL2Wgr
+      TwNy6zU/Tse1dQhxcxPmaKa6TTSaSfuDlmM7reIqUV2Obmw5e8bxqlVs1088QlzWXSEsAKG7nkZY
+      bGoQhlkOvpqjmpmKti2ZMzZxPdt06DDm/ARkpfuQgxmrWqYLvIfwOxwALuObwddU5JdCYHlQD4Wm
+      oynUrVIhdQjf9AxjIgAG0ptmXdujdXAoDYDx2IgVp6KbFK0GE6hbKDPWsItDV4BPMyvWCQZM7J1l
+      BXbbkeBsBAsg7dehHQNMr1qEcGgdKVnbuYlX7J5+tjMJggud/5f8CSFjQTR2iDAgGb6weHbAmeiE
+      2N7/D/ZQxIqebrh6TGaWg/NrnqtQjaI+XPK0y21Nh+A24gmnmzxgw7DWFbpRCZa3wg2W9Cq8rFtr
+      ftib8ig6YFjlEpSXd2rY9CGgukw/5E+hfdFi1SkzvSgu9fL7XQ1d101wyldBfOEMh/lNF3q7C+TT
+      toxAlnxVD++IG2prxJwoV1pPAJVOnSa0uqpOcbVJzaiz67q7wlomYR366tMeg73sEJ9OT8XE+SmW
+      YgJ/2PI9xSpOfWeCfpqsF/cZsmi7z3CB5zaXfT2I0oTd9kdPcoFCqTtNV8LQK4TVTfbzHhBuxY8Z
+      vhaAMM4KVOEkPXFZ/lcXOhQ9qH45t5C/24V+HUceO45OmzK3U1yQmqICQei67vOXfimefeV86aL0
+      xKXaFftz1kOV+cftKxcrZ69Ssw6PIrbLXhVyoydwG0ttn5wlWFviguyWuE3Oh+9esegLD51b065V
+      y/Prq2ZKLD7mLFybr80t7kgsDWz9cOhFKoGmOCvQKGAnELCtuAD71xNoMLoTMZVnvptA30lstMrh
+      dm1ve2H8lWgrtm1c94W0fY07GHdqb5rMI5Xe3ITGaiT071G3QUQgKRViOszu4R8mwOKTTRYN1fFN
+      uobT8kRDAKDvqsE1ImF3NogOBCIxCe1relLITwpZkJq+rf5PtRyX6Tl6d/7Gj391+sJJ+QRiWl1B
+      B34cfYYqjlqtGZNzi8Zj504vZlNrZyquLD6RX7l0/sKi+7hQ1+ursoiOtO5vKqTD9I+DfqGeRjWv
+      7XomsSuxaxfzt0S7Rvf5/mdSb3/rj49yyfcWur726vPXy+O90LcH7w0VXmh1hdSrfod7KhrIY+gT
+      /iLDjh9BcF6Mly2fAG+TuMLPkci9FBwg399Om/vQfuhrNbBTfI2eQiORUTQPxQfuK4AfgwaEIilp
+      olYSRFHKSOl8I+3re9qlfecn755/8+zYi1xy/s7LbunLe8fH98fThqyHv/BakHU0kI+igRB8ahL0
+      9i3ZZtFg3IQWgBb4PvTpD9Ub2NfnV6xxo5kHENexcQ6lhduUx5vRHUUj8Sym2XhsNzvc6esJ9M2P
+      cqebA2x74SZCGYnI2cmoFUZq1zofYucvwUXeEZaUxExOkOBnIi4UcCqba7Dk221Z8te/Xxy7/Od3
+      C1xS3P2L3//p9itvbmNJ7RsDxGdJNNgBlnR6CeTCNpY8iI51ZklD9D8myo4R5XYSHUB7w71Md5oX
+      RV5gXmhLnz88/HLl8I+O3eKSv91/69xrL31pbnxwDoKlqD9CLBXeEPbUhTNUa37QHbAoGsjHUS9d
+      B3U3SA26JuYw/a8fx3Wm6F+FPI3hsYDg6/J0ZBk25MwYetC3CbstBR410+VnKEsM5wQfrzQDrS7d
+      CyER04L38E6X/DDq9p9Vh5lB0xvcGjcdyc0Eh2t68JOBy+ZKYiqVFbKlXElKSel0SspKAl71sFbA
+      kgSMm0QHY4xT6I8XOJYwQ6gdCPIDzQTtYDXfnpmz6LMRfRq0bGLlRvCz1R812+0YZTJpLYdzuXQ2
+      m88LOQk3KPNiW3J8tbaUuPLGz9e45M+efeuN92Z/+Vwncvz0xmBAjmjwPyTHmQY5TqLZgBxbKvMx
+      Pz6MHylRSGkSEUhRE4oFVYv48R/Kt+QBYRYAAA==
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Length:
+      - '2137'
+      Content-Type:
+      - application/x-protobuf
+      User-Agent:
+      - OTel-OTLP-Exporter-Python/1.37.0
+    method: POST
+    uri: https://logfire-eu.pydantic.dev/v1/traces
+  response:
+    body:
+      string: ''
+    headers:
+      CF-RAY:
+      - 998ae8185cdd0f25-DUS
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Date:
+      - Mon, 03 Nov 2025 09:39:49 GMT
+      Nel:
+      - '{"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}'
+      Report-To:
+      - '{"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=Vm6XXy0mEb86d%2B7x6s37dxPG7LCTne5tJHke8BGDYSrhwHbAJ8O3scr7JWCPyfi9yJjf6jlhZ3cHEw3iplcw6xlRACUU%2F0%2BaYxXL8VSY0hiJBLWAZ10%3D"}]}'
+      Server:
+      - cloudflare
+      cf-cache-status:
+      - DYNAMIC
+      vary:
+      - origin, access-control-request-method, access-control-request-headers
+      via:
+      - 1.1 google
+    status:
+      code: 200
+      message: OK
+- request:
+    body: ''
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate, br
+      connection:
+      - keep-alive
+      host:
+      - geocode.maps.co
+      user-agent:
+      - python-httpx/0.28.1
+    method: GET
+    uri: https://geocode.maps.co/search?q=Wiltshire&api_key=67f133606f7f2324432620ajuad9a22
+  response:
+    body:
+      string: "[{\"place_id\":275957681,\"licence\":\"Data \xA9 OpenStreetMap contributors,
+        ODbL 1.0. http://osm.org/copyright\",\"osm_type\":\"relation\",\"osm_id\":2694420,\"lat\":\"51.324162\",\"lon\":\"-1.9032486699002247\",\"class\":\"boundary\",\"type\":\"ceremonial\",\"place_rank\":25,\"importance\":0.6694106884874261,\"addresstype\":\"ceremonial\",\"name\":\"Wiltshire\",\"display_name\":\"Wiltshire,
+        England, United Kingdom\",\"address\":{\"ceremonial\":\"Wiltshire\",\"state\":\"England\",\"ISO3166-2-lvl4\":\"GB-ENG\",\"country\":\"United
+        Kingdom\",\"country_code\":\"gb\"},\"extratags\":{\"wikidata\": \"Q23183\",
+        \"wikipedia\": \"en:Wiltshire\"},\"namedetails\":{\"name\": \"Wiltshire\"},\"boundingbox\":[\"50.9449859\",\"51.7031417\",\"-2.3655986\",\"-1.4857262\"]},{\"place_id\":275958535,\"licence\":\"Data
+        \xA9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright\",\"osm_type\":\"relation\",\"osm_id\":57533,\"lat\":\"51.25\",\"lon\":\"-1.916667\",\"class\":\"boundary\",\"type\":\"administrative\",\"place_rank\":12,\"importance\":0.48652229174669703,\"addresstype\":\"county\",\"name\":\"Wiltshire\",\"display_name\":\"Wiltshire,
+        England, United Kingdom\",\"address\":{\"county\":\"Wiltshire\",\"ISO3166-2-lvl6\":\"GB-WIL\",\"state\":\"England\",\"ISO3166-2-lvl4\":\"GB-ENG\",\"country\":\"United
+        Kingdom\",\"country_code\":\"gb\"},\"extratags\":{\"is_in\": \"England, UK\",
+        \"gns_uni\": \"6086822\", \"ref:gss\": \"E06000054\", \"website\": \"https://www.wiltshire.gov.uk/\",
+        \"ons_code\": \"00HY\", \"wikidata\": \"Q21694746\", \"wikipedia\": \"en:Wiltshire
+        (district)\", \"designation\": \"unitary_authority\", \"council_name\": \"Wiltshire
+        Council\", \"linked_place\": \"county\", \"gns_classification\": \"ADM1\"},\"namedetails\":{\"name\":
+        \"Wiltshire\", \"name:be\": \"\u040E\u0456\u043B\u0442\u0448\u044B\u0440\",
+        \"name:cy\": \"Wiltshire\", \"name:de\": \"Wiltshire\", \"name:en\": \"Wiltshire\",
+        \"name:nl\": \"Wiltshire\", \"name:pl\": \"Wiltshire\", \"name:ru\": \"\u0423\u0438\u043B\u0442\u0448\u0438\u0440\",
+        \"name:sv\": \"Wiltshire\", \"name:ceb\": \"Wiltshire\", \"name:nan\": \"Wiltshire\",
+        \"ISO3166-2\": \"GB-WIL\"},\"boundingbox\":[\"50.9449859\",\"51.7031417\",\"-2.3655986\",\"-1.4857262\"]}]"
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      CF-Cache-Status:
+      - MISS
+      CF-RAY:
+      - 998ae8186dea4f64-DUS
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Mon, 03 Nov 2025 09:39:49 GMT
+      Last-Modified:
+      - Mon, 03 Nov 2025 09:39:49 GMT
+      Nel:
+      - '{"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}'
+      Report-To:
+      - '{"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=YRgrai4N2QworbgALihr7zLvA1SU8n2FSrjF9aSXKPAWDjk0e1ntAvXhchtvO6%2BX%2B2Y2k8fJEaw3xptgEgpaiCmMXUdG8zodSvzQuGtD"}]}'
+      Server:
+      - cloudflare
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      alt-svc:
+      - h3=":443"; ma=86400
+      content-length:
+      - '1904'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: ''
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate, br
+      connection:
+      - keep-alive
+      host:
+      - geocode.maps.co
+      user-agent:
+      - python-httpx/0.28.1
+    method: GET
+    uri: https://geocode.maps.co/search?q=Zurich&api_key=67f133606f7f2324432620ajuad9a22
+  response:
+    body:
+      string: "[{\"place_id\":71007587,\"licence\":\"Data \xA9 OpenStreetMap contributors,
+        ODbL 1.0. http://osm.org/copyright\",\"osm_type\":\"relation\",\"osm_id\":1682248,\"lat\":\"47.3744489\",\"lon\":\"8.5410422\",\"class\":\"boundary\",\"type\":\"administrative\",\"place_rank\":16,\"importance\":0.7464166765390975,\"addresstype\":\"city\",\"name\":\"Z\xFCrich\",\"display_name\":\"Z\xFCrich,
+        Bezirk Z\xFCrich, Z\xFCrich, Schweiz/Suisse/Svizzera/Svizra\",\"address\":{\"city\":\"Z\xFCrich\",\"county\":\"Bezirk
+        Z\xFCrich\",\"state\":\"Z\xFCrich\",\"ISO3166-2-lvl4\":\"CH-ZH\",\"country\":\"Schweiz/Suisse/Svizzera/Svizra\",\"country_code\":\"ch\"},\"extratags\":{\"ele\":
+        \"408\", \"place\": \"city\", \"website\": \"https://www.stadt-zuerich.ch/\",
+        \"wikidata\": \"Q72\", \"wikipedia\": \"de:Z\xFCrich\", \"population\": \"443037\",
+        \"linked_place\": \"city\", \"swisstopo:SHN\": \"CH01120261\", \"admin_centre:4\":
+        \"yes\", \"population:date\": \"2022-12-31\", \"openGeoDB:loc_id\": \"32325\",
+        \"swisstopo:OBJEKTART\": \"Gemeindegebiet\", \"swisstopo:BEZIRKSNUM\": \"112\",
+        \"swisstopo:BFS_NUMMER\": \"261\", \"swisstopo:KANTONSNUM\": \"1\", \"openGeoDB:postal_codes\":
+        \"8000\u20138099\", \"report_problems:website\": \"https://www.zueriwieneu.ch/\",
+        \"openGeoDB:license_plate_code\": \"ZH\"},\"namedetails\":{\"name\": \"Z\xFCrich\",
+        \"name:ca\": \"Z\xFAric\", \"name:de\": \"Z\xFCrich\", \"name:en\": \"Zurich\",
+        \"name:es\": \"Z\xFArich\", \"name:fr\": \"Zurich\", \"name:it\": \"Zurigo\",
+        \"name:lt\": \"Ci\u016Brichas\", \"name:ru\": \"\u0426\u044E\u0440\u0438\u0445\",
+        \"name:sq\": \"Cyrihu\", \"name:zh\": \"\u8607\u9ECE\u4E16\", \"name:fur\":
+        \"Zurich\", \"name:zh-Hans\": \"\u82CF\u9ECE\u4E16\", \"name:zh-Hant\": \"\u8607\u9ECE\u4E16\",
+        \"name:af\": \"Z\xFCrich\", \"name:am\": \"\u12D9\u122A\u12AD\", \"name:an\":
+        \"Z\xFArich\", \"name:ar\": \"\u0632\u064A\u0648\u0631\u062E\", \"name:az\":
+        \"S\xFCrix\", \"name:be\": \"\u0426\u044E\u0440\u044B\u0445\", \"name:bg\":
+        \"\u0426\u044E\u0440\u0438\u0445\", \"name:bn\": \"\u099C\u09C1\u09B0\u09BF\u0996\",
+        \"name:br\": \"Z\xFCrich\", \"name:bs\": \"Z\xFCrich\", \"name:ce\": \"\u0426\u0443\u044C\u0440\u0438\u0445\",
+        \"name:cs\": \"Curych\", \"name:cv\": \"\u0426\u044E\u0440\u0438\u0445\",
+        \"name:cy\": \"Z\xFCrich\", \"name:da\": \"Z\xFCrich\", \"name:el\": \"\u0396\u03C5\u03C1\u03AF\u03C7\u03B7\",
+        \"name:eo\": \"Zuriko\", \"name:et\": \"Z\xFCrich\", \"name:eu\": \"Z\xFCrich\",
+        \"name:fa\": \"\u0632\u0648\u0631\u06CC\u062E\", \"name:fi\": \"Z\xFCrich\",
+        \"name:fj\": \"Zuriki\", \"name:fy\": \"Z\xFCrich\", \"name:ga\": \"Z\xFCrich\",
+        \"name:gd\": \"Z\xFCrich\", \"name:gl\": \"Z\xFAric\", \"name:he\": \"\u05E6\u05D9\u05E8\u05D9\u05DA\",
+        \"name:hi\": \"\u091C\u093C\u094D\u092F\u0942\u0930\u093F\u0916\u093C\", \"name:hr\":
+        \"Z\xFCrich\", \"name:ht\": \"Zirik\", \"name:hu\": \"Z\xFCrich\", \"name:hy\":
+        \"\u0551\u0575\u0578\u0582\u0580\u056B\u056D\", \"name:ia\": \"Zurich\", \"name:id\":
+        \"Z\xFCrich\", \"name:ie\": \"Z\xFArich\", \"name:io\": \"Z\xFCrich\", \"name:is\":
+        \"Z\xFCrich\", \"name:ja\": \"\u30C1\u30E5\u30FC\u30EA\u30C3\u30D2\", \"name:jv\":
+        \"Z\xFCrich\", \"name:ka\": \"\u10EA\u10D8\u10E3\u10E0\u10D8\u10EE\u10D8\",
+        \"name:kk\": \"\u0426\u044E\u0440\u0438\u0445\", \"name:kn\": \"\u0C9D\u0CCD\u0CAF\u0CC2\u0CB0\u0CBF\u0C96\u0CCD\",
+        \"name:ko\": \"\uCDE8\uB9AC\uD788\", \"name:ku\": \"Zur\xEEx\", \"name:la\":
+        \"Turicum\", \"name:lb\": \"Z\xFCrech\", \"name:li\": \"Zeurich\", \"name:ln\":
+        \"Ts\xFAri\", \"_place_name:lt\": \"Ciurichas\", \"name:lv\": \"C\u012Brihe\",
+        \"name:mk\": \"\u0426\u0438\u0440\u0438\u0445\", \"name:ml\": \"\u0D38\u0D42\u0D31\u0D3F\u0D1A\u0D4D\u0D1A\u0D4D\",
+        \"name:mn\": \"\u0426\u044E\u0440\u0438\u0445\", \"name:mr\": \"\u091D\u094D\u092F\u0941\u0930\u093F\u0915\",
+        \"name:ms\": \"Z\xFCrich\", \"name:mt\": \"Zurich\", \"name:my\": \"\u1007\u1030\u1038\u101B\u1005\u103A\u1001\u103B\u103A\u1019\u103C\u102D\u102F\u1037\",
+        \"name:na\": \"Z\xFCrich\", \"name:nl\": \"Z\xFCrich\", \"name:nn\": \"Z\xFCrich\",
+        \"name:no\": \"Z\xFCrich\", \"name:oc\": \"Zuric\", \"name:os\": \"\u0426\u044E\u0440\u0438\u0445\",
+        \"name:pa\": \"\u0A1C\u0A3C\u0A3F\u0A0A\u0A30\u0A3F\u0A16\", \"name:pl\":
+        \"Zurych\", \"name:ps\": \"\u0685\u0648\u0631\u06CC\u062E\", \"name:pt\":
+        \"Zurique\", \"name:qu\": \"Z\xFCrich\", \"name:rm\": \"Turitg\", \"name:rn\":
+        \"Zurich\", \"name:ro\": \"Z\xFCrich\", \"name:sh\": \"Z\xFCrich\", \"name:sk\":
+        \"Z\xFCrich\", \"name:sl\": \"Z\xFCrich\", \"name:sr\": \"\u0426\u0438\u0440\u0438\u0445\",
+        \"name:sv\": \"Z\xFCrich\", \"name:sw\": \"Z\xFCrich\", \"name:ta\": \"\u0B9A\u0BC2\u0BB0\u0BBF\u0B95\u0BCD\",
+        \"name:tg\": \"\u0422\u0441\u044E\u0440\u0438\u0445\", \"name:th\": \"\u0E0B\u0E39\u0E23\u0E34\u0E01\",
+        \"name:tl\": \"Z\xFCrich\", \"name:tr\": \"Z\xFCrih\", \"name:tt\": \"Ts\xFCrix\",
+        \"name:ug\": \"\u0633\u064A\u06C7\u0631\u0649\u062E\", \"name:uk\": \"\u0426\u044E\u0440\u0438\u0445\",
+        \"name:ur\": \"\u0632\u06CC\u0648\u0631\u062E\", \"name:uz\": \"Syurix\",
+        \"name:vi\": \"Z\xFCrich\", \"name:vo\": \"Z\xFCrich\", \"name:wo\": \"Zurich\",
+        \"name:yi\": \"\u05E6\u05D9\u05E8\u05D9\u05DA\", \"name:yo\": \"Z\xFCrich\",
+        \"name:als\": \"Z\xFCrich\", \"name:arc\": \"\u072C\u0723\u071D\u072A\u071D\u071F\",
+        \"name:arz\": \"\u0632\u0648\u0631\u064A\u062E\", \"name:bar\": \"Zirich\",
+        \"name:frp\": \"Tsurique\", \"name:frr\": \"Z\xFCrich\", \"name:gsw\": \"Z\xFCri\",
+        \"name:hsb\": \"Z\xFCrich\", \"name:ilo\": \"Z\xFCrich\", \"name:lmo\": \"Z\xFCrigh\",
+        \"name:nah\": \"Zurich\", \"name:nan\": \"Z\xFCrich\", \"name:nds\": \"Z\xFCrich\",
+        \"name:pdc\": \"Zurich\", \"name:pfl\": \"Zirich\", \"name:pms\": \"Zurigh\",
+        \"name:pnb\": \"\u0632\u06CC\u0648\u0631\u0686\", \"name:scn\": \"Zur\xECcu\",
+        \"name:vec\": \"Zurigo\", \"name:war\": \"Z\xFCrich\", \"name:wuu\": \"\u82CF\u9ECE\u4E16\",
+        \"name:yue\": \"\u8607\u9ECE\u4E16\", \"name:be-tarask\": \"\u0426\u044E\u0440\u044B\u0445\"},\"boundingbox\":[\"47.3202187\",\"47.4346662\",\"8.4480061\",\"8.6254413\"]},{\"place_id\":71085455,\"licence\":\"Data
+        \xA9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright\",\"osm_type\":\"relation\",\"osm_id\":1690227,\"lat\":\"47.4133024\",\"lon\":\"8.656394\",\"class\":\"boundary\",\"type\":\"administrative\",\"place_rank\":8,\"importance\":0.63203958980268,\"addresstype\":\"state\",\"name\":\"Z\xFCrich\",\"display_name\":\"Z\xFCrich,
+        Schweiz/Suisse/Svizzera/Svizra\",\"address\":{\"state\":\"Z\xFCrich\",\"ISO3166-2-lvl4\":\"CH-ZH\",\"country\":\"Schweiz/Suisse/Svizzera/Svizra\",\"country_code\":\"ch\"},\"extratags\":{\"wikidata\":
+        \"Q11943\", \"wikipedia\": \"de:Kanton Z\xFCrich\", \"ref:nuts:2\": \"CH04\",
+        \"ref:nuts:3\": \"CH040\", \"name:prefix\": \"Kanton\", \"linked_place\":
+        \"state\", \"swisstopo:KANTONSNUM\": \"1\"},\"namedetails\":{\"ref\": \"ZH\",
+        \"name\": \"Z\xFCrich\", \"name:af\": \"Z\xFCrich\", \"name:am\": \"\u12D9\u122A\u12AD\",
+        \"name:an\": \"Z\xFArich\", \"name:ar\": \"\u0632\u064A\u0648\u0631\u062E\",
+        \"name:az\": \"S\xFCrix\", \"name:be\": \"\u0426\u044E\u0440\u044B\u0445\",
+        \"name:bg\": \"\u0426\u044E\u0440\u0438\u0445\", \"name:bn\": \"\u099C\u09C1\u09B0\u09BF\u0996\",
+        \"name:br\": \"Z\xFCrich\", \"name:bs\": \"Z\xFCrich\", \"name:ca\": \"Z\xFAric\",
+        \"name:cs\": \"Curych\", \"name:cv\": \"\u0426\u044E\u0440\u0438\u0445\",
+        \"name:cy\": \"Z\xFCrich\", \"name:da\": \"Z\xFCrich\", \"name:de\": \"Z\xFCrich\",
+        \"name:el\": \"\u0396\u03C5\u03C1\u03AF\u03C7\u03B7\", \"name:en\": \"Zurich\",
+        \"name:eo\": \"Zuriko\", \"name:es\": \"Z\xFArich\", \"name:et\": \"Z\xFCrich\",
+        \"name:eu\": \"Z\xFCrich\", \"name:fa\": \"\u0632\u0648\u0631\u06CC\u062E\",
+        \"name:fi\": \"Z\xFCrich\", \"name:fr\": \"Zurich\", \"name:ga\": \"Z\xFCrich\",
+        \"name:gd\": \"Z\xFCrich\", \"name:gl\": \"Z\xFAric\", \"name:he\": \"\u05E6\u05D9\u05E8\u05D9\u05DA\",
+        \"name:hi\": \"\u091C\u093C\u094D\u092F\u0942\u0930\u093F\u0916\u093C\", \"name:hr\":
+        \"Z\xFCrich\", \"name:hu\": \"Z\xFCrich\", \"name:id\": \"Z\xFCrich\", \"name:io\":
+        \"Z\xFCrich\", \"name:is\": \"Z\xFCrich\", \"name:it\": \"Zurigo\", \"name:ja\":
+        \"\u30C1\u30E5\u30FC\u30EA\u30C3\u30D2\", \"name:jv\": \"Z\xFCrich\", \"name:ka\":
+        \"\u10EA\u10D8\u10E3\u10E0\u10D8\u10EE\u10D8\", \"name:kn\": \"\u0C9D\u0CCD\u0CAF\u0CC2\u0CB0\u0CBF\u0C96\u0CCD\",
+        \"name:ko\": \"\uCDE8\uB9AC\uD788\", \"name:la\": \"Turicum\", \"name:lb\":
+        \"Z\xFCrech\", \"name:lt\": \"Ciurichas\", \"name:lv\": \"C\u012Brihe\", \"name:mk\":
+        \"\u0426\u0438\u0440\u0438\u0445\", \"name:ml\": \"\u0D38\u0D42\u0D31\u0D3F\u0D1A\u0D4D\u0D1A\u0D4D\",
+        \"name:mr\": \"\u091D\u094D\u092F\u0941\u0930\u093F\u0915\", \"name:ms\":
+        \"Z\xFCrich\", \"name:my\": \"\u1007\u1030\u1038\u101B\u1005\u103A\u1001\u103B\u103A\u1019\u103C\u102D\u102F\u1037\",
+        \"name:na\": \"Z\xFCrich\", \"name:nl\": \"Z\xFCrich\", \"name:nn\": \"Z\xFCrich\",
+        \"name:no\": \"Z\xFCrich\", \"name:oc\": \"Zuric\", \"name:os\": \"\u0426\u044E\u0440\u0438\u0445\",
+        \"name:pl\": \"Zurych\", \"name:pt\": \"Zurique\", \"name:qu\": \"Z\xFCrich\",
+        \"name:rm\": \"Turitg\", \"name:ro\": \"Z\xFCrich\", \"name:ru\": \"\u0426\u044E\u0440\u0438\u0445\",
+        \"name:sh\": \"Z\xFCrich\", \"name:sk\": \"Z\xFCrich\", \"name:sl\": \"Z\xFCrich\",
+        \"name:sq\": \"Cyrihu\", \"name:sr\": \"\u0426\u0438\u0440\u0438\u0445\",
+        \"name:sv\": \"Z\xFCrich\", \"name:sw\": \"Z\xFCrich\", \"name:ta\": \"\u0B9A\u0BC2\u0BB0\u0BBF\u0B95\u0BCD\",
+        \"name:th\": \"\u0E0B\u0E39\u0E23\u0E34\u0E01\", \"name:tl\": \"Z\xFCrich\",
+        \"name:tr\": \"Z\xFCrih\", \"name:ug\": \"\u0633\u064A\u06C7\u0631\u0649\u062E\",
+        \"name:uk\": \"\u0426\u044E\u0440\u0438\u0445\", \"name:ur\": \"\u0632\u06CC\u0648\u0631\u062E\",
+        \"name:vi\": \"Z\xFCrich\", \"name:vo\": \"Z\xFCrich\", \"name:wo\": \"Zurich\",
+        \"name:yi\": \"\u05E6\u05D9\u05E8\u05D9\u05DA\", \"name:yo\": \"Z\xFCrich\",
+        \"name:zh\": \"\u8607\u9ECE\u4E16\u5DDE\", \"alt_name\": \"Kanton Z\xFCrich\",
+        \"name:als\": \"Z\xFCrich\", \"name:arc\": \"\u072C\u0723\u071D\u072A\u071D\u071F\",
+        \"name:arz\": \"\u0632\u0648\u0631\u064A\u062E\", \"name:bar\": \"Zirich\",
+        \"name:ckb\": \"\u0632\u06CC\u0648\u0631\u062E\", \"name:frp\": \"Tsurique\",
+        \"name:frr\": \"Z\xFCrich\", \"name:gsw\": \"Z\xFCri\", \"name:hsb\": \"Z\xFCrich\",
+        \"name:ilo\": \"Z\xFCrich\", \"name:lmo\": \"Z\xFCrigh\", \"name:nah\": \"Zurich\",
+        \"name:nan\": \"Z\xFCrich\", \"name:nds\": \"Z\xFCrich\", \"name:pdc\": \"Zurich\",
+        \"name:pfl\": \"Zirich\", \"name:pms\": \"Zurigh\", \"name:pnb\": \"\u0632\u06CC\u0648\u0631\u0686\",
+        \"name:scn\": \"Zur\xECcu\", \"name:vec\": \"Zurigo\", \"name:war\": \"Z\xFCrich\",
+        \"name:wuu\": \"\u82CF\u9ECE\u4E16\", \"name:yue\": \"\u8607\u9ECE\u4E16\",
+        \"ISO3166-2\": \"CH-ZH\", \"alt_name:ca\": \"Cant\xF3 de Zuric\", \"alt_name:de\":
+        \"Kanton Z\xFCrich\", \"alt_name:fr\": \"Canton de Zurich\", \"alt_name:it\":
+        \"Canton Zurigo\", \"name:zh-Hans\": \"\u82CF\u9ECE\u4E16\u5DDE\", \"name:zh-Hant\":
+        \"\u8607\u9ECE\u4E16\u5DDE\", \"_place_name:ja\": \"\u30C1\u30E5\u30FC\u30EA\u30C3\u30D2\u5DDE\",
+        \"_place_name:rm\": \"Turtig\", \"name:be-tarask\": \"\u0426\u044E\u0440\u044B\u0445\"},\"boundingbox\":[\"47.1594376\",\"47.6944722\",\"8.3576804\",\"8.9849407\"]},{\"place_id\":322881725,\"licence\":\"Data
+        \xA9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright\",\"osm_type\":\"relation\",\"osm_id\":129836,\"lat\":\"39.234454\",\"lon\":\"-99.438161\",\"class\":\"boundary\",\"type\":\"administrative\",\"place_rank\":16,\"importance\":0.43616687385616,\"addresstype\":\"village\",\"name\":\"Zurich\",\"display_name\":\"Zurich,
+        Rooks County, Kansas, United States\",\"address\":{\"village\":\"Zurich\",\"county\":\"Rooks
+        County\",\"state\":\"Kansas\",\"ISO3166-2-lvl4\":\"US-KS\",\"country\":\"United
+        States\",\"country_code\":\"us\"},\"extratags\":{\"ele\": \"675\", \"wikidata\":
+        \"Q230417\", \"wikipedia\": \"en:Zurich, Kansas\", \"population\": \"120\",
+        \"border_type\": \"city\", \"linked_place\": \"village\", \"population:date\":
+        \"2006\"},\"namedetails\":{\"name\": \"Zurich\"},\"boundingbox\":[\"39.2285113\",\"39.2354090\",\"-99.4390190\",\"-99.4287947\"]},{\"place_id\":155904800,\"licence\":\"Data
+        \xA9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright\",\"osm_type\":\"relation\",\"osm_id\":2656651,\"lat\":\"53.1117662\",\"lon\":\"5.3929759\",\"class\":\"boundary\",\"type\":\"administrative\",\"place_rank\":16,\"importance\":0.4160591300434686,\"addresstype\":\"village\",\"name\":\"Zurich\",\"display_name\":\"Zurich,
+        S\xFAdwest-Frysl\xE2n, Frysl\xE2n, Nederland\",\"address\":{\"village\":\"Zurich\",\"municipality\":\"S\xFAdwest-Frysl\xE2n\",\"state\":\"Frysl\xE2n\",\"ISO3166-2-lvl4\":\"NL-FR\",\"country\":\"Nederland\",\"country_code\":\"nl\"},\"extratags\":{\"wikidata\":
+        \"Q230406\", \"wikipedia\": \"nl:Zurich (Nederland)\", \"population\": \"190\",
+        \"start_date\": \"1948-06-29 00:00:02\", \"linked_place\": \"village\", \"authoritative\":
+        \"yes\", \"population:date\": \"2017-01-01\", \"ref:woonplaatscode\": \"2327\"},\"namedetails\":{\"name\":
+        \"Zurich\", \"name:nl\": \"Zurich\", \"name:fy\": \"Surch\", \"_place_name:nl\":
+        \"Zurich\", \"name:ru\": \"\u0417\u044E\u0440\u0438\u0445\"},\"boundingbox\":[\"53.0915214\",\"53.1209787\",\"5.3722590\",\"5.4077200\"]}]"
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      CF-Cache-Status:
+      - MISS
+      CF-RAY:
+      - 998ae818698fc7e5-DUS
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Mon, 03 Nov 2025 09:39:49 GMT
+      Last-Modified:
+      - Mon, 03 Nov 2025 09:39:49 GMT
+      Nel:
+      - '{"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}'
+      Report-To:
+      - '{"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=awxUopkgyZnT1vDeRRhRi8Z7Zd3Ad%2BCTsLTkMu90ZcbtXDgcuW7lJIpqkinsb2dm%2BfiARoSIihi0lDs9I%2FzqNOSlydvgOeMiNopo%2FyPG"}]}'
+      Server:
+      - cloudflare
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      alt-svc:
+      - h3=":443"; ma=86400
+      content-length:
+      - '9783'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: !!binary |
+      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
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Length:
+      - '4731'
+      Content-Type:
+      - application/x-protobuf
+      User-Agent:
+      - OTel-OTLP-Exporter-Python/1.37.0
+    method: POST
+    uri: https://logfire-eu.pydantic.dev/v1/traces
+  response:
+    body:
+      string: ''
+    headers:
+      CF-RAY:
+      - 998ae81bcfc17a55-DUS
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Date:
+      - Mon, 03 Nov 2025 09:39:49 GMT
+      Nel:
+      - '{"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}'
+      Report-To:
+      - '{"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=VkvER8i4qR1EwMPIGiHmU%2B75bVg0rmesjQBPQo8c%2B2qHxY34hYIeJnF8vDWlLoGIrwFbuc%2Bb81K0QJgNQXAnZ3xmghg3yIHJzkpMuaCI5zQT0UaU"}]}'
+      Server:
+      - cloudflare
+      cf-cache-status:
+      - DYNAMIC
+      vary:
+      - origin, access-control-request-method, access-control-request-headers
+      via:
+      - 1.1 google
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"messages":[{"role":"system","content":"Be concise, reply with one sentence.
+      Use the `get_lat_lng` tool to get the latitude and longitude of the locations,
+      then use the `get_weather` tool to get the weather."},{"role":"user","content":"What
+      is the weather like in Zurich and in Wiltshire?"},{"role":"assistant","content":null,"tool_calls":[{"id":"call_urYOfQ2VRpYrEoDkTNrYQkLv","type":"function","function":{"name":"get_lat_lng","arguments":"{\"location_description\":
+      \"Zurich\"}"}},{"id":"call_iWDMqdzmgTwjn31bKsWzTpCX","type":"function","function":{"name":"get_lat_lng","arguments":"{\"location_description\":
+      \"Wiltshire\"}"}}]},{"role":"tool","tool_call_id":"call_urYOfQ2VRpYrEoDkTNrYQkLv","content":"{\"lat\":\"47.3744489\",\"lng\":\"8.5410422\"}"},{"role":"tool","tool_call_id":"call_iWDMqdzmgTwjn31bKsWzTpCX","content":"{\"lat\":\"51.324162\",\"lng\":\"-1.9032486699002247\"}"}],"model":"gpt-4o","stream":false,"tool_choice":"auto","tools":[{"type":"function","function":{"name":"get_lat_lng","description":"<summary>Get
+      the latitude and longitude of a location.</summary>\n<returns>\n<description>A
+      dictionary containing latitude and longitude.</description>\n</returns>","parameters":{"additionalProperties":false,"properties":{"location_description":{"description":"A
+      description of a location.","type":"string"}},"required":["location_description"],"type":"object"},"strict":true}},{"type":"function","function":{"name":"get_weather","description":"<summary>Get
+      the weather at a location.</summary>\n<returns>\n<description>A dictionary containing
+      temperature and weather description.</description>\n</returns>","parameters":{"additionalProperties":false,"properties":{"lat":{"description":"Latitude
+      of the location.","type":"number"},"lng":{"description":"Longitude of the location.","type":"number"}},"required":["lat","lng"],"type":"object"},"strict":true}}]}'
+    headers:
+      accept:
+      - application/json
+      accept-encoding:
+      - gzip, deflate, br
+      connection:
+      - keep-alive
+      content-length:
+      - '1875'
+      content-type:
+      - application/json
+      cookie:
+      - __cf_bm=1fVj8mbCq2kAs9UvXZ2udj1X2ECyEqoTIR36Rguc_fo-1762162788-1.0.1.1-mF9svks2_WdOF9_PalCZUaYLjmamZFAe44wJsPr.vTu.kRunG45iVuLRM88tx8AUkJtO8rJjJoGJHurSgMeYOE70kNCotqel82j2aad_uac;
+        _cfuvid=Ajs0eTWLrN.3geZiibu0HCW0TDYiVb1nZD6EHUrNxxo-1762162788935-0.0.1.1-604800000
+      host:
+      - api.openai.com
+      user-agent:
+      - pydantic-ai/1.0.15
+      x-stainless-arch:
+      - arm64
+      x-stainless-async:
+      - async:asyncio
+      x-stainless-lang:
+      - python
+      x-stainless-os:
+      - MacOS
+      x-stainless-package-version:
+      - 2.1.0
+      x-stainless-read-timeout:
+      - '600'
+      x-stainless-retry-count:
+      - '0'
+      x-stainless-runtime:
+      - CPython
+      x-stainless-runtime-version:
+      - 3.12.8
+    method: POST
+    uri: https://api.openai.com/v1/chat/completions
+  response:
+    body:
+      string: !!binary |
+        YwCwKgBA/Fen7SzT15tDBKZ7u9Kq5RhTTQk4d33+LwcCJ3pif9HNLXC+pp2t8vDwXhp+ywNNIKAx
+        NUFtUW/g5aj15fP+OkSoc3CCqqRV3WjcnUdzclVubZnz4fvEO9/Oy7O9rfXp5+PJSXCFhUOEYdVo
+        ZSn5ZRIDtx56FJxzOU3n4OQnMfNjlmQe8IRuyLUBJ5SjdcPBZR4LXS91vZiYWg210jM4vThERL9v
+        AyI0f98BJ1bgL06MYYAjXokI02A0OEHOcz1b2VssEBKl1y1y6jfGANfsMBihpDHC4a35+50wq69K
+        Y0Rvn9t1sfPztb+zvjutdvfYenNQZ0YmZK98j4oiCTEycQisiwsMEaGXHf2lSm3Fp5a20tMZEMGm
+        fxyc8PsKI+0rOIXJMkjCMEyzBb3C9OUrOKXLKPS9kLF/yGv+S2/9SyloBn8LxdXO925z/Xz4eLCv
+        o537rcNTVYdXF8N65C8DFvoxW56x6y8zL2BhGsdZ5nmMhYlhEGjzzR0lei+AQZqE3wUr90ZGjHQ/
+        mKEcp2E1k/MoDrAhql7bB3eRvGNDQBl9bBz9QYzT0I1W2KHVgl2WRRIb8JMJDC3xl0QXGiRgXhDH
+        a5onL0owbM5+bAlKqkrnV8JD7spNXg9AQIX0n6OiXP7QDLau+/JKAGNK6dHqXJSBmdZ1ApXdpBut
+        eMcfAAsTUHBjVNhaT+CEqAYi0L5nqztR1H2pp3Gqg5QjUIwijqI4zNOVjOD8OwM=
+    headers:
+      CF-RAY:
+      - 998ae81b3a071633-DUS
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - br
+      Content-Type:
+      - application/json
+      Date:
+      - Mon, 03 Nov 2025 09:39:51 GMT
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      X-Content-Type-Options:
+      - nosniff
+      access-control-expose-headers:
+      - X-Request-ID
+      alt-svc:
+      - h3=":443"; ma=86400
+      cf-cache-status:
+      - DYNAMIC
+      openai-organization:
+      - user-go1uahqj1xwugtuyl7fpavtk
+      openai-processing-ms:
+      - '1085'
+      openai-project:
+      - proj_iT53cGFGZImyTUsEPAQ0QFAO
+      openai-version:
+      - '2020-10-01'
+      x-envoy-upstream-service-time:
+      - '1338'
+      x-openai-proxy-wasm:
+      - v0.1
+      x-ratelimit-limit-requests:
+      - '500'
+      x-ratelimit-limit-tokens:
+      - '30000'
+      x-ratelimit-remaining-requests:
+      - '499'
+      x-ratelimit-remaining-tokens:
+      - '29918'
+      x-ratelimit-reset-requests:
+      - 120ms
+      x-ratelimit-reset-tokens:
+      - 164ms
+      x-request-id:
+      - req_aabe0da2820d496987b770b55a6468e3
+    status:
+      code: 200
+      message: OK
+- request:
+    body: ''
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate, br
+      connection:
+      - keep-alive
+      host:
+      - api.tomorrow.io
+      user-agent:
+      - python-httpx/0.28.1
+    method: GET
+    uri: https://api.tomorrow.io/v4/weather/realtime?apikey=tP0WPxsrmqImCytQaIjIQG2wo0OFyAvr&location=47.3744489%2C8.5410422&units=metric
+  response:
+    body:
+      string: '{"data":{"time":"2025-11-03T09:39:00Z","values":{"altimeterSetting":1025.24,"cloudBase":2.4,"cloudCeiling":null,"cloudCover":27,"dewPoint":6,"freezingRainIntensity":0,"humidity":81,"precipitationProbability":0,"pressureSeaLevel":1025.74,"pressureSurfaceLevel":971.7,"rainIntensity":0,"sleetIntensity":0,"snowIntensity":0,"temperature":8.9,"temperatureApparent":8.9,"uvHealthConcern":0,"uvIndex":2,"visibility":16,"weatherCode":1100,"windDirection":235,"windGust":4.6,"windSpeed":1.4}},"location":{"lat":47.3744489,"lon":8.5410422}}'
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-Ray:
+      - 998ae828aeb1a3eb-DUS
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Mon, 03 Nov 2025 09:39:51 GMT
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cf_bm=b5Y92Br8sTZU001GhoDQVr06IkrD0jytgMzydFLSln8-1762162791-1.0.1.1-tQzXH_pi6MZ3x8dAe_GlnldTPtfrZZ5eR2v0RE.IZi4eY_48dC2C3a6WqdHtv7zx9EsvBfObrANIKHPuBq6KsDul06xRe7tXbYiGmFgRzBA;
+        path=/; expires=Mon, 03-Nov-25 10:09:51 GMT; domain=.tomorrow.io; HttpOnly;
+        Secure; SameSite=None
+      - _cfuvid=qeeg6YmD3V_yhQ4JSCyeQV5TPRaCZ_bZ4qN8usK6ZLo-1762162791967-0.0.1.1-604800000;
+        path=/; domain=.tomorrow.io; HttpOnly; Secure; SameSite=None
+      Strict-Transport-Security:
+      - max-age=31536000
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - accept-encoding
+      Via:
+      - 1.1 google
+      cf-apo-via:
+      - origin,host
+      content-length:
+      - '531'
+      expect-ct:
+      - max-age=86400, enforce
+      referrer-policy:
+      - same-origin
+      x-content-type-options:
+      - nosniff
+      x-correlation-id:
+      - a2b54e2e-c040-4b37-bbcc-b7cce31bb42a
+      x-frame-options:
+      - SAMEORIGIN
+      x-kong-proxy-latency:
+      - '21'
+      x-kong-upstream-latency:
+      - '32'
+      x-ratelimit-remaining-plan-5f857927f9d5bdc6c63abb67:
+      - '10'
+      x-ratelimit-remaining-plan-5f96c370732c89cb4d9a98e8:
+      - '3'
+      x-ratelimit-remaining-plan-5fa4047f4acee993fbd7399d:
+      - '3'
+      x-ratelimit-remaining-plan-5fb2a269785f8043656f245e:
+      - '10'
+      x-ratelimit-remaining-plan-600d6ce482ff404e9a7a4c0c:
+      - '5'
+      x-ratelimit-remaining-plan-600d73bef98f624e9adcf465:
+      - '5'
+      x-ratelimit-remaining-plan-600d742fdee75e4e9aab6661:
+      - '5'
+      x-ratelimit-remaining-plan-6036283133bb2ff6d4bd82a7:
+      - '3'
+      x-ratelimit-remaining-plan-606d86d0a26c4d7df907bc7a:
+      - '5'
+      x-ratelimit-remaining-plan-609d458bdd3d437ff19fd44f:
+      - '5'
+      x-ratelimit-remaining-plan-60d46beae90c3b3549a59ff3:
+      - '3'
+      x-ratelimit-remaining-plan-60f00adf8d481f9421462962:
+      - '3'
+      x-ratelimit-remaining-plan-60f00d40803f8e9421c5a7f8:
+      - '5'
+      x-ratelimit-remaining-plan-60f58bbc299fbc36c91529aa:
+      - '5'
+      x-ratelimit-remaining-plan-648b3f22ef567da8b7fb4599:
+      - '3'
+      x-ratelimit-remaining-plan-649ab4540000000000b71412:
+      - '3'
+      x-ratelimit-remaining-web-app:
+      - '500000'
+      x-request-id:
+      - 66de6cb8-db8b-4893-8131-321e54dd35e5
+      x-xss-protection:
+      - 1; mode=block
+    status:
+      code: 200
+      message: OK
+- request:
+    body: !!binary |
+      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
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Length:
+      - '2328'
+      Content-Type:
+      - application/x-protobuf
+      User-Agent:
+      - OTel-OTLP-Exporter-Python/1.37.0
+    method: POST
+    uri: https://logfire-eu.pydantic.dev/v1/traces
+  response:
+    body:
+      string: ''
+    headers:
+      CF-RAY:
+      - 998ae829cba17b85-DUS
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Date:
+      - Mon, 03 Nov 2025 09:39:51 GMT
+      Nel:
+      - '{"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}'
+      Report-To:
+      - '{"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=97eF2PutGhUn70rE8vorIVWed5F4Q7FApqaqSizWHfxLzEpAPeG1fWSqLscN8G9f586ed87cwe2HnSLZCnEhf7kHd3SYfSbTO75JABCRxG0rzEf4t0M%3D"}]}'
+      Server:
+      - cloudflare
+      cf-cache-status:
+      - DYNAMIC
+      vary:
+      - origin, access-control-request-method, access-control-request-headers
+      via:
+      - 1.1 google
+    status:
+      code: 200
+      message: OK
+- request:
+    body: ''
+    headers:
+      accept:
+      - '*/*'
+      accept-encoding:
+      - gzip, deflate, br
+      connection:
+      - keep-alive
+      host:
+      - api.tomorrow.io
+      user-agent:
+      - python-httpx/0.28.1
+    method: GET
+    uri: https://api.tomorrow.io/v4/weather/realtime?apikey=tP0WPxsrmqImCytQaIjIQG2wo0OFyAvr&location=51.324162%2C-1.9032486699002247&units=metric
+  response:
+    body:
+      string: '{"data":{"time":"2025-11-03T09:39:00Z","values":{"altimeterSetting":1011.61,"cloudBase":0.3,"cloudCeiling":0.1,"cloudCover":93,"dewPoint":11.4,"freezingRainIntensity":0,"humidity":86,"precipitationProbability":0,"pressureSeaLevel":1011.77,"pressureSurfaceLevel":994.99,"rainIntensity":0,"sleetIntensity":0,"snowIntensity":0,"temperature":13.7,"temperatureApparent":13.7,"uvHealthConcern":0,"uvIndex":0,"visibility":15.91,"weatherCode":1001,"windDirection":226,"windGust":5.1,"windSpeed":3.7}},"location":{"lat":51.324162,"lon":-1.9032486699002247}}'
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-Ray:
+      - 998ae828aef1519f-DUS
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Mon, 03 Nov 2025 09:39:51 GMT
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cf_bm=IY0xU9OTSeOtWIM2YIjRxXs4I1NheIEu.dH8Punkzho-1762162791-1.0.1.1-N1VWvm13cLTeFIc7tK5kSsxuvKmGFlJe3ztdLYZPHMQGVh7ggDC_LKsRHoNNcfD9EwdfvXB_fRmVYG8saizgeydwKi_s1yWc3zASen4p1U4;
+        path=/; expires=Mon, 03-Nov-25 10:09:51 GMT; domain=.tomorrow.io; HttpOnly;
+        Secure; SameSite=None
+      - _cfuvid=kZkF8ksn0Oa68DHmI3sOSIRTFmD2_RTm0EnJ_kGJLZ4-1762162791978-0.0.1.1-604800000;
+        path=/; domain=.tomorrow.io; HttpOnly; Secure; SameSite=None
+      Strict-Transport-Security:
+      - max-age=31536000
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - accept-encoding
+      Via:
+      - 1.1 google
+      cf-apo-via:
+      - origin,host
+      content-length:
+      - '548'
+      expect-ct:
+      - max-age=86400, enforce
+      referrer-policy:
+      - same-origin
+      x-content-type-options:
+      - nosniff
+      x-correlation-id:
+      - 14498c5e-e020-457e-ab0a-7367da2dfcfa
+      x-frame-options:
+      - SAMEORIGIN
+      x-kong-proxy-latency:
+      - '24'
+      x-kong-upstream-latency:
+      - '36'
+      x-ratelimit-remaining-plan-5f857927f9d5bdc6c63abb67:
+      - '10'
+      x-ratelimit-remaining-plan-5f96c370732c89cb4d9a98e8:
+      - '3'
+      x-ratelimit-remaining-plan-5fa4047f4acee993fbd7399d:
+      - '3'
+      x-ratelimit-remaining-plan-5fb2a269785f8043656f245e:
+      - '10'
+      x-ratelimit-remaining-plan-600d6ce482ff404e9a7a4c0c:
+      - '5'
+      x-ratelimit-remaining-plan-600d73bef98f624e9adcf465:
+      - '5'
+      x-ratelimit-remaining-plan-600d742fdee75e4e9aab6661:
+      - '5'
+      x-ratelimit-remaining-plan-6036283133bb2ff6d4bd82a7:
+      - '3'
+      x-ratelimit-remaining-plan-606d86d0a26c4d7df907bc7a:
+      - '5'
+      x-ratelimit-remaining-plan-609d458bdd3d437ff19fd44f:
+      - '5'
+      x-ratelimit-remaining-plan-60d46beae90c3b3549a59ff3:
+      - '3'
+      x-ratelimit-remaining-plan-60f00adf8d481f9421462962:
+      - '3'
+      x-ratelimit-remaining-plan-60f00d40803f8e9421c5a7f8:
+      - '5'
+      x-ratelimit-remaining-plan-60f58bbc299fbc36c91529aa:
+      - '5'
+      x-ratelimit-remaining-plan-648b3f22ef567da8b7fb4599:
+      - '3'
+      x-ratelimit-remaining-plan-649ab4540000000000b71412:
+      - '3'
+      x-ratelimit-remaining-web-app:
+      - '500000'
+      x-request-id:
+      - 6e61b79b-ceaa-4fc3-8c70-ca3d5bb7f203
+      x-xss-protection:
+      - 1; mode=block
+    status:
+      code: 200
+      message: OK
+- request:
+    body: !!binary |
+      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
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Length:
+      - '2198'
+      Content-Type:
+      - application/x-protobuf
+      User-Agent:
+      - OTel-OTLP-Exporter-Python/1.37.0
+    method: POST
+    uri: https://logfire-eu.pydantic.dev/v1/traces
+  response:
+    body:
+      string: ''
+    headers:
+      CF-RAY:
+      - 998ae82dea1ab238-DUS
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Date:
+      - Mon, 03 Nov 2025 09:39:52 GMT
+      Nel:
+      - '{"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}'
+      Report-To:
+      - '{"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=5ec9YRvxUyr50awWrkIsOSHN%2BMCubzJVr743lbtr0v53CK5E73wEHEer1RdAHRxSNvLex0vY2sVUgzxWQwRi7S74K0hvm%2BIYfp%2FHkDcfPtcgHKOdprY%3D"}]}'
+      Server:
+      - cloudflare
+      cf-cache-status:
+      - DYNAMIC
+      vary:
+      - origin, access-control-request-method, access-control-request-headers
+      via:
+      - 1.1 google
+    status:
+      code: 200
+      message: OK
+- request:
+    body: "{\"messages\":[{\"role\":\"system\",\"content\":\"Be concise, reply with
+      one sentence. Use the `get_lat_lng` tool to get the latitude and longitude of
+      the locations, then use the `get_weather` tool to get the weather.\"},{\"role\":\"user\",\"content\":\"What
+      is the weather like in Zurich and in Wiltshire?\"},{\"role\":\"assistant\",\"content\":null,\"tool_calls\":[{\"id\":\"call_urYOfQ2VRpYrEoDkTNrYQkLv\",\"type\":\"function\",\"function\":{\"name\":\"get_lat_lng\",\"arguments\":\"{\\\"location_description\\\":
+      \\\"Zurich\\\"}\"}},{\"id\":\"call_iWDMqdzmgTwjn31bKsWzTpCX\",\"type\":\"function\",\"function\":{\"name\":\"get_lat_lng\",\"arguments\":\"{\\\"location_description\\\":
+      \\\"Wiltshire\\\"}\"}}]},{\"role\":\"tool\",\"tool_call_id\":\"call_urYOfQ2VRpYrEoDkTNrYQkLv\",\"content\":\"{\\\"lat\\\":\\\"47.3744489\\\",\\\"lng\\\":\\\"8.5410422\\\"}\"},{\"role\":\"tool\",\"tool_call_id\":\"call_iWDMqdzmgTwjn31bKsWzTpCX\",\"content\":\"{\\\"lat\\\":\\\"51.324162\\\",\\\"lng\\\":\\\"-1.9032486699002247\\\"}\"},{\"role\":\"assistant\",\"content\":null,\"tool_calls\":[{\"id\":\"call_ntZkqfCzxFCqULhDE2quGi9l\",\"type\":\"function\",\"function\":{\"name\":\"get_weather\",\"arguments\":\"{\\\"lat\\\":
+      47.3744489, \\\"lng\\\": 8.5410422}\"}},{\"id\":\"call_fQCyDjRZHXGFe5CVAHLci4QO\",\"type\":\"function\",\"function\":{\"name\":\"get_weather\",\"arguments\":\"{\\\"lat\\\":
+      51.324162, \\\"lng\\\": -1.9032486699002247}\"}}]},{\"role\":\"tool\",\"tool_call_id\":\"call_ntZkqfCzxFCqULhDE2quGi9l\",\"content\":\"{\\\"temperature\\\":\\\"9\xB0C\\\",\\\"description\\\":\\\"Mostly
+      Clear\\\"}\"},{\"role\":\"tool\",\"tool_call_id\":\"call_fQCyDjRZHXGFe5CVAHLci4QO\",\"content\":\"{\\\"temperature\\\":\\\"14\xB0C\\\",\\\"description\\\":\\\"Cloudy\\\"}\"}],\"model\":\"gpt-4o\",\"stream\":false,\"tool_choice\":\"auto\",\"tools\":[{\"type\":\"function\",\"function\":{\"name\":\"get_lat_lng\",\"description\":\"<summary>Get
+      the latitude and longitude of a location.</summary>\\n<returns>\\n<description>A
+      dictionary containing latitude and longitude.</description>\\n</returns>\",\"parameters\":{\"additionalProperties\":false,\"properties\":{\"location_description\":{\"description\":\"A
+      description of a location.\",\"type\":\"string\"}},\"required\":[\"location_description\"],\"type\":\"object\"},\"strict\":true}},{\"type\":\"function\",\"function\":{\"name\":\"get_weather\",\"description\":\"<summary>Get
+      the weather at a location.</summary>\\n<returns>\\n<description>A dictionary
+      containing temperature and weather description.</description>\\n</returns>\",\"parameters\":{\"additionalProperties\":false,\"properties\":{\"lat\":{\"description\":\"Latitude
+      of the location.\",\"type\":\"number\"},\"lng\":{\"description\":\"Longitude
+      of the location.\",\"type\":\"number\"}},\"required\":[\"lat\",\"lng\"],\"type\":\"object\"},\"strict\":true}}]}"
+    headers:
+      accept:
+      - application/json
+      accept-encoding:
+      - gzip, deflate, br
+      connection:
+      - keep-alive
+      content-length:
+      - '2494'
+      content-type:
+      - application/json
+      cookie:
+      - __cf_bm=1fVj8mbCq2kAs9UvXZ2udj1X2ECyEqoTIR36Rguc_fo-1762162788-1.0.1.1-mF9svks2_WdOF9_PalCZUaYLjmamZFAe44wJsPr.vTu.kRunG45iVuLRM88tx8AUkJtO8rJjJoGJHurSgMeYOE70kNCotqel82j2aad_uac;
+        _cfuvid=Ajs0eTWLrN.3geZiibu0HCW0TDYiVb1nZD6EHUrNxxo-1762162788935-0.0.1.1-604800000
+      host:
+      - api.openai.com
+      user-agent:
+      - pydantic-ai/1.0.15
+      x-stainless-arch:
+      - arm64
+      x-stainless-async:
+      - async:asyncio
+      x-stainless-lang:
+      - python
+      x-stainless-os:
+      - MacOS
+      x-stainless-package-version:
+      - 2.1.0
+      x-stainless-read-timeout:
+      - '600'
+      x-stainless-retry-count:
+      - '0'
+      x-stainless-runtime:
+      - CPython
+      x-stainless-runtime-version:
+      - 3.12.8
+    method: POST
+    uri: https://api.openai.com/v1/chat/completions
+  response:
+    body:
+      string: !!binary |
+        YwAYHQBA/HKaz03Qm8V2rnTBlNL/9+jkvbPiIo20TjrkATj+x6nnAdKITcq3ZIMtkPkyFlgnbVxD
+        axuooAUuYIvVqXt2a2KkIMDit1V871cCkC1IgUypxTS+zrbu66Pr8Pmwd/i29xE2V1dXW+evD9XV
+        u+eDQ0oTgNzyhY1o0sYSA9u6FiLuXH6NC1IYzKbDwXQ4W4yELzSu4JoUaO0lG7ts2B+Os/4860+V
+        r5bOGo6k8JQAwNdVB0Dt7/uk0E/viosxNFLALwEUXM2kQDpGG0W3QikA2Os+V6CDFo9dsKZM23z8
+        4RtrKTnARjQuSv0Butx/4M1KCQ3hxnPQ0gWGW2Hx97vVgMPzmmFb3NlaYmkDp9g1fiOmdl3xYWDJ
+        YPz3u7XhGjTEf1jXpNB2de0zTAcuKfK/aOgnrNOodmsf3DKqEzHMNfKveQ2SAkVxnpLh/CTAv3S3
+        uwyeJR9c4yUXV/Ej7fFgfDSowIBQRqMB/2MAZKPG41lqk3I6vGYs2CIy2pRcqEN153VXWCfknBQi
+        z/Eo1z4f/dC2XZ8gTBjDXrjICRXTUQOUXeAXNpRkmvmRWADjuVgOpEDvLR5w6yMKN/nKtmsOPtj5
+        eXnl8+lkMh0X86WeUPKTGAM=
+    headers:
+      CF-RAY:
+      - 998ae82a2a2b1633-DUS
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - br
+      Content-Type:
+      - application/json
+      Date:
+      - Mon, 03 Nov 2025 09:39:54 GMT
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      X-Content-Type-Options:
+      - nosniff
+      access-control-expose-headers:
+      - X-Request-ID
+      alt-svc:
+      - h3=":443"; ma=86400
+      cf-cache-status:
+      - DYNAMIC
+      openai-organization:
+      - user-go1uahqj1xwugtuyl7fpavtk
+      openai-processing-ms:
+      - '1232'
+      openai-project:
+      - proj_iT53cGFGZImyTUsEPAQ0QFAO
+      openai-version:
+      - '2020-10-01'
+      x-envoy-upstream-service-time:
+      - '1551'
+      x-openai-proxy-wasm:
+      - v0.1
+      x-ratelimit-limit-requests:
+      - '500'
+      x-ratelimit-limit-tokens:
+      - '30000'
+      x-ratelimit-remaining-requests:
+      - '499'
+      x-ratelimit-remaining-tokens:
+      - '29890'
+      x-ratelimit-reset-requests:
+      - 120ms
+      x-ratelimit-reset-tokens:
+      - 220ms
+      x-request-id:
+      - req_0dca5e429f1c4928b10d8ba609de42f5
+    status:
+      code: 200
+      message: OK
+version: 1

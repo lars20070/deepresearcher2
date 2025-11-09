@@ -14,7 +14,7 @@ from deepresearcher2.logger import logger
 from deepresearcher2.models import WebSearchResult, WebSearchSummary
 
 
-@pytest.mark.ollama
+@pytest.mark.vcr()
 @pytest.mark.asyncio
 async def test_websearch_without_reflection(topic: str) -> None:
     """
@@ -57,7 +57,7 @@ async def test_websearch_without_reflection(topic: str) -> None:
     #     f.write(ctx.state.model_dump_json(indent=2))
 
 
-@pytest.mark.ollama
+@pytest.mark.vcr()
 @pytest.mark.asyncio
 async def test_websearch_with_reflection(topic: str) -> None:
     """
@@ -101,7 +101,7 @@ async def test_websearch_with_reflection(topic: str) -> None:
     logger.debug(f"Search results:\n{results_json}")
 
 
-@pytest.mark.ollama
+@pytest.mark.vcr()
 @pytest.mark.asyncio
 async def test_summarizesearchresults() -> None:
     """
@@ -150,7 +150,7 @@ async def test_summarizesearchresults() -> None:
     #     f.write(ctx.state.model_dump_json(indent=2))
 
 
-@pytest.mark.ollama
+@pytest.mark.vcr()
 @pytest.mark.asyncio
 async def test_reflectonsearch() -> None:
     """
@@ -192,7 +192,7 @@ async def test_reflectonsearch() -> None:
     #     f.write(ctx.state.model_dump_json(indent=2))
 
 
-@pytest.mark.ollama
+@pytest.mark.vcr()
 @pytest.mark.asyncio
 async def test_finalizesummary(config_for_testing: Generator[None, None, None], cleanup_reports_folder: None) -> None:
     """

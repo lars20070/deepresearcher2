@@ -80,6 +80,8 @@
     "pyright",
     "choix",
     "ddgs",
+    "fastmcp",
+    "wolframscript",
   ],
   "cSpell.languageSettings": [
     {

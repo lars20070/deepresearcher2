@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-query_instructions_without_reflection = """
+QUERY_INSTRUCTIONS_WITHOUT_REFLECTION = """
 Please generate a targeted web search query for a specific topic.
 
 <REQUIREMENTS>
@@ -30,7 +30,7 @@ Respond with a JSON object containing:
 
 Provide your response in JSON format."""
 
-query_instructions_with_reflection = """
+QUERY_INSTRUCTIONS_WITH_REFLECTION = """
 Please generate a targeted web search query for a specific topic. The query will gather information related to a specific topic
 based on specific knowledge gaps.
 
@@ -68,7 +68,7 @@ Respond with a JSON object containing:
 
 Provide your response in JSON format."""
 
-summary_instructions = """
+SUMMARY_INSTRUCTIONS = """
 You are a search results summarizer. Your task is to generate a comprehensive summary from web search results that is relevant to the user's topic.
 
 <INPUT_FORMAT>
@@ -98,7 +98,7 @@ It is characterized by its distinct aroma, which is typically associated with th
 Provide your response in text format."""
 
 # This prompt is specifically for the generation of the knowledge_gap benchmark. Not used for production.
-summary_instructions_evals = """
+SUMMARY_INSTRUCTIONS_EVALS = """
 You are a search results summarizer. Your task is to generate a comprehensive summary from web search results that is relevant to the user's topic.
 
 <INPUT_FORMAT>
@@ -129,7 +129,7 @@ It is characterized by its distinct aroma, which is typically associated with th
 
 Provide your response in text format."""
 
-reflection_instructions = """
+REFLECTION_INSTRUCTIONS = """
 You analyze web search summaries to identify knowledge gaps and coverage areas.
 
 <INPUT_FORMAT>
@@ -185,7 +185,7 @@ Respond with a JSON object containing:
 
 Provide your response in JSON format."""
 
-final_summary_instructions = """
+FINAL_SUMMARY_INSTRUCTIONS = """
 You are a precise information compiler that transforms web search summaries into comprehensive reports. Follow these instructions carefully.
 
 <INPUT_FORMAT>
@@ -220,7 +220,7 @@ Respond with a JSON object containing:
 The JSON response must be properly formatted with quotes escaped within the summary value. Do not include any text outside the JSON object.
 """
 
-evaluation_instructions = """
+EVALUATION_INSTRUCTIONS = """
 You are presented with a question and two possible answers A and B. Evaluate carefully whether answer A or answer B is the better reply.
 You have got only these two options. Your evaluations contribute to Bradley-Terry scores across multiple items. Consistency and
 objectivity are critical for reliable rankings. Each comparison should be independent but internally consistent.
@@ -232,7 +232,7 @@ Example 1:
 <B> Pickled Citrus Ribbon </B>
 Expected output:
 {
-    "result": "B",
+    "response": "B",
 }
 
 Example 2:
@@ -241,7 +241,7 @@ Example 2:
 <B> climate change effects </B>
 Expected output:
 {
-    "result": "A",
+    "response": "A",
 }
 
 Example 3:
@@ -250,7 +250,7 @@ Example 3:
 <B> That's an interesting perspective, though I see it differently. </B>
 Expected output:
 {
-    "result": "A",
+    "response": "A",
 }
 </EXAMPLES>
 

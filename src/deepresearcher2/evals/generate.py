@@ -8,7 +8,7 @@ from pydantic_ai import format_as_xml
 from pydantic_ai.settings import ModelSettings
 from pydantic_evals import Case, Dataset
 
-from deepresearcher2.agents import summary_agent_evals
+from deepresearcher2.agents import SUMMARY_AGENT_EVALS
 from deepresearcher2.config import config
 from deepresearcher2.logger import logger
 from deepresearcher2.utils import (
@@ -61,8 +61,8 @@ async def generate_search_summaries(
             f"List of web search results:\n{xml}\n"
             "Do NOT include bullet points! Do NOT use Markdown formatting!"
         )
-        async with summary_agent_evals:
-            result = await summary_agent_evals.run(
+        async with SUMMARY_AGENT_EVALS:
+            result = await SUMMARY_AGENT_EVALS.run(
                 user_prompt=prompt,
                 model_settings=ModelSettings(
                     temperature=config.temperature_summary,

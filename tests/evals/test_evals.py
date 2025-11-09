@@ -6,6 +6,8 @@ from typing import TYPE_CHECKING, Any
 if TYPE_CHECKING:
     from pathlib import Path
 
+import random
+
 import numpy as np
 import pytest
 from pydantic_ai import Agent
@@ -14,7 +16,7 @@ from pydantic_ai.providers.openai import OpenAIProvider
 from pydantic_ai.settings import ModelSettings
 from pydantic_evals import Case, Dataset
 
-from deepresearcher2.agents import evaluation_agent
+from deepresearcher2.agents import EVALUATION_AGENT
 from deepresearcher2.evals.evals import (
     EvalGame,
     EvalPlayer,
@@ -58,7 +60,7 @@ async def test_evalgame(ice_cream_players: list[EvalPlayer]) -> None:
 
     result = await game.run(
         players=(ice_cream_players[0], ice_cream_players[4]),
-        agent=evaluation_agent,
+        agent=EVALUATION_AGENT,
         model_settings=MODEL_SETTINGS,
     )
     logger.debug(f"Game result: {result}")
@@ -75,6 +77,8 @@ async def test_evaltournament(ice_cream_players: list[EvalPlayer], ice_cream_gam
     """
     Test the EvalTournament class.
     """
+    random.seed(42)  # Make test deterministic for VCR recording
+
     logger.info("Testing EvalTournament() class")
 
     tournament = EvalTournament(players=ice_cream_players, game=ice_cream_game)
@@ -89,7 +93,7 @@ async def test_evaltournament(ice_cream_players: list[EvalPlayer], ice_cream_gam
 
     # Test the default strategy
     players_with_scores = await tournament.run(
-        agent=evaluation_agent,
+        agent=EVALUATION_AGENT,
         model_settings=MODEL_SETTINGS,
     )
     assert isinstance(players_with_scores, list)
@@ -102,7 +106,7 @@ async def test_evaltournament(ice_cream_players: list[EvalPlayer], ice_cream_gam
 
     # Test the random sampling strategy
     players_with_scores = await tournament.run(
-        agent=evaluation_agent,
+        agent=EVALUATION_AGENT,
         model_settings=MODEL_SETTINGS,
         strategy=random_sampling_strategy,
         fraction_of_games=0.3,
@@ -118,18 +122,21 @@ async def test_evaltournament(ice_cream_players: list[EvalPlayer], ice_cream_gam
 
 @pytest.mark.vcr()
 @pytest.mark.asyncio
-async def test_random_sampling_strategy(ice_cream_players: list[EvalPlayer], ice_cream_game: EvalGame) -> None:
+@pytest.mark.parametrize("fraction_of_games", [None, 0.3, 42.0])  # Last value is non-sensical and will be ignored in the strategy.
+async def test_random_sampling_strategy(ice_cream_players: list[EvalPlayer], ice_cream_game: EvalGame, fraction_of_games: float | None) -> None:
     """
     Test the random sampling tournament strategy.
     """
+    random.seed(42)  # Make test deterministic for VCR recording
+
     logger.info("Testing random_sampling_strategy()")
 
     players_with_scores = await random_sampling_strategy(
         players=ice_cream_players,
         game=ice_cream_game,
-        agent=evaluation_agent,
+        agent=EVALUATION_AGENT,
         model_settings=MODEL_SETTINGS,
-        fraction_of_games=0.3,
+        fraction_of_games=fraction_of_games,
     )
     assert isinstance(players_with_scores, list)
     for player in players_with_scores:
@@ -146,12 +153,14 @@ async def test_round_robin_strategy(ice_cream_players: list[EvalPlayer], ice_cre
     """
     Test the round robin tournament strategy.
     """
+    random.seed(42)  # Make test deterministic for VCR recording
+
     logger.info("Testing round_robin_strategy()")
 
     players_with_scores = await round_robin_strategy(
         players=ice_cream_players,
         game=ice_cream_game,
-        agent=evaluation_agent,
+        agent=EVALUATION_AGENT,
         model_settings=MODEL_SETTINGS,
         number_of_rounds=1,
     )
@@ -170,12 +179,14 @@ async def test_adaptive_uncertainty_strategy(ice_cream_players: list[EvalPlayer]
     """
     Test the adaptive uncertainty tournament strategy.
     """
+    random.seed(42)  # Make test deterministic for VCR recording
+
     logger.info("Testing adaptive_uncertainty_strategy()")
 
     players_with_scores = await adaptive_uncertainty_strategy(
         players=ice_cream_players,
         game=ice_cream_game,
-        agent=evaluation_agent,
+        agent=EVALUATION_AGENT,
         model_settings=MODEL_SETTINGS,
         max_standard_deviation=1.0,
         alpha=0.01,
@@ -189,7 +200,7 @@ async def test_adaptive_uncertainty_strategy(ice_cream_players: list[EvalPlayer]
         logger.debug(f"Player {player.idx} score: {player.score}")
 
 
-@pytest.mark.ollama
+@pytest.mark.vcr()
 @pytest.mark.asyncio
 async def test_evaltournament_usecase(tmp_path: Path) -> None:
     """
@@ -197,7 +208,7 @@ async def test_evaltournament_usecase(tmp_path: Path) -> None:
 
     The code demonstrates how the evaluation framework can be used in practice. It is not intended as test for individual components.
     In this use case, we are provided with a list of topics. The objective is to generate creative web search queries for these topics.
-    We have a basline implementation in the `main` branch and a novel implementation in some `feature` branch. In this simple example,
+    We have a baseline implementation in the `main` branch and a novel implementation in some `feature` branch. In this simple example,
     the implementations differ merely in the prompt (`prompt_baseline` vs. `prompt_novel`) and temperature. We want to check whether the
     novel implementation does indeed generate more creative queries.
 
@@ -208,6 +219,7 @@ async def test_evaltournament_usecase(tmp_path: Path) -> None:
     (3) We run the novel implementation, score both baseline and novel queries in one go using a Bradley-Terry tournament,
         and check whether the scores have improved.
     """
+    random.seed(42)  # Make test deterministic for VCR recording
 
     # Path to store the evaluation dataset
     path_out = tmp_path / "dataset.json"
@@ -235,10 +247,10 @@ async def test_evaltournament_usecase(tmp_path: Path) -> None:
         "kintsugi philosophy",
         "nano-medicine delivery systems",
         "Streisand effect dynamics",
-        "social cooling phenomenon",
         "Anne Brorhilke",
         "bioconcrete self-healing",
         "bacteriophage therapy revival",
+        "Habsburg jaw genetics",
     ]
 
     cases: list[Case[dict[str, str], type[None], Any]] = []
@@ -289,10 +301,7 @@ async def test_evaltournament_usecase(tmp_path: Path) -> None:
         async with query_agent:
             result = await query_agent.run(
                 user_prompt=prompt_novel,
-                model_settings=ModelSettings(
-                    temperature=1.0,
-                    timeout=300,
-                ),
+                model_settings=MODEL_SETTINGS,  # Ideally, we would run the model at higher temperature. But for VCR recording we need determinism.
             )
 
         logger.debug(f"Generated query: {result.output}")
@@ -306,19 +315,21 @@ async def test_evaltournament_usecase(tmp_path: Path) -> None:
     game = EvalGame(criterion="Which of the two search queries shows more genuine curiosity and creativity, and is less formulaic?")
     tournament = EvalTournament(players=players, game=game)
     players_scored = await tournament.run(
-        agent=evaluation_agent,
+        agent=EVALUATION_AGENT,
         model_settings=MODEL_SETTINGS,
     )
 
     # Players sorted by score
     players_sorted = sorted(players_scored, key=lambda p: p.score if p.score is not None else float("-inf"))
     for player in players_sorted:
-        logger.debug(f"Player {player.idx:4d}   score: {player.score:7.4f}   item: {player.item}")
+        logger.debug(f"Player {player.idx:4d}   score: {player.score:7.4f}   query: {player.item}")
 
     # Average score for both baseline and novel queries
     scores_baseline = [tournament.get_player_by_idx(idx=i).score or 0.0 for i in range(len(dataset.cases))]
     scores_novel = [tournament.get_player_by_idx(idx=i + len(dataset.cases)).score or 0.0 for i in range(len(dataset.cases))]
-    logger.debug(f"Average score for baseline queries: {np.mean(scores_baseline):0.4f}")
-    logger.debug(f"Average score for novel queries:    {np.mean(scores_novel):0.4f}")
-    # Not every novel query will have scored higher than the baseline case.But on average the novel queries should have improved scores.
+    logger.debug(f"Average score for baseline queries (Players 0 to 9): {np.mean(scores_baseline):7.4f}")
+    logger.debug(f"Average score for novel queries  (Players 10 to 19): {np.mean(scores_novel):7.4f}")
+    # Not every novel query will have scored higher than the baseline case. But on average the novel queries should have improved scores.
     assert np.mean(scores_novel) > np.mean(scores_baseline)
+    # The sum of all Bradley-Terry scores is zero.
+    assert np.isclose(np.mean(scores_novel) + np.mean(scores_baseline), 0)
