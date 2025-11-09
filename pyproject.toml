@@ -134,6 +134,13 @@ omit = [
 show_missing = true  # Show line numbers of missing coverage in terminal
 skip_covered = false # Show all files, including those with full coverage
 skip_empty = true    # Skip files with no statements
+precision = 1        # Show coverage to 1 decimal place
+exclude_lines = [
+    "pragma: no cover",            # Don't count lines marked to be excluded
+    "raise NotImplementedError",   # Don't count abstract methods
+    "if __name__ == .__main__.:",  # Don't count main entry points
+    "if TYPE_CHECKING:",           # Don't count type checking blocks
+]
 
 [tool.coverage.html]
 directory = "coverage"
