@@ -10,7 +10,6 @@
     "ghcr.io/rocker-org/devcontainer-features/pandoc:1": {},
     "ghcr.io/lukewiwa/features/shellcheck:0": {},
     "ghcr.io/prulloac/devcontainer-features/latex:1": {},
-    "ghcr.io/prulloac/devcontainer-features/ollama:1": {},
     "ghcr.io/devcontainers-extra/features/curl-apt-get:1": {},
     "ghcr.io/jsburckhardt/devcontainer-features/uv:1": {},
     "ghcr.io/devcontainers/features/node:1": {
@@ -22,20 +21,14 @@
       "upgradePackages": true
     }
   },
-  // Use 'forwardPorts' to make a list of ports inside the container available locally.
-  "forwardPorts": [
-    11434
-  ], // Ollama default port
-  // Mount local Ollama models into the container
-  "mounts": [
-    "source=${localEnv:HOME}/.ollama,target=/home/vscode/.ollama,type=bind"
-  ],
   // Use 'containerEnv' to set environment variables in the container.
-  "containerEnv": {},
+  // Connect to Ollama instance running on host machine
+  "containerEnv": {
+    "OLLAMA_HOST": "http://host.docker.internal:11434"
+  },
   // Use 'postCreateCommand' to run commands after the container is created.
-  // Set OLLAMA_HOST after feature installation to use external Ollama server
-  // This prevents the Ollama feature from trying to bind to the external host during installation
-  "postCreateCommand": "sudo apt-get update && sudo apt-get install -y cmake pkg-config libclang-dev && grep -q 'OLLAMA_HOST' ~/.bashrc || echo 'export OLLAMA_HOST=http://host.docker.internal:11434' >> ~/.bashrc && uv sync",
+  // Install build dependencies needed for MLX and other compiled Python packages
+  "postCreateCommand": "sudo apt-get update && sudo apt-get install -y cmake pkg-config libclang-dev && uv sync",
   // Use 'postStartCommand' to run commands after the container is started.
   //"postStartCommand": "",
   // Configure tool-specific properties.
