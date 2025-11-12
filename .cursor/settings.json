@@ -6,5 +6,6 @@
     "github": {
       "disabled": false
     }
-  }
+  },
+  "remote.containers.reopenFolderInContainer": false
 }
