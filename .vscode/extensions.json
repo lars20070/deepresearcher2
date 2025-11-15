@@ -35,6 +35,8 @@
     "berublan.vscode-log-viewer",
     // mermaid 
     "bierner.markdown-mermaid",
+    // Makefile
+    "ms-vscode.makefile-tools",
     // container
     "ms-vscode-remote.remote-containers",
   ],
