@@ -809,7 +809,7 @@ async def test_mcp_server() -> None:
 async def test_mcp_server_in_memory() -> None:
     """
     Test the MCP server functionality using from the FastMCP package.
-    Testing both in-memory transport.
+    Testing in-memory transport.
     """
 
     server = FastMCP("PydanticAI Server")
@@ -848,7 +848,7 @@ async def test_mcp_server_in_memory() -> None:
 async def test_mcp_server_stdio() -> None:
     """
     Test the MCP server functionality using from the FastMCP package.
-    Testing both stdio transport.
+    Testing stdio transport.
     """
 
     server_params = StdioServerParameters(
