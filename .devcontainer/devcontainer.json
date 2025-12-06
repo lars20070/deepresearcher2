@@ -33,6 +33,10 @@
       "onAutoForward": "silent"
     }
   },
+  // Add additional container run arguments.
+  "runArgs": [
+    "--add-host=host.docker.internal:host-gateway"
+  ], // Required for Linux where Docker runs natively and not as Docker Desktop (macOS). Allows connecting to services running on host machine. See OLLAMA_HOST below.
   // Use 'containerEnv' to set environment variables in the container. Visible system-wide. For example when `docker exec` is used.
   "containerEnv": {
     "OLLAMA_HOST": "http://host.docker.internal:11434", // Connect to Ollama instance running on host machine.
