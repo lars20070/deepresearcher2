@@ -2,7 +2,7 @@
 // README at: https://github.com/devcontainers/templates/tree/main/src/python
 {
   "name": "Deep Researcher 2",
-  // "image": "ghcr.io/deepresearcher2/devcontainer:latest",
+  // "image": "ghcr.io/lars20070/deepresearcher2-devcontainer:latest",
   "build": {
     "dockerfile": "Dockerfile"
   },
