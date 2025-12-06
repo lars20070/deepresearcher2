@@ -116,6 +116,9 @@ jobs:
         uses: devcontainers/ci@v0.3
         with:
           imageName: ghcr.io/deepresearcher2/devcontainer
+          cacheFrom: ghcr.io/${{ github.repository }}/devcontainer
+          imageTag: latest,${{ github.sha }}
+          push: always
           runCmd: |
             bash -c '
               set -o errexit -o pipefail -o nounset
