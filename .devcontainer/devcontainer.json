@@ -20,7 +20,7 @@
       "installOhMyZsh": false
     },
     "ghcr.io/devcontainers-community/features/deno:1": { // Required for https://github.com/pydantic/mcp-run-python
-      "version": "latest"
+      "version": "2.5.6"
     }
   },
   // Port forwarding for local services
