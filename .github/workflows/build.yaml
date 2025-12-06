@@ -94,3 +94,31 @@ jobs:
         with:
           name: deepresearcher2-uml-packages
           path: uml/packages.png
+      - name: Free Disk Space on GitHub Actions runner
+        # Runners come with many preinstalled tools that we don't need for our build.
+        # This action removes them to free up disk space for the following heavy devcontainer build.
+        uses: jlumbroso/free-disk-space@v1.3.1
+        with:
+          tool-cache: false
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          docker-images: true
+          swap-storage: true
+
+      # - uses: actions/checkout@v4
+
+      - name: Build and run dev container task
+        uses: devcontainers/ci@v0.3
+        with:
+          runCmd: |
+            bash -c '
+              set -o errexit -o pipefail -o nounset
+              uv --version
+              uvx --version
+              uv run python --version
+              uvx ruff check .
+              uvx pyright .
+              echo "Dev container built and run successfully"
+            '
