@@ -23,9 +23,9 @@ devcontainer build --workspace-folder .  # Builds the dev container
 devcontainer up --workspace-folder .  # Starts the dev container and runs postCreateCommand. Complete startup test.
 ```
 
-## Building and testing the container in the CI pipeline
+## Building, testing and pushing the container in the CI pipeline
 
-The container build and startup process are tested in the CI pipeline defined in `.github/workflows/ci.yml`. The availability of major development tools and the successful execution of `make lint`, `make typecheck`, and `make test` are verified.
+The container build and startup process are tested in the CI pipeline defined in `.github/workflows/build.yml`. The availability of major development tools and the successful execution of `uvx ruff check .` and `uvx pyright .` are verified. The container image is pushed to the GitHub Container Registry (GHCR) as `ghcr.io/lars20070/deepresearcher2-devcontainer`.
 
 ## Known Issue in Cursor IDE
 

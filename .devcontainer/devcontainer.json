@@ -5,7 +5,7 @@
   // "image": "ghcr.io/lars20070/deepresearcher2-devcontainer:latest",
   "build": {
     "dockerfile": "Dockerfile",
-    // "cacheFrom": "ghcr.io/lars20070/deepresearcher2-devcontainer:latest" // Please commment out if Dockerfile has changed.
+    "cacheFrom": "ghcr.io/lars20070/deepresearcher2-devcontainer:latest"
   },
   // Features to add to the dev container. More info: https://containers.dev/features.
   "features": {
