@@ -163,7 +163,10 @@ knowledge_base:
     enabled: true
   code_guidelines:
     enabled: true
-    filePatterns: []
+    filePatterns:
+      - ".cursor/rules/general.mdc"
+      - ".cursor/rules/python.mdc"
+      - ".cursor/rules/python-testing.mdc"
   learnings:
     scope: auto
   issues:
