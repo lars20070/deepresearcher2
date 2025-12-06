@@ -1,3 +1,4 @@
+<!-- markdownlint-disable MD041 -->
 ## Requirements
 
 Please ensure that [Docker](https://docs.docker.com/desktop/) is installed and running on the host machine. To configure your IDE and MCP servers, mount your own `.vscode/` or `.cursor/` folders by uncommenting the `mounts` section in `devcontainer.json`. To set your API keys, please copy a valid `.env` file based on `.env.example` into the container by uncommenting the `initializeCommand` in `devcontainer.json`.
