@@ -106,12 +106,10 @@ jobs:
           large-packages: true
           docker-images: true
           swap-storage: true
-
-      # - uses: actions/checkout@v4
-
       - name: Build and run dev container task
         uses: devcontainers/ci@v0.3
         with:
+          # imageName: ghcr.io/lars20070/deepresearcher2-devcontainer
           runCmd: |
             bash -c '
               set -o errexit -o pipefail -o nounset
