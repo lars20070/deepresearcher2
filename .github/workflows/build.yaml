@@ -115,8 +115,8 @@ jobs:
       - name: Build and run dev container task
         uses: devcontainers/ci@v0.3
         with:
-          imageName: ghcr.io/deepresearcher2/devcontainer
-          cacheFrom: ghcr.io/${{ github.repository }}/devcontainer
+          imageName: ghcr.io/lars20070/deepresearcher2-devcontainer
+          cacheFrom: ghcr.io/lars20070/deepresearcher2-devcontainer
           imageTag: latest,${{ github.sha }}
           push: always
           runCmd: |
