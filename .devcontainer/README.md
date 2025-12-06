@@ -25,7 +25,7 @@ devcontainer up --workspace-folder .  # Starts the dev container and runs postCr
 
 ## Building, testing and pushing the container in the CI pipeline
 
-The container build and startup process are tested in the CI pipeline defined in `.github/workflows/build.yml`. The availability of major development tools and the successful execution of `uvx ruff check .` and `uvx pyright .` are verified. The container image is pushed to the GitHub Container Registry (GHCR) as `ghcr.io/lars20070/deepresearcher2-devcontainer`. Note that this image is for an `amd64` architecture only.
+The container build and startup process are tested in the CI pipeline defined in `.github/workflows/build.yaml`. The availability of major development tools and the successful execution of `uvx ruff check .` and `uvx pyright .` are verified. The container image is pushed to the GitHub Container Registry (GHCR) as `ghcr.io/lars20070/deepresearcher2-devcontainer`. Note that this image is for an `amd64` architecture only.
 
 ## Known Issue in Cursor IDE
 
