@@ -10,7 +10,6 @@
     "ghcr.io/devcontainers/features/github-cli:1": {},
     "ghcr.io/rocker-org/devcontainer-features/pandoc:1": {},
     "ghcr.io/lukewiwa/features/shellcheck:0": {},
-    "ghcr.io/prulloac/devcontainer-features/latex:1": {},
     "ghcr.io/devcontainers/features/common-utils:2": {
       "installLsof": true,
       "installBuildTools": true, // This option installs build-essential
