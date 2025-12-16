@@ -19,6 +19,9 @@
       "installZsh": true,
       "installOhMyZsh": false
     },
+    "ghcr.io/devcontainers/features/node:1": { // Required for local Context7 MCP server
+      "version": "lts"
+    },
     "ghcr.io/devcontainers-community/features/deno:1": { // Required for https://github.com/pydantic/mcp-run-python
       "version": "2.5.6"
     }
