@@ -83,3 +83,8 @@ def date_server() -> None:
         return date_output
 
     server.run()
+
+
+# Run the helper function
+if __name__ == "__main__":
+    print(asyncio.run(_run_date()))
