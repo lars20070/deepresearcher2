@@ -1,5 +1,5 @@
 language: en-US
-tone_instructions: ""
+tone_instructions: "Be concise and focus on critical issues only. Do not comment on trivial matters, nitpicks, or stylistic preferences. Only flag issues that could cause bugs, security vulnerabilities, or significant maintainability problems."
 early_access: false
 enable_free_tier: true
 reviews:
