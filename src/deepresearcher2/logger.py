@@ -4,6 +4,8 @@ import logfire
 from dotenv import load_dotenv
 from loguru import logger
 
+__all__ = ["logger"]
+
 from .config import config
 
 load_dotenv()
