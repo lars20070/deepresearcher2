@@ -128,6 +128,7 @@ omit = [
   "src/deepresearcher2/examples.py",
   "src/deepresearcher2/evals/generate.py",
   "src/deepresearcher2/evals/import_bigbench.py",
+  "src/deepresearcher2/mcp/wolframscript_server.py",
 ]
 
 [tool.coverage.report]
