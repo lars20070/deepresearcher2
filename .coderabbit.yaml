@@ -28,7 +28,14 @@ reviews:
   auto_assign_reviewers: false
   in_progress_fortune: true
   poem: true
-  path_filters: []
+  path_filters:
+    - "!uv.lock"
+    - "!coverage/**"
+    - "!dist/**"
+    - "!*.dot"
+    - "!**/__pycache__/**"
+    - "!.venv/**"
+    - "!node_modules/**"
   path_instructions: []
   abort_on_close: true
   disable_cache: false
@@ -81,9 +88,9 @@ reviews:
       enabled_only: false
       level: default
     biome:
-      enabled: true
+      enabled: false
     hadolint:
-      enabled: true
+      enabled: false
     swiftlint:
       enabled: false
     phpstan:
@@ -106,7 +113,7 @@ reviews:
     eslint:
       enabled: false
     flake8:
-      enabled: true
+      enabled: false
     rubocop:
       enabled: false
     buf:
@@ -124,7 +131,7 @@ reviews:
     semgrep:
       enabled: true
     circleci:
-      enabled: true
+      enabled: false
     clippy:
       enabled: false
     sqlfluff:
@@ -146,7 +153,7 @@ reviews:
     htmlhint:
       enabled: false
     checkmake:
-      enabled: true
+      enabled: false
     osvScanner:
       enabled: true
 chat:
@@ -185,7 +192,9 @@ knowledge_base:
 code_generation:
   docstrings:
     language: en-US
-    path_instructions: []
+    path_instructions:
+      - path: "src/**"
+        instructions: "Use Google-style docstrings with Args, Returns, and Raises sections. Include type information in the function signature, not the docstring."
   unit_tests:
     path_instructions: []
 issue_enrichment:
