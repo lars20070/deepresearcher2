@@ -151,9 +151,21 @@ def wolframscript_server() -> None:
         Returns:
             str: Version of the `wolframscript` tool.
         """
-        logger.info("Running 'wolframscript --version'")
-        version = await _run_wolframscript(["--version"])
+        logger.info("Running 'wolframscript -version'")
+        version = await _run_wolframscript(["-version"])
         logger.debug(f"WolframScript version: {version}")
+        return version
+
+    @server.tool
+    async def version_wolframengine() -> str:
+        """Get the version of the Wolfram Engine.
+
+        Returns:
+            str: Version of the Wolfram Engine.
+        """
+        logger.info("Running 'wolframscript -code '$Version''")
+        version = await _run_wolframscript(["-code", "$Version"])
+        logger.debug(f"Wolfram Engine version: {version}")
         return version
 
     server.run()
