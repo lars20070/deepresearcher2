@@ -49,7 +49,7 @@ async def test_wolframscript_server() -> None:
 
 @pytest.mark.wolframscript
 @pytest.mark.asyncio
-async def test_wolframscript_server_version() -> None:
+async def test_version_wolframscript() -> None:
     """
     Test the wolframscript MCP server functionality defined in deepresearcher2.mcp.wolframscript_server.wolframscript_server()
 
@@ -69,12 +69,11 @@ async def test_wolframscript_server_version() -> None:
         result = await session.list_tools()
         tools = result.tools
         assert len(tools) == 2
-        assert tools[1].name == "version"
+        assert tools[1].name == "version_wolframscript"
         logger.debug(f"Available tools on wolframscript server: {[tool.name for tool in tools]}")
 
         # Call the wolframscript tool
-        result = await session.call_tool("version", {})
-
+        result = await session.call_tool("version_wolframscript", {})
         # Extract text from result
         content = result.content[0]
         text = getattr(content, "text", str(content))

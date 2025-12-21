@@ -145,7 +145,7 @@ def wolframscript_server() -> None:
             os.unlink(tmp_file_path)
 
     @server.tool
-    async def version() -> str:
+    async def version_wolframscript() -> str:
         """Get the version of the `wolframscript` tool.
 
         Returns:
