@@ -134,13 +134,13 @@ async def test_run_wolframscript_success(mocker: MockerFixture) -> None:
         return_value=mock_process,
     )
 
-    result = await _run_wolframscript(["--version"])
+    result = await _run_wolframscript(["-version"])
 
     assert result == "WolframScript 1.13.0 for Mac OS X ARM (64-bit)"
     mock_create_subprocess.assert_called_once()
     call_args = mock_create_subprocess.call_args
     assert call_args[0][0] == "wolframscript"
-    assert call_args[0][1] == "--version"
+    assert call_args[0][1] == "-version"
 
 
 @pytest.mark.asyncio
