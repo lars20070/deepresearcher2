@@ -168,4 +168,16 @@ def wolframscript_server() -> None:
         logger.debug(f"Wolfram Engine version: {version}")
         return version
 
+    @server.tool
+    async def licensetype() -> str:
+        """Get the license type of the Wolfram Engine.
+
+        Returns:
+            str: License type of the Wolfram Engine e.g. 'Professional'.
+        """
+        logger.info("Running 'wolframscript -code '$LicenseType''")
+        license_type = await _run_wolframscript(["-code", "$LicenseType"])
+        logger.debug(f"Wolfram Engine license type: {license_type}")
+        return license_type
+
     server.run()
