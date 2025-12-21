@@ -6,6 +6,7 @@
 __pycache__/
 .pytest_cache/
 .ruff_cache/
+.ropeproject/
 .env
 .env.backup
 *.log

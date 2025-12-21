@@ -14,7 +14,7 @@ async def _run_wolframscript(args: list[str]) -> str:
     """Run a wolframscript command and return the output.
 
     Args:
-        args: List of arguments to pass to wolframscript (e.g., ["--version"] or ["-print", "-file", "/path/to/file"]).
+        args: List of arguments to pass to wolframscript (e.g., ["-version"] or ["-print", "-file", "/path/to/file"]).
 
     Returns:
         str: The decoded stdout output from the command.

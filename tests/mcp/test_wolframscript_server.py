@@ -190,7 +190,7 @@ async def test_run_wolframscript_file_not_found(mocker: MockerFixture) -> None:
     )
 
     with pytest.raises(RuntimeError) as exc_info:
-        await _run_wolframscript(["--version"])
+        await _run_wolframscript(["-version"])
 
     assert "wolframscript' command not found" in str(exc_info.value)
     assert "Wolfram Engine installation" in str(exc_info.value)
