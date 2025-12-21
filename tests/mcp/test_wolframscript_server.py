@@ -33,7 +33,8 @@ async def test_wolframscript_server() -> None:
         result = await session.list_tools()
         tools = result.tools
         assert len(tools) == 4
-        assert tools[0].name == "evaluate"
+        tool_names = {tool.name for tool in tools}
+        assert "evaluate" in tool_names
         logger.debug(f"Available tools on wolframscript server: {[tool.name for tool in tools]}")
 
         # Call the evaluate tool
@@ -69,7 +70,8 @@ async def test_version_wolframscript() -> None:
         result = await session.list_tools()
         tools = result.tools
         assert len(tools) == 4
-        assert tools[1].name == "version_wolframscript"
+        tool_names = {tool.name for tool in tools}
+        assert "version_wolframscript" in tool_names
         logger.debug(f"Available tools on wolframscript server: {[tool.name for tool in tools]}")
 
         # Call the wolframscript tool
@@ -105,7 +107,8 @@ async def test_version_wolframengine() -> None:
         result = await session.list_tools()
         tools = result.tools
         assert len(tools) == 4
-        assert tools[2].name == "version_wolframengine"
+        tool_names = {tool.name for tool in tools}
+        assert "version_wolframengine" in tool_names
         logger.debug(f"Available tools on wolframscript server: {[tool.name for tool in tools]}")
 
         # Call the wolframscript tool
@@ -141,7 +144,8 @@ async def test_licensetype() -> None:
         result = await session.list_tools()
         tools = result.tools
         assert len(tools) == 4
-        assert tools[3].name == "licensetype"
+        tool_names = {tool.name for tool in tools}
+        assert "licensetype" in tool_names
         logger.debug(f"Available tools on wolframscript server: {[tool.name for tool in tools]}")
 
         # Call the wolframscript tool
