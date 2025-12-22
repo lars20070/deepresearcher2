@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""MCP server that provides the local date."""
+"""MCP server that wraps WolframScript."""
 
 import asyncio
 import os
