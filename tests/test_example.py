@@ -1299,8 +1299,11 @@ async def test_openrouter() -> None:
 
     logger.info("Testing connection to OpenRouter.")
 
+    if config.openrouter_api_key is None:
+        pytest.skip("OpenRouter API key not set. Please specify OPENROUTER_API_KEY in the .env file.")
+
     provider = OpenRouterProvider(
-        api_key=config.openrouter_api_key,  # type: ignore[arg-type]
+        api_key=config.openrouter_api_key,
     )
     model = OpenAIChatModel(
         model_name="moonshotai/kimi-k2-thinking",
