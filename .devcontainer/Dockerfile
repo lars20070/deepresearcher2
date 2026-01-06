@@ -1,8 +1,8 @@
 ARG PYTHON_VERSION=3.12
 FROM mcr.microsoft.com/devcontainers/python:${PYTHON_VERSION}-trixie
 
-# Copy uv and uvx (pinned version)
-COPY --from=ghcr.io/astral-sh/uv:0.9.16 /uv /uvx /bin/
+# Copy uv and uvx (latest version)
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
 # Set non-interactive frontend for apt
 ENV DEBIAN_FRONTEND=noninteractive
@@ -10,7 +10,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 # Enable Docker BuildKit for cache mounts
 ENV DOCKER_BUILDKIT=1
 
-# Install system dependencies with cache mount for faster rebuilds (unpinned versions)
+# Install system dependencies with cache mount for faster rebuilds (latest versions)
 # Trixie is a testing distribution. Certain versions of packages might disappear from mirrors. Therefore we do not pin versions here.
 # hadolint ignore=DL3008
 RUN --mount=type=cache,target=/var/cache/apt \
