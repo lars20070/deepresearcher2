@@ -60,6 +60,7 @@ class Config(BaseSettings):
     brave_api_key: str | None = None
     perplexity_api_key: str | None = None
     serper_api_key: str | None = None
+    openrouter_api_key: str | None = None
 
     model_config = SettingsConfigDict(
         env_file=".env",

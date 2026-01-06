@@ -25,6 +25,7 @@ from mcp.types import TextContent
 from pydantic import BaseModel, EmailStr, Field
 from pydantic_ai import Agent, ModelRetry, RunContext, format_as_xml
 from pydantic_ai.mcp import MCPServerSSE, MCPServerStdio
+from pydantic_ai.providers.openrouter import OpenRouterProvider
 
 if TYPE_CHECKING:
     from pydantic_ai.messages import ModelMessage
@@ -1283,3 +1284,27 @@ def test_bradley_terry_expectation_propagation() -> None:
     _, cov_2 = choix.ep_pairwise(n, games, 0.1, model="logit")
     logger.debug(f"New total variance: {np.trace(cov_2):0.4f}")
     assert np.trace(cov_2) < np.trace(cov)  # More games should lead to less variance.
+
+
+@pytest.mark.example
+@pytest.mark.paid
+@pytest.mark.asyncio
+async def test_openrouter() -> None:
+    """
+    Test the OpenRouterProvider() class
+    https://ai.pydantic.dev/models/openrouter/
+    """
+
+    logger.info("Testing connection to OpenRouter.")
+
+    model = OpenAIChatModel(
+        model_name="anthropic/claude-3.5-sonnet",
+        provider=OpenRouterProvider(api_key=config.openrouter_api_key),  # type: ignore[arg-type]
+    )
+    agent = Agent(
+        model=model,
+        system_prompt="Be concise, reply with one sentence.",
+    )
+
+    result = await agent.run('Where does "hello world" come from?')
+    logger.debug(f"Result from agent: {result.output}")
