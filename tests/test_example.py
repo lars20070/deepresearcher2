@@ -1297,9 +1297,12 @@ async def test_openrouter() -> None:
 
     logger.info("Testing connection to OpenRouter.")
 
+    provider = OpenRouterProvider(
+        api_key=config.openrouter_api_key,  # type: ignore[arg-type]
+    )
     model = OpenAIChatModel(
         model_name="anthropic/claude-3.5-sonnet",
-        provider=OpenRouterProvider(api_key=config.openrouter_api_key),  # type: ignore[arg-type]
+        provider=provider,
     )
     agent = Agent(
         model=model,
