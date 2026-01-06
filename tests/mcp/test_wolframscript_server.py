@@ -87,6 +87,7 @@ async def test_version_wolframscript() -> None:
 
 @pytest.mark.wolframscript
 @pytest.mark.asyncio
+@pytest.mark.skip(reason="Wolfram Engine license currently not activated.")
 async def test_version_wolframengine() -> None:
     """
     Test the wolframscript MCP server functionality defined in deepresearcher2.mcp.wolframscript_server.wolframscript_server()
