@@ -36,6 +36,7 @@ reviews:
     - "!**/__pycache__/**"
     - "!.venv/**"
     - "!node_modules/**"
+    - "!.cursor/plans/**"
   path_instructions: []
   abort_on_close: true
   disable_cache: false
