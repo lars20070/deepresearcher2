@@ -4,7 +4,7 @@
   "name": "Deep Researcher 2",
   // "image": "ghcr.io/lars20070/deepresearcher2-devcontainer:latest",
   "build": {
-    "dockerfile": "Dockerfile",
+    "dockerfile": "Dockerfile"
     // "cacheFrom": "ghcr.io/lars20070/deepresearcher2-devcontainer:latest" // Note that this image is for an amd64 architecture only.
   },
   // Features to add to the dev container. More info: https://containers.dev/features.

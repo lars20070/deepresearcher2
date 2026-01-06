@@ -10,14 +10,16 @@ ENV DEBIAN_FRONTEND=noninteractive
 # Enable Docker BuildKit for cache mounts
 ENV DOCKER_BUILDKIT=1
 
-# Install system dependencies with cache mount for faster rebuilds (pinned versions)
+# Install system dependencies with cache mount for faster rebuilds (unpinned versions)
+# Trixie is a testing distribution. Certain versions of packages might disappear from mirrors. Therefore we do not pin versions here.
+# hadolint ignore=DL3008
 RUN --mount=type=cache,target=/var/cache/apt \
   --mount=type=cache,target=/var/lib/apt/lists \
   apt-get update \
   && apt-get install -y --no-install-recommends \
-  cmake=3.31.6-2 \
-  ninja-build=1.12.1-1 \
-  libclang-dev=1:19.0-63 \
+  cmake \
+  ninja-build \
+  libclang-dev \
   && apt-get clean -y \
   && rm -rf /var/lib/apt/lists/*
 
