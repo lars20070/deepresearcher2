@@ -1293,6 +1293,8 @@ async def test_openrouter() -> None:
     """
     Test the OpenRouterProvider() class
     https://ai.pydantic.dev/models/openrouter/
+
+    The settings `only`, `ignore`, `order` and `allow_fallbacks` can be used to control the provider selection.
     """
 
     logger.info("Testing connection to OpenRouter.")
@@ -1301,12 +1303,23 @@ async def test_openrouter() -> None:
         api_key=config.openrouter_api_key,  # type: ignore[arg-type]
     )
     model = OpenAIChatModel(
-        model_name="anthropic/claude-3.5-sonnet",
+        model_name="moonshotai/kimi-k2-thinking",
         provider=provider,
     )
+    settings: ModelSettings = {
+        "extra_body": {
+            "provider": {
+                "only": ["nebius"],  # Specify a whitelist.
+                "ignore": [],  # Specify a blacklist.
+                # "order": ["deepinfra/turbo", "nebius"],  # Specify the order of the providers (after the whitelist and blacklist have been applied).
+                "allow_fallbacks": True,
+            }
+        }
+    }
     agent = Agent(
         model=model,
         system_prompt="Be concise, reply with one sentence.",
+        model_settings=settings,
     )
 
     result = await agent.run('Where does "hello world" come from?')
