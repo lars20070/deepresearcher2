@@ -62,6 +62,8 @@ class Config(BaseSettings):
     perplexity_api_key: str | None = None
     serper_api_key: str | None = None
     openrouter_api_key: str | None = None
+    deepinfra_api_key: str | None = None
+    together_api_key: str | None = None
 
     # OpenRouter metadata
     # The OpenRouter dashboard lists activities and their corresponding app. https://openrouter.ai/activity
