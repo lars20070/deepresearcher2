@@ -52,6 +52,10 @@ jobs:
           echo GEO_API_KEY=${{ secrets.GEO_API_KEY }} >> .env
           echo BRAVE_API_KEY=${{ secrets.BRAVE_API_KEY }} >> .env
           echo SERPER_API_KEY=${{ secrets.SERPER_API_KEY }} >> .env
+          echo CODECOV_TOKEN=${{ secrets.CODECOV_TOKEN }} >> .env
+          echo OPENROUTER_API_KEY=${{ secrets.OPENROUTER_API_KEY }} >> .env
+          echo DEEPINFRA_API_KEY=${{ secrets.DEEPINFRA_API_KEY }} >> .env
+          echo TOGETHER_API_KEY=${{ secrets.TOGETHER_API_KEY }} >> .env
       - name: Install uv package manager
         uses: astral-sh/setup-uv@v5.2.2
         with:
