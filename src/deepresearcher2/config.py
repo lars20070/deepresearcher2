@@ -62,6 +62,11 @@ class Config(BaseSettings):
     serper_api_key: str | None = None
     openrouter_api_key: str | None = None
 
+    # OpenRouter metadata
+    # The OpenRouter dashboard lists activities and their corresponding app. https://openrouter.ai/activity
+    openrouter_app_url: str = "https://github.com/lars20070/deepresearcher2"
+    openrouter_app_name: str = "Deep Researcher 2"
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",

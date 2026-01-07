@@ -1303,16 +1303,12 @@ async def test_openrouter() -> None:
     if config.openrouter_api_key is None:
         pytest.skip("OpenRouter API key not set. Please specify OPENROUTER_API_KEY in the .env file.")
 
-    # Metadata for OpenRouter dashboard
-    app_url = "https://github.com/lars20070/deepresearcher2"
-    app_name = "Deep Researcher 2"
-
     client = AsyncOpenAI(
         base_url="https://openrouter.ai/api/v1",
         api_key=config.openrouter_api_key,
         default_headers={
-            "HTTP-Referer": app_url,
-            "X-Title": app_name,
+            "HTTP-Referer": config.openrouter_app_url,
+            "X-Title": config.openrouter_app_name,
         },
     )
     provider = OpenRouterProvider(
