@@ -17,6 +17,15 @@ class SearchEngine(str, Enum):
     searxng = "searxng"
 
 
+class Provider(str, Enum):
+    ollama = "ollama"
+    lmstudio = "lmstudio"
+    openrouter = "openrouter"
+    openai = "openai"
+    together = "together"
+    deepinfra = "deepinfra"
+
+
 class Model(str, Enum):
     llama33 = "llama3.3"
     qwen25_72b = "qwen2.5:72b"
