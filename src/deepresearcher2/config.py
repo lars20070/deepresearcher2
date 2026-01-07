@@ -39,6 +39,7 @@ class Config(BaseSettings):
     max_web_search_results: int = Field(default=2, description="Number of results in a single web search")
     search_engine: SearchEngine = Field(default=SearchEngine.searxng, description="Search engine for the web searches")
     ollama_host: str = Field(default="http://localhost:11434", description="Ollama host URL")
+    lmstudio_host: str = Field(default="http://localhost:1234/v1", description="LM Studio host URL")
     searxng_host: str = Field(default="http://localhost:8080", description="SearXNG host URL")
     model: Model = Field(default=Model.llama33, description="Model to be used by all agents")
     model_timeout: int = Field(default=600, description="Timeout in seconds for the model requests")
