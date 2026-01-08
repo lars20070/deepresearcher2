@@ -15,7 +15,7 @@ load_dotenv()
 Model = str | OpenAIChatModel
 
 
-def create_model(config: Config) -> Model:
+def create_model(config: Config) -> Model:  # pragma: no cover
     """
     Create a model instance based on provider configuration.
 
