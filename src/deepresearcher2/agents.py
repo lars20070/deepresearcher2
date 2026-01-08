@@ -43,13 +43,13 @@ def create_model(config: Config) -> Model_:
         # Native pydantic-ai shorthand for cloud models
         # API keys are automatically read from env variables.
         case Provider.openrouter:
-            return f"openrouter:{config.model}"
+            return f"openrouter:{config.model.value}"
         case Provider.openai:
-            return f"openai:{config.model}"
+            return f"openai:{config.model.value}"
         case Provider.together:
-            return f"together:{config.model}"
+            return f"together:{config.model.value}"
         case Provider.deepinfra:
-            return f"deepinfra:{config.model}"
+            return f"deepinfra:{config.model.value}"
 
 
 # Models
