@@ -26,7 +26,7 @@ reviews:
   auto_apply_labels: false
   suggested_reviewers: true
   auto_assign_reviewers: false
-  in_progress_fortune: true
+  in_progress_fortune: false
   poem: false
   path_filters:
     - "!uv.lock"
@@ -158,7 +158,7 @@ reviews:
     osvScanner:
       enabled: true
 chat:
-  art: true
+  art: false
   auto_reply: true
   integrations:
     jira:
