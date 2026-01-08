@@ -8,7 +8,7 @@ import pytest
 from pytest_mock import MockerFixture
 from vcr.request import Request
 
-from deepresearcher2.config import Model, SearchEngine, config
+from deepresearcher2.config import SearchEngine, config
 from deepresearcher2.evals.evals import EvalGame, EvalPlayer
 from deepresearcher2.logger import logger
 
@@ -68,7 +68,7 @@ def config_for_testing(monkeypatch: pytest.MonkeyPatch) -> Generator[None, None,
     monkeypatch.setattr(config, "max_research_loops", 3)
     monkeypatch.setattr(config, "max_web_search_results", 2)
     monkeypatch.setattr(config, "search_engine", SearchEngine.serper)
-    monkeypatch.setattr(config, "model", Model.llama33)
+    monkeypatch.setattr(config, "model", "llama3.3")
     monkeypatch.setattr(config, "model_timeout", 600)
     monkeypatch.setattr(config, "reports_folder", "tests/reports/")
     monkeypatch.setattr(config, "logs2logfire", False)

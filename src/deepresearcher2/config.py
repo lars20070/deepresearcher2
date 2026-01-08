@@ -26,15 +26,15 @@ class Provider(str, Enum):
     deepinfra = "deepinfra"
 
 
-class Model(str, Enum):
-    llama33 = "llama3.3"
-    qwen25_72b = "qwen2.5:72b"
-    qwen3_8b = "qwen3:8b"
-    qwen3_30b = "qwen3:30b"
-    qwen3_32b = "qwen3:32b"
-    gptoss = "gpt-oss"
-    gpt4o = "openai:gpt-4o"
-    gpt4omini = "openai:gpt-4o-mini"
+# class Model(str, Enum):
+#     llama33 = "llama3.3"
+#     qwen25_72b = "qwen2.5:72b"
+#     qwen3_8b = "qwen3:8b"
+#     qwen3_30b = "qwen3:30b"
+#     qwen3_32b = "qwen3:32b"
+#     gptoss = "gpt-oss"
+#     gpt4o = "openai:gpt-4o"
+#     gpt4omini = "openai:gpt-4o-mini"
 
 
 class Config(BaseSettings):
@@ -51,7 +51,7 @@ class Config(BaseSettings):
     lmstudio_host: str = Field(default="http://localhost:1234/v1", description="LM Studio host URL")
     searxng_host: str = Field(default="http://localhost:8080", description="SearXNG host URL")
     provider: Provider = Field(default=Provider.ollama, description="Provider hosting the model (either local or cloud)")
-    model: Model = Field(default=Model.llama33, description="Model to be used by all agents")
+    model: str = Field(default="llama3.3", description="Model to be used by all agents")
     model_timeout: int = Field(default=600, description="Timeout in seconds for the model requests")
     reports_folder: str = Field(default="reports/", description="Output directory for the final reports")
     logs2logfire: bool = Field(default=False, description="Post all logs to Logfire. If false, some logs are written to a local log file.")

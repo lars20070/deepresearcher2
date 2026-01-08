@@ -12,10 +12,10 @@ from .prompts import EVALUATION_INSTRUCTIONS, FINAL_SUMMARY_INSTRUCTIONS, REFLEC
 
 load_dotenv()
 
-Model_ = str | OpenAIChatModel
+Model = str | OpenAIChatModel
 
 
-def create_model(config: Config) -> Model_:
+def create_model(config: Config) -> Model:
     """
     Create a model instance based on provider configuration.
 
@@ -34,25 +34,25 @@ def create_model(config: Config) -> Model_:
         # Custom OpenAI-compatible endpoints for local models
         case Provider.ollama:
             return OpenAIChatModel(
-                model_name=config.model.value,
+                model_name=config.model,
                 provider=OpenAIProvider(base_url=f"{config.ollama_host}/v1"),
             )
         case Provider.lmstudio:
             return OpenAIChatModel(
-                model_name=config.model.value,
+                model_name=config.model,
                 provider=OpenAIProvider(base_url=f"{config.lmstudio_host}/v1"),
             )
 
         # Native pydantic-ai shorthand for cloud models
         # API keys are automatically read from env variables.
         case Provider.openrouter:
-            return f"openrouter:{config.model.value}"
+            return f"openrouter:{config.model}"
         case Provider.openai:
-            return f"openai:{config.model.value}"
+            return f"openai:{config.model}"
         case Provider.together:
-            return f"together:{config.model.value}"
+            return f"together:{config.model}"
         case Provider.deepinfra:
-            return f"deepinfra:{config.model.value}"
+            return f"deepinfra:{config.model}"
         case _:
             error_msg = f"Unsupported provider: {config.provider.value}"
             logger.error(error_msg)
