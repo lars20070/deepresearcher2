@@ -16,6 +16,7 @@ from deepresearcher2.logger import logger
 def pytest_configure(config: pytest.Config) -> None:
     config.addinivalue_line("markers", "paid: tests requiring paid API keys")
     config.addinivalue_line("markers", "ollama: tests requiring a local Ollama instance")
+    config.addinivalue_line("markers", "lmstudio: tests requiring a local LM Studio instance")
     config.addinivalue_line("markers", "searxng: tests requiring a local SearXNG instance")
     config.addinivalue_line("markers", "wolframscript: tests requiring a local WolframScript installation")
     config.addinivalue_line("markers", "example: examples which are not testing deepresearcher2 functionality")
@@ -29,6 +30,16 @@ def skip_ollama_tests(request: pytest.FixtureRequest) -> None:
     """
     if request.node.get_closest_marker("ollama") and os.getenv("GITHUB_ACTIONS") == "true":
         pytest.skip("Tests requiring Ollama skipped in CI environment")
+
+
+@pytest.fixture(autouse=True)
+def skip_lmstudio_tests(request: pytest.FixtureRequest) -> None:
+    """
+    Skip tests marked with 'lmstudio' when running in CI environment.
+    Run these tests only locally.
+    """
+    if request.node.get_closest_marker("lmstudio") and os.getenv("GITHUB_ACTIONS") == "true":
+        pytest.skip("Tests requiring LM Studio skipped in CI environment")
 
 
 @pytest.fixture(autouse=True)

@@ -112,6 +112,7 @@ asyncio_default_fixture_loop_scope = "function" # Use "session" for a single eve
 markers = [
   "paid: tests requiring paid APIs",
   "ollama: tests requiring a local Ollama instance",
+  "lmstudio: tests requiring a local LM Studio instance",
   "searxng: tests requiring a local SearXNG instance",
   "wolframscript: tests requiring a local WolframScript installation",
   "example: examples which are not testing deepresearcher2 functionality",
