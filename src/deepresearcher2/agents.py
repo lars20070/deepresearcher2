@@ -6,6 +6,7 @@ from pydantic_ai.models.openai import OpenAIChatModel
 from pydantic_ai.providers.openai import OpenAIProvider
 
 from .config import Config, Provider, config
+from .logger import logger
 from .models import FinalSummary, GameResult, Reflection, WebSearchQuery
 from .prompts import EVALUATION_INSTRUCTIONS, FINAL_SUMMARY_INSTRUCTIONS, REFLECTION_INSTRUCTIONS, SUMMARY_INSTRUCTIONS, SUMMARY_INSTRUCTIONS_EVALS
 
@@ -27,6 +28,8 @@ def create_model(config: Config) -> Model_:
     Returns:
         Model_: Configured model instance.
     """
+    logger.info(f"Creating a model for provider: {config.provider.value}")
+
     match config.provider:
         # Custom OpenAI-compatible endpoints for local models
         case Provider.ollama:
@@ -50,6 +53,10 @@ def create_model(config: Config) -> Model_:
             return f"together:{config.model.value}"
         case Provider.deepinfra:
             return f"deepinfra:{config.model.value}"
+        case _:
+            error_msg = f"Unsupported provider: {config.provider.value}"
+            logger.error(error_msg)
+            raise ValueError(error_msg)
 
 
 # Models

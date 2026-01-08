@@ -16,11 +16,11 @@ def test_create_model() -> None:
     logger.info("Testing create_model() functionality for all providers.")
 
     for provider in Provider:
-        logger.debug(f"Provider: {provider}")
+        logger.debug(f"Provider: {provider.value}")
 
         config = Config()
         config.provider = provider
 
         model = create_model(config)
-        logger.debug(f"Created model:\n{model}")
+        logger.debug(f"Created model: {model}")
         assert model is not None
