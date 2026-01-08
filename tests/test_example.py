@@ -59,7 +59,7 @@ async def test_pydanticai_agent() -> None:
     logger.info("Testing PydanticAI Agent() class with a cloud model")
 
     agent = Agent(
-        model="google-gla:gemini-2.0-flash",
+        model="openai:gpt-4o",
         system_prompt="Be concise, reply with one sentence.",
     )
 

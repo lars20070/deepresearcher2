@@ -59,16 +59,18 @@ def create_model(config: Config) -> Model_:
             raise ValueError(error_msg)
 
 
-# Models
-if "openai" in config.model.value:
-    # Cloud model
-    model = config.model.value
-else:
-    # Local Ollama model
-    model = OpenAIChatModel(
-        model_name=config.model.value,
-        provider=OpenAIProvider(base_url=f"{config.ollama_host}/v1"),
-    )
+# # Models
+# if "openai" in config.model.value:
+#     # Cloud model
+#     model = config.model.value
+# else:
+#     # Local Ollama model
+#     model = OpenAIChatModel(
+#         model_name=config.model.value,
+#         provider=OpenAIProvider(base_url=f"{config.ollama_host}/v1"),
+#     )
+
+model = create_model(config)
 
 # MCP serves
 MCP_SERVER_DUCKDUCKGO = MCPServerStdio("uvx", args=["duckduckgo-mcp-server"])
