@@ -31,7 +31,7 @@ def create_model(config: Config) -> Model:
     logger.info(f"Creating a model for provider: {config.provider.value}")
 
     match config.provider:
-        # Custom OpenAI-compatible endpoints for local models
+        # Local models
         case Provider.ollama:
             return OpenAIChatModel(
                 model_name=config.model,
@@ -43,32 +43,26 @@ def create_model(config: Config) -> Model:
                 provider=OpenAIProvider(base_url=f"{config.lmstudio_host}/v1"),
             )
 
-        # Native pydantic-ai shorthand for cloud models
-        # API keys are automatically read from env variables.
+        # Cloud models
         case Provider.openrouter:
-            return f"openrouter:{config.model}"
+            return f"openrouter:{config.model}"  # API key automatically read from env variables.
         case Provider.openai:
-            return f"openai:{config.model}"
+            return f"openai:{config.model}"  # API key automatically read from env variables.
         case Provider.together:
-            return f"together:{config.model}"
+            return f"together:{config.model}"  # API key automatically read from env variables.
         case Provider.deepinfra:
-            return f"deepinfra:{config.model}"
+            return OpenAIChatModel(
+                model_name=config.model,
+                provider=OpenAIProvider(
+                    base_url="https://api.deepinfra.com/v1/openai",
+                    api_key=config.deepinfra_api_key,
+                ),
+            )
         case _:
             error_msg = f"Unsupported provider: {config.provider.value}"
             logger.error(error_msg)
             raise ValueError(error_msg)
 
-
-# # Models
-# if "openai" in config.model.value:
-#     # Cloud model
-#     model = config.model.value
-# else:
-#     # Local Ollama model
-#     model = OpenAIChatModel(
-#         model_name=config.model.value,
-#         provider=OpenAIProvider(base_url=f"{config.ollama_host}/v1"),
-#     )
 
 model = create_model(config)
 
