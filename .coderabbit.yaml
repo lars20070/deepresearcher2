@@ -27,7 +27,7 @@ reviews:
   suggested_reviewers: true
   auto_assign_reviewers: false
   in_progress_fortune: true
-  poem: true
+  poem: false
   path_filters:
     - "!uv.lock"
     - "!coverage/**"
