@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 from dotenv import load_dotenv
+from openai import AsyncOpenAI
 from pydantic_ai import Agent
 from pydantic_ai.mcp import MCPServerStdio
 from pydantic_ai.models.openai import OpenAIChatModel
 from pydantic_ai.providers.openai import OpenAIProvider
+from pydantic_ai.providers.openrouter import OpenRouterProvider
 
 from .config import Config, Provider, config
 from .logger import logger
@@ -45,7 +47,22 @@ def create_model(config: Config) -> Model:  # pragma: no cover
 
         # Cloud models
         case Provider.openrouter:
-            return f"openrouter:{config.model}"  # API key automatically read from env variables.
+            client = AsyncOpenAI(
+                base_url=config.openrouter_base_url,
+                api_key=config.openrouter_api_key,
+                default_headers={
+                    "HTTP-Referer": config.openrouter_app_url,
+                    "X-Title": config.openrouter_app_name,
+                },
+            )
+            provider = OpenRouterProvider(
+                openai_client=client,
+            )
+            model = OpenAIChatModel(
+                model_name=config.model,
+                provider=provider,
+            )
+            return model
         case Provider.openai:
             return f"openai:{config.model}"  # API key automatically read from env variables.
         case Provider.together:
