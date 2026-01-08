@@ -54,7 +54,7 @@ def create_model(config: Config) -> Model:  # pragma: no cover
             return OpenAIChatModel(
                 model_name=config.model,
                 provider=OpenAIProvider(
-                    base_url="https://api.deepinfra.com/v1/openai",
+                    base_url=config.deepinfra_base_url,
                     api_key=config.deepinfra_api_key,
                 ),
             )

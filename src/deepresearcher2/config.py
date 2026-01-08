@@ -38,6 +38,7 @@ class Config(BaseSettings):
     search_engine: SearchEngine = Field(default=SearchEngine.searxng, description="Search engine for the web searches")
     ollama_host: str = Field(default="http://localhost:11434", description="Ollama host URL")
     lmstudio_host: str = Field(default="http://localhost:1234", description="LM Studio host URL")
+    deepinfra_base_url: str = Field(default="https://api.deepinfra.com/v1/openai", description="DeepInfra base URL for OpenAI-compatible API")
     searxng_host: str = Field(default="http://localhost:8080", description="SearXNG host URL")
     provider: Provider = Field(default=Provider.ollama, description="Provider hosting the model (either local or cloud)")
     model: str = Field(default="llama3.3", description="Model to be used by all agents")
