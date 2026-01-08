@@ -28,11 +28,16 @@
   },
   // Port forwarding for local services
   "forwardPorts": [
-    11434
+    11434,
+    1234
   ],
   "portsAttributes": {
     "11434": {
       "label": "Ollama",
+      "onAutoForward": "silent"
+    },
+    "1234": {
+      "label": "LM Studio",
       "onAutoForward": "silent"
     }
   },
@@ -43,6 +48,7 @@
   // Use 'containerEnv' to set environment variables in the container. Visible system-wide. For example when `docker exec` is used.
   "containerEnv": {
     "OLLAMA_HOST": "http://host.docker.internal:11434", // Connect to Ollama instance running on host machine.
+    "LMSTUDIO_HOST": "http://host.docker.internal:1234", // Connect to LM Studio instance running on host machine.
     "COLUMNS": "150",
     "CI": "false",
     "LOGFIRE_INSPECT_ARGUMENTS": "1",
