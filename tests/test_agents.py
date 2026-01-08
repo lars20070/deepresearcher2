@@ -3,7 +3,7 @@
 from dotenv import load_dotenv
 
 from deepresearcher2.agents import create_model
-from deepresearcher2.config import Config, config
+from deepresearcher2.config import Config, Provider, config
 from deepresearcher2.logger import logger
 
 load_dotenv()
@@ -11,13 +11,19 @@ load_dotenv()
 
 def test_create_model() -> None:
     """
-    Test model creation for all providers.
+    Test create_model() functionality for all providers.
     """
-    logger.info("Testing model creation for all providers")
+    logger.info("Testing create_model() functionality for all providers.")
 
-    config = Config()
-    model = create_model(config)
-    assert model is not None
+    for provider in Provider:
+        logger.debug(f"Provider: {provider}")
+
+        config = Config()
+        config.provider = provider
+
+        model = create_model(config)
+        logger.debug(f"Created model:\n{model}")
+        assert model is not None
 
 
 def test_config() -> None:

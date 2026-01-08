@@ -18,8 +18,14 @@ def create_model(config: Config) -> Model_:
     """
     Create a model instance based on provider configuration.
 
+    For custom providers (Ollama, LM Studio), returns an OpenAIChatModel.
     For providers with native pydantic-ai support, returns a shorthand string.
-    For custom providers (LM Studio, DeepInfra), returns an OpenAIChatModel.
+
+    Args:
+        config (Config): Configuration object containing provider and model info.
+
+    Returns:
+        Model_: Configured model instance.
     """
     match config.provider:
         # Custom OpenAI-compatible endpoints for local models
@@ -34,8 +40,8 @@ def create_model(config: Config) -> Model_:
                 provider=OpenAIProvider(base_url=f"{config.lmstudio_host}/v1"),
             )
 
-        # Native pydantic-ai shorthand
-        # API keys are automatically read from env variables
+        # Native pydantic-ai shorthand for cloud models
+        # API keys are automatically read from env variables.
         case Provider.openrouter:
             return f"openrouter:{config.model}"
         case Provider.openai:
