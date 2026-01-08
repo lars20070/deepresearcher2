@@ -17,6 +17,23 @@ load_dotenv()
 Model = str | OpenAIChatModel
 
 
+def _check_api_key(api_key: str | None, provider: Provider) -> None:  # pragma: no cover
+    """
+    Check that a required API key is present.
+
+    Args:
+        api_key: The API key to check.
+        provider: The provider associated with the API key.
+
+    Raises:
+        ValueError: If the API key is missing.
+    """
+    if not api_key:
+        error_msg = f"{provider.value.upper()}_API_KEY is required for the {provider.value} model provider."
+        logger.error(error_msg)
+        raise ValueError(error_msg)
+
+
 def create_model(config: Config) -> Model:  # pragma: no cover
     """
     Create a model instance based on provider configuration.
@@ -47,6 +64,7 @@ def create_model(config: Config) -> Model:  # pragma: no cover
 
         # Cloud models
         case Provider.openrouter:
+            _check_api_key(config.openrouter_api_key, Provider.openrouter)
             client = AsyncOpenAI(
                 base_url=config.openrouter_base_url,
                 api_key=config.openrouter_api_key,
@@ -64,10 +82,13 @@ def create_model(config: Config) -> Model:  # pragma: no cover
             )
             return model
         case Provider.openai:
+            _check_api_key(config.openai_api_key, Provider.openai)
             return f"openai:{config.model}"  # API key automatically read from env variables.
         case Provider.together:
+            _check_api_key(config.together_api_key, Provider.together)
             return f"together:{config.model}"  # API key automatically read from env variables.
         case Provider.deepinfra:
+            _check_api_key(config.deepinfra_api_key, Provider.deepinfra)
             return OpenAIChatModel(
                 model_name=config.model,
                 provider=OpenAIProvider(
