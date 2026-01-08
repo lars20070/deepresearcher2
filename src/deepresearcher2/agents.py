@@ -5,11 +5,46 @@ from pydantic_ai.mcp import MCPServerStdio
 from pydantic_ai.models.openai import OpenAIChatModel
 from pydantic_ai.providers.openai import OpenAIProvider
 
-from .config import config
+from .config import Config, Provider, config
 from .models import FinalSummary, GameResult, Reflection, WebSearchQuery
 from .prompts import EVALUATION_INSTRUCTIONS, FINAL_SUMMARY_INSTRUCTIONS, REFLECTION_INSTRUCTIONS, SUMMARY_INSTRUCTIONS, SUMMARY_INSTRUCTIONS_EVALS
 
 load_dotenv()
+
+Model_ = str | OpenAIChatModel
+
+
+def create_model(config: Config) -> Model_:
+    """
+    Create a model instance based on provider configuration.
+
+    For providers with native pydantic-ai support, returns a shorthand string.
+    For custom providers (LM Studio, DeepInfra), returns an OpenAIChatModel.
+    """
+    match config.provider:
+        # Custom OpenAI-compatible endpoints for local models
+        case Provider.ollama:
+            return OpenAIChatModel(
+                model_name=config.model.value,
+                provider=OpenAIProvider(base_url=f"{config.ollama_host}/v1"),
+            )
+        case Provider.lmstudio:
+            return OpenAIChatModel(
+                model_name=config.model.value,
+                provider=OpenAIProvider(base_url=f"{config.lmstudio_host}/v1"),
+            )
+
+        # Native pydantic-ai shorthand
+        # API keys are automatically read from env variables
+        case Provider.openrouter:
+            return f"openrouter:{config.model}"
+        case Provider.openai:
+            return f"openai:{config.model}"
+        case Provider.together:
+            return f"together:{config.model}"
+        case Provider.deepinfra:
+            return f"deepinfra:{config.model}"
+
 
 # Models
 if "openai" in config.model.value:
