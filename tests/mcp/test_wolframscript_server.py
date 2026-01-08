@@ -32,8 +32,9 @@ async def test_wolframscript_server() -> None:
         # List all available tools
         result = await session.list_tools()
         tools = result.tools
-        assert len(tools) == 2
-        assert tools[0].name == "evaluate"
+        assert len(tools) == 4
+        tool_names = {tool.name for tool in tools}
+        assert "evaluate" in tool_names
         logger.debug(f"Available tools on wolframscript server: {[tool.name for tool in tools]}")
 
         # Call the evaluate tool
@@ -49,7 +50,7 @@ async def test_wolframscript_server() -> None:
 
 @pytest.mark.wolframscript
 @pytest.mark.asyncio
-async def test_wolframscript_server_version() -> None:
+async def test_version_wolframscript() -> None:
     """
     Test the wolframscript MCP server functionality defined in deepresearcher2.mcp.wolframscript_server.wolframscript_server()
 
@@ -68,13 +69,13 @@ async def test_wolframscript_server_version() -> None:
         # List all available tools
         result = await session.list_tools()
         tools = result.tools
-        assert len(tools) == 2
-        assert tools[1].name == "version"
+        assert len(tools) == 4
+        tool_names = {tool.name for tool in tools}
+        assert "version_wolframscript" in tool_names
         logger.debug(f"Available tools on wolframscript server: {[tool.name for tool in tools]}")
 
         # Call the wolframscript tool
-        result = await session.call_tool("version", {})
-
+        result = await session.call_tool("version_wolframscript", {})
         # Extract text from result
         content = result.content[0]
         text = getattr(content, "text", str(content))
@@ -82,6 +83,80 @@ async def test_wolframscript_server_version() -> None:
         logger.debug(f"WolframScript version: {text}")
         assert len(text) > 0
         assert any(char.isdigit() for char in text), "Version should contain digits"
+
+
+@pytest.mark.wolframscript
+@pytest.mark.asyncio
+@pytest.mark.skip(reason="Wolfram Engine license currently not activated.")
+async def test_version_wolframengine() -> None:
+    """
+    Test the wolframscript MCP server functionality defined in deepresearcher2.mcp.wolframscript_server.wolframscript_server()
+
+    The MCP server wraps the 'wolframscript' command to return the version of Wolfram Engine.
+    The MCP server is started automatically.
+    """
+    server_params = StdioServerParameters(
+        command="uv",
+        args=["run", "wolframscript_server"],
+        env=dict(os.environ),
+    )
+
+    async with stdio_client(server_params) as (read, write), ClientSession(read, write) as session:
+        await session.initialize()
+
+        # List all available tools
+        result = await session.list_tools()
+        tools = result.tools
+        assert len(tools) == 4
+        tool_names = {tool.name for tool in tools}
+        assert "version_wolframengine" in tool_names
+        logger.debug(f"Available tools on wolframscript server: {[tool.name for tool in tools]}")
+
+        # Call the wolframscript tool
+        result = await session.call_tool("version_wolframengine", {})
+        # Extract text from result
+        content = result.content[0]
+        text = getattr(content, "text", str(content))
+
+        logger.debug(f"Wolfram Engine version: {text}")
+        assert len(text) > 0
+        assert any(char.isdigit() for char in text), "Version should contain digits"
+
+
+@pytest.mark.wolframscript
+@pytest.mark.asyncio
+async def test_licensetype() -> None:
+    """
+    Test the wolframscript MCP server functionality defined in deepresearcher2.mcp.wolframscript_server.wolframscript_server()
+
+    The MCP server wraps the 'wolframscript' command to return the license type of the Wolfram Engine.
+    The MCP server is started automatically.
+    """
+    server_params = StdioServerParameters(
+        command="uv",
+        args=["run", "wolframscript_server"],
+        env=dict(os.environ),
+    )
+
+    async with stdio_client(server_params) as (read, write), ClientSession(read, write) as session:
+        await session.initialize()
+
+        # List all available tools
+        result = await session.list_tools()
+        tools = result.tools
+        assert len(tools) == 4
+        tool_names = {tool.name for tool in tools}
+        assert "licensetype" in tool_names
+        logger.debug(f"Available tools on wolframscript server: {[tool.name for tool in tools]}")
+
+        # Call the wolframscript tool
+        result = await session.call_tool("licensetype", {})
+        # Extract text from result
+        content = result.content[0]
+        text = getattr(content, "text", str(content))
+
+        logger.debug(f"Wolfram Engine license type: {text}")
+        assert len(text) > 0
 
 
 @pytest.mark.asyncio
@@ -99,13 +174,13 @@ async def test_run_wolframscript_success(mocker: MockerFixture) -> None:
         return_value=mock_process,
     )
 
-    result = await _run_wolframscript(["--version"])
+    result = await _run_wolframscript(["-version"])
 
     assert result == "WolframScript 1.13.0 for Mac OS X ARM (64-bit)"
     mock_create_subprocess.assert_called_once()
     call_args = mock_create_subprocess.call_args
     assert call_args[0][0] == "wolframscript"
-    assert call_args[0][1] == "--version"
+    assert call_args[0][1] == "-version"
 
 
 @pytest.mark.asyncio
@@ -120,7 +195,7 @@ async def test_run_wolframscript_file_not_found(mocker: MockerFixture) -> None:
     )
 
     with pytest.raises(RuntimeError) as exc_info:
-        await _run_wolframscript(["--version"])
+        await _run_wolframscript(["-version"])
 
     assert "wolframscript' command not found" in str(exc_info.value)
     assert "Wolfram Engine installation" in str(exc_info.value)

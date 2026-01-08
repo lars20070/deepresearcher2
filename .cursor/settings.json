@@ -2,6 +2,10 @@
   "mcpServers": {
     "context7": {
       "disabled": false
+    },
+    "github": {
+      "disabled": false
     }
-  }
+  },
+  "remote.containers.reopenFolderInContainer": false
 }

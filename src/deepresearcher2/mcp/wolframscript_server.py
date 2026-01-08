@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""MCP server that provides the local date."""
+"""MCP server that wraps WolframScript."""
 
 import asyncio
 import os
@@ -14,7 +14,7 @@ async def _run_wolframscript(args: list[str]) -> str:
     """Run a wolframscript command and return the output.
 
     Args:
-        args: List of arguments to pass to wolframscript (e.g., ["--version"] or ["-print", "-file", "/path/to/file"]).
+        args: List of arguments to pass to wolframscript (e.g., ["-version"] or ["-print", "-file", "/path/to/file"]).
 
     Returns:
         str: The decoded stdout output from the command.
@@ -145,15 +145,39 @@ def wolframscript_server() -> None:
             os.unlink(tmp_file_path)
 
     @server.tool
-    async def version() -> str:
+    async def version_wolframscript() -> str:
         """Get the version of the `wolframscript` tool.
 
         Returns:
             str: Version of the `wolframscript` tool.
         """
-        logger.info("Running 'wolframscript --version'")
-        version = await _run_wolframscript(["--version"])
+        logger.info("Running 'wolframscript -version'")
+        version = await _run_wolframscript(["-version"])
         logger.debug(f"WolframScript version: {version}")
         return version
+
+    @server.tool
+    async def version_wolframengine() -> str:
+        """Get the version of the Wolfram Engine.
+
+        Returns:
+            str: Version of the Wolfram Engine.
+        """
+        logger.info("Running 'wolframscript -code '$Version''")
+        version = await _run_wolframscript(["-code", "$Version"])
+        logger.debug(f"Wolfram Engine version: {version}")
+        return version
+
+    @server.tool
+    async def licensetype() -> str:
+        """Get the license type of the Wolfram Engine.
+
+        Returns:
+            str: License type of the Wolfram Engine e.g. 'Professional'.
+        """
+        logger.info("Running 'wolframscript -code '$LicenseType''")
+        license_type = await _run_wolframscript(["-code", "$LicenseType"])
+        logger.debug(f"Wolfram Engine license type: {license_type}")
+        return license_type
 
     server.run()

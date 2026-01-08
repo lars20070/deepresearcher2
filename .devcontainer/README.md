@@ -1,20 +1,37 @@
-## Dev Container
+<!-- markdownlint-disable MD041 -->
+## Requirements
 
-The development container image is based on Debian 11 (Bullseye). The container provides a standard development environment.
+Please ensure that [Docker](https://docs.docker.com/desktop/) is installed and running on the host machine. To configure your IDE and MCP servers, mount your own `.vscode/` or `.cursor/` folders by uncommenting the `mounts` section in `devcontainer.json`. To set your API keys, please copy a valid `.env` file based on `.env.example` into the container by uncommenting the `initializeCommand` in `devcontainer.json`.
 
-The container also provides a secure sandbox environment for coding agents. Coding agents such as `Claude Code` might have read-write access to the entire file system. The dev container prevents the coding agent from messing up the host system.
+## Overview
 
-home directory: `/home/vscode`<br>
-project directory: `/workspaces/deepresearcher2`
+The dev container is built using a hybrid approach: the `Dockerfile` provides low-level customization, while `devcontainer.json` is used for fine-tuning and IDE integration. Minor changes to `devcontainer.json` do not require a full rebuild of the entire image, which speeds up the development workflow.
 
-## Docker
+1. The `Dockerfile` is based on Microsoft's Debian-style [Trixie image for Python 3.12](https://hub.docker.com/r/microsoft/devcontainers-python). It configures a non-root `vscode` user, sets `/workspaces/deepresearcher2` as the working directory, and installs essential system dependencies along with `uv`.
 
-The setup has been tested with Docker Desktop on macOS. Adjust memory and disk usage in `Settings` -> `Resources` -> `Advanced` if necessary.
+2. The `devcontainer.json` is based on Microsoft's [dev container template](https://github.com/devcontainers/templates/tree/main/src/python) for Python 3. It installs additional development tools via `features`, sets important environment variables, and runs `uv sync`. The container does not enforce any specific IDE configuration; developers are encouraged to mount their own `.vscode/` or `.cursor/` folders externally. To set your API keys, please uncomment the `initializeCommand` in `devcontainer.json` and copy a valid `.env` file into the container. Note that the Ollama instance runs on the host machine for performance reasons. Please ensure that [Ollama](https://ollama.com/download) is installed and running on the host.
 
-### Ollama
+## Building and testing the container locally
 
-The project relies on local LLMs running in `ollama`. The Ollama CLI is installed in the container via `features`.
+You can build and test the container locally using the `devcontainer` CLI tool. This process works independently of any specific IDE, such as VS Code or Cursor.
 
-In order to avoid pulling models at container startup, we mount the `~/.ollama` folder of the host system into the container. Make sure the local Ollama installation exists.
+```bash
+# brew install devcontainer
+# npm install -g @devcontainers/cli
 
-The Ollama installation on the host system is GPU accelerated. The Ollama installation in the container is not. For that reason, we use the Ollama installation on the host system as external Ollama server by setting the `OLLAMA_HOST` environment variable. Strictly speaking, mounting of the external `~/.ollama` folder is therefore not necessary.
+devcontainer read-configuration --workspace-folder .  # Validates devcontainer.json configuration
+devcontainer build --workspace-folder .  # Builds the dev container
+devcontainer up --workspace-folder .  # Starts the dev container and runs postCreateCommand. Complete startup test.
+```
+
+## Building, testing and pushing the container in the CI pipeline
+
+The container build and startup process are tested in the CI pipeline defined in `.github/workflows/build.yaml`. The availability of major development tools and the successful execution of `uvx ruff check .` and `uvx pyright .` are verified. The container image is pushed to the GitHub Container Registry (GHCR) as `ghcr.io/lars20070/deepresearcher2-devcontainer`. Note that this image is for an `amd64` architecture only.
+
+## Known Issue in Cursor IDE
+
+Occasionally, the dev container may fail to start properly in the Cursor IDE. A [suggested workaround](https://forum.cursor.com/t/dev-containers-support/1510/13) is:
+
+1. Start the container using VS Code.
+2. In Cursor, attach to the already running container.
+3. Inside the container, navigate to `/workspaces/deepresearcher2`.

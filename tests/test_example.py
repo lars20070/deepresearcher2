@@ -22,9 +22,11 @@ from httpx import AsyncClient
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 from mcp.types import TextContent
+from openai import AsyncOpenAI
 from pydantic import BaseModel, EmailStr, Field
 from pydantic_ai import Agent, ModelRetry, RunContext, format_as_xml
 from pydantic_ai.mcp import MCPServerSSE, MCPServerStdio
+from pydantic_ai.providers.openrouter import OpenRouterProvider
 
 if TYPE_CHECKING:
     from pydantic_ai.messages import ModelMessage
@@ -57,7 +59,7 @@ async def test_pydanticai_agent() -> None:
     logger.info("Testing PydanticAI Agent() class with a cloud model")
 
     agent = Agent(
-        model="google-gla:gemini-2.0-flash",
+        model="openai:gpt-4o",
         system_prompt="Be concise, reply with one sentence.",
     )
 
@@ -809,7 +811,7 @@ async def test_mcp_server() -> None:
 async def test_mcp_server_in_memory() -> None:
     """
     Test the MCP server functionality using from the FastMCP package.
-    Testing both in-memory transport.
+    Testing in-memory transport.
     """
 
     server = FastMCP("PydanticAI Server")
@@ -848,7 +850,7 @@ async def test_mcp_server_in_memory() -> None:
 async def test_mcp_server_stdio() -> None:
     """
     Test the MCP server functionality using from the FastMCP package.
-    Testing both stdio transport.
+    Testing stdio transport.
     """
 
     server_params = StdioServerParameters(
@@ -1283,3 +1285,54 @@ def test_bradley_terry_expectation_propagation() -> None:
     _, cov_2 = choix.ep_pairwise(n, games, 0.1, model="logit")
     logger.debug(f"New total variance: {np.trace(cov_2):0.4f}")
     assert np.trace(cov_2) < np.trace(cov)  # More games should lead to less variance.
+
+
+@pytest.mark.example
+@pytest.mark.paid
+@pytest.mark.asyncio
+async def test_openrouter() -> None:
+    """
+    Test the OpenRouterProvider() class
+    https://ai.pydantic.dev/models/openrouter/
+
+    The settings `only`, `ignore`, `order` and `allow_fallbacks` can be used to control the provider selection.
+    """
+
+    logger.info("Testing connection to OpenRouter.")
+
+    if config.openrouter_api_key is None:
+        pytest.skip("OpenRouter API key not set. Please specify OPENROUTER_API_KEY in the .env file.")
+
+    client = AsyncOpenAI(
+        base_url="https://openrouter.ai/api/v1",
+        api_key=config.openrouter_api_key,
+        default_headers={
+            "HTTP-Referer": config.openrouter_app_url,
+            "X-Title": config.openrouter_app_name,
+        },
+    )
+    provider = OpenRouterProvider(
+        openai_client=client,
+    )
+    model = OpenAIChatModel(
+        model_name="moonshotai/kimi-k2-thinking",
+        provider=provider,
+    )
+    settings: ModelSettings = {
+        "extra_body": {
+            "provider": {
+                "only": ["nebius"],  # Specify a whitelist.
+                "ignore": [],  # Specify a blacklist.
+                # "order": ["deepinfra/turbo", "nebius"],  # Specify the order of the providers (after the whitelist and blacklist have been applied).
+                "allow_fallbacks": True,
+            }
+        }
+    }
+    agent = Agent(
+        model=model,
+        system_prompt="Be concise, reply with one sentence.",
+        model_settings=settings,
+    )
+
+    result = await agent.run('Where does "hello world" come from?')
+    logger.debug(f"Result from agent: {result.output}")

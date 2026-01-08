@@ -8,6 +8,7 @@ __pycache__/
 .ruff_cache/
 .env
 .env.backup
+!.env.example
 *.log
 coverage/
 uml/

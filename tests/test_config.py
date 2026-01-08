@@ -2,7 +2,7 @@
 
 from dotenv import load_dotenv
 
-from deepresearcher2.config import config
+from deepresearcher2.config import SearchEngine, config
 from deepresearcher2.logger import logger
 
 load_dotenv()
@@ -17,6 +17,6 @@ def test_config() -> None:
     # See values in config_for_testing() fixture
     assert config is not None
     assert config.max_research_loops == 3
-    assert config.search_engine == "serper"
+    assert config.search_engine == SearchEngine.serper
 
     # logger.debug(f"Config:\n{config.model_dump_json(indent=2)}")

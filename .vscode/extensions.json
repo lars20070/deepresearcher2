@@ -27,12 +27,17 @@
     "GitHub.copilot-chat",
     "ms-vscode.vscode-copilot-data-analysis",
     "AutomataLabs.copilot-mcp",
+    "CodeRabbit.coderabbit-vscode",
+    // Cline
+    // "saoudrizwan.claude-dev",
     // spell checker
     "streetsidesoftware.code-spell-checker",
     // logging
     "berublan.vscode-log-viewer",
     // mermaid 
     "bierner.markdown-mermaid",
+    // Makefile
+    "ms-vscode.makefile-tools",
     // container
     "ms-vscode-remote.remote-containers",
   ],

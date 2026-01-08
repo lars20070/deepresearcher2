@@ -1,6 +1,6 @@
 [project]
 name = "deepresearcher2"
-version = "0.1.7"
+version = "0.1.8"
 description = "fully local web research and report writing assistant"
 readme = "README.md"
 authors = [{ name = "Lars Nilse", email = "l.nilse@dunelm.org.uk" }]
@@ -112,6 +112,7 @@ asyncio_default_fixture_loop_scope = "function" # Use "session" for a single eve
 markers = [
   "paid: tests requiring paid APIs",
   "ollama: tests requiring a local Ollama instance",
+  "lmstudio: tests requiring a local LM Studio instance",
   "searxng: tests requiring a local SearXNG instance",
   "wolframscript: tests requiring a local WolframScript installation",
   "example: examples which are not testing deepresearcher2 functionality",
@@ -128,6 +129,7 @@ omit = [
   "src/deepresearcher2/examples.py",
   "src/deepresearcher2/evals/generate.py",
   "src/deepresearcher2/evals/import_bigbench.py",
+  "src/deepresearcher2/mcp/wolframscript_server.py",
 ]
 
 [tool.coverage.report]
