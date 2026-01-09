@@ -11,12 +11,10 @@ import random
 import numpy as np
 import pytest
 from pydantic_ai import Agent
-from pydantic_ai.models.openai import OpenAIChatModel
-from pydantic_ai.providers.openai import OpenAIProvider
 from pydantic_ai.settings import ModelSettings
 from pydantic_evals import Case, Dataset
 
-from deepresearcher2.agents import EVALUATION_AGENT
+from deepresearcher2.agents import EVALUATION_AGENT, model
 from deepresearcher2.evals.evals import (
     EvalGame,
     EvalPlayer,
@@ -200,7 +198,7 @@ async def test_adaptive_uncertainty_strategy(ice_cream_players: list[EvalPlayer]
         logger.debug(f"Player {player.idx} score: {player.score}")
 
 
-# @pytest.mark.vcr()
+@pytest.mark.vcr()
 @pytest.mark.asyncio
 @pytest.mark.usefixtures("timer_for_tests")
 async def test_evaltournament_usecase(tmp_path: Path) -> None:
@@ -226,11 +224,13 @@ async def test_evaltournament_usecase(tmp_path: Path) -> None:
     path_out = tmp_path / "dataset.json"
 
     # Agent for generating search queries using a local Ollama server
+    model_for_queries = model  # Use the model defined in .env
+    # model_for_queries = OpenAIChatModel(
+    #     model_name="qwen2.5:72b",
+    #     provider=OpenAIProvider(base_url="http://localhost:11434/v1"),
+    # )
     query_agent = Agent(
-        model=OpenAIChatModel(
-            model_name="qwen2.5:72b",
-            provider=OpenAIProvider(base_url="http://localhost:11434/v1"),
-        ),
+        model=model_for_queries,
         output_type=str,
         system_prompt="Please generate a concise web search query for the given research topic. Reply with ONLY the query string. Do NOT use quotes.",
         retries=5,
