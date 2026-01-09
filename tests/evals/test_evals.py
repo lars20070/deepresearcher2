@@ -200,7 +200,7 @@ async def test_adaptive_uncertainty_strategy(ice_cream_players: list[EvalPlayer]
         logger.debug(f"Player {player.idx} score: {player.score}")
 
 
-@pytest.mark.vcr()
+# @pytest.mark.vcr()
 @pytest.mark.asyncio
 @pytest.mark.usefixtures("timer_for_tests")
 async def test_evaltournament_usecase(tmp_path: Path) -> None:
@@ -318,6 +318,8 @@ async def test_evaltournament_usecase(tmp_path: Path) -> None:
     players_scored = await tournament.run(
         agent=EVALUATION_AGENT,
         model_settings=MODEL_SETTINGS,
+        strategy=adaptive_uncertainty_strategy,
+        max_standard_deviation=2.0,
     )
 
     # Players sorted by score
