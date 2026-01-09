@@ -202,7 +202,7 @@ async def test_adaptive_uncertainty_strategy(ice_cream_players: list[EvalPlayer]
 
 @pytest.mark.vcr()
 @pytest.mark.asyncio
-async def test_evaltournament_usecase(tmp_path: Path) -> None:
+async def test_evaltournament_usecase(tmp_path: Path, timer_for_tests: None) -> None:
     """
     Use case for EvalTournament, EvalGame and EvalPlayer classes.
 
