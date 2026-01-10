@@ -54,6 +54,14 @@ reviews:
         - Async test functions must have @pytest.mark.asyncio decorator
         - VCR cassettes must not contain API keys or secrets in recorded responses
         - Tests creating files/directories must have cleanup fixtures
+    - path: "**/prompts.py"
+      instructions: |
+        Review LLM prompts for:
+        - Clarity and explicit instructions: Ensure tasks are clearly defined with minimal ambiguity.
+        - Delimiters: Use clear delimiters (e.g., XML tags, markdown blocks) to separate instructions from data.
+        - Output Specification: Explicitly define the expected output format (JSON, XML, etc.) with schemas or examples.
+        - Injection Safety: Check that user inputs are clearly distinguished from system instructions.
+        - Context Length: Ensure prompts are efficient and don't include unnecessary tokens.
   abort_on_close: true
   disable_cache: false
   auto_review:
