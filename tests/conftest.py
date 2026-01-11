@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import glob
 import os
+import time
 from collections.abc import Generator
 from unittest.mock import MagicMock
 
@@ -159,3 +160,14 @@ def vcr_config() -> dict[str, object]:
         "decode_compressed_response": True,
         "before_record_request": uri_spoofing,
     }
+
+
+@pytest.fixture
+def timer_for_tests(request: pytest.FixtureRequest) -> Generator[None, None, None]:
+    """
+    Measure and log the duration of each test.
+    """
+    start = time.perf_counter()
+    yield
+    duration = time.perf_counter() - start
+    logger.info(f"{request.node.name} completed in {duration:.2f} seconds.")
