@@ -1,7 +1,7 @@
-<div align="left">
+<div align="center">
   <a href="https://github.com/lars20070/deepresearcher2/">
     <picture>
-      <img src=".github/images/logo_deepresearcher2.png" alt="Deep Researcher 2" width="60%">
+      <img src=".github/images/banner_deepresearcher2.png" alt="Deep Researcher 2" width="60%">
     </picture>
   </a>
 </div>
