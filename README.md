@@ -1,11 +1,10 @@
 <div align="left">
   <a href="https://github.com/lars20070/deepresearcher2/">
     <picture>
-      <img src=".github/images/logo_deepresearcher2.png" alt="Deep Researcher 2" width="51%">
+      <img src=".github/images/logo_deepresearcher2.png" alt="Deep Researcher 2" width="60%">
     </picture>
   </a>
 </div>
-<br>
 
 [![codecov](https://codecov.io/gh/lars20070/deepresearcher2/branch/master/graph/badge.svg)](https://codecov.io/gh/lars20070/deepresearcher2)
 [![Build](https://github.com/lars20070/deepresearcher2/actions/workflows/build.yaml/badge.svg)](https://github.com/lars20070/deepresearcher2/actions/workflows/build.yaml)
