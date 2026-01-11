@@ -13,11 +13,9 @@
 [![License](https://img.shields.io/github/license/lars20070/deepresearcher2)](https://github.com/lars20070/deepresearcher2/blob/master/LICENSE)
 
 A fully local web research and report writing assistant that protects your privacy.
-The AI models run locally using Ollama, and web searches are performed locally with SearXNG.
-By default, no API keys are needed.
+The AI models run locally using [Ollama](https://ollama.com) or [LM Studio](https://lmstudio.ai), and web searches are performed locally with [SearXNG](https://searxng.org). By default, no API keys are required.
 
-**Note:** Steps 1 and 2 are optional. You can choose to run the models and web searches in the cloud instead.
-If you do, you must add the required API keys to the `.env` file.
+**Note:** **Note:** Steps 1 and 2 are optional. You can instead run models and web searches in the cloud. To do so, add the required API keys to your `.env` file. Supported model providers include OpenRouter, Together AI, DeepInfra, and OpenAI. For web searches, Deep Researcher 2 supports Brave, DuckDuckGo, Perplexity, Serper and Tavily.
 
 
 ## Getting started
