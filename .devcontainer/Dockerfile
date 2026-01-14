@@ -20,6 +20,7 @@ RUN --mount=type=cache,target=/var/cache/apt \
   cmake \
   ninja-build \
   libclang-dev \
+  zstd \
   && apt-get clean -y \
   && rm -rf /var/lib/apt/lists/*
 

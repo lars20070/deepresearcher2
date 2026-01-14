@@ -86,6 +86,7 @@
     "jlumbroso",
     "LMSTUDIO",
     "unsanitized",
+    "zstd",
   ],
   "cSpell.languageSettings": [
     {
