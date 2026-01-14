@@ -4,9 +4,11 @@ import os
 import time
 from collections.abc import Generator
 from pathlib import Path
+from typing import Any
 from unittest.mock import MagicMock
 
 import pytest
+from pydantic_evals import Case, Dataset
 from pytest_mock import MockerFixture
 from vcr.request import Request
 
@@ -183,3 +185,48 @@ def assay_path(request: pytest.FixtureRequest) -> Path:
     module_name = path.stem
     test_name = request.node.name.split("[")[0]
     return path.parent / "assays" / module_name / f"{test_name}.json"
+
+
+@pytest.fixture
+def assay_dataset(request: pytest.FixtureRequest, assay_path: Path) -> Generator[Dataset, None, None]:
+    """
+    Load dataset from assay file, or provide empty dataset for recording.
+    """
+
+    if assay_path.exists():
+        # Load the dataset if it exists
+        logger.info(f"Loading assay dataset from {assay_path}")
+        dataset = Dataset[dict[str, str], type[None], Any].from_file(assay_path)
+
+    else:
+        # Create the dataset if it does not exist
+        logger.info(f"Creating new assay dataset at {assay_path}")
+        topics = [
+            "pangolin trafficking networks",
+            "molecular gastronomy",
+            "dark kitchen economics",
+            "kintsugi philosophy",
+            "nano-medicine delivery systems",
+            "Streisand effect dynamics",
+            "Anne Brorhilke",
+            "bioconcrete self-healing",
+            "bacteriophage therapy revival",
+            "Habsburg jaw genetics",
+        ]
+
+        cases: list[Case[dict[str, str], type[None], Any]] = []
+        for idx, topic in enumerate(topics):
+            logger.info(f"Case {idx + 1} / {len(topics)} with topic: {topic}")
+            case = Case(
+                name=f"case_{idx:03d}",
+                inputs={"topic": topic},
+            )
+            cases.append(case)
+        dataset: Dataset[dict[str, str], type[None], Any] = Dataset[dict[str, str], type[None], Any](cases=cases)
+
+    yield dataset
+
+    # # Auto-save the dataset after the test
+    # if dataset.cases:
+    #     assay_path.parent.mkdir(parents=True, exist_ok=True)
+    #     dataset.to_file(assay_path, schema_path=None)

@@ -40,7 +40,7 @@ MODEL_SETTINGS_CURIOUS = ModelSettings(
 @pytest.mark.skip(reason="Run only locally with DeepInfra cloud inference. PROVIDER='deepinfra' MODEL='Qwen/Qwen2.5-72B-Instruct'")
 @pytest.mark.asyncio
 @pytest.mark.usefixtures("timer_for_tests")
-async def test_search_queries(tmp_path: Path, assay_path: Path) -> None:
+async def test_search_queries(assay_path: Path, assay_dataset: Dataset) -> None:
     """
     Use case for EvalTournament, EvalGame and EvalPlayer classes.
 
@@ -59,6 +59,7 @@ async def test_search_queries(tmp_path: Path, assay_path: Path) -> None:
     """
 
     logger.debug(f"assay path: {assay_path}")
+    logger.debug(f"assay dataset: {assay_dataset}")
 
     # Agent for generating search queries using a local Ollama server
     model_for_queries = OpenAIChatModel(
@@ -80,35 +81,37 @@ async def test_search_queries(tmp_path: Path, assay_path: Path) -> None:
 
     # (1) Generate Cases and serialise them
 
-    topics = [
-        "pangolin trafficking networks",
-        "molecular gastronomy",
-        "dark kitchen economics",
-        "kintsugi philosophy",
-        "nano-medicine delivery systems",
-        "Streisand effect dynamics",
-        "Anne Brorhilke",
-        "bioconcrete self-healing",
-        "bacteriophage therapy revival",
-        "Habsburg jaw genetics",
-    ]
+    # topics = [
+    #     "pangolin trafficking networks",
+    #     "molecular gastronomy",
+    #     "dark kitchen economics",
+    #     "kintsugi philosophy",
+    #     "nano-medicine delivery systems",
+    #     "Streisand effect dynamics",
+    #     "Anne Brorhilke",
+    #     "bioconcrete self-healing",
+    #     "bacteriophage therapy revival",
+    #     "Habsburg jaw genetics",
+    # ]
 
-    cases: list[Case[dict[str, str], type[None], Any]] = []
-    for idx, topic in enumerate(topics):
-        logger.info(f"Case {idx + 1} / {len(topics)} with topic: {topic}")
-        case = Case(
-            name=f"case_{idx:03d}",
-            inputs={"topic": topic},
-        )
-        cases.append(case)
-    dataset: Dataset[dict[str, str], type[None], Any] = Dataset[dict[str, str], type[None], Any](cases=cases)
+    # cases: list[Case[dict[str, str], type[None], Any]] = []
+    # for idx, topic in enumerate(topics):
+    #     logger.info(f"Case {idx + 1} / {len(topics)} with topic: {topic}")
+    #     case = Case(
+    #         name=f"case_{idx:03d}",
+    #         inputs={"topic": topic},
+    #     )
+    #     cases.append(case)
+    # dataset: Dataset[dict[str, str], type[None], Any] = Dataset[dict[str, str], type[None], Any](cases=cases)
 
-    assay_path.parent.mkdir(parents=True, exist_ok=True)
-    dataset.to_file(assay_path, schema_path=None)
+    # assay_path.parent.mkdir(parents=True, exist_ok=True)
+    # dataset.to_file(assay_path, schema_path=None)
+
+    dataset = assay_dataset
 
     # (2) Generate base line model outputs
 
-    dataset = Dataset[dict[str, str], type[None], Any].from_file(assay_path)
+    # dataset = Dataset[dict[str, str], type[None], Any].from_file(assay_path)
     cases_new: list[Case[dict[str, str], type[None], Any]] = []
     logger.info("")
     for case in dataset.cases:
