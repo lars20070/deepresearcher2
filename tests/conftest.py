@@ -3,6 +3,7 @@ import glob
 import os
 import time
 from collections.abc import Generator
+from pathlib import Path
 from unittest.mock import MagicMock
 
 import pytest
@@ -171,3 +172,14 @@ def timer_for_tests(request: pytest.FixtureRequest) -> Generator[None, None, Non
     yield
     duration = time.perf_counter() - start
     logger.info(f"{request.node.name} completed in {duration:.2f} seconds.")
+
+
+@pytest.fixture
+def assay_path(request: pytest.FixtureRequest) -> Path:
+    """
+    Compute the assay file path from test module and function name.
+    """
+    path = Path(request.fspath)
+    module_name = path.stem
+    test_name = request.node.name.split("[")[0]
+    return path.parent / "assays" / module_name / f"{test_name}.yaml"

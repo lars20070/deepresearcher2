@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Any
 if TYPE_CHECKING:
     from pathlib import Path
 
-import random
+import random  # noqa: F401
 
 import numpy as np
 import pytest
@@ -31,7 +31,7 @@ MODEL_SETTINGS = ModelSettings(
 )
 
 MODEL_SETTINGS_CURIOUS = ModelSettings(
-    temperature=1.0,  # TODO: At higher temperature, qwen2.5:72b starts talking in Chinese despite the system prompt.
+    temperature=1.0,  # TODO: At higher temperature, qwen2.5:72b starts talking in Chinese despite the system prompt telling it not to.
     timeout=300,
 )
 
@@ -40,7 +40,7 @@ MODEL_SETTINGS_CURIOUS = ModelSettings(
 @pytest.mark.skip(reason="Run only locally with DeepInfra cloud inference. PROVIDER='deepinfra' MODEL='Qwen/Qwen2.5-72B-Instruct'")
 @pytest.mark.asyncio
 @pytest.mark.usefixtures("timer_for_tests")
-async def test_search_queries(tmp_path: Path) -> None:
+async def test_search_queries(tmp_path: Path, assay_path: Path) -> None:
     """
     Use case for EvalTournament, EvalGame and EvalPlayer classes.
 
@@ -57,10 +57,12 @@ async def test_search_queries(tmp_path: Path) -> None:
     (3) We run the novel implementation, score both baseline and novel queries in one go using a Bradley-Terry tournament,
         and check whether the scores have improved.
     """
-    random.seed(42)  # Make test deterministic for VCR recording
+    # random.seed(42)  # Make test deterministic for VCR recording
 
     # Path to store the evaluation dataset
     path_out = tmp_path / "dataset.json"
+
+    logger.debug(f"assay path: {assay_path}")
 
     # Agent for generating search queries using a local Ollama server
     model_for_queries = OpenAIChatModel(
