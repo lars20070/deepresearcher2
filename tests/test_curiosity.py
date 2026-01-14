@@ -81,32 +81,6 @@ async def test_search_queries(assay_path: Path, assay_dataset: Dataset) -> None:
 
     # (1) Generate Cases and serialise them
 
-    # topics = [
-    #     "pangolin trafficking networks",
-    #     "molecular gastronomy",
-    #     "dark kitchen economics",
-    #     "kintsugi philosophy",
-    #     "nano-medicine delivery systems",
-    #     "Streisand effect dynamics",
-    #     "Anne Brorhilke",
-    #     "bioconcrete self-healing",
-    #     "bacteriophage therapy revival",
-    #     "Habsburg jaw genetics",
-    # ]
-
-    # cases: list[Case[dict[str, str], type[None], Any]] = []
-    # for idx, topic in enumerate(topics):
-    #     logger.info(f"Case {idx + 1} / {len(topics)} with topic: {topic}")
-    #     case = Case(
-    #         name=f"case_{idx:03d}",
-    #         inputs={"topic": topic},
-    #     )
-    #     cases.append(case)
-    # dataset: Dataset[dict[str, str], type[None], Any] = Dataset[dict[str, str], type[None], Any](cases=cases)
-
-    # assay_path.parent.mkdir(parents=True, exist_ok=True)
-    # dataset.to_file(assay_path, schema_path=None)
-
     dataset = assay_dataset
 
     # (2) Generate base line model outputs
