@@ -11,12 +11,12 @@ import random
 import numpy as np
 import pytest
 from pydantic_ai import Agent
-from pydantic_ai.models.openai import OpenAIChatModel
-from pydantic_ai.providers.openai import OpenAIProvider
+from pydantic_ai.models.openai import OpenAIChatModel  # noqa: F401
+from pydantic_ai.providers.openai import OpenAIProvider  # noqa: F401
 from pydantic_ai.settings import ModelSettings
 from pydantic_evals import Case, Dataset
 
-from deepresearcher2.agents import EVALUATION_AGENT
+from deepresearcher2.agents import EVALUATION_AGENT, model  # noqa: F401
 from deepresearcher2.evals.evals import (
     EvalGame,
     EvalPlayer,
@@ -26,13 +26,18 @@ from deepresearcher2.evals.evals import (
 from deepresearcher2.logger import logger
 
 MODEL_SETTINGS = ModelSettings(
-    temperature=0.0,  # Model needs to be deterministic for VCR recording to work.
+    temperature=0.0,
+    timeout=300,
+)
+
+MODEL_SETTINGS_CURIOUS = ModelSettings(
+    temperature=1.0,  # TODO: At higher temperature, qwen2.5:72b starts talking in Chinese despite the system prompt.
     timeout=300,
 )
 
 
 # @pytest.mark.vcr()
-@pytest.mark.skip(reason="Run only locally with DeepInfra cloud inference. PROVIDER='deepinfra' MODEL='Qwen/Qwen2.5-72B-Instruct'")
+# @pytest.mark.skip(reason="Run only locally with DeepInfra cloud inference. PROVIDER='deepinfra' MODEL='Qwen/Qwen2.5-72B-Instruct'")
 @pytest.mark.asyncio
 @pytest.mark.usefixtures("timer_for_tests")
 async def test_search_queries(tmp_path: Path) -> None:
@@ -67,7 +72,8 @@ async def test_search_queries(tmp_path: Path) -> None:
     query_agent = Agent(
         model=model_for_queries,
         output_type=str,
-        system_prompt="Please generate a concise web search query for the given research topic. Reply with ONLY the query string. Do NOT use quotes.",
+        system_prompt="Please generate a concise web search query for the given research topic. You must respond only in English."
+        + " Never use Chinese characters or any non-English text. Reply with ONLY the query string. Do NOT use quotes.",
         retries=5,
         instrument=True,
     )
@@ -104,6 +110,7 @@ async def test_search_queries(tmp_path: Path) -> None:
 
     dataset = Dataset[dict[str, str], type[None], Any].from_file(path_out)
     cases_new: list[Case[dict[str, str], type[None], Any]] = []
+    logger.info("")
     for case in dataset.cases:
         logger.info(f"Case {case.name} with topic: {case.inputs['topic']}")
 
@@ -127,6 +134,7 @@ async def test_search_queries(tmp_path: Path) -> None:
 
     dataset = Dataset[dict[str, str], type[None], Any].from_file(path_out)
     players: list[EvalPlayer] = []
+    logger.info("")
     for idx, case in enumerate(dataset.cases):
         logger.info(f"Case {case.name} with topic: {case.inputs['topic']}")
 
@@ -137,7 +145,7 @@ async def test_search_queries(tmp_path: Path) -> None:
         async with query_agent:
             result = await query_agent.run(
                 user_prompt=prompt_novel,
-                model_settings=MODEL_SETTINGS,  # Ideally, we would run the model at higher temperature. But for VCR recording we need determinism.
+                model_settings=MODEL_SETTINGS_CURIOUS,
             )
 
         logger.debug(f"Generated query: {result.output}")
