@@ -179,7 +179,7 @@ def assay_path(request: pytest.FixtureRequest) -> Path:
     """
     Compute the assay file path from test module and function name.
     """
-    path = Path(request.fspath)
+    path = Path(request.fspath)  # type: ignore[attr-defined]
     module_name = path.stem
     test_name = request.node.name.split("[")[0]
-    return path.parent / "assays" / module_name / f"{test_name}.yaml"
+    return path.parent / "assays" / module_name / f"{test_name}.json"

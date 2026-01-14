@@ -57,10 +57,6 @@ async def test_search_queries(tmp_path: Path, assay_path: Path) -> None:
     (3) We run the novel implementation, score both baseline and novel queries in one go using a Bradley-Terry tournament,
         and check whether the scores have improved.
     """
-    # random.seed(42)  # Make test deterministic for VCR recording
-
-    # Path to store the evaluation dataset
-    path_out = tmp_path / "dataset.json"
 
     logger.debug(f"assay path: {assay_path}")
 
@@ -106,11 +102,13 @@ async def test_search_queries(tmp_path: Path, assay_path: Path) -> None:
         )
         cases.append(case)
     dataset: Dataset[dict[str, str], type[None], Any] = Dataset[dict[str, str], type[None], Any](cases=cases)
-    dataset.to_file(path_out)
+
+    assay_path.parent.mkdir(parents=True, exist_ok=True)
+    dataset.to_file(assay_path, schema_path=None)
 
     # (2) Generate base line model outputs
 
-    dataset = Dataset[dict[str, str], type[None], Any].from_file(path_out)
+    dataset = Dataset[dict[str, str], type[None], Any].from_file(assay_path)
     cases_new: list[Case[dict[str, str], type[None], Any]] = []
     logger.info("")
     for case in dataset.cases:
@@ -130,11 +128,13 @@ async def test_search_queries(tmp_path: Path, assay_path: Path) -> None:
         )
         cases_new.append(case_new)
     dataset_new: Dataset[dict[str, str], type[None], Any] = Dataset[dict[str, str], type[None], Any](cases=cases_new)
-    dataset_new.to_file(path_out)
+
+    assay_path.parent.mkdir(parents=True, exist_ok=True)
+    dataset_new.to_file(assay_path, schema_path=None)
 
     # (3) Generate novel model outputs and score them
 
-    dataset = Dataset[dict[str, str], type[None], Any].from_file(path_out)
+    dataset = Dataset[dict[str, str], type[None], Any].from_file(assay_path)
     players: list[EvalPlayer] = []
     logger.info("")
     for idx, case in enumerate(dataset.cases):
