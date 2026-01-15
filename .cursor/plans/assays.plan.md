@@ -127,7 +127,7 @@ tests
 │       └── test_agent_delegation.yaml
 └── test_example.py
 ```
-In a similar way, I want to store the baseline data and auxiliarry data for AI agent evaluations in `assays` subfolders.
+In a similar way, I want to store the baseline data and auxiliary data for AI agent evaluations in `assays` subfolders.
 ```
 tests
 ├── assays
@@ -137,7 +137,7 @@ tests
 ```
 I want to stay close to the `pytest` framework and use hooks.
 
-@test_evals.py (245-270)  In a first step, I need to store a `Dataset` of `Cases` as a `yaml` file in a `assays` subfolder. What is the best way to set this up? In the case of `pytest-recording`, the `@pytest.mark.vcr()` decorator filles the `casettes` subfolder automatically. The user interface for the developer is very clean. How can I fill `cassettes` with the cases for the evaluations?
+@test_evals.py (245-270)  In a first step, I need to store a `Dataset` of `Cases` as a `yaml` file in a `assays` subfolder. What is the best way to set this up? In the case of `pytest-recording`, the `@pytest.mark.vcr()` decorator filles the `cassettes` subfolder automatically. The user interface for the developer is very clean. How can I fill `cassettes` with the cases for the evaluations?
 
 Please think carefully about the problem. Come up with three options for the software framework design. Discuss the pros and cons of each design and present the option that you would recommend.
 
