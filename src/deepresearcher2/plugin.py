@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from _pytest.config import Config, PytestPluginManager
 from _pytest.config.argparsing import Parser
+from _pytest.main import Session
 
 from .logger import logger
 
@@ -41,3 +42,18 @@ def pytest_unconfigure() -> None:
 def pytest_addhooks(pluginmanager: PytestPluginManager) -> None:
     # pluginmanager.add_hookspecs(hooks)
     pass
+
+
+def pytest_sessionstart(session: Session) -> None:
+    """
+    Session start hook.
+    """
+    logger.info("Hello from `pytest_sessionstart` hook!")
+
+
+def pytest_sessionfinish(session: Session, exitstatus: int) -> None:
+    """
+    Session finish hook.
+    """
+    logger.info("Hello from `pytest_sessionfinish` hook!")
+    logger.info(f"Exit status: {exitstatus}")
