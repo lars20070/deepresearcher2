@@ -1,10 +1,7 @@
 #!/usr/bin/env python3
+
 import pytest
-from _pytest.config import Config, PytestPluginManager
-from _pytest.config.argparsing import Parser
-from _pytest.main import Session
-from _pytest.nodes import Item
-from _pytest.runner import CallInfo
+from pytest import CallInfo, Config, Item, Parser, PytestPluginManager, Session
 
 from .logger import logger
 
@@ -75,7 +72,7 @@ def pytest_runtest_makereport(item: Item, call: CallInfo) -> None:
     # Here, we are interested in the "call" phase.
     # Use setup and teardown to report when a fixture or cleanup fails.
     if call.when == "call":
-        outcome = call.excinfo
+        outcome = call.excinfo  # Contains exceptions i.e. None if test passed.
 
         try:
             # Access the test ID (nodeid)
