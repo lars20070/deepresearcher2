@@ -14,9 +14,9 @@ reviews:
   review_status: true
   commit_status: true
   fail_commit_status: false
-  collapse_walkthrough: false
+  collapse_walkthrough: true
   changed_files_summary: true
-  sequence_diagrams: true
+  sequence_diagrams: false
   estimate_code_review_effort: true
   assess_linked_issues: true
   related_issues: true
@@ -26,8 +26,8 @@ reviews:
   auto_apply_labels: false
   suggested_reviewers: true
   auto_assign_reviewers: false
-  in_progress_fortune: true
-  poem: true
+  in_progress_fortune: false
+  poem: false
   path_filters:
     - "!uv.lock"
     - "!coverage/**"
@@ -37,13 +37,39 @@ reviews:
     - "!.venv/**"
     - "!node_modules/**"
     - "!.cursor/plans/**"
-  path_instructions: []
+  path_instructions:
+    - path: "**/*.py"
+      instructions: |
+        Review Python code for:
+        - PEP 8, type hints, docstrings, error handling, and performance. Flag mutable default arguments.
+        - Blocking calls inside async functions (use asyncio equivalents)
+        - API keys or secrets accidentally logged or exposed in error messages
+        - Missing context managers for network/file resources
+        - Unbounded retries or missing timeouts on external calls
+        - User-controlled strings passed unsanitized to shell commands or LLM prompts
+    - path: "tests/**/*.py"
+      instructions: |
+        Review test code for:
+        - Check pytest best practices, fixture usage, test isolation, and edge case coverage.
+        - Async test functions must have @pytest.mark.asyncio decorator
+        - VCR cassettes must not contain API keys or secrets in recorded responses
+        - Tests creating files/directories must have cleanup fixtures
+    - path: "**/prompts.py"
+      instructions: |
+        Review LLM prompts for:
+        - Clarity and explicit instructions: Ensure tasks are clearly defined with minimal ambiguity.
+        - Delimiters: Use clear delimiters (e.g., XML tags, markdown blocks) to separate instructions from data.
+        - Output Specification: Explicitly define the expected output format (JSON, XML, etc.) with schemas or examples.
+        - Injection Safety: Check that user inputs are clearly distinguished from system instructions.
+        - Context Length: Ensure prompts are efficient and don't include unnecessary tokens.
   abort_on_close: true
   disable_cache: false
   auto_review:
     enabled: true
     auto_incremental_review: true
-    ignore_title_keywords: []
+    ignore_title_keywords:
+      - "DO NOT REVIEW"
+      - "WIP"
     labels: []
     drafts: false
     base_branches: []
@@ -158,7 +184,7 @@ reviews:
     osvScanner:
       enabled: true
 chat:
-  art: true
+  art: false
   auto_reply: true
   integrations:
     jira:

@@ -529,7 +529,7 @@ async def adaptive_uncertainty_strategy(
         if previous_scores is not None:
             absolute_change = np.abs(scores - previous_scores)
             max_change = np.max(absolute_change)
-            logger.debug(f"Maximum absolute change in the scores since last iteration: {max_change}")
+            logger.debug(f"Maximum absolute change in the scores since last iteration: {max_change:.4f}")
         previous_scores = scores.copy()
 
         # Find most uncertain pair which has not yet been played.
@@ -561,7 +561,8 @@ async def adaptive_uncertainty_strategy(
 
         # Play the most uncertain pair
         logger.debug(
-            f"Most uncertain pair: Player {players[next_pair[0]].idx} vs Player {players[next_pair[1]].idx} (uncertainty: {max_uncertainty})"
+            f"Most uncertain pair: Player {players[next_pair[0]].idx} vs Player {players[next_pair[1]].idx} "
+            f"(std dev: {math.sqrt(max_uncertainty):.4f}, std dev termination target: {max_standard_deviation:.4f})"
         )
         player_1, player_2 = players[next_pair[0]], players[next_pair[1]]
         result = await game.run(

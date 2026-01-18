@@ -1,6 +1,6 @@
 [project]
 name = "deepresearcher2"
-version = "0.1.8"
+version = "0.1.9"
 description = "fully local web research and report writing assistant"
 readme = "README.md"
 authors = [{ name = "Lars Nilse", email = "l.nilse@dunelm.org.uk" }]
@@ -47,6 +47,13 @@ research = "deepresearcher2.graph:main"
 import = "deepresearcher2.evals.import_bigbench:main"
 generate = "deepresearcher2.evals.generate:main"
 eval = "deepresearcher2.evals.evals:main"
+
+[project.urls]
+"Source Code" = "https://github.com/lars20070/deepresearcher2"
+"Bug Tracker" = "https://github.com/lars20070/deepresearcher2/issues"
+
+[project.entry-points.pytest11]
+assays = "deepresearcher2.plugin"
 
 [tool.ruff]
 line-length = 150
