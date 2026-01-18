@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 
+import importlib
+
 from pytest_mock import MockerFixture
 
+import deepresearcher2.plugin
 from deepresearcher2.plugin import (
     ASSAY_MODES,
     pytest_addhooks,
@@ -12,6 +15,26 @@ from deepresearcher2.plugin import (
     pytest_sessionstart,
     pytest_unconfigure,
 )
+
+
+def test_module_imports() -> None:
+    """
+    Test that the plugin module imports correctly and exports expected symbols.
+
+    This test forces a module reload to ensure coverage tracks import-time code.
+    """
+    # Reload the module to capture import-time coverage
+    module = importlib.reload(deepresearcher2.plugin)
+
+    # Verify module-level exports
+    assert module.ASSAY_MODES == ("evaluate", "new_baseline")
+    assert callable(module.pytest_addoption)
+    assert callable(module.pytest_configure)
+    assert callable(module.pytest_unconfigure)
+    assert callable(module.pytest_addhooks)
+    assert callable(module.pytest_sessionstart)
+    assert callable(module.pytest_sessionfinish)
+    assert callable(module.pytest_runtest_makereport)
 
 
 def test_pytest_addoption(mocker: MockerFixture) -> None:
