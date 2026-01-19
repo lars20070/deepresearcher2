@@ -20,6 +20,10 @@ def pytest_addoption(parser: Parser) -> None:
 
 
 def pytest_configure(config: Config) -> None:
+    """
+    Configurations at the start of the test session.
+    For example, add custom markers here.
+    """
     # config.addinivalue_line("markers", "vcr: Mark the test as using VCR.py.")
     # config.addinivalue_line("markers", "block_network: Block network access except for VCR recording.")
     # config.addinivalue_line("markers", "default_cassette: Override the default cassette name.")
@@ -28,6 +32,9 @@ def pytest_configure(config: Config) -> None:
     #     "allowed_hosts: List of regexes to match hosts to where connection must be allowed.",
     # )
     # network.install_pycurl_wrapper()
+
+    # Add marker @pytest.mark.assay
+    config.addinivalue_line("markers", "assay: Mark the test for AI agent evaluation i.e. running an assay.")
 
     assay_mode = config.getoption("--assay-mode")
     logger.debug(f"assay_mode={assay_mode}")
