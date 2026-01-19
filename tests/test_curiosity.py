@@ -3,6 +3,8 @@ from __future__ import annotations as _annotations
 
 from typing import TYPE_CHECKING, Any
 
+from deepresearcher2.plugin import PLAYERS_KEY
+
 if TYPE_CHECKING:
     from pathlib import Path
 
@@ -41,7 +43,7 @@ MODEL_SETTINGS_CURIOUS = ModelSettings(
 @pytest.mark.assay
 @pytest.mark.asyncio
 @pytest.mark.usefixtures("timer_for_tests")
-async def test_search_queries(assay_path: Path, assay_dataset: Dataset) -> None:
+async def test_search_queries(request: pytest.FixtureRequest, assay_path: Path, assay_dataset: Dataset) -> None:
     """
     Use case for EvalTournament, EvalGame and EvalPlayer classes.
 
@@ -134,6 +136,9 @@ async def test_search_queries(assay_path: Path, assay_dataset: Dataset) -> None:
         player_novel = EvalPlayer(idx=idx + len(dataset.cases), item=result.output)
         players.append(player_baseline)
         players.append(player_novel)
+
+    # Pass new responses to PyTest hook
+    request.node.stash[PLAYERS_KEY] = players
 
     # Run the Bradley-Terry tournament to score both baseline and novel queries
     game = EvalGame(criterion="Which of the two search queries shows more genuine curiosity and creativity, and is less formulaic?")

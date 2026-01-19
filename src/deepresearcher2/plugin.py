@@ -3,9 +3,12 @@
 import pytest
 from pytest import CallInfo, Config, Item, Parser, PytestPluginManager, Session
 
+from .evals.evals import EvalPlayer
 from .logger import logger
 
 ASSAY_MODES = ("evaluate", "new_baseline")
+
+PLAYERS_KEY = pytest.StashKey[list[EvalPlayer]]()
 
 
 def pytest_addoption(parser: Parser) -> None:
@@ -95,6 +98,10 @@ def pytest_runtest_makereport(item: Item, call: CallInfo) -> None:
             logger.info(f"Test: {test_id}")
             logger.info(f"Test Outcome: {test_outcome}")
             logger.info(f"Test Duration: {test_duration:.5f} seconds")
+
+            # Access baseline and novel players
+            all_players = item.stash.get(PLAYERS_KEY, None)
+            logger.debug(f"number of players: {len(all_players) if all_players is not None else 'None'}")
 
         except Exception as e:
             logger.error("ERROR:", e)
