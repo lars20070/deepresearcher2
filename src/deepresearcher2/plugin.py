@@ -4,8 +4,8 @@ from typing import Any
 
 import pytest
 from pydantic import BaseModel, Field
-from pydantic_evals import Case, Dataset
-from pytest import CallInfo, Config, Item, Parser, PytestPluginManager, Session
+from pydantic_evals import Dataset
+from pytest import CallInfo, Config, Function, Item, Parser, PytestPluginManager, Session
 
 from .evals.evals import EvalPlayer
 from .logger import logger
@@ -42,6 +42,11 @@ def pytest_configure(config: Config) -> None:
 
     # Add marker @pytest.mark.assay
     config.addinivalue_line("markers", "assay: Mark the test for AI agent evaluation i.e. running an assay.")
+    # config.addinivalue_line(
+    #         "markers",
+    #         "assay(generator=None, record_mode='evaluate'): Mark the test for AI agent evaluation. "
+    #         "Args: generator - callable returning Dataset; record_mode - 'evaluate' or 'new_baseline'.",
+    #     )
 
     assay_mode = config.getoption("--assay-mode")
     logger.debug(f"assay_mode={assay_mode}")
@@ -95,43 +100,6 @@ def _assay_path(item: Item) -> Path:
     return path.parent / "assays" / module_name / f"{test_name}.json"
 
 
-def _assay_dataset(item: Item, assay_path: Path) -> Dataset:
-    """
-    Load dataset from assay file, or provide empty dataset (inputs yes, but no outputs) for recording.
-    """
-
-    if assay_path.exists():
-        # Load the dataset if it exists
-        logger.info(f"Loading assay dataset from {assay_path}")
-        return Dataset[dict[str, str], type[None], Any].from_file(assay_path)
-
-    else:
-        # Create the dataset if it does not exist
-        logger.info(f"Creating new assay dataset at {assay_path}")
-        topics = [
-            "pangolin trafficking networks",
-            "molecular gastronomy",
-            "dark kitchen economics",
-            "kintsugi philosophy",
-            "nano-medicine delivery systems",
-            "Streisand effect dynamics",
-            "Anne Brorhilke",
-            "bioconcrete self-healing",
-            "bacteriophage therapy revival",
-            "Habsburg jaw genetics",
-        ]
-
-        cases: list[Case[dict[str, str], type[None], Any]] = []
-        for idx, topic in enumerate(topics):
-            logger.info(f"Case {idx + 1} / {len(topics)} with topic: {topic}")
-            case = Case(
-                name=f"case_{idx:03d}",
-                inputs={"topic": topic},
-            )
-            cases.append(case)
-        return Dataset[dict[str, str], type[None], Any](cases=cases)
-
-
 @pytest.hookimpl(tryfirst=True)
 def pytest_runtest_setup(item: Item) -> None:
     """
@@ -143,13 +111,19 @@ def pytest_runtest_setup(item: Item) -> None:
     if marker is None:
         return
 
-    # Only inject for Function items (actual test functions)
-    if not hasattr(item, "funcargs"):
+    # Only inject for Function items i.e. actual test functions
+    # For example, if @pytest.mark.assay decorates a class, we skip it here.
+    if not isinstance(item, Function):
         return
+
+    # Get generator from marker kwargs
+    generator = marker.kwargs.get("generator")
+    if generator is not None:
+        logger.debug(f"There is a custom generator: {generator}")
 
     logger.debug("Populating assay context with dataset and path")
     assay_path = _assay_path(item)
-    assay_dataset = _assay_dataset(item, assay_path)
+    assay_dataset = generator() if generator is not None else Dataset[dict[str, str], type[None], Any](cases=[])
 
     item.funcargs["assay"] = AssayContext(  # type: ignore[attr-defined]
         dataset=assay_dataset,

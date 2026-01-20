@@ -167,9 +167,40 @@ async def test_search_queries_1(request: pytest.FixtureRequest, assay_path: Path
     assert np.isclose(np.mean(scores_novel) + np.mean(scores_baseline), 0)
 
 
+def generate_evaluation_cases() -> Dataset[dict[str, str], type[None], Any]:
+    """
+    Generate a list of Cases containing topics as input.
+    """
+    logger.info("Creating new assay dataset.")
+
+    topics = [
+        "pangolin trafficking networks",
+        "molecular gastronomy",
+        "dark kitchen economics",
+        "kintsugi philosophy",
+        "nano-medicine delivery systems",
+        "Streisand effect dynamics",
+        "Anne Brorhilke",
+        "bioconcrete self-healing",
+        "bacteriophage therapy revival",
+        "Habsburg jaw genetics",
+    ]
+
+    cases: list[Case[dict[str, str], type[None], Any]] = []
+    for idx, topic in enumerate(topics):
+        logger.info(f"Case {idx + 1} / {len(topics)} with topic: {topic}")
+        case = Case(
+            name=f"case_{idx:03d}",
+            inputs={"topic": topic},
+        )
+        cases.append(case)
+
+    return Dataset[dict[str, str], type[None], Any](cases=cases)
+
+
 # @pytest.mark.vcr()
 @pytest.mark.skip(reason="Run only locally with DeepInfra cloud inference. PROVIDER='deepinfra' MODEL='Qwen/Qwen2.5-72B-Instruct'")
-@pytest.mark.assay
+@pytest.mark.assay(generator=generate_evaluation_cases)
 @pytest.mark.asyncio
 @pytest.mark.usefixtures("timer_for_tests")
 async def test_search_queries_2(assay: AssayContext) -> None:
