@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-from collections.abc import Generator
 from pathlib import Path
+from typing import Any
 
 import pytest
 from pydantic import BaseModel, Field
-from pydantic_evals import Dataset
+from pydantic_evals import Case, Dataset
 from pytest import CallInfo, Config, Item, Parser, PytestPluginManager, Session
 
 from .evals.evals import EvalPlayer
@@ -95,8 +95,45 @@ def _assay_path(item: Item) -> Path:
     return path.parent / "assays" / module_name / f"{test_name}.json"
 
 
-@pytest.hookimpl(hookwrapper=True)
-def pytest_runtest_call(item: Item) -> Generator[None, None, None]:
+def _assay_dataset(item: Item, assay_path: Path) -> Dataset:
+    """
+    Load dataset from assay file, or provide empty dataset (inputs yes, but no outputs) for recording.
+    """
+
+    if assay_path.exists():
+        # Load the dataset if it exists
+        logger.info(f"Loading assay dataset from {assay_path}")
+        return Dataset[dict[str, str], type[None], Any].from_file(assay_path)
+
+    else:
+        # Create the dataset if it does not exist
+        logger.info(f"Creating new assay dataset at {assay_path}")
+        topics = [
+            "pangolin trafficking networks",
+            "molecular gastronomy",
+            "dark kitchen economics",
+            "kintsugi philosophy",
+            "nano-medicine delivery systems",
+            "Streisand effect dynamics",
+            "Anne Brorhilke",
+            "bioconcrete self-healing",
+            "bacteriophage therapy revival",
+            "Habsburg jaw genetics",
+        ]
+
+        cases: list[Case[dict[str, str], type[None], Any]] = []
+        for idx, topic in enumerate(topics):
+            logger.info(f"Case {idx + 1} / {len(topics)} with topic: {topic}")
+            case = Case(
+                name=f"case_{idx:03d}",
+                inputs={"topic": topic},
+            )
+            cases.append(case)
+        return Dataset[dict[str, str], type[None], Any](cases=cases)
+
+
+@pytest.hookimpl(tryfirst=True)
+def pytest_runtest_setup(item: Item) -> None:
     """
     Here we will inject the Dataset input.
     """
@@ -104,18 +141,21 @@ def pytest_runtest_call(item: Item) -> Generator[None, None, None]:
     # Execute the hook only for tests marked with @pytest.mark.assay
     marker = item.get_closest_marker("assay")
     if marker is None:
-        yield
         return
 
-    logger.debug("In pytest_runtest_call hook - before test execution")
+    # Only inject for Function items (actual test functions)
+    if not hasattr(item, "funcargs"):
+        return
 
-    # Compute path
+    logger.debug("Populating assay context with dataset and path")
     assay_path = _assay_path(item)
-    logger.debug(f"assay path: {assay_path}")
+    assay_dataset = _assay_dataset(item, assay_path)
 
-    yield
-
-    logger.debug("In pytest_runtest_call hook - after test execution")
+    item.funcargs["assay"] = AssayContext(  # type: ignore[attr-defined]
+        dataset=assay_dataset,
+        path=assay_path,
+        record_mode="evaluate",
+    )
 
 
 @pytest.hookimpl(tryfirst=True)  # Executed before other hooks. Important for non-None return values.

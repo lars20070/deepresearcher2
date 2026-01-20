@@ -26,6 +26,7 @@ from deepresearcher2.evals.evals import (
     adaptive_uncertainty_strategy,
 )
 from deepresearcher2.logger import logger
+from deepresearcher2.plugin import AssayContext
 
 MODEL_SETTINGS = ModelSettings(
     temperature=0.0,
@@ -171,13 +172,13 @@ async def test_search_queries_1(request: pytest.FixtureRequest, assay_path: Path
 @pytest.mark.assay
 @pytest.mark.asyncio
 @pytest.mark.usefixtures("timer_for_tests")
-async def test_search_queries_2(request: pytest.FixtureRequest, assay_path: Path, assay_dataset: Dataset) -> None:
+async def test_search_queries_2(assay: AssayContext) -> None:
     """
     Run the agent workflow once.
     """
 
-    logger.debug(f"assay path: {assay_path}")
-    logger.debug(f"assay dataset: {assay_dataset}")
+    logger.debug(f"assay path: {assay.path}")
+    logger.debug(f"assay dataset: {assay.dataset}")
 
     # Agent for generating search queries using a local Ollama server
     model_for_queries = OpenAIChatModel(
@@ -199,11 +200,10 @@ async def test_search_queries_2(request: pytest.FixtureRequest, assay_path: Path
 
     # (1) Generate Cases and serialise them
 
-    dataset = assay_dataset
+    dataset = assay.dataset
 
     # (2) Generate base line model outputs
 
-    # dataset = Dataset[dict[str, str], type[None], Any].from_file(assay_path)
     cases_new: list[Case[dict[str, str], type[None], Any]] = []
     logger.info("")
     for case in dataset.cases:
@@ -224,5 +224,5 @@ async def test_search_queries_2(request: pytest.FixtureRequest, assay_path: Path
         cases_new.append(case_new)
     dataset_new: Dataset[dict[str, str], type[None], Any] = Dataset[dict[str, str], type[None], Any](cases=cases_new)
 
-    assay_path.parent.mkdir(parents=True, exist_ok=True)
-    dataset_new.to_file(assay_path, schema_path=None)
+    assay.path.parent.mkdir(parents=True, exist_ok=True)
+    dataset_new.to_file(assay.path, schema_path=None)
