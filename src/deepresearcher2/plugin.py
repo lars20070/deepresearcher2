@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
+from collections.abc import Generator
+from pathlib import Path
 
 import pytest
+from pydantic import BaseModel, Field
+from pydantic_evals import Dataset
 from pytest import CallInfo, Config, Item, Parser, PytestPluginManager, Session
 
 from .evals.evals import EvalPlayer
@@ -67,6 +71,51 @@ def pytest_sessionfinish(session: Session, exitstatus: int) -> None:
     """
     logger.info("Hello from `pytest_sessionfinish` hook!")
     logger.info(f"Exit status: {exitstatus}")
+
+
+class AssayContext(BaseModel):
+    """
+    Context for assay execution.
+
+    All data and metadata required to run an assay.
+    """
+
+    dataset: Dataset = Field(..., description="The evaluation dataset for this assay")
+    path: Path = Field(..., description="File path where the assay dataset is stored")
+    record_mode: str = Field(default="evaluate", description='Recording mode: "evaluate" or "new_baseline"')
+
+
+def _assay_path(item: Item) -> Path:
+    """
+    Compute the assay file path from test module and function name.
+    """
+    path = Path(item.fspath)
+    module_name = path.stem
+    test_name = item.name.split("[")[0]
+    return path.parent / "assays" / module_name / f"{test_name}.json"
+
+
+@pytest.hookimpl(hookwrapper=True)
+def pytest_runtest_call(item: Item) -> Generator[None, None, None]:
+    """
+    Here we will inject the Dataset input.
+    """
+
+    # Execute the hook only for tests marked with @pytest.mark.assay
+    marker = item.get_closest_marker("assay")
+    if marker is None:
+        yield
+        return
+
+    logger.debug("In pytest_runtest_call hook - before test execution")
+
+    # Compute path
+    assay_path = _assay_path(item)
+    logger.debug(f"assay path: {assay_path}")
+
+    yield
+
+    logger.debug("In pytest_runtest_call hook - after test execution")
 
 
 @pytest.hookimpl(tryfirst=True)  # Executed before other hooks. Important for non-None return values.
