@@ -44,8 +44,8 @@ def pytest_configure(config: Config) -> None:
     config.addinivalue_line("markers", "assay: Mark the test for AI agent evaluation i.e. running an assay.")
     # config.addinivalue_line(
     #         "markers",
-    #         "assay(generator=None, record_mode='evaluate'): Mark the test for AI agent evaluation. "
-    #         "Args: generator - callable returning Dataset; record_mode - 'evaluate' or 'new_baseline'.",
+    #         "assay(generator=None, assay_mode='evaluate'): Mark the test for AI agent evaluation. "
+    #         "Args: generator - callable returning Dataset; assay_mode - 'evaluate' or 'new_baseline'.",
     #     )
 
     assay_mode = config.getoption("--assay-mode")
@@ -87,10 +87,10 @@ class AssayContext(BaseModel):
 
     dataset: Dataset = Field(..., description="The evaluation dataset for this assay")
     path: Path = Field(..., description="File path where the assay dataset is stored")
-    record_mode: str = Field(default="evaluate", description='Recording mode: "evaluate" or "new_baseline"')
+    assay_mode: str = Field(default="evaluate", description='Assay mode: "evaluate" or "new_baseline"')
 
 
-def _assay_path(item: Item) -> Path:
+def _path(item: Item) -> Path:
     """
     Compute the assay file path from test module and function name.
     """
@@ -120,30 +120,57 @@ def pytest_runtest_setup(item: Item) -> None:
     generator = marker.kwargs.get("generator")
 
     logger.info("Populating assay context with dataset and path")
-    assay_path = _assay_path(item)
-    if assay_path.exists():
-        logger.info(f"Loading assay dataset from {assay_path}")
-        assay_dataset = Dataset[dict[str, str], type[None], Any].from_file(assay_path)
+    path = _path(item)
+    if path.exists():
+        logger.info(f"Loading assay dataset from {path}")
+        dataset = Dataset[dict[str, str], type[None], Any].from_file(path)
     elif generator is not None:
         logger.info("Generating new assay dataset using custom generator")
-        assay_dataset = generator()
+        dataset = generator()
 
-        if not isinstance(assay_dataset, Dataset):
+        if not isinstance(dataset, Dataset):
             raise TypeError(f"The generator {generator} must return a Dataset instance.")
 
-        logger.info(f"Serialising generated assay dataset to {assay_path}")
-        assay_path.parent.mkdir(parents=True, exist_ok=True)
-        assay_dataset.to_file(assay_path, schema_path=None)
+        logger.info(f"Serialising generated assay dataset to {path}")
+        path.parent.mkdir(parents=True, exist_ok=True)
+        dataset.to_file(path, schema_path=None)
     else:
         logger.info("No existing assay dataset file or generator found; using empty dataset")
-        assay_dataset = Dataset[dict[str, str], type[None], Any](cases=[])
+        dataset = Dataset[dict[str, str], type[None], Any](cases=[])
 
     # Inject assay context into the test function arguments
     item.funcargs["assay"] = AssayContext(  # type: ignore[attr-defined]
-        dataset=assay_dataset,
-        path=assay_path,
-        record_mode="evaluate",
+        dataset=dataset,
+        path=path,
+        assay_mode=item.config.getoption("--assay-mode"),
     )
+
+
+@pytest.hookimpl(trylast=True)
+def pytest_runtest_teardown(item: Item) -> None:
+    """
+    Here we serialize the Dataset if in 'new_baseline' mode.
+    """
+
+    # Execute the hook only for tests marked with @pytest.mark.assay
+    marker = item.get_closest_marker("assay")
+    if marker is None:
+        return
+
+    # Only inject for Function items i.e. actual test functions
+    # For example, if @pytest.mark.assay decorates a class, we skip it here.
+    if not isinstance(item, Function):
+        return
+
+    assay: AssayContext | None = item.funcargs.get("assay")  # type: ignore[attr-defined]
+    if assay is None:
+        logger.warning("No assay context found in test function arguments during teardown.")
+        return
+
+    if assay.assay_mode == "new_baseline":
+        logger.info(f"Serializing assay dataset to {assay.path}")
+        assay.path.parent.mkdir(parents=True, exist_ok=True)
+        assay.dataset.to_file(assay.path, schema_path=None)
 
 
 @pytest.hookimpl(tryfirst=True)  # Executed before other hooks. Important for non-None return values.
