@@ -229,15 +229,11 @@ async def test_search_queries_2(assay: AssayContext) -> None:
 
     logger.info("Use case for EvalTournament, EvalGame and EvalPlayer classes.")
 
-    # (1) Generate Cases and serialise them
-
-    dataset = assay.dataset
-
-    # (2) Generate base line model outputs
+    # Generate model outputs
 
     cases_new: list[Case[dict[str, str], type[None], Any]] = []
     logger.info("")
-    for case in dataset.cases:
+    for case in assay.dataset.cases:
         logger.info(f"Case {case.name} with topic: {case.inputs['topic']}")
 
         prompt_baseline = f"Please generate a query for the research topic: <TOPIC>{case.inputs['topic']}</TOPIC>"
@@ -253,7 +249,9 @@ async def test_search_queries_2(assay: AssayContext) -> None:
             inputs={"topic": case.inputs["topic"], "query": result.output},
         )
         cases_new.append(case_new)
-    dataset_new: Dataset[dict[str, str], type[None], Any] = Dataset[dict[str, str], type[None], Any](cases=cases_new)
 
-    assay.path.parent.mkdir(parents=True, exist_ok=True)
-    dataset_new.to_file(assay.path, schema_path=None)
+    assert cases_new is not None
+
+    # Update assay dataset in place (automatic serialisation by assay plugin)
+    assay.dataset.cases.clear()
+    assay.dataset.cases.extend(cases_new)
