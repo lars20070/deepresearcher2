@@ -43,7 +43,7 @@ MODEL_SETTINGS_CURIOUS = ModelSettings(
 @pytest.mark.assay
 @pytest.mark.asyncio
 @pytest.mark.usefixtures("timer_for_tests")
-async def test_search_queries(request: pytest.FixtureRequest, assay_path: Path, assay_dataset: Dataset) -> None:
+async def test_search_queries_1(request: pytest.FixtureRequest, assay_path: Path, assay_dataset: Dataset) -> None:
     """
     Use case for EvalTournament, EvalGame and EvalPlayer classes.
 
@@ -164,3 +164,65 @@ async def test_search_queries(request: pytest.FixtureRequest, assay_path: Path, 
     assert np.mean(scores_novel) > np.mean(scores_baseline)
     # The sum of all Bradley-Terry scores is zero.
     assert np.isclose(np.mean(scores_novel) + np.mean(scores_baseline), 0)
+
+
+# @pytest.mark.vcr()
+@pytest.mark.skip(reason="Run only locally with DeepInfra cloud inference. PROVIDER='deepinfra' MODEL='Qwen/Qwen2.5-72B-Instruct'")
+@pytest.mark.assay
+@pytest.mark.asyncio
+@pytest.mark.usefixtures("timer_for_tests")
+async def test_search_queries_2(request: pytest.FixtureRequest, assay_path: Path, assay_dataset: Dataset) -> None:
+    """
+    Run the agent workflow once.
+    """
+
+    logger.debug(f"assay path: {assay_path}")
+    logger.debug(f"assay dataset: {assay_dataset}")
+
+    # Agent for generating search queries using a local Ollama server
+    model_for_queries = OpenAIChatModel(
+        model_name="qwen2.5:72b",
+        provider=OpenAIProvider(base_url="http://localhost:11434/v1"),
+    )
+    # model_for_queries = model  # Use the model defined in .env (Not possible for VCR recording!)
+
+    query_agent = Agent(
+        model=model_for_queries,
+        output_type=str,
+        system_prompt="Please generate a concise web search query for the given research topic. You must respond only in English."
+        + " Never use Chinese characters or any non-English text. Reply with ONLY the query string. Do NOT use quotes.",
+        retries=5,
+        instrument=True,
+    )
+
+    logger.info("Use case for EvalTournament, EvalGame and EvalPlayer classes.")
+
+    # (1) Generate Cases and serialise them
+
+    dataset = assay_dataset
+
+    # (2) Generate base line model outputs
+
+    # dataset = Dataset[dict[str, str], type[None], Any].from_file(assay_path)
+    cases_new: list[Case[dict[str, str], type[None], Any]] = []
+    logger.info("")
+    for case in dataset.cases:
+        logger.info(f"Case {case.name} with topic: {case.inputs['topic']}")
+
+        prompt_baseline = f"Please generate a query for the research topic: <TOPIC>{case.inputs['topic']}</TOPIC>"
+        async with query_agent:
+            result = await query_agent.run(
+                user_prompt=prompt_baseline,
+                model_settings=MODEL_SETTINGS,
+            )
+
+        logger.debug(f"Generated query: {result.output}")
+        case_new = Case(
+            name=case.name,
+            inputs={"topic": case.inputs["topic"], "query": result.output},
+        )
+        cases_new.append(case_new)
+    dataset_new: Dataset[dict[str, str], type[None], Any] = Dataset[dict[str, str], type[None], Any](cases=cases_new)
+
+    assay_path.parent.mkdir(parents=True, exist_ok=True)
+    dataset_new.to_file(assay_path, schema_path=None)

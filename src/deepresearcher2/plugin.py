@@ -74,6 +74,8 @@ def pytest_runtest_makereport(item: Item, call: CallInfo) -> None:
     """
     Hook to process test reports.
 
+    Run the Bradley-Terry tournament on the model outputs after each test here.
+
     Args:
         item (Item): The test item.
         call (CallInfo): Information about the test call.
