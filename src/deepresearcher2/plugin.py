@@ -118,13 +118,27 @@ def pytest_runtest_setup(item: Item) -> None:
 
     # Get generator from marker kwargs
     generator = marker.kwargs.get("generator")
-    if generator is not None:
-        logger.debug(f"There is a custom generator: {generator}")
 
-    logger.debug("Populating assay context with dataset and path")
+    logger.info("Populating assay context with dataset and path")
     assay_path = _assay_path(item)
-    assay_dataset = generator() if generator is not None else Dataset[dict[str, str], type[None], Any](cases=[])
+    if assay_path.exists():
+        logger.info(f"Loading assay dataset from {assay_path}")
+        assay_dataset = Dataset[dict[str, str], type[None], Any].from_file(assay_path)
+    elif generator is not None:
+        logger.info("Generating new assay dataset using custom generator")
+        assay_dataset = generator()
 
+        if not isinstance(assay_dataset, Dataset):
+            raise TypeError(f"The generator {generator} must return a Dataset instance.")
+
+        logger.info(f"Serialising generated assay dataset to {assay_path}")
+        assay_path.parent.mkdir(parents=True, exist_ok=True)
+        assay_dataset.to_file(assay_path, schema_path=None)
+    else:
+        logger.info("No existing assay dataset file or generator found; using empty dataset")
+        assay_dataset = Dataset[dict[str, str], type[None], Any](cases=[])
+
+    # Inject assay context into the test function arguments
     item.funcargs["assay"] = AssayContext(  # type: ignore[attr-defined]
         dataset=assay_dataset,
         path=assay_path,
