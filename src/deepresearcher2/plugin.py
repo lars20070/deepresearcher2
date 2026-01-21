@@ -175,24 +175,27 @@ def pytest_runtest_call(item: Item) -> Generator[None, None, None]:
     current test context implicitly without threading arguments through the call stack.
     """
 
-    # Execute the hook only for tests marked with @pytest.mark.assay
+    # 1. Filter: Only run for tests marked with @pytest.mark.assay
     marker = item.get_closest_marker("assay")
     if marker is None:
         yield
         return
 
-    logger.info("Inside pytest_runtest_call hook")
+    logger.info("Intercepting Agent.run() calls in pytest_runtest_call hook")
 
-    # Initialize the stash for capturing responses
+    # 2. Initialize Storage: Prepare the specific stash key for this test item
     item.stash[AGENT_RESPONSES_KEY] = []
 
-    # Capture the current method state
-    # Prevents infinite recursion in the wrapper
+    # 3. Capture State: Save the *current* method implementation.
+    # Crucial for compatibility: If another plugin has already patched Agent.run,
+    # we capture that patch instead of the raw method, preserving the chain of command.
     original_run = Agent.run
-    # Capture the item in the context variable
+
+    # 4. Set Context: Push the current test item into the thread-local context.
+    # This 'token' is required to cleanly pop the context later.
     token = _current_item_var.set(item)
 
-    # Define the wrapper function
+    # 5. Define Wrapper: Create the interceptor closure locally
     async def _instrumented_agent_run(
         self: Agent[Any, Any],
         *args: Any,  # noqa: ANN401
@@ -201,10 +204,10 @@ def pytest_runtest_call(item: Item) -> Generator[None, None, None]:
         """
         Wrapped Agent.run() that captures responses to the current test item's stash.
         """
-        # Transparently await the original method
+        # A. Execute actual logic (awaiting the captured variable avoids infinite recursion)
         result = await original_run(self, *args, **kwargs)
 
-        # Capture logic using the ContextVar
+        # B. Capture result (retrieve item via ContextVar tunnel)
         current_item = _current_item_var.get()
         if current_item is not None:
             responses = current_item.stash.get(AGENT_RESPONSES_KEY, [])
@@ -213,19 +216,20 @@ def pytest_runtest_call(item: Item) -> Generator[None, None, None]:
 
         return result
 
-    # Apply the patch
+    # 6. Apply Patch: Hot-swap the class method
     Agent.run = _instrumented_agent_run  # type: ignore[method-assign]
     logger.debug("Monkeypatched Agent.run() for automatic response capture")
 
     try:
-        yield  # Run the test
+        yield  # 7. Yield control to pytest to run the actual test function
     finally:
-        # Restore method state
+        # 8. Data Integrity: Restore the original method immediately
         Agent.run = original_run  # type: ignore[method-assign]
-        # Restore context variable
+
+        # 9. Cleanup: Pop the ContextVar value using the token to prevent state leaks.
+        # This ensures the context is clean for the next test execution.
         _current_item_var.reset(token)
 
-        # Captured responses now in item.stash[AGENT_RESPONSES_KEY]
         captured_count = len(item.stash.get(AGENT_RESPONSES_KEY, []))
         logger.debug(f"Restored Agent.run(), captured {captured_count} responses.")
 
