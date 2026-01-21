@@ -235,10 +235,14 @@ async def test_search_queries_2(assay: AssayContext) -> None:
     for case in assay.dataset.cases:
         logger.info(f"Case {case.name} with topic: {case.inputs['topic']}")
 
-        prompt_baseline = f"Please generate a query for the research topic: <TOPIC>{case.inputs['topic']}</TOPIC>"
+        # prompt = f"Please generate a query for the research topic: <TOPIC>{case.inputs['topic']}</TOPIC>"
+        prompt = (
+            f"Please generate a very creative search query for the research topic: <TOPIC>{case.inputs['topic']}</TOPIC>\n"
+            "The query should show genuine originality and interest in the topic. AVOID any generic or formulaic phrases."
+        )
         async with query_agent:
             result = await query_agent.run(
-                user_prompt=prompt_baseline,
+                user_prompt=prompt,
                 model_settings=MODEL_SETTINGS,
             )
 

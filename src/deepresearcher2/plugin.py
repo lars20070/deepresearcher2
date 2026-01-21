@@ -1,17 +1,26 @@
 #!/usr/bin/env python3
+import asyncio
 import contextvars
 from collections.abc import Generator
 from pathlib import Path
 from typing import Any
 
+import numpy as np
 import pytest
 from pydantic import BaseModel, Field
 from pydantic_ai import Agent
 from pydantic_ai.agent import AgentRunResult
+from pydantic_ai.settings import ModelSettings
 from pydantic_evals import Dataset
 from pytest import CallInfo, Config, Function, Item, Parser, PytestPluginManager, Session
 
-from .evals.evals import EvalPlayer
+from .agents import EVALUATION_AGENT
+from .evals.evals import (
+    EvalGame,
+    EvalPlayer,
+    EvalTournament,
+    adaptive_uncertainty_strategy,
+)
 from .logger import logger
 
 PLAYERS_KEY = pytest.StashKey[list[EvalPlayer]]()
@@ -189,7 +198,7 @@ def pytest_runtest_call(item: Item) -> Generator[None, None, None]:
     # 3. Capture State: Save the *current* method implementation.
     # Crucial for compatibility: If another plugin has already patched Agent.run,
     # we capture that patch instead of the raw method, preserving the chain of command.
-    original_run = Agent.run
+    original_agent_run = Agent.run
 
     # 4. Set Context: Push the current test item into the thread-local context.
     # This 'token' is required to cleanly pop the context later.
@@ -205,7 +214,7 @@ def pytest_runtest_call(item: Item) -> Generator[None, None, None]:
         Wrapped Agent.run() that captures responses to the current test item's stash.
         """
         # A. Execute actual logic (awaiting the captured variable avoids infinite recursion)
-        result = await original_run(self, *args, **kwargs)
+        result = await original_agent_run(self, *args, **kwargs)
 
         # B. Capture result (retrieve item via ContextVar tunnel)
         current_item = _current_item_var.get()
@@ -224,7 +233,7 @@ def pytest_runtest_call(item: Item) -> Generator[None, None, None]:
         yield  # 7. Yield control to pytest to run the actual test function
     finally:
         # 8. Data Integrity: Restore the original method immediately
-        Agent.run = original_run  # type: ignore[method-assign]
+        Agent.run = original_agent_run  # type: ignore[method-assign]
 
         # 9. Cleanup: Pop the ContextVar value using the token to prevent state leaks.
         # This ensures the context is clean for the next test execution.
@@ -301,5 +310,65 @@ def pytest_runtest_makereport(item: Item, call: CallInfo) -> None:
             all_players = item.stash.get(PLAYERS_KEY, None)
             logger.debug(f"number of players: {len(all_players) if all_players is not None else 'None'}")
 
-        except Exception as e:
-            logger.error("ERROR:", e)
+            # Prepare list of players
+            players: list[EvalPlayer] = []
+            assay: AssayContext | None = item.funcargs.get("assay")  # type: ignore[attr-defined]
+
+            # Baseline players from previously serialized assay dataset
+            baseline_case_count = 0
+            if assay is not None:
+                for idx, case in enumerate(assay.dataset.cases):
+                    players.append(EvalPlayer(idx=idx, item=case.inputs["query"]))
+                baseline_case_count = len(assay.dataset.cases)
+
+            # Novel players from current test run
+            for idx, response in enumerate(responses):
+                if response.output is None:
+                    logger.warning(f"Response #{idx} has None output.")
+                    continue
+                players.append(EvalPlayer(idx=idx + baseline_case_count, item=response.output))
+
+            # Log all players before tournament
+            for player in players:
+                logger.debug(f"Player #{player.idx} item: {player.item!r:.100}")
+
+            # Run async tournament synchronously
+            asyncio.run(_run_tournament(players))
+
+        except Exception:
+            logger.exception("Error in pytest_runtest_makereport:")
+
+
+async def _run_tournament(players: list[EvalPlayer]) -> None:
+    """
+    Run the Bradley-Terry tournament asynchronously.
+    """
+    if not players:
+        logger.debug("No players to evaluate in tournament.")
+        return
+
+    MODEL_SETTINGS = ModelSettings(
+        temperature=0.0,
+        timeout=300,
+    )
+
+    # Run the Bradley-Terry tournament to score both baseline and novel queries
+    game = EvalGame(criterion="Which of the two search queries shows more genuine curiosity and creativity, and is less formulaic?")
+    tournament = EvalTournament(players=players, game=game)
+    players_scored = await tournament.run(
+        agent=EVALUATION_AGENT,
+        model_settings=MODEL_SETTINGS,
+        strategy=adaptive_uncertainty_strategy,
+        max_standard_deviation=2.0,
+    )
+
+    # Players sorted by score
+    players_sorted = sorted(players_scored, key=lambda p: p.score if p.score is not None else float("-inf"))
+    for player in players_sorted:
+        logger.debug(f"Player {player.idx:4d}   score: {player.score:7.4f}   query: {player.item}")
+
+    # Average score for both baseline and novel queries
+    scores_baseline = [tournament.get_player_by_idx(idx=i).score or 0.0 for i in range(len(players) // 2)]
+    scores_novel = [tournament.get_player_by_idx(idx=i + len(players) // 2).score or 0.0 for i in range(len(players) // 2)]
+    logger.debug(f"Average score for baseline queries (Players 0 to 9): {np.mean(scores_baseline):7.4f}")
+    logger.debug(f"Average score for novel queries  (Players 10 to 19): {np.mean(scores_novel):7.4f}")
