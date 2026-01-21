@@ -1,18 +1,30 @@
 #!/usr/bin/env python3
+import contextvars
+from collections.abc import Generator
 from pathlib import Path
 from typing import Any
 
 import pytest
 from pydantic import BaseModel, Field
+from pydantic_ai import Agent
+from pydantic_ai.agent import AgentRunResult
 from pydantic_evals import Dataset
 from pytest import CallInfo, Config, Function, Item, Parser, PytestPluginManager, Session
 
 from .evals.evals import EvalPlayer
 from .logger import logger
 
+PLAYERS_KEY = pytest.StashKey[list[EvalPlayer]]()
+
+# Modes for the assay plugin. "evaluate" is the default mode.
 ASSAY_MODES = ("evaluate", "new_baseline")
 
-PLAYERS_KEY = pytest.StashKey[list[EvalPlayer]]()
+# Key to stash Agent responses during assay tests
+AGENT_RESPONSES_KEY = pytest.StashKey[list[AgentRunResult[Any]]]()
+
+# Items stashed by the _wrapped_run wrapper
+# _current_item_var defined at module level. But items are stored locally to the current execution context.
+_current_item_var: contextvars.ContextVar[Item | None] = contextvars.ContextVar("_current_item", default=None)
 
 
 def pytest_addoption(parser: Parser) -> None:
@@ -146,6 +158,70 @@ def pytest_runtest_setup(item: Item) -> None:
     )
 
 
+# Store the original Agent.run method (prevents infinite recursion in the wrapper)
+_original_agent_run = Agent.run
+
+
+async def _wrapped_agent_run(
+    self: Agent[Any, Any],
+    user_prompt: str,
+    **kwargs: Any,  # noqa: ANN401 - Must match Agent.run() signature
+) -> AgentRunResult[Any]:
+    """
+    Wrapped Agent.run() that captures responses to the current test item's stash.
+    """
+    # Call the original method
+    result = await _original_agent_run(self, user_prompt, **kwargs)
+
+    # Capture the response in the current test item's stash (if any)
+    current_item = _current_item_var.get()
+    if current_item is not None:
+        responses = current_item.stash.get(AGENT_RESPONSES_KEY, [])
+        responses.append(result)
+        logger.debug(f"Captured Agent.run() response #{len(responses)}: {result.output!r:.100}")
+
+    return result
+
+
+@pytest.hookimpl(hookwrapper=True)
+def pytest_runtest_call(item: Item) -> Generator[None, None, None]:
+    """
+    Hook that wraps the test execution to monkeypatch Agent.run().
+
+    Captures all Agent.run() calls and stores the responses in the test item's stash with key AGENT_RESPONSES_KEY.
+    - Before test: Monkeypatch Agent.run() to capture responses
+    - During test: All Agent.run() calls are automatically captured
+    - After test: Restore original method, responses available in item.stash
+    """
+
+    # Execute the hook only for tests marked with @pytest.mark.assay
+    marker = item.get_closest_marker("assay")
+    if marker is None:
+        yield
+        return
+
+    logger.info("Inside pytest_runtest_call hook")
+
+    # Initialize the stash for capturing responses
+    item.stash[AGENT_RESPONSES_KEY] = []
+
+    # Set the current item in the context variable
+    token = _current_item_var.set(item)
+
+    # Monkeypatch the Agent.run method
+    Agent.run = _wrapped_agent_run  # type: ignore[method-assign]
+    logger.debug("Monkeypatched Agent.run() for automatic response capture")
+
+    try:
+        yield  # The test runs here
+    finally:
+        # Restore the original method
+        Agent.run = _original_agent_run  # type: ignore[method-assign]
+        # Reset the context variable
+        _current_item_var.reset(token)
+        logger.debug(f"Restored Agent.run(), captured {len(item.stash.get(AGENT_RESPONSES_KEY, []))} responses")
+
+
 @pytest.hookimpl(trylast=True)
 def pytest_runtest_teardown(item: Item) -> None:
     """
@@ -194,6 +270,9 @@ def pytest_runtest_makereport(item: Item, call: CallInfo) -> None:
             # Access the test ID (nodeid)
             test_id = item.nodeid
 
+            # Number of intercepted Agent.run() calls
+            responses = item.stash.get(AGENT_RESPONSES_KEY, [])
+
             # Access the test outcome (passed, failed, etc.)
             test_outcome = "failed" if outcome else "passed"
 
@@ -202,6 +281,7 @@ def pytest_runtest_makereport(item: Item, call: CallInfo) -> None:
 
             # Print Test Outcome and Duration
             logger.info(f"Test: {test_id}")
+            logger.debug(f"Number of Agent.run() calls during test: {len(responses)}")
             logger.info(f"Test Outcome: {test_outcome}")
             logger.info(f"Test Duration: {test_duration:.5f} seconds")
 
