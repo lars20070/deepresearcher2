@@ -22,7 +22,7 @@ ASSAY_MODES = ("evaluate", "new_baseline")
 # Key to stash Agent responses during assay tests
 AGENT_RESPONSES_KEY = pytest.StashKey[list[AgentRunResult[Any]]]()
 
-# Items stashed by the _wrapped_run wrapper
+# Items stashed by the _wrapped_run wrapper. Required for async safety.
 # _current_item_var defined at module level. But items are stored locally to the current execution context.
 _current_item_var: contextvars.ContextVar[Item | None] = contextvars.ContextVar("_current_item", default=None)
 
@@ -158,40 +158,21 @@ def pytest_runtest_setup(item: Item) -> None:
     )
 
 
-# Store the original Agent.run method (prevents infinite recursion in the wrapper)
-_original_agent_run = Agent.run
-
-
-async def _wrapped_agent_run(
-    self: Agent[Any, Any],
-    user_prompt: str,
-    **kwargs: Any,  # noqa: ANN401 - Must match Agent.run() signature
-) -> AgentRunResult[Any]:
-    """
-    Wrapped Agent.run() that captures responses to the current test item's stash.
-    """
-    # Call the original method
-    result = await _original_agent_run(self, user_prompt, **kwargs)
-
-    # Capture the response in the current test item's stash (if any)
-    current_item = _current_item_var.get()
-    if current_item is not None:
-        responses = current_item.stash.get(AGENT_RESPONSES_KEY, [])
-        responses.append(result)
-        logger.debug(f"Captured Agent.run() response #{len(responses)}: {result.output!r:.100}")
-
-    return result
-
-
 @pytest.hookimpl(hookwrapper=True)
 def pytest_runtest_call(item: Item) -> Generator[None, None, None]:
     """
-    Hook that wraps the test execution to monkeypatch Agent.run().
+    Intercepts `Agent.run()` calls during test execution to record model outputs.
 
-    Captures all Agent.run() calls and stores the responses in the test item's stash with key AGENT_RESPONSES_KEY.
-    - Before test: Monkeypatch Agent.run() to capture responses
-    - During test: All Agent.run() calls are automatically captured
-    - After test: Restore original method, responses available in item.stash
+    Mechanism:
+    1. Setup: Temporarily replaces `Agent.run` with an instrumented wrapper.
+    2. Capture: When called, the wrapper retrieves the current test `item` via a `ContextVar`
+       and saves the result to `item.stash[AGENT_RESPONSES_KEY]`.
+    3. Teardown: Restores the original `Agent.run` method.
+
+    Why ContextVar?
+    The `Agent.run` method signature cannot be modified to accept the test `item`.
+    `ContextVar` acts as a thread-safe tunnel, allowing the wrapper to access the
+    current test context implicitly without threading arguments through the call stack.
     """
 
     # Execute the hook only for tests marked with @pytest.mark.assay
@@ -205,21 +186,48 @@ def pytest_runtest_call(item: Item) -> Generator[None, None, None]:
     # Initialize the stash for capturing responses
     item.stash[AGENT_RESPONSES_KEY] = []
 
-    # Set the current item in the context variable
+    # Capture the current method state
+    # Prevents infinite recursion in the wrapper
+    original_run = Agent.run
+    # Capture the item in the context variable
     token = _current_item_var.set(item)
 
-    # Monkeypatch the Agent.run method
-    Agent.run = _wrapped_agent_run  # type: ignore[method-assign]
+    # Define the wrapper function
+    async def _instrumented_agent_run(
+        self: Agent[Any, Any],
+        *args: Any,  # noqa: ANN401
+        **kwargs: Any,  # noqa: ANN401
+    ) -> AgentRunResult[Any]:
+        """
+        Wrapped Agent.run() that captures responses to the current test item's stash.
+        """
+        # Transparently await the original method
+        result = await original_run(self, *args, **kwargs)
+
+        # Capture logic using the ContextVar
+        current_item = _current_item_var.get()
+        if current_item is not None:
+            responses = current_item.stash.get(AGENT_RESPONSES_KEY, [])
+            responses.append(result)
+            logger.debug(f"Captured Agent.run() response #{len(responses)}: {result.output!r:.100}")
+
+        return result
+
+    # Apply the patch
+    Agent.run = _instrumented_agent_run  # type: ignore[method-assign]
     logger.debug("Monkeypatched Agent.run() for automatic response capture")
 
     try:
-        yield  # The test runs here
+        yield  # Run the test
     finally:
-        # Restore the original method
-        Agent.run = _original_agent_run  # type: ignore[method-assign]
-        # Reset the context variable
+        # Restore method state
+        Agent.run = original_run  # type: ignore[method-assign]
+        # Restore context variable
         _current_item_var.reset(token)
-        logger.debug(f"Restored Agent.run(), captured {len(item.stash.get(AGENT_RESPONSES_KEY, []))} responses")
+
+        # Captured responses now in item.stash[AGENT_RESPONSES_KEY]
+        captured_count = len(item.stash.get(AGENT_RESPONSES_KEY, []))
+        logger.debug(f"Restored Agent.run(), captured {captured_count} responses.")
 
 
 @pytest.hookimpl(trylast=True)
