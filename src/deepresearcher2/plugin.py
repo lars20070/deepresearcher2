@@ -273,51 +273,52 @@ def pytest_runtest_teardown(item: Item) -> None:
 EvaluationStrategy = Callable[[Item], Coroutine[Any, Any, None]]
 
 
-@pytest.hookimpl(tryfirst=True)  # Executed before other hooks. Important for non-None return values.
+@pytest.hookimpl(tryfirst=True)
 def pytest_runtest_makereport(item: Item, call: CallInfo) -> None:
     """
-    Hook to process test reports.
+    Hook to process test reports and run evaluations after test execution.
 
-    Run the Bradley-Terry tournament on the model outputs after each test here.
+    Runs the configured evaluation strategy (default: Bradley-Terry tournament)
+    on captured model outputs after the test's "call" phase completes.
 
     Args:
-        item (Item): The test item.
-        call (CallInfo): Information about the test call.
+        item: The pytest test item containing test metadata and stashed data.
+        call: Information about the test call phase (setup/call/teardown).
     """
+
     # pytest_runtest_makereport is called three times per test: setup, call, teardown
     # Here, we are interested in the "call" phase.
     # Use setup and teardown to report when a fixture or cleanup fails.
-    if call.when == "call":
-        outcome = call.excinfo  # Contains exceptions i.e. None if test passed.
+    if call.when != "call":
+        return
 
-        try:
-            # Access the test ID (nodeid)
-            test_id = item.nodeid
+    # Only inject for Function items i.e. actual test functions
+    # For example, if @pytest.mark.assay decorates a class, we skip it here.
+    if not isinstance(item, Function):
+        return
 
-            # Access the test outcome (passed, failed, etc.)
-            test_outcome = "failed" if outcome else "passed"
+    # Execute the hook only for tests marked with @pytest.mark.assay
+    marker = item.get_closest_marker("assay")
+    if marker is None:
+        return
 
-            # Access the test duration
-            test_duration = call.duration
+    # Log test execution summary
+    logger.info(f"Test: {item.nodeid}")
+    test_outcome = "failed" if call.excinfo else "passed"
+    logger.info(f"Test Outcome: {test_outcome}")
+    logger.info(f"Test Duration: {call.duration:.5f} seconds")
 
-            # Print Test Outcome and Duration
-            logger.info(f"Test: {test_id}")
-            logger.info(f"Test Outcome: {test_outcome}")
-            logger.info(f"Test Duration: {test_duration:.5f} seconds")
+    # Retrieve evaluator from marker kwargs with type validation
+    evaluator: EvaluationStrategy = marker.kwargs.get("evaluator", bradley_terry_evaluation)
+    if not callable(evaluator):
+        logger.error(f"Invalid evaluator type: {type(evaluator)}. Expected callable.")
+        return
 
-            # Get marker and extract evaluator
-            marker = item.get_closest_marker("assay")
-            if marker is None:
-                return  # Not an assay test, skip evaluation
-
-            # Get evaluator from marker kwargs, default to bradley_terry_evaluation
-            evaluator: EvaluationStrategy = marker.kwargs.get("evaluator", bradley_terry_evaluation)
-
-            # Run async tournament synchronously
-            asyncio.run(evaluator(item))
-
-        except Exception:
-            logger.exception("Error in pytest_runtest_makereport:")
+    # Run the async evaluation strategy synchronously
+    try:
+        asyncio.run(evaluator(item))
+    except Exception:
+        logger.exception("Error during evaluation in pytest_runtest_makereport.")
 
 
 async def bradley_terry_evaluation(item: Item) -> None:
