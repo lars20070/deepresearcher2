@@ -36,6 +36,9 @@ AGENT_RESPONSES_KEY = pytest.StashKey[list[AgentRunResult[Any]]]()
 _current_item_var: contextvars.ContextVar[Item | None] = contextvars.ContextVar("_current_item", default=None)
 
 
+EvaluationStrategy = Callable[[Item], Coroutine[Any, Any, None]]
+
+
 def pytest_addoption(parser: Parser) -> None:
     group = parser.getgroup("recording")
     group.addoption(
@@ -264,18 +267,14 @@ def pytest_runtest_teardown(item: Item) -> None:
     if not _is_assay(item):
         return
 
+    # Check whether to serialize the dataset
     assay: AssayContext | None = item.funcargs.get("assay")  # type: ignore[attr-defined]
-    if assay is None:
-        logger.warning("No assay context found in test function arguments during teardown.")
+    if assay is None or assay.assay_mode != "new_baseline":
         return
 
-    if assay.assay_mode == "new_baseline":
-        logger.info(f"Serializing assay dataset to {assay.path}")
-        assay.path.parent.mkdir(parents=True, exist_ok=True)
-        assay.dataset.to_file(assay.path, schema_path=None)
-
-
-EvaluationStrategy = Callable[[Item], Coroutine[Any, Any, None]]
+    logger.info(f"Serializing assay dataset to {assay.path}")
+    assay.path.parent.mkdir(parents=True, exist_ok=True)
+    assay.dataset.to_file(assay.path, schema_path=None)
 
 
 @pytest.hookimpl(tryfirst=True)
@@ -304,6 +303,11 @@ def pytest_runtest_makereport(item: Item, call: CallInfo) -> None:
     test_outcome = "failed" if call.excinfo else "passed"
     logger.info(f"Test Outcome: {test_outcome}")
     logger.info(f"Test Duration: {call.duration:.5f} seconds")
+
+    # Check whether to run evaluation
+    assay: AssayContext | None = item.funcargs.get("assay")  # type: ignore[attr-defined]
+    if assay is None or assay.assay_mode != "evaluate":
+        return
 
     # Retrieve evaluator from marker kwargs with type validation
     marker = item.get_closest_marker("assay")
