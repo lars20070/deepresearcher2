@@ -38,6 +38,12 @@ EvaluationStrategy = Callable[[Item], Coroutine[Any, Any, None]]
 
 
 def pytest_addoption(parser: Parser) -> None:
+    """
+    Register the --assay-mode option (evaluate or new_baseline).
+
+    Args:
+        parser: The pytest argument parser.
+    """
     group = parser.getgroup("recording")
     group.addoption(
         "--assay-mode",
@@ -50,8 +56,10 @@ def pytest_addoption(parser: Parser) -> None:
 
 def pytest_configure(config: Config) -> None:
     """
-    Configurations at the start of the test session.
-    For example, add custom markers here.
+    Register the @pytest.mark.assay marker.
+
+    Args:
+        config: The pytest configuration object.
     """
     logger.info("Registering the @pytest.mark.assay marker.")
     config.addinivalue_line(
@@ -67,9 +75,12 @@ def pytest_configure(config: Config) -> None:
 
 class AssayContext(BaseModel):
     """
-    Context for assay execution.
+    Context injected into assay tests containing dataset, path, and mode.
 
-    All data and metadata required to run an assay.
+    Attributes:
+        dataset: The evaluation dataset with test cases.
+        path: File path for dataset persistence.
+        assay_mode: "evaluate" or "new_baseline".
     """
 
     dataset: Dataset = Field(..., description="The evaluation dataset for this assay")
@@ -79,7 +90,10 @@ class AssayContext(BaseModel):
 
 def _path(item: Item) -> Path:
     """
-    Compute the assay file path from test module and function name.
+    Compute assay file path: <test_dir>/assays/<module>/<test>.json.
+
+    Args:
+        item: The pytest test item.
     """
     path = Path(item.fspath)
     module_name = path.stem
@@ -89,11 +103,12 @@ def _path(item: Item) -> Path:
 
 def _is_assay(item: Item) -> bool:
     """
-    Check that the item is a valid assay test.
-
-    Returns True if:
+    Check if item is a valid assay unit test:
     - item is a Function (not a class or module)
     - item has the @pytest.mark.assay marker
+
+    Args:
+        item: The pytest collection item to check.
     """
     if not isinstance(item, Function):
         return False
@@ -103,7 +118,11 @@ def _is_assay(item: Item) -> bool:
 @pytest.hookimpl(tryfirst=True)
 def pytest_runtest_setup(item: Item) -> None:
     """
-    Here we will inject the Dataset input.
+    Load dataset and inject AssayContext into the test function.
+    Loads from file if exists, else calls generator, else uses empty dataset.
+
+    Args:
+        item: The pytest test item being set up.
     """
     if not _is_assay(item):
         return
@@ -225,7 +244,10 @@ def pytest_runtest_call(item: Item) -> Generator[None, None, None]:
 @pytest.hookimpl(trylast=True)
 def pytest_runtest_teardown(item: Item) -> None:
     """
-    Here we serialize the Dataset if in 'new_baseline' mode.
+    Serialize the dataset to disk when in new_baseline mode.
+
+    Args:
+        item: The pytest test item being torn down.
     """
     if not _is_assay(item):
         return
@@ -289,7 +311,10 @@ def pytest_runtest_makereport(item: Item, call: CallInfo) -> None:
 
 async def bradley_terry_evaluation(item: Item) -> None:
     """
-    Run the Bradley-Terry tournament asynchronously.
+    Run Bradley-Terry tournament on baseline and novel responses.
+
+    Args:
+        item: The pytest test item with assay context and captured responses.
     """
     # Prepare the list of all players, baseline and novel
     players: list[EvalPlayer] = []

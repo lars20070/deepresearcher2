@@ -108,6 +108,7 @@ async def test_search_queries(assay: AssayContext) -> None:
 
     assert cases_new is not None
 
-    # Update assay dataset in place (automatic serialisation by assay plugin)
+    # Update assay dataset in place
+    # Required for automatic serialisation by pytest-assay plugin
     assay.dataset.cases.clear()
     assay.dataset.cases.extend(cases_new)

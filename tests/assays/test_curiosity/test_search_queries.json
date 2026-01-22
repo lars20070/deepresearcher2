@@ -1,10 +1,11 @@
 {
-  "name": null,
+  "name": "test_search_queries",
   "cases": [
     {
       "name": "case_000",
       "inputs": {
-        "topic": "pangolin trafficking networks"
+        "topic": "pangolin trafficking networks",
+        "query": "pangolin smuggling rings deep dive"
       },
       "metadata": null,
       "expected_output": null,
@@ -13,7 +14,8 @@
     {
       "name": "case_001",
       "inputs": {
-        "topic": "molecular gastronomy"
+        "topic": "molecular gastronomy",
+        "query": "molecular gastronomy cutting edge techniques fusion cuisine avant garde culinary arts revolutionary food science innovations"
       },
       "metadata": null,
       "expected_output": null,
@@ -22,7 +24,8 @@
     {
       "name": "case_002",
       "inputs": {
-        "topic": "dark kitchen economics"
+        "topic": "dark kitchen economics",
+        "query": "exploring shadowy side of culinary commerce dark kitchens financial impacts"
       },
       "metadata": null,
       "expected_output": null,
@@ -31,7 +34,8 @@
     {
       "name": "case_003",
       "inputs": {
-        "topic": "kintsugi philosophy"
+        "topic": "kintsugi philosophy",
+        "query": "exploring kintsugi mindset in modern resilience practices"
       },
       "metadata": null,
       "expected_output": null,
@@ -40,7 +44,8 @@
     {
       "name": "case_004",
       "inputs": {
-        "topic": "nano-medicine delivery systems"
+        "topic": "nano-medicine delivery systems",
+        "query": "nano needles piercing cell membranes drug delivery innovation"
       },
       "metadata": null,
       "expected_output": null,
@@ -49,7 +54,8 @@
     {
       "name": "case_005",
       "inputs": {
-        "topic": "Streisand effect dynamics"
+        "topic": "Streisand effect dynamics",
+        "query": "unraveling the paradox behind the Streisand effect how information suppression backfires"
       },
       "metadata": null,
       "expected_output": null,
@@ -58,7 +64,8 @@
     {
       "name": "case_006",
       "inputs": {
-        "topic": "Anne Brorhilke"
+        "topic": "Anne Brorhilke",
+        "query": "Anne Brorhilke innovative contributions literary world"
       },
       "metadata": null,
       "expected_output": null,
@@ -67,7 +74,8 @@
     {
       "name": "case_007",
       "inputs": {
-        "topic": "bioconcrete self-healing"
+        "topic": "bioconcrete self-healing",
+        "query": "bioconcrete revolution cracking the code of self repair"
       },
       "metadata": null,
       "expected_output": null,
@@ -76,7 +84,8 @@
     {
       "name": "case_008",
       "inputs": {
-        "topic": "bacteriophage therapy revival"
+        "topic": "bacteriophage therapy revival",
+        "query": "bacteriophage therapy resurgence innovative approaches"
       },
       "metadata": null,
       "expected_output": null,
@@ -85,7 +94,8 @@
     {
       "name": "case_009",
       "inputs": {
-        "topic": "Habsburg jaw genetics"
+        "topic": "Habsburg jaw genetics",
+        "query": "Habsburg jaw genetic origins royal family facial features inheritance pattern"
       },
       "metadata": null,
       "expected_output": null,
