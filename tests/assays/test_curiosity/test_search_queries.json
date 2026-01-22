@@ -1,11 +1,10 @@
 {
-  "name": "test_search_queries_2",
+  "name": null,
   "cases": [
     {
       "name": "case_000",
       "inputs": {
-        "topic": "pangolin trafficking networks",
-        "query": "pangolin trafficking networks"
+        "topic": "pangolin trafficking networks"
       },
       "metadata": null,
       "expected_output": null,
@@ -14,8 +13,7 @@
     {
       "name": "case_001",
       "inputs": {
-        "topic": "molecular gastronomy",
-        "query": "molecular gastronomy definition principles and techniques"
+        "topic": "molecular gastronomy"
       },
       "metadata": null,
       "expected_output": null,
@@ -24,8 +22,7 @@
     {
       "name": "case_002",
       "inputs": {
-        "topic": "dark kitchen economics",
-        "query": "dark kitchen business model economics"
+        "topic": "dark kitchen economics"
       },
       "metadata": null,
       "expected_output": null,
@@ -34,8 +31,7 @@
     {
       "name": "case_003",
       "inputs": {
-        "topic": "kintsugi philosophy",
-        "query": "kintsugi philosophy meaning and application"
+        "topic": "kintsugi philosophy"
       },
       "metadata": null,
       "expected_output": null,
@@ -44,8 +40,7 @@
     {
       "name": "case_004",
       "inputs": {
-        "topic": "nano-medicine delivery systems",
-        "query": "nano medicine delivery systems review"
+        "topic": "nano-medicine delivery systems"
       },
       "metadata": null,
       "expected_output": null,
@@ -54,8 +49,7 @@
     {
       "name": "case_005",
       "inputs": {
-        "topic": "Streisand effect dynamics",
-        "query": "Streisand effect dynamics analysis"
+        "topic": "Streisand effect dynamics"
       },
       "metadata": null,
       "expected_output": null,
@@ -64,8 +58,7 @@
     {
       "name": "case_006",
       "inputs": {
-        "topic": "Anne Brorhilke",
-        "query": "Anne Brorhilke biography achievements contributions"
+        "topic": "Anne Brorhilke"
       },
       "metadata": null,
       "expected_output": null,
@@ -74,8 +67,7 @@
     {
       "name": "case_007",
       "inputs": {
-        "topic": "bioconcrete self-healing",
-        "query": "bioconcrete self healing mechanism and applications"
+        "topic": "bioconcrete self-healing"
       },
       "metadata": null,
       "expected_output": null,
@@ -84,8 +76,7 @@
     {
       "name": "case_008",
       "inputs": {
-        "topic": "bacteriophage therapy revival",
-        "query": "bacteriophage therapy revival"
+        "topic": "bacteriophage therapy revival"
       },
       "metadata": null,
       "expected_output": null,
@@ -94,8 +85,7 @@
     {
       "name": "case_009",
       "inputs": {
-        "topic": "Habsburg jaw genetics",
-        "query": "Habsburg jaw genetics causes and traits"
+        "topic": "Habsburg jaw genetics"
       },
       "metadata": null,
       "expected_output": null,
