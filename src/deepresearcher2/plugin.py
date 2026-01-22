@@ -366,5 +366,6 @@ async def bradley_terry_evaluation(item: Item) -> None:
     # Average score for both baseline and novel queries
     scores_baseline = [tournament.get_player_by_idx(idx=i).score or 0.0 for i in range(len(players) // 2)]
     scores_novel = [tournament.get_player_by_idx(idx=i + len(players) // 2).score or 0.0 for i in range(len(players) // 2)]
-    logger.debug(f"Average score for baseline queries (Players 0 to 9): {np.mean(scores_baseline):7.4f}")
-    logger.debug(f"Average score for novel queries  (Players 10 to 19): {np.mean(scores_novel):7.4f}")
+    if scores_baseline and scores_novel:
+        logger.debug(f"Average score for baseline queries (Players 0 to 9): {np.mean(scores_baseline):7.4f}")
+        logger.debug(f"Average score for novel queries  (Players 10 to 19): {np.mean(scores_novel):7.4f}")
