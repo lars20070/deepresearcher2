@@ -121,23 +121,30 @@ def _path(item: Item) -> Path:
     return path.parent / "assays" / module_name / f"{test_name}.json"
 
 
+def _is_assay(item: Item) -> bool:
+    """
+    Check that the item is a valid assay test.
+
+    Returns True if:
+    - item is a Function (not a class or module)
+    - item has the @pytest.mark.assay marker
+    """
+    if not isinstance(item, Function):
+        return False
+    return item.get_closest_marker("assay") is not None
+
+
 @pytest.hookimpl(tryfirst=True)
 def pytest_runtest_setup(item: Item) -> None:
     """
     Here we will inject the Dataset input.
     """
-
-    # Execute the hook only for tests marked with @pytest.mark.assay
-    marker = item.get_closest_marker("assay")
-    if marker is None:
-        return
-
-    # Only inject for Function items i.e. actual test functions
-    # For example, if @pytest.mark.assay decorates a class, we skip it here.
-    if not isinstance(item, Function):
+    if not _is_assay(item):
         return
 
     # Get generator from marker kwargs
+    marker = item.get_closest_marker("assay")
+    assert marker is not None
     generator = marker.kwargs.get("generator")
 
     logger.info("Populating assay context with dataset and path")
@@ -183,6 +190,12 @@ def pytest_runtest_call(item: Item) -> Generator[None, None, None]:
     `ContextVar` acts as a thread-safe tunnel, allowing the wrapper to access the
     current test context implicitly without threading arguments through the call stack.
     """
+
+    # Only inject for Function items i.e. actual test functions
+    # For example, if @pytest.mark.assay decorates a class, we skip it here.
+    if not isinstance(item, Function):
+        yield
+        return
 
     # 1. Filter: Only run for tests marked with @pytest.mark.assay
     marker = item.get_closest_marker("assay")
@@ -248,15 +261,7 @@ def pytest_runtest_teardown(item: Item) -> None:
     """
     Here we serialize the Dataset if in 'new_baseline' mode.
     """
-
-    # Execute the hook only for tests marked with @pytest.mark.assay
-    marker = item.get_closest_marker("assay")
-    if marker is None:
-        return
-
-    # Only inject for Function items i.e. actual test functions
-    # For example, if @pytest.mark.assay decorates a class, we skip it here.
-    if not isinstance(item, Function):
+    if not _is_assay(item):
         return
 
     assay: AssayContext | None = item.funcargs.get("assay")  # type: ignore[attr-defined]
@@ -285,21 +290,13 @@ def pytest_runtest_makereport(item: Item, call: CallInfo) -> None:
         item: The pytest test item containing test metadata and stashed data.
         call: Information about the test call phase (setup/call/teardown).
     """
+    if not _is_assay(item):
+        return
 
     # pytest_runtest_makereport is called three times per test: setup, call, teardown
     # Here, we are interested in the "call" phase.
     # Use setup and teardown to report when a fixture or cleanup fails.
     if call.when != "call":
-        return
-
-    # Only inject for Function items i.e. actual test functions
-    # For example, if @pytest.mark.assay decorates a class, we skip it here.
-    if not isinstance(item, Function):
-        return
-
-    # Execute the hook only for tests marked with @pytest.mark.assay
-    marker = item.get_closest_marker("assay")
-    if marker is None:
         return
 
     # Log test execution summary
@@ -309,6 +306,8 @@ def pytest_runtest_makereport(item: Item, call: CallInfo) -> None:
     logger.info(f"Test Duration: {call.duration:.5f} seconds")
 
     # Retrieve evaluator from marker kwargs with type validation
+    marker = item.get_closest_marker("assay")
+    assert marker is not None
     evaluator: EvaluationStrategy = marker.kwargs.get("evaluator", bradley_terry_evaluation)
     if not callable(evaluator):
         logger.error(f"Invalid evaluator type: {type(evaluator)}. Expected callable.")
