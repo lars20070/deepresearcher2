@@ -26,7 +26,7 @@ from deepresearcher2.evals.evals import (
     adaptive_uncertainty_strategy,
 )
 from deepresearcher2.logger import logger
-from deepresearcher2.plugin import AssayContext
+from deepresearcher2.plugin import AssayContext, bradley_terry_evaluation
 
 MODEL_SETTINGS = ModelSettings(
     temperature=0.0,
@@ -199,7 +199,7 @@ def generate_evaluation_cases() -> Dataset[dict[str, str], type[None], Any]:
 
 
 @pytest.mark.skip(reason="Run only locally with DeepInfra cloud inference. PROVIDER='deepinfra' MODEL='Qwen/Qwen2.5-72B-Instruct'")
-@pytest.mark.assay(generator=generate_evaluation_cases)
+@pytest.mark.assay(generator=generate_evaluation_cases, evaluator=bradley_terry_evaluation)
 @pytest.mark.asyncio
 @pytest.mark.usefixtures("timer_for_tests")
 async def test_search_queries_2(assay: AssayContext) -> None:

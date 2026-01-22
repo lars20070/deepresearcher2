@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import asyncio
 import contextvars
-from collections.abc import Generator
+from collections.abc import Callable, Coroutine, Generator
 from pathlib import Path
 from typing import Any
 
@@ -270,10 +270,7 @@ def pytest_runtest_teardown(item: Item) -> None:
         assay.dataset.to_file(assay.path, schema_path=None)
 
 
-# EvaluationStrategy = Callable[
-#     [list[EvalPlayer], EvalGame, Agent, ModelSettings],
-#     Awaitable[list[EvalPlayer]],
-# ]
+EvaluationStrategy = Callable[[Item], Coroutine[Any, Any, None]]
 
 
 @pytest.hookimpl(tryfirst=True)  # Executed before other hooks. Important for non-None return values.
@@ -308,14 +305,22 @@ def pytest_runtest_makereport(item: Item, call: CallInfo) -> None:
             logger.info(f"Test Outcome: {test_outcome}")
             logger.info(f"Test Duration: {test_duration:.5f} seconds")
 
+            # Get marker and extract evaluator
+            marker = item.get_closest_marker("assay")
+            if marker is None:
+                return  # Not an assay test, skip evaluation
+
+            # Get evaluator from marker kwargs, default to bradley_terry_evaluation
+            evaluator: EvaluationStrategy = marker.kwargs.get("evaluator", bradley_terry_evaluation)
+
             # Run async tournament synchronously
-            asyncio.run(_run_bradley_terry_tournament(item))
+            asyncio.run(evaluator(item))
 
         except Exception:
             logger.exception("Error in pytest_runtest_makereport:")
 
 
-async def _run_bradley_terry_tournament(item: Item) -> None:
+async def bradley_terry_evaluation(item: Item) -> None:
     """
     Run the Bradley-Terry tournament asynchronously.
     """
