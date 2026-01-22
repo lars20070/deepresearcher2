@@ -7,13 +7,9 @@ from pytest_mock import MockerFixture
 import deepresearcher2.plugin
 from deepresearcher2.plugin import (
     ASSAY_MODES,
-    pytest_addhooks,
     pytest_addoption,
     pytest_configure,
     pytest_runtest_makereport,
-    pytest_sessionfinish,
-    pytest_sessionstart,
-    pytest_unconfigure,
 )
 
 
@@ -96,65 +92,6 @@ def test_pytest_configure_new_baseline(mocker: MockerFixture) -> None:
 
     mock_config.getoption.assert_called_once_with("--assay-mode")
     mock_logger.debug.assert_called_once_with("assay_mode=new_baseline")
-
-
-def test_pytest_unconfigure() -> None:
-    """
-    Test the pytest_unconfigure() function runs without error.
-    """
-    # Function currently does nothing, just verify it doesn't raise
-    pytest_unconfigure()
-
-
-def test_pytest_addhooks(mocker: MockerFixture) -> None:
-    """
-    Test the pytest_addhooks() function runs without error.
-    """
-    mock_pluginmanager = mocker.MagicMock()
-
-    # Function currently does nothing, just verify it doesn't raise
-    pytest_addhooks(mock_pluginmanager)
-
-
-def test_pytest_sessionstart(mocker: MockerFixture) -> None:
-    """
-    Test the pytest_sessionstart() function logs the session start message.
-    """
-    mock_session = mocker.MagicMock()
-    mock_logger = mocker.patch("deepresearcher2.plugin.logger")
-
-    pytest_sessionstart(mock_session)
-
-    mock_logger.info.assert_called_once_with("Hello from `pytest_sessionstart` hook!")
-
-
-def test_pytest_sessionfinish(mocker: MockerFixture) -> None:
-    """
-    Test the pytest_sessionfinish() function logs session finish and exit status.
-    """
-    mock_session = mocker.MagicMock()
-    mock_logger = mocker.patch("deepresearcher2.plugin.logger")
-
-    pytest_sessionfinish(mock_session, exitstatus=0)
-
-    # Verify both log messages were called
-    assert mock_logger.info.call_count == 2
-    mock_logger.info.assert_any_call("Hello from `pytest_sessionfinish` hook!")
-    mock_logger.info.assert_any_call("Exit status: 0")
-
-
-def test_pytest_sessionfinish_with_failure(mocker: MockerFixture) -> None:
-    """
-    Test the pytest_sessionfinish() function logs non-zero exit status.
-    """
-    mock_session = mocker.MagicMock()
-    mock_logger = mocker.patch("deepresearcher2.plugin.logger")
-
-    pytest_sessionfinish(mock_session, exitstatus=1)
-
-    assert mock_logger.info.call_count == 2
-    mock_logger.info.assert_any_call("Hello from `pytest_sessionfinish` hook!")
-    mock_logger.info.assert_any_call("Exit status: 1")
 
 
 def test_pytest_runtest_makereport_passed(mocker: MockerFixture) -> None:

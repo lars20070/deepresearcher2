@@ -12,7 +12,7 @@ from pydantic_ai import Agent
 from pydantic_ai.agent import AgentRunResult
 from pydantic_ai.settings import ModelSettings
 from pydantic_evals import Dataset
-from pytest import CallInfo, Config, Function, Item, Parser, PytestPluginManager, Session
+from pytest import CallInfo, Config, Function, Item, Parser
 
 from .agents import EVALUATION_AGENT
 from .evals.evals import (
@@ -22,8 +22,6 @@ from .evals.evals import (
     adaptive_uncertainty_strategy,
 )
 from .logger import logger
-
-PLAYERS_KEY = pytest.StashKey[list[EvalPlayer]]()
 
 # Modes for the assay plugin. "evaluate" is the default mode.
 ASSAY_MODES = ("evaluate", "new_baseline")
@@ -55,51 +53,16 @@ def pytest_configure(config: Config) -> None:
     Configurations at the start of the test session.
     For example, add custom markers here.
     """
-    # config.addinivalue_line("markers", "vcr: Mark the test as using VCR.py.")
-    # config.addinivalue_line("markers", "block_network: Block network access except for VCR recording.")
-    # config.addinivalue_line("markers", "default_cassette: Override the default cassette name.")
-    # config.addinivalue_line(
-    #     "markers",
-    #     "allowed_hosts: List of regexes to match hosts to where connection must be allowed.",
-    # )
-    # network.install_pycurl_wrapper()
-
-    # Add marker @pytest.mark.assay
-    config.addinivalue_line("markers", "assay: Mark the test for AI agent evaluation i.e. running an assay.")
-    # config.addinivalue_line(
-    #         "markers",
-    #         "assay(generator=None, assay_mode='evaluate'): Mark the test for AI agent evaluation. "
-    #         "Args: generator - callable returning Dataset; assay_mode - 'evaluate' or 'new_baseline'.",
-    #     )
-
-    assay_mode = config.getoption("--assay-mode")
-    logger.debug(f"assay_mode={assay_mode}")
-
-    pass
-
-
-def pytest_unconfigure() -> None:
-    pass
-
-
-def pytest_addhooks(pluginmanager: PytestPluginManager) -> None:
-    # pluginmanager.add_hookspecs(hooks)
-    pass
-
-
-def pytest_sessionstart(session: Session) -> None:
-    """
-    Session start hook.
-    """
-    logger.info("Hello from `pytest_sessionstart` hook!")
-
-
-def pytest_sessionfinish(session: Session, exitstatus: int) -> None:
-    """
-    Session finish hook.
-    """
-    logger.info("Hello from `pytest_sessionfinish` hook!")
-    logger.info(f"Exit status: {exitstatus}")
+    logger.info("Registering the @pytest.mark.assay marker.")
+    config.addinivalue_line(
+        "markers",
+        "assay(generator=None, evaluator=bradley_terry_evaluation): "
+        "Mark the test for AI agent evaluation (assay). "
+        "Args: "
+        "generator - optional callable returning a Dataset for test cases; "
+        "evaluator - optional async callable(Item) -> None for custom evaluation strategy "
+        "(defaults to Bradley-Terry tournament).",
+    )
 
 
 class AssayContext(BaseModel):
