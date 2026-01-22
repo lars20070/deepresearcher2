@@ -270,6 +270,12 @@ def pytest_runtest_teardown(item: Item) -> None:
         assay.dataset.to_file(assay.path, schema_path=None)
 
 
+# EvaluationStrategy = Callable[
+#     [list[EvalPlayer], EvalGame, Agent, ModelSettings],
+#     Awaitable[list[EvalPlayer]],
+# ]
+
+
 @pytest.hookimpl(tryfirst=True)  # Executed before other hooks. Important for non-None return values.
 def pytest_runtest_makereport(item: Item, call: CallInfo) -> None:
     """
@@ -291,9 +297,6 @@ def pytest_runtest_makereport(item: Item, call: CallInfo) -> None:
             # Access the test ID (nodeid)
             test_id = item.nodeid
 
-            # Number of intercepted Agent.run() calls
-            responses = item.stash.get(AGENT_RESPONSES_KEY, [])
-
             # Access the test outcome (passed, failed, etc.)
             test_outcome = "failed" if outcome else "passed"
 
@@ -302,47 +305,43 @@ def pytest_runtest_makereport(item: Item, call: CallInfo) -> None:
 
             # Print Test Outcome and Duration
             logger.info(f"Test: {test_id}")
-            logger.debug(f"Number of Agent.run() calls during test: {len(responses)}")
             logger.info(f"Test Outcome: {test_outcome}")
             logger.info(f"Test Duration: {test_duration:.5f} seconds")
 
-            # Access baseline and novel players
-            all_players = item.stash.get(PLAYERS_KEY, None)
-            logger.debug(f"number of players: {len(all_players) if all_players is not None else 'None'}")
-
-            # Prepare list of players
-            players: list[EvalPlayer] = []
-            assay: AssayContext | None = item.funcargs.get("assay")  # type: ignore[attr-defined]
-
-            # Baseline players from previously serialized assay dataset
-            baseline_case_count = 0
-            if assay is not None:
-                for idx, case in enumerate(assay.dataset.cases):
-                    players.append(EvalPlayer(idx=idx, item=case.inputs["query"]))
-                baseline_case_count = len(assay.dataset.cases)
-
-            # Novel players from current test run
-            for idx, response in enumerate(responses):
-                if response.output is None:
-                    logger.warning(f"Response #{idx} has None output.")
-                    continue
-                players.append(EvalPlayer(idx=idx + baseline_case_count, item=response.output))
-
-            # Log all players before tournament
-            for player in players:
-                logger.debug(f"Player #{player.idx} item: {player.item!r:.100}")
-
             # Run async tournament synchronously
-            asyncio.run(_run_tournament(players))
+            asyncio.run(_run_bradley_terry_tournament(item))
 
         except Exception:
             logger.exception("Error in pytest_runtest_makereport:")
 
 
-async def _run_tournament(players: list[EvalPlayer]) -> None:
+async def _run_bradley_terry_tournament(item: Item) -> None:
     """
     Run the Bradley-Terry tournament asynchronously.
     """
+    # Prepare the list of all players, baseline and novel
+    players: list[EvalPlayer] = []
+
+    # 1. Baseline players from previously serialized assay dataset
+    assay: AssayContext | None = item.funcargs.get("assay")  # type: ignore[attr-defined]
+    baseline_case_count = 0
+    if assay is not None:
+        for idx, case in enumerate(assay.dataset.cases):
+            players.append(EvalPlayer(idx=idx, item=case.inputs["query"]))
+        baseline_case_count = len(assay.dataset.cases)
+
+    # 2. Novel players from current test run
+    responses = item.stash.get(AGENT_RESPONSES_KEY, [])
+    for idx, response in enumerate(responses):
+        if response.output is None:
+            logger.warning(f"Response #{idx} has None output.")
+            continue
+        players.append(EvalPlayer(idx=idx + baseline_case_count, item=response.output))
+
+    # Log all players before tournament
+    for player in players:
+        logger.debug(f"Player #{player.idx} item: {player.item!r:.100}")
+
     if not players:
         logger.debug("No players to evaluate in tournament.")
         return
