@@ -14,6 +14,7 @@ from __future__ import annotations as _annotations
 
 import contextlib
 import importlib
+import json
 from pathlib import Path
 from types import SimpleNamespace
 from typing import TYPE_CHECKING, Any
@@ -694,17 +695,19 @@ def test_pytest_runtest_makereport_failed_test(mocker: MockerFixture) -> None:
     mock_logger.info.assert_any_call("Test Outcome: failed")
 
 
-def test_pytest_runtest_makereport_runs_evaluation(mocker: MockerFixture) -> None:
-    """Test pytest_runtest_makereport runs evaluation in evaluate mode."""
+def test_pytest_runtest_makereport_runs_evaluation(mocker: MockerFixture, tmp_path: Path) -> None:
+    """Test pytest_runtest_makereport runs evaluation and serializes readout."""
     dataset = Dataset[dict[str, str], type[None], Any](cases=[])
+    assay_path = tmp_path / "assays" / "test_module" / "test_func.json"
+    assay_path.parent.mkdir(parents=True, exist_ok=True)
 
     mock_item = mocker.MagicMock(spec=Function)
     mock_item.nodeid = "tests/test.py::test_func"
-    mock_item.funcargs = {"assay": AssayContext(dataset=dataset, path=Path("/tmp/test.json"), assay_mode="evaluate")}
+    mock_item.funcargs = {"assay": AssayContext(dataset=dataset, path=assay_path, assay_mode="evaluate")}
     mock_marker = mocker.MagicMock()
 
-    # Custom evaluator mock - returns Readout
-    mock_evaluator = AsyncMock(return_value=Readout(passed=True))
+    # Custom evaluator mock - returns Readout with details
+    mock_evaluator = AsyncMock(return_value=Readout(passed=True, details={"test_key": "test_value"}))
     mock_marker.kwargs = {"evaluator": mock_evaluator}
     mock_item.get_closest_marker.return_value = mock_marker
 
@@ -722,6 +725,16 @@ def test_pytest_runtest_makereport_runs_evaluation(mocker: MockerFixture) -> Non
     mock_evaluator.assert_called_once_with(mock_item)
     # Should log the result
     mock_logger.info.assert_any_call("Evaluation result: passed=True")
+
+    # Verify readout file was created
+    readout_path = assay_path.with_suffix(".readout.json")
+    assert readout_path.exists()
+
+    # Verify readout content
+    with readout_path.open() as f:
+        readout_data = json.load(f)
+    assert readout_data["passed"] is True
+    assert readout_data["details"] == {"test_key": "test_value"}
 
 
 def test_pytest_runtest_makereport_uses_default_evaluator(mocker: MockerFixture) -> None:
@@ -811,6 +824,60 @@ def test_pytest_runtest_makereport_evaluation_exception(mocker: MockerFixture) -
 
     # Should log exception
     mock_logger.exception.assert_called_once()
+
+
+# =============================================================================
+# Readout Tests
+# =============================================================================
+
+
+def test_readout_model_defaults() -> None:
+    """Test Readout model initializes with default values."""
+    readout = Readout()
+
+    assert readout.passed is True
+    assert readout.details is None
+
+
+def test_readout_model_custom() -> None:
+    """Test Readout model initializes with custom values."""
+    readout = Readout(passed=False, details={"error": "test error"})
+
+    assert readout.passed is False
+    assert readout.details == {"error": "test error"}
+
+
+def test_readout_to_file(tmp_path: Path) -> None:
+    """Test Readout.to_file() serializes to JSON file."""
+    readout = Readout(passed=True, details={"key": "value", "count": 42})
+    file_path = tmp_path / "readout.json"
+
+    readout.to_file(file_path)
+
+    assert file_path.exists()
+
+    # Verify content
+    with file_path.open() as f:
+        data = json.load(f)
+
+    assert data["passed"] is True
+    assert data["details"] == {"key": "value", "count": 42}
+
+
+def test_readout_to_file_with_none_details(tmp_path: Path) -> None:
+    """Test Readout.to_file() handles None details correctly."""
+    readout = Readout(passed=False, details=None)
+    file_path = tmp_path / "readout.json"
+
+    readout.to_file(file_path)
+
+    assert file_path.exists()
+
+    with file_path.open() as f:
+        data = json.load(f)
+
+    assert data["passed"] is False
+    assert data["details"] is None
 
 
 # =============================================================================
