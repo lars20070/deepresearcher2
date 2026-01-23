@@ -49,3 +49,26 @@ uv run pytest tests/test_utils.py::test_fetch_content -v
 - Hostname normalization in `conftest.py` handles `host.docker.internal` → `localhost`
 - Deterministic tests: set `temperature=0.0` in `MODEL_SETTINGS`
 
+### Coverage Requirements
+
+**After writing or modifying tests**, verify coverage targets are met:
+
+1. **Read coverage targets** from `.codecov.yaml` to determine:
+   - `coverage.status.project.default.target` - minimum overall project coverage
+   - `coverage.status.project.default.threshold` - allowed coverage drop tolerance
+   - `coverage.status.patch.default.target` - minimum coverage for new/modified code
+
+2. **Run coverage report**:
+```bash
+# Full project coverage
+uv run pytest --cov=src/deepresearcher2 --cov-report=term-missing
+
+# Specific module coverage
+uv run pytest --cov=src/deepresearcher2/MODULE_NAME --cov-report=term-missing tests/test_MODULE_NAME.py
+```
+
+3. **Verify targets are met**:
+   - New code must meet the **patch target** from `.codecov.yaml`
+   - Overall coverage must not drop below **project target minus threshold**
+   - Focus coverage on critical paths: error handling, edge cases, and main functionality
+
