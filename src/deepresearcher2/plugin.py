@@ -417,15 +417,21 @@ class BradleyTerryEvaluator:
         # Average score for both baseline and novel queries
         scores_baseline = [tournament.get_player_by_idx(idx=i).score or 0.0 for i in range(len(players) // 2)]
         scores_novel = [tournament.get_player_by_idx(idx=i + len(players) // 2).score or 0.0 for i in range(len(players) // 2)]
+        
         if scores_baseline and scores_novel:
-            logger.debug(f"Average score for baseline queries (Players 0 to 9): {np.mean(scores_baseline):7.4f}")
-            logger.debug(f"Average score for novel queries  (Players 10 to 19): {np.mean(scores_novel):7.4f}")
+            avg_baseline = np.mean(scores_baseline)
+            avg_novel = np.mean(scores_novel)
+            passed = bool(avg_novel > avg_baseline)
+            logger.debug(f"Average score for baseline queries (Players 0 to 9): {avg_baseline:7.4f}")
+            logger.debug(f"Average score for novel queries  (Players 10 to 19): {avg_novel:7.4f}")
+        else:
+            passed = False
 
         return Readout(
-            passed=True,
+            passed=passed,
             details={
-                "baseline_scores": scores_baseline,
-                "novel_scores": scores_novel,
-                "player_count": len(players),
+                "test_cases_count": len(players)//2,  # test cases (baseline responses) + test cases (novel responses) = total players
+                "scores_baseline": scores_baseline,
+                "scores_novel": scores_novel,
             },
         )

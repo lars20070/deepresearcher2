@@ -968,7 +968,7 @@ async def test_bradley_terry_evaluator_call_with_players(mocker: MockerFixture) 
 
     # Verify result (use type name check due to module reload)
     assert type(result).__name__ == "Readout"
-    assert result.passed is True
+    assert result.passed is False
 
 
 @pytest.mark.asyncio
