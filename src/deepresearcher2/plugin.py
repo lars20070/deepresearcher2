@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 import asyncio
 import contextvars
-from collections.abc import Callable, Coroutine, Generator
+from collections.abc import Coroutine, Generator
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, Protocol
 
 import numpy as np
 import pytest
@@ -34,7 +35,23 @@ AGENT_RESPONSES_KEY = pytest.StashKey[list[AgentRunResult[Any]]]()
 _current_item_var: contextvars.ContextVar[Item | None] = contextvars.ContextVar("_current_item", default=None)
 
 
-EvaluationStrategy = Callable[[Item], Coroutine[Any, Any, None]]
+@dataclass
+class EvalResult:
+    """Result from an evaluator execution."""
+
+    score: float | None = None
+    passed: bool = True
+    details: dict[str, Any] | None = None
+
+
+class Evaluator(Protocol):
+    """Protocol for evaluation strategy callables.
+
+    The Protocol defines ONLY what the plugin needs to call.
+    Evaluator implementations configure themselves via __init__.
+    """
+
+    def __call__(self, item: Item) -> Coroutine[Any, Any, EvalResult]: ...
 
 
 def pytest_addoption(parser: Parser) -> None:
@@ -63,12 +80,14 @@ def pytest_configure(config: Config) -> None:
     logger.info("Registering the @pytest.mark.assay marker.")
     config.addinivalue_line(
         "markers",
-        "assay(generator=None, evaluator=bradley_terry_evaluation): "
+        "assay(generator=None, evaluator=BradleyTerryEvaluator()): "
         "Mark the test for AI agent evaluation (assay). "
         "Args: "
         "generator - optional callable returning a Dataset for test cases; "
-        "evaluator - optional async callable(Item) -> None for custom evaluation strategy "
-        "(defaults to Bradley-Terry tournament).",
+        "evaluator - optional Evaluator instance for custom evaluation strategy "
+        "(defaults to BradleyTerryEvaluator with default settings). "
+        "Configure evaluators by instantiating with parameters: "
+        "evaluator=BradleyTerryEvaluator(criterion='Which response is better?')",
     )
 
 
@@ -296,75 +315,109 @@ def pytest_runtest_makereport(item: Item, call: CallInfo) -> None:
     # Retrieve evaluator from marker kwargs with type validation
     marker = item.get_closest_marker("assay")
     assert marker is not None
-    evaluator: EvaluationStrategy = marker.kwargs.get("evaluator", bradley_terry_evaluation)
+    evaluator: Evaluator = marker.kwargs.get("evaluator", BradleyTerryEvaluator())
     if not callable(evaluator):
         logger.error(f"Invalid evaluator type: {type(evaluator)}. Expected callable.")
         return
 
-    # Run the async evaluation strategy synchronously
+    # Run the evaluator asynchronously
     try:
-        asyncio.run(evaluator(item))
+        result = asyncio.run(evaluator(item))
+        logger.info(f"Evaluation result: score={result.score}, passed={result.passed}")
     except Exception:
-        logger.exception("Error during evaluation in pytest_runtest_makereport.")
+        logger.error("Error during evaluation in pytest_runtest_makereport.")
 
 
-async def bradley_terry_evaluation(item: Item) -> None:
+class BradleyTerryEvaluator:
+    """Evaluates test outputs using Bradley-Terry tournament scoring.
+
+    Configuration is set at instantiation; __call__ runs the evaluation.
     """
-    Run Bradley-Terry tournament on baseline and novel responses.
 
-    Args:
-        item: The pytest test item with assay context and captured responses.
-    """
-    # Prepare the list of all players, baseline and novel
-    players: list[EvalPlayer] = []
+    def __init__(
+        self,
+        criterion: str = "Which of the two search queries shows more genuine curiosity and creativity, and is less formulaic?",
+    ) -> None:
+        """Configure the evaluator.
 
-    # 1. Baseline players from previously serialized assay dataset
-    assay: AssayContext | None = item.funcargs.get("assay")  # type: ignore[attr-defined]
-    baseline_case_count = 0
-    if assay is not None:
-        for idx, case in enumerate(assay.dataset.cases):
-            players.append(EvalPlayer(idx=idx, item=case.inputs["query"]))
-        baseline_case_count = len(assay.dataset.cases)
+        Args:
+            criterion: The evaluation criterion for pairwise comparison.
+        """
+        self.criterion = criterion
 
-    # 2. Novel players from current test run
-    responses = item.stash.get(AGENT_RESPONSES_KEY, [])
-    for idx, response in enumerate(responses):
-        if response.output is None:
-            logger.warning(f"Response #{idx} has None output.")
-            continue
-        players.append(EvalPlayer(idx=idx + baseline_case_count, item=response.output))
+    async def __call__(self, item: Item) -> EvalResult:
+        """Run Bradley-Terry tournament on baseline and novel responses.
 
-    # Log all players before tournament
-    for player in players:
-        logger.debug(f"Player #{player.idx} item: {repr(player.item)[:100]}")
+        Args:
+            item: The pytest test item with assay context and captured responses.
 
-    if not players:
-        logger.debug("No players to evaluate in tournament.")
-        return
+        Returns:
+            EvalResult with score, passed status, and details.
+        """
+        # Prepare the list of all players, baseline and novel
+        players: list[EvalPlayer] = []
 
-    MODEL_SETTINGS = ModelSettings(
-        temperature=0.0,
-        timeout=300,
-    )
+        # 1. Baseline players from previously serialized assay dataset
+        assay: AssayContext | None = item.funcargs.get("assay")  # type: ignore[attr-defined]
+        baseline_case_count = 0
+        if assay is not None:
+            for idx, case in enumerate(assay.dataset.cases):
+                players.append(EvalPlayer(idx=idx, item=case.inputs["query"]))
+            baseline_case_count = len(assay.dataset.cases)
 
-    # Run the Bradley-Terry tournament to score both baseline and novel queries
-    game = EvalGame(criterion="Which of the two search queries shows more genuine curiosity and creativity, and is less formulaic?")
-    tournament = EvalTournament(players=players, game=game)
-    players_scored = await tournament.run(
-        agent=EVALUATION_AGENT,
-        model_settings=MODEL_SETTINGS,
-        strategy=adaptive_uncertainty_strategy,
-        max_standard_deviation=2.0,
-    )
+        # 2. Novel players from current test run
+        responses = item.stash.get(AGENT_RESPONSES_KEY, [])
+        for idx, response in enumerate(responses):
+            if response.output is None:
+                logger.warning(f"Response #{idx} has None output.")
+                continue
+            players.append(EvalPlayer(idx=idx + baseline_case_count, item=response.output))
 
-    # Players sorted by score
-    players_sorted = sorted(players_scored, key=lambda p: p.score if p.score is not None else float("-inf"))
-    for player in players_sorted:
-        logger.debug(f"Player {player.idx:4d}   score: {player.score:7.4f}   query: {player.item}")
+        # Log all players before tournament
+        for player in players:
+            logger.debug(f"Player #{player.idx} item: {repr(player.item)[:100]}")
 
-    # Average score for both baseline and novel queries
-    scores_baseline = [tournament.get_player_by_idx(idx=i).score or 0.0 for i in range(len(players) // 2)]
-    scores_novel = [tournament.get_player_by_idx(idx=i + len(players) // 2).score or 0.0 for i in range(len(players) // 2)]
-    if scores_baseline and scores_novel:
-        logger.debug(f"Average score for baseline queries (Players 0 to 9): {np.mean(scores_baseline):7.4f}")
-        logger.debug(f"Average score for novel queries  (Players 10 to 19): {np.mean(scores_novel):7.4f}")
+        if not players:
+            logger.debug("No players to evaluate in tournament.")
+            return EvalResult(score=None, passed=True, details={"message": "No players to evaluate"})
+
+        model_settings = ModelSettings(
+            temperature=0.0,
+            timeout=300,
+        )
+
+        # Run the Bradley-Terry tournament to score both baseline and novel queries
+        game = EvalGame(criterion=self.criterion)
+        tournament = EvalTournament(players=players, game=game)
+        players_scored = await tournament.run(
+            agent=EVALUATION_AGENT,
+            model_settings=model_settings,
+            strategy=adaptive_uncertainty_strategy,
+            max_standard_deviation=2.0,
+        )
+
+        # Players sorted by score
+        players_sorted = sorted(players_scored, key=lambda p: p.score if p.score is not None else float("-inf"))
+        for player in players_sorted:
+            logger.debug(f"Player {player.idx:4d}   score: {player.score:7.4f}   query: {player.item}")
+
+        # Average score for both baseline and novel queries
+        scores_baseline = [tournament.get_player_by_idx(idx=i).score or 0.0 for i in range(len(players) // 2)]
+        scores_novel = [tournament.get_player_by_idx(idx=i + len(players) // 2).score or 0.0 for i in range(len(players) // 2)]
+        if scores_baseline and scores_novel:
+            logger.debug(f"Average score for baseline queries (Players 0 to 9): {np.mean(scores_baseline):7.4f}")
+            logger.debug(f"Average score for novel queries  (Players 10 to 19): {np.mean(scores_novel):7.4f}")
+
+        # Calculate overall score (average of all scores)
+        all_scores = [p.score for p in players_scored if p.score is not None]
+        overall_score = float(np.mean(all_scores)) if all_scores else None
+
+        return EvalResult(
+            score=overall_score,
+            passed=True,
+            details={
+                "baseline_scores": scores_baseline,
+                "novel_scores": scores_novel,
+                "player_count": len(players),
+            },
+        )

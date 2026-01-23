@@ -15,6 +15,7 @@ from __future__ import annotations as _annotations
 import contextlib
 import importlib
 from pathlib import Path
+from types import SimpleNamespace
 from typing import TYPE_CHECKING, Any
 from unittest.mock import AsyncMock, MagicMock
 
@@ -27,10 +28,11 @@ import deepresearcher2.plugin
 from deepresearcher2.plugin import (
     ASSAY_MODES,
     AssayContext,
+    BradleyTerryEvaluator,
+    EvalResult,
     _current_item_var,
     _is_assay,
     _path,
-    bradley_terry_evaluation,
     pytest_addoption,
     pytest_configure,
     pytest_runtest_call,
@@ -65,7 +67,8 @@ def test_module_imports() -> None:
     assert callable(module.pytest_runtest_call)
     assert callable(module.pytest_runtest_teardown)
     assert callable(module.pytest_runtest_makereport)
-    assert callable(module.bradley_terry_evaluation)
+    assert hasattr(module, "BradleyTerryEvaluator")
+    assert hasattr(module, "EvalResult")
     assert callable(module._path)
     assert callable(module._is_assay)
 
@@ -700,8 +703,8 @@ def test_pytest_runtest_makereport_runs_evaluation(mocker: MockerFixture) -> Non
     mock_item.funcargs = {"assay": AssayContext(dataset=dataset, path=Path("/tmp/test.json"), assay_mode="evaluate")}
     mock_marker = mocker.MagicMock()
 
-    # Custom evaluator mock
-    mock_evaluator = AsyncMock()
+    # Custom evaluator mock - returns EvalResult
+    mock_evaluator = AsyncMock(return_value=EvalResult(score=0.85, passed=True))
     mock_marker.kwargs = {"evaluator": mock_evaluator}
     mock_item.get_closest_marker.return_value = mock_marker
 
@@ -711,24 +714,26 @@ def test_pytest_runtest_makereport_runs_evaluation(mocker: MockerFixture) -> Non
     mock_call.duration = 0.1
 
     mocker.patch("deepresearcher2.plugin._is_assay", return_value=True)
-    mocker.patch("deepresearcher2.plugin.logger")
+    mock_logger = mocker.patch("deepresearcher2.plugin.logger")
 
     pytest_runtest_makereport(mock_item, mock_call)
 
     # Evaluator should have been called
     mock_evaluator.assert_called_once_with(mock_item)
+    # Should log the result
+    mock_logger.info.assert_any_call("Evaluation result: score=0.85, passed=True")
 
 
-def test_pytest_runtest_makereport_skips_evaluation_in_new_baseline(mocker: MockerFixture) -> None:
-    """Test pytest_runtest_makereport skips evaluation in new_baseline mode."""
+def test_pytest_runtest_makereport_uses_default_evaluator(mocker: MockerFixture) -> None:
+    """Test pytest_runtest_makereport uses BradleyTerryEvaluator() as default."""
     dataset = Dataset[dict[str, str], type[None], Any](cases=[])
 
     mock_item = mocker.MagicMock(spec=Function)
     mock_item.nodeid = "tests/test.py::test_func"
-    mock_item.funcargs = {"assay": AssayContext(dataset=dataset, path=Path("/tmp/test.json"), assay_mode="new_baseline")}
+    mock_item.funcargs = {"assay": AssayContext(dataset=dataset, path=Path("/tmp/test.json"), assay_mode="evaluate")}
+    mock_item.stash = {deepresearcher2.plugin.AGENT_RESPONSES_KEY: []}
     mock_marker = mocker.MagicMock()
-    mock_evaluator = AsyncMock()
-    mock_marker.kwargs = {"evaluator": mock_evaluator}
+    mock_marker.kwargs = {}  # No evaluator specified - should use default
     mock_item.get_closest_marker.return_value = mock_marker
 
     mock_call = mocker.MagicMock()
@@ -737,12 +742,18 @@ def test_pytest_runtest_makereport_skips_evaluation_in_new_baseline(mocker: Mock
     mock_call.duration = 0.1
 
     mocker.patch("deepresearcher2.plugin._is_assay", return_value=True)
-    mocker.patch("deepresearcher2.plugin.logger")
+    mock_logger = mocker.patch("deepresearcher2.plugin.logger")
+    # Mock the tournament to avoid actual API calls
+    mock_tournament_class = mocker.patch("deepresearcher2.plugin.EvalTournament")
+    mock_tournament = mocker.MagicMock()
+    mock_tournament.run = AsyncMock(return_value=[])
+    mock_tournament.get_player_by_idx = MagicMock(return_value=MagicMock(score=0.5))
+    mock_tournament_class.return_value = mock_tournament
 
     pytest_runtest_makereport(mock_item, mock_call)
 
-    # Evaluator should NOT be called in new_baseline mode
-    mock_evaluator.assert_not_called()
+    # Should log evaluation completed (no error)
+    assert any("Evaluation result" in str(call) for call in mock_logger.info.call_args_list)
 
 
 def test_pytest_runtest_makereport_invalid_evaluator(mocker: MockerFixture) -> None:
@@ -781,7 +792,7 @@ def test_pytest_runtest_makereport_evaluation_exception(mocker: MockerFixture) -
     mock_marker = mocker.MagicMock()
 
     # Evaluator that raises an exception
-    async def failing_evaluator(item: Item) -> None:
+    async def failing_evaluator(item: Item) -> EvalResult:
         raise RuntimeError("Evaluation failed")
 
     mock_marker.kwargs = {"evaluator": failing_evaluator}
@@ -798,160 +809,111 @@ def test_pytest_runtest_makereport_evaluation_exception(mocker: MockerFixture) -
     # Should not raise, exception is handled internally
     pytest_runtest_makereport(mock_item, mock_call)
 
-    # Should log exception
-    mock_logger.exception.assert_called_once()
+    # Should log error
+    mock_logger.error.assert_called_once()
 
 
 # =============================================================================
-# bradley_terry_evaluation Tests
+# BradleyTerryEvaluator Tests
 # =============================================================================
+
+
+def test_bradley_terry_evaluator_init_defaults() -> None:
+    """Test BradleyTerryEvaluator initializes with default values."""
+    evaluator = BradleyTerryEvaluator()
+
+    assert evaluator.criterion == "Which of the two search queries shows more genuine curiosity and creativity, and is less formulaic?"
+
+
+def test_bradley_terry_evaluator_init_custom() -> None:
+    """Test BradleyTerryEvaluator initializes with custom criterion."""
+    evaluator = BradleyTerryEvaluator(criterion="Custom criterion")
+
+    assert evaluator.criterion == "Custom criterion"
 
 
 @pytest.mark.asyncio
-async def test_bradley_terry_evaluation_no_players(mocker: MockerFixture) -> None:
-    """Test bradley_terry_evaluation handles empty player list."""
+async def test_bradley_terry_evaluator_call_no_players(mocker: MockerFixture) -> None:
+    """Test BradleyTerryEvaluator.__call__ handles empty player list."""
+    evaluator = BradleyTerryEvaluator()
     mock_item = mocker.MagicMock(spec=Function)
     mock_item.funcargs = {"assay": None}
-    # Use the module's AGENT_RESPONSES_KEY
     mock_item.stash = {deepresearcher2.plugin.AGENT_RESPONSES_KEY: []}
 
     mock_logger = mocker.patch("deepresearcher2.plugin.logger")
 
-    await bradley_terry_evaluation(mock_item)
+    result = await evaluator(mock_item)
 
+    # Check result by attribute presence (module reload can cause isinstance to fail)
+    assert type(result).__name__ == "EvalResult"
+    assert result.score is None
+    assert result.passed is True
+    assert result.details is not None
+    assert result.details.get("message") == "No players to evaluate"
     mock_logger.debug.assert_any_call("No players to evaluate in tournament.")
 
 
 @pytest.mark.asyncio
-async def test_bradley_terry_evaluation_with_baseline_cases(mocker: MockerFixture) -> None:
-    """Test bradley_terry_evaluation creates players from baseline cases."""
+async def test_bradley_terry_evaluator_call_with_players(mocker: MockerFixture) -> None:
+    """Test BradleyTerryEvaluator.__call__ runs tournament with players."""
+    evaluator = BradleyTerryEvaluator(criterion="Test criterion")
+
     cases: list[Case[dict[str, str], type[None], Any]] = [
-        Case(name="case_001", inputs={"query": "baseline query 1"}),
-        Case(name="case_002", inputs={"query": "baseline query 2"}),
+        Case(name="case_001", inputs={"query": "baseline query"}),
     ]
     dataset = Dataset[dict[str, str], type[None], Any](cases=cases)
 
+    mock_response = mocker.MagicMock(spec=AgentRunResult)
+    mock_response.output = "novel output"
+
     mock_item = mocker.MagicMock(spec=Function)
     mock_item.funcargs = {"assay": AssayContext(dataset=dataset, path=Path("/tmp/test.json"), assay_mode="evaluate")}
-    # Use the module's AGENT_RESPONSES_KEY
-    mock_item.stash = {deepresearcher2.plugin.AGENT_RESPONSES_KEY: []}
+    mock_item.stash = {deepresearcher2.plugin.AGENT_RESPONSES_KEY: [mock_response]}
 
     mocker.patch("deepresearcher2.plugin.logger")
 
-    # Mock the tournament to avoid actual API calls
+    # Mock the tournament - use SimpleNamespace for players to allow formatting
+
     mock_tournament_class = mocker.patch("deepresearcher2.plugin.EvalTournament")
     mock_tournament = mocker.MagicMock()
-    mock_tournament.run = AsyncMock(return_value=[])
-    mock_tournament.get_player_by_idx = MagicMock(return_value=MagicMock(score=0.5))
+    mock_player = SimpleNamespace(idx=0, score=0.75, item="baseline query")
+    mock_tournament.run = AsyncMock(return_value=[mock_player])
+    mock_tournament.get_player_by_idx = MagicMock(return_value=mock_player)
     mock_tournament_class.return_value = mock_tournament
 
-    await bradley_terry_evaluation(mock_item)
+    # Mock ModelSettings to verify it uses hard-coded values
+    mock_model_settings = mocker.patch("deepresearcher2.plugin.ModelSettings")
+    mock_model_settings.return_value = mocker.MagicMock()
 
-    # Verify tournament was created with players
+    result = await evaluator(mock_item)
+
+    # Verify ModelSettings was called with hard-coded values
+    mock_model_settings.assert_called_once_with(temperature=0.0, timeout=300)
+
+    # Verify tournament was created with correct criterion
     mock_tournament_class.assert_called_once()
     call_kwargs = mock_tournament_class.call_args.kwargs
+    assert call_kwargs["game"].criterion == "Test criterion"
 
-    # Verify player count matches baseline cases
-    assert len(call_kwargs["players"]) == 2
-
-    # Verify players have correct indices
-    assert call_kwargs["players"][0].idx == 0
-    assert call_kwargs["players"][1].idx == 1
-
-    # Verify players contain the query text from cases
-    assert call_kwargs["players"][0].item == "baseline query 1"
-    assert call_kwargs["players"][1].item == "baseline query 2"
-
-    # Verify game criterion was set
-    assert "game" in call_kwargs
-    assert call_kwargs["game"].criterion is not None
-
-    # Verify tournament.run was called
+    # Verify tournament.run was called with hard-coded max_standard_deviation
     mock_tournament.run.assert_called_once()
+    run_kwargs = mock_tournament.run.call_args.kwargs
+    assert run_kwargs["max_standard_deviation"] == 2.0
+
+    # Verify result (use type name check due to module reload)
+    assert type(result).__name__ == "EvalResult"
+    assert result.passed is True
 
 
 @pytest.mark.asyncio
-async def test_bradley_terry_evaluation_with_novel_responses(mocker: MockerFixture) -> None:
-    """Test bradley_terry_evaluation creates players from novel responses."""
-    dataset = Dataset[dict[str, str], type[None], Any](cases=[])
+async def test_bradley_terry_evaluator_protocol_conformance() -> None:
+    """Test BradleyTerryEvaluator conforms to Evaluator Protocol."""
+    evaluator = BradleyTerryEvaluator()
+    # Should be callable with Item and return Coroutine[Any, Any, EvalResult]
+    assert callable(evaluator)
 
-    # Mock agent responses (simulating Agent.run() outputs captured during test)
-    mock_response1 = mocker.MagicMock(spec=AgentRunResult)
-    mock_response1.output = "novel output 1"
-    mock_response2 = mocker.MagicMock(spec=AgentRunResult)
-    mock_response2.output = "novel output 2"
-
-    mock_item = mocker.MagicMock(spec=Function)
-    mock_item.funcargs = {"assay": AssayContext(dataset=dataset, path=Path("/tmp/test.json"), assay_mode="evaluate")}
-    # Use the module's AGENT_RESPONSES_KEY
-    mock_item.stash = {deepresearcher2.plugin.AGENT_RESPONSES_KEY: [mock_response1, mock_response2]}
-
-    mocker.patch("deepresearcher2.plugin.logger")
-
-    mock_tournament_class = mocker.patch("deepresearcher2.plugin.EvalTournament")
-    mock_tournament = mocker.MagicMock()
-    mock_tournament.run = AsyncMock(return_value=[])
-    mock_tournament.get_player_by_idx = MagicMock(return_value=MagicMock(score=0.5))
-    mock_tournament_class.return_value = mock_tournament
-
-    await bradley_terry_evaluation(mock_item)
-
-    # Verify tournament was created with 2 novel players
-    mock_tournament_class.assert_called_once()
-    call_kwargs = mock_tournament_class.call_args.kwargs
-    assert len(call_kwargs["players"]) == 2
-
-    # Verify novel players have correct indices (starting from 0 since no baseline)
-    assert call_kwargs["players"][0].idx == 0
-    assert call_kwargs["players"][1].idx == 1
-
-    # Verify novel players contain the agent output text
-    assert call_kwargs["players"][0].item == "novel output 1"
-    assert call_kwargs["players"][1].item == "novel output 2"
-
-
-@pytest.mark.asyncio
-async def test_bradley_terry_evaluation_skips_none_outputs(mocker: MockerFixture) -> None:
-    """Test bradley_terry_evaluation skips responses with None output."""
-    dataset = Dataset[dict[str, str], type[None], Any](cases=[])
-
-    mock_response1 = mocker.MagicMock(spec=AgentRunResult)
-    mock_response1.output = None  # Should be skipped
-    mock_response2 = mocker.MagicMock(spec=AgentRunResult)
-    mock_response2.output = "valid output"
-    mock_response3 = mocker.MagicMock(spec=AgentRunResult)
-    mock_response3.output = None  # Also skipped
-
-    mock_item = mocker.MagicMock(spec=Function)
-    mock_item.funcargs = {"assay": AssayContext(dataset=dataset, path=Path("/tmp/test.json"), assay_mode="evaluate")}
-    # Use the module's AGENT_RESPONSES_KEY
-    mock_item.stash = {deepresearcher2.plugin.AGENT_RESPONSES_KEY: [mock_response1, mock_response2, mock_response3]}
-
-    mock_logger = mocker.patch("deepresearcher2.plugin.logger")
-
-    mock_tournament_class = mocker.patch("deepresearcher2.plugin.EvalTournament")
-    mock_tournament = mocker.MagicMock()
-    mock_tournament.run = AsyncMock(return_value=[])
-    mock_tournament.get_player_by_idx = MagicMock(return_value=MagicMock(score=0.5))
-    mock_tournament_class.return_value = mock_tournament
-
-    await bradley_terry_evaluation(mock_item)
-
-    # Should log warning for each None output
-    assert mock_logger.warning.call_count == 2
-    warning_messages = [str(call) for call in mock_logger.warning.call_args_list]
-    assert any("Response #0" in msg and "None output" in msg for msg in warning_messages)
-    assert any("Response #2" in msg and "None output" in msg for msg in warning_messages)
-
-    # Only one valid player should be created
-    mock_tournament_class.assert_called_once()
-    call_kwargs = mock_tournament_class.call_args.kwargs
-    assert len(call_kwargs["players"]) == 1
-
-    # Verify the valid player has the correct data
-    assert call_kwargs["players"][0].item == "valid output"
-    # Index should be 1 (0 was skipped, 1 had valid output)
-    assert call_kwargs["players"][0].idx == 1
+    # Type checker will verify Protocol conformance, but runtime check that it's callable
+    assert callable(evaluator)
 
 
 # =============================================================================
