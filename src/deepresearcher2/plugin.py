@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 import asyncio
 import contextvars
+import json
 from collections.abc import Coroutine, Generator
-from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Protocol
 
@@ -35,12 +35,20 @@ AGENT_RESPONSES_KEY = pytest.StashKey[list[AgentRunResult[Any]]]()
 _current_item_var: contextvars.ContextVar[Item | None] = contextvars.ContextVar("_current_item", default=None)
 
 
-@dataclass
-class Readout:
+class Readout(BaseModel):
     """Result from an evaluator execution."""
 
     passed: bool = True
     details: dict[str, Any] | None = None
+
+    def to_file(self, path: Path) -> None:
+        """Serialize the readout to a JSON file.
+
+        Args:
+            path: The file path to write to.
+        """
+        with path.open("w") as f:
+            json.dump(self.model_dump(), f, indent=2)
 
 
 class Evaluator(Protocol):
@@ -327,7 +335,7 @@ def pytest_runtest_makereport(item: Item, call: CallInfo) -> None:
         # Serialize the readout
         readout_path = assay.path.with_suffix(".readout.json")
         readout_path.parent.mkdir(parents=True, exist_ok=True)
-        # readout.to_file(readout_path, schema_path=None)
+        readout.to_file(readout_path)
 
     except Exception:
         logger.exception("Error during evaluation in pytest_runtest_makereport.")
