@@ -321,8 +321,14 @@ def pytest_runtest_makereport(item: Item, call: CallInfo) -> None:
 
     # Run the evaluator asynchronously
     try:
-        result = asyncio.run(evaluator(item))
-        logger.info(f"Evaluation result: passed={result.passed}")
+        readout = asyncio.run(evaluator(item))
+        logger.info(f"Evaluation result: passed={readout.passed}")
+
+        # Serialize the readout
+        readout_path = assay.path.with_suffix(".readout.json")
+        readout_path.parent.mkdir(parents=True, exist_ok=True)
+        # readout.to_file(readout_path, schema_path=None)
+
     except Exception:
         logger.exception("Error during evaluation in pytest_runtest_makereport.")
 
