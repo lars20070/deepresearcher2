@@ -44,17 +44,11 @@ json_dict = to_jsonable_python(messages)
 ## Key Benefits
 
 | Aspect | Monkey-patching `Agent.run` | `capture_run_messages()` |
-
 |--------|---------------------------|-------------------------|
-
 | Captures | Only final `AgentRunResult` | Full message history (requests, responses, tool calls, retries) |
-
 | API stability | Fragile (internal method) | Official testing API |
-
 | Serialization | Manual | Built-in `ModelMessagesTypeAdapter` |
-
 | Detail level | Output only | Complete conversation trace |
-
 | Async safety | Manual `ContextVar` | Handled internally |
 
 ## Recommended Refactor
