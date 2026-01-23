@@ -218,7 +218,7 @@ def pytest_runtest_call(item: Item) -> Generator[None, None, None]:
         if current_item is not None:
             responses = current_item.stash.get(AGENT_RESPONSES_KEY, [])
             responses.append(result)
-            logger.debug(f"Captured Agent.run() response #{len(responses)}: {result.output!r:.100}")
+            logger.debug(f"Captured Agent.run() response #{len(responses)}: {repr(result.output)[:100]}")
 
         return result
 
@@ -336,7 +336,7 @@ async def bradley_terry_evaluation(item: Item) -> None:
 
     # Log all players before tournament
     for player in players:
-        logger.debug(f"Player #{player.idx} item: {player.item!r:.100}")
+        logger.debug(f"Player #{player.idx} item: {repr(player.item)[:100]}")
 
     if not players:
         logger.debug("No players to evaluate in tournament.")
