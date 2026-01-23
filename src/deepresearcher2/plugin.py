@@ -325,7 +325,7 @@ def pytest_runtest_makereport(item: Item, call: CallInfo) -> None:
         result = asyncio.run(evaluator(item))
         logger.info(f"Evaluation result: score={result.score}, passed={result.passed}")
     except Exception:
-        logger.error("Error during evaluation in pytest_runtest_makereport.")
+        logger.exception("Error during evaluation in pytest_runtest_makereport.")
 
 
 class BradleyTerryEvaluator:

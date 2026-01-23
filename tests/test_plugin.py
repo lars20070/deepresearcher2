@@ -809,8 +809,8 @@ def test_pytest_runtest_makereport_evaluation_exception(mocker: MockerFixture) -
     # Should not raise, exception is handled internally
     pytest_runtest_makereport(mock_item, mock_call)
 
-    # Should log error
-    mock_logger.error.assert_called_once()
+    # Should log exception
+    mock_logger.exception.assert_called_once()
 
 
 # =============================================================================
