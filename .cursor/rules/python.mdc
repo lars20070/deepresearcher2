@@ -252,7 +252,12 @@ AGENT_NAME = Agent(
 
 ## Docstrings
 
-Use Google-style docstrings:
+Use Google-style docstrings (not Sphinx style):
+
+### Formatting Rules
+- **No backticks**: Do not use backticks in docstrings. Write `--assay-mode` as --assay-mode, `None` as None, `True` as True, etc.
+- Google style uses plain text for parameter names, options, and values
+
 ```python
 def complex_function(param1: str, param2: int = 5) -> dict[str, Any]:
     """Short one-line description.
