@@ -29,7 +29,7 @@ from deepresearcher2.plugin import (
     ASSAY_MODES,
     AssayContext,
     BradleyTerryEvaluator,
-    EvalResult,
+    Readout,
     _current_item_var,
     _is_assay,
     _path,
@@ -68,7 +68,7 @@ def test_module_imports() -> None:
     assert callable(module.pytest_runtest_teardown)
     assert callable(module.pytest_runtest_makereport)
     assert hasattr(module, "BradleyTerryEvaluator")
-    assert hasattr(module, "EvalResult")
+    assert hasattr(module, "Readout")
     assert callable(module._path)
     assert callable(module._is_assay)
 
@@ -703,8 +703,8 @@ def test_pytest_runtest_makereport_runs_evaluation(mocker: MockerFixture) -> Non
     mock_item.funcargs = {"assay": AssayContext(dataset=dataset, path=Path("/tmp/test.json"), assay_mode="evaluate")}
     mock_marker = mocker.MagicMock()
 
-    # Custom evaluator mock - returns EvalResult
-    mock_evaluator = AsyncMock(return_value=EvalResult(score=0.85, passed=True))
+    # Custom evaluator mock - returns Readout
+    mock_evaluator = AsyncMock(return_value=Readout(passed=True))
     mock_marker.kwargs = {"evaluator": mock_evaluator}
     mock_item.get_closest_marker.return_value = mock_marker
 
@@ -721,7 +721,7 @@ def test_pytest_runtest_makereport_runs_evaluation(mocker: MockerFixture) -> Non
     # Evaluator should have been called
     mock_evaluator.assert_called_once_with(mock_item)
     # Should log the result
-    mock_logger.info.assert_any_call("Evaluation result: score=0.85, passed=True")
+    mock_logger.info.assert_any_call("Evaluation result: passed=True")
 
 
 def test_pytest_runtest_makereport_uses_default_evaluator(mocker: MockerFixture) -> None:
@@ -792,7 +792,7 @@ def test_pytest_runtest_makereport_evaluation_exception(mocker: MockerFixture) -
     mock_marker = mocker.MagicMock()
 
     # Evaluator that raises an exception
-    async def failing_evaluator(item: Item) -> EvalResult:
+    async def failing_evaluator(item: Item) -> Readout:
         raise RuntimeError("Evaluation failed")
 
     mock_marker.kwargs = {"evaluator": failing_evaluator}
@@ -845,8 +845,7 @@ async def test_bradley_terry_evaluator_call_no_players(mocker: MockerFixture) ->
     result = await evaluator(mock_item)
 
     # Check result by attribute presence (module reload can cause isinstance to fail)
-    assert type(result).__name__ == "EvalResult"
-    assert result.score is None
+    assert type(result).__name__ == "Readout"
     assert result.passed is True
     assert result.details is not None
     assert result.details.get("message") == "No players to evaluate"
@@ -901,7 +900,7 @@ async def test_bradley_terry_evaluator_call_with_players(mocker: MockerFixture) 
     assert run_kwargs["max_standard_deviation"] == 2.0
 
     # Verify result (use type name check due to module reload)
-    assert type(result).__name__ == "EvalResult"
+    assert type(result).__name__ == "Readout"
     assert result.passed is True
 
 
@@ -909,7 +908,7 @@ async def test_bradley_terry_evaluator_call_with_players(mocker: MockerFixture) 
 async def test_bradley_terry_evaluator_protocol_conformance() -> None:
     """Test BradleyTerryEvaluator conforms to Evaluator Protocol."""
     evaluator = BradleyTerryEvaluator()
-    # Should be callable with Item and return Coroutine[Any, Any, EvalResult]
+    # Should be callable with Item and return Coroutine[Any, Any, Readout]
     assert callable(evaluator)
 
     # Type checker will verify Protocol conformance, but runtime check that it's callable

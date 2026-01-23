@@ -36,10 +36,9 @@ _current_item_var: contextvars.ContextVar[Item | None] = contextvars.ContextVar(
 
 
 @dataclass
-class EvalResult:
+class Readout:
     """Result from an evaluator execution."""
 
-    score: float | None = None
     passed: bool = True
     details: dict[str, Any] | None = None
 
@@ -51,7 +50,7 @@ class Evaluator(Protocol):
     Evaluator implementations configure themselves via __init__.
     """
 
-    def __call__(self, item: Item) -> Coroutine[Any, Any, EvalResult]: ...
+    def __call__(self, item: Item) -> Coroutine[Any, Any, Readout]: ...
 
 
 def pytest_addoption(parser: Parser) -> None:
@@ -323,7 +322,7 @@ def pytest_runtest_makereport(item: Item, call: CallInfo) -> None:
     # Run the evaluator asynchronously
     try:
         result = asyncio.run(evaluator(item))
-        logger.info(f"Evaluation result: score={result.score}, passed={result.passed}")
+        logger.info(f"Evaluation result: passed={result.passed}")
     except Exception:
         logger.exception("Error during evaluation in pytest_runtest_makereport.")
 
@@ -345,14 +344,14 @@ class BradleyTerryEvaluator:
         """
         self.criterion = criterion
 
-    async def __call__(self, item: Item) -> EvalResult:
+    async def __call__(self, item: Item) -> Readout:
         """Run Bradley-Terry tournament on baseline and novel responses.
 
         Args:
             item: The pytest test item with assay context and captured responses.
 
         Returns:
-            EvalResult with score, passed status, and details.
+            Readout with passed status and details.
         """
         # Prepare the list of all players, baseline and novel
         players: list[EvalPlayer] = []
@@ -379,7 +378,7 @@ class BradleyTerryEvaluator:
 
         if not players:
             logger.debug("No players to evaluate in tournament.")
-            return EvalResult(score=None, passed=True, details={"message": "No players to evaluate"})
+            return Readout(passed=True, details={"message": "No players to evaluate"})
 
         model_settings = ModelSettings(
             temperature=0.0,
@@ -408,12 +407,7 @@ class BradleyTerryEvaluator:
             logger.debug(f"Average score for baseline queries (Players 0 to 9): {np.mean(scores_baseline):7.4f}")
             logger.debug(f"Average score for novel queries  (Players 10 to 19): {np.mean(scores_novel):7.4f}")
 
-        # Calculate overall score (average of all scores)
-        all_scores = [p.score for p in players_scored if p.score is not None]
-        overall_score = float(np.mean(all_scores)) if all_scores else None
-
-        return EvalResult(
-            score=overall_score,
+        return Readout(
             passed=True,
             details={
                 "baseline_scores": scores_baseline,
