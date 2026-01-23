@@ -125,16 +125,33 @@ def test_assay_context_model_new_baseline_mode() -> None:
 def test_assay_context_with_cases() -> None:
     """Test AssayContext with a dataset containing cases."""
     cases: list[Case[dict[str, str], type[None], Any]] = [
-        Case(name="case_001", inputs={"query": "test query 1"}),
-        Case(name="case_002", inputs={"query": "test query 2"}),
+        Case(name="case_001", inputs={"topic": "test topic 1", "query": "test query 1"}),
+        Case(name="case_002", inputs={"topic": "test topic 2", "query": "test query 2"}),
     ]
     dataset = Dataset[dict[str, str], type[None], Any](cases=cases)
     path = Path("/tmp/test.json")
 
     context = AssayContext(dataset=dataset, path=path)
 
+    # Verify case count and structure
     assert len(context.dataset.cases) == 2
+
+    # Verify first case content
+    assert context.dataset.cases[0].name == "case_001"
+    assert context.dataset.cases[0].inputs["topic"] == "test topic 1"
     assert context.dataset.cases[0].inputs["query"] == "test query 1"
+    assert "topic" in context.dataset.cases[0].inputs
+    assert "query" in context.dataset.cases[0].inputs
+
+    # Verify dataset is mutable (required for update inside unit tests)
+    context.dataset.cases.clear()
+    assert len(context.dataset.cases) == 0
+
+    # Verify we can extend with new cases
+    new_case = Case(name="case_003", inputs={"query": "new query"})
+    context.dataset.cases.append(new_case)
+    assert len(context.dataset.cases) == 1
+    assert context.dataset.cases[0].name == "case_003"
 
 
 # =============================================================================
@@ -152,6 +169,15 @@ def test_path_computation(mocker: MockerFixture) -> None:
 
     expected = Path("/project/tests/assays/test_example/test_my_function.json")
     assert result == expected
+
+    # Verify path is absolute
+    assert result.is_absolute()
+
+    # Verify path ends with .json
+    assert result.suffix == ".json"
+
+    # Verify assays directory is in the path
+    assert "assays" in result.parts
 
 
 def test_path_computation_with_parametrized_test(mocker: MockerFixture) -> None:
@@ -212,14 +238,11 @@ def test_is_assay_non_function_item(mocker: MockerFixture) -> None:
 
 def test_pytest_addoption(mocker: MockerFixture) -> None:
     """Test pytest_addoption registers the --assay-mode option correctly."""
-    mock_group = mocker.MagicMock()
     mock_parser = mocker.MagicMock()
-    mock_parser.getgroup.return_value = mock_group
 
     pytest_addoption(mock_parser)
 
-    mock_parser.getgroup.assert_called_once_with("recording")
-    mock_group.addoption.assert_called_once_with(
+    mock_parser.addoption.assert_called_once_with(
         "--assay-mode",
         action="store",
         default="evaluate",
@@ -266,10 +289,15 @@ def test_pytest_runtest_setup_non_assay_item(mocker: MockerFixture) -> None:
 
 def test_pytest_runtest_setup_with_existing_dataset(mocker: MockerFixture, tmp_path: Path) -> None:
     """Test pytest_runtest_setup loads existing dataset from file."""
-    # Create a temporary dataset file
+    # Create a temporary dataset file with realistic topic data
     dataset_path = tmp_path / "assays" / "test_module" / "test_func.json"
     dataset_path.parent.mkdir(parents=True)
-    dataset = Dataset[dict[str, str], type[None], Any](cases=[Case(name="case_001", inputs={"query": "existing query"})])
+    dataset = Dataset[dict[str, str], type[None], Any](
+        cases=[
+            Case(name="case_001", inputs={"topic": "pangolin trafficking", "query": "existing query"}),
+            Case(name="case_002", inputs={"topic": "molecular gastronomy", "query": "another query"}),
+        ]
+    )
     dataset.to_file(dataset_path, schema_path=None)
 
     # Mock the item
@@ -289,20 +317,41 @@ def test_pytest_runtest_setup_with_existing_dataset(mocker: MockerFixture, tmp_p
     # Verify assay context was injected
     assert "assay" in mock_item.funcargs
     assay_ctx = mock_item.funcargs["assay"]
+
     # Check by attribute presence instead of isinstance (module reload can cause different class instances)
     assert hasattr(assay_ctx, "dataset")
     assert hasattr(assay_ctx, "path")
     assert hasattr(assay_ctx, "assay_mode")
-    assert len(assay_ctx.dataset.cases) == 1
+
+    # Verify dataset content was loaded correctly
+    assert len(assay_ctx.dataset.cases) == 2
     assert assay_ctx.path == dataset_path
+    assert assay_ctx.assay_mode == "evaluate"
+
+    # Verify case data integrity
+    assert assay_ctx.dataset.cases[0].name == "case_001"
+    assert assay_ctx.dataset.cases[0].inputs["topic"] == "pangolin trafficking"
+    assert assay_ctx.dataset.cases[0].inputs["query"] == "existing query"
+
+    assert assay_ctx.dataset.cases[1].name == "case_002"
+    assert assay_ctx.dataset.cases[1].inputs["topic"] == "molecular gastronomy"
+    assert assay_ctx.dataset.cases[1].inputs["query"] == "another query"
+
+    # Verify cases are iterable (as used in test_curiosity.py)
+    topics = [case.inputs["topic"] for case in assay_ctx.dataset.cases]
+    assert topics == ["pangolin trafficking", "molecular gastronomy"]
 
 
 def test_pytest_runtest_setup_with_generator(mocker: MockerFixture, tmp_path: Path) -> None:
     """Test pytest_runtest_setup calls generator when no dataset file exists."""
     dataset_path = tmp_path / "assays" / "test_module" / "test_func.json"
 
-    # Mock generator that returns a dataset
-    generated_dataset = Dataset[dict[str, str], type[None], Any](cases=[Case(name="generated", inputs={"query": "generated query"})])
+    # Mock generator that returns a dataset (like generate_evaluation_cases in test_curiosity.py)
+    topics = ["pangolin trafficking", "molecular gastronomy", "dark kitchen economics"]
+    generated_cases: list[Case[dict[str, str], type[None], Any]] = [
+        Case(name=f"case_{idx:03d}", inputs={"topic": topic}) for idx, topic in enumerate(topics)
+    ]
+    generated_dataset = Dataset[dict[str, str], type[None], Any](cases=generated_cases)
     mock_generator = mocker.MagicMock(return_value=generated_dataset)
 
     # Mock the item
@@ -319,15 +368,32 @@ def test_pytest_runtest_setup_with_generator(mocker: MockerFixture, tmp_path: Pa
 
     pytest_runtest_setup(mock_item)
 
-    # Verify generator was called
+    # Verify generator was called exactly once
     mock_generator.assert_called_once()
 
-    # Verify dataset was serialized
+    # Verify dataset file was created
     assert dataset_path.exists()
+    assert dataset_path.suffix == ".json"
 
-    # Verify assay context was injected
+    # Verify file contains valid JSON that can be reloaded
+    reloaded_dataset = Dataset[dict[str, str], type[None], Any].from_file(dataset_path)
+    assert len(reloaded_dataset.cases) == 3
+
+    # Verify reloaded data matches original
+    for idx, topic in enumerate(topics):
+        assert reloaded_dataset.cases[idx].name == f"case_{idx:03d}"
+        assert reloaded_dataset.cases[idx].inputs["topic"] == topic
+
+    # Verify assay context was injected with correct data
     assay_ctx = mock_item.funcargs["assay"]
-    assert len(assay_ctx.dataset.cases) == 1
+    assert len(assay_ctx.dataset.cases) == 3
+    assert assay_ctx.path == dataset_path
+    assert assay_ctx.assay_mode == "evaluate"
+
+    # Verify case content
+    assert assay_ctx.dataset.cases[0].inputs["topic"] == "pangolin trafficking"
+    assert assay_ctx.dataset.cases[1].inputs["topic"] == "molecular gastronomy"
+    assert assay_ctx.dataset.cases[2].inputs["topic"] == "dark kitchen economics"
 
 
 def test_pytest_runtest_setup_generator_invalid_return(mocker: MockerFixture, tmp_path: Path) -> None:
@@ -478,7 +544,13 @@ def test_pytest_runtest_teardown_evaluate_mode(mocker: MockerFixture, tmp_path: 
 def test_pytest_runtest_teardown_new_baseline_mode(mocker: MockerFixture, tmp_path: Path) -> None:
     """Test pytest_runtest_teardown serializes dataset in new_baseline mode."""
     dataset_path = tmp_path / "assays" / "test.json"
-    dataset = Dataset[dict[str, str], type[None], Any](cases=[Case(name="case_001", inputs={"query": "test"})])
+
+    # Create dataset with multiple cases (simulating test_curiosity.py workflow)
+    cases: list[Case[dict[str, str], type[None], Any]] = [
+        Case(name="case_000", inputs={"topic": "topic A", "query": "generated query A"}),
+        Case(name="case_001", inputs={"topic": "topic B", "query": "generated query B"}),
+    ]
+    dataset = Dataset[dict[str, str], type[None], Any](cases=cases)
 
     mock_item = mocker.MagicMock(spec=Function)
     mock_item.funcargs = {"assay": AssayContext(dataset=dataset, path=dataset_path, assay_mode="new_baseline")}
@@ -490,6 +562,20 @@ def test_pytest_runtest_teardown_new_baseline_mode(mocker: MockerFixture, tmp_pa
 
     # File should be created in new_baseline mode
     assert dataset_path.exists()
+    assert dataset_path.suffix == ".json"
+
+    # Verify serialized content can be reloaded
+    reloaded = Dataset[dict[str, str], type[None], Any].from_file(dataset_path)
+    assert len(reloaded.cases) == 2
+
+    # Verify data integrity after serialization round-trip
+    assert reloaded.cases[0].name == "case_000"
+    assert reloaded.cases[0].inputs["topic"] == "topic A"
+    assert reloaded.cases[0].inputs["query"] == "generated query A"
+
+    assert reloaded.cases[1].name == "case_001"
+    assert reloaded.cases[1].inputs["topic"] == "topic B"
+    assert reloaded.cases[1].inputs["query"] == "generated query B"
 
 
 def test_pytest_runtest_teardown_no_assay_context(mocker: MockerFixture) -> None:
@@ -570,9 +656,17 @@ def test_pytest_runtest_makereport_passed_test(mocker: MockerFixture) -> None:
 
     pytest_runtest_makereport(mock_item, mock_call)
 
+    # Verify all expected log messages
     mock_logger.info.assert_any_call("Test: tests/test_example.py::test_foo")
     mock_logger.info.assert_any_call("Test Outcome: passed")
     mock_logger.info.assert_any_call("Test Duration: 0.12345 seconds")
+
+    # Verify logger.info was called exactly 3 times for the summary
+    assert mock_logger.info.call_count == 3
+
+    # Verify error was not logged for passing test
+    mock_logger.error.assert_not_called()
+    mock_logger.exception.assert_not_called()
 
 
 def test_pytest_runtest_makereport_failed_test(mocker: MockerFixture) -> None:
@@ -756,7 +850,24 @@ async def test_bradley_terry_evaluation_with_baseline_cases(mocker: MockerFixtur
     # Verify tournament was created with players
     mock_tournament_class.assert_called_once()
     call_kwargs = mock_tournament_class.call_args.kwargs
+
+    # Verify player count matches baseline cases
     assert len(call_kwargs["players"]) == 2
+
+    # Verify players have correct indices
+    assert call_kwargs["players"][0].idx == 0
+    assert call_kwargs["players"][1].idx == 1
+
+    # Verify players contain the query text from cases
+    assert call_kwargs["players"][0].item == "baseline query 1"
+    assert call_kwargs["players"][1].item == "baseline query 2"
+
+    # Verify game criterion was set
+    assert "game" in call_kwargs
+    assert call_kwargs["game"].criterion is not None
+
+    # Verify tournament.run was called
+    mock_tournament.run.assert_called_once()
 
 
 @pytest.mark.asyncio
@@ -764,7 +875,7 @@ async def test_bradley_terry_evaluation_with_novel_responses(mocker: MockerFixtu
     """Test bradley_terry_evaluation creates players from novel responses."""
     dataset = Dataset[dict[str, str], type[None], Any](cases=[])
 
-    # Mock agent responses
+    # Mock agent responses (simulating Agent.run() outputs captured during test)
     mock_response1 = mocker.MagicMock(spec=AgentRunResult)
     mock_response1.output = "novel output 1"
     mock_response2 = mocker.MagicMock(spec=AgentRunResult)
@@ -790,6 +901,14 @@ async def test_bradley_terry_evaluation_with_novel_responses(mocker: MockerFixtu
     call_kwargs = mock_tournament_class.call_args.kwargs
     assert len(call_kwargs["players"]) == 2
 
+    # Verify novel players have correct indices (starting from 0 since no baseline)
+    assert call_kwargs["players"][0].idx == 0
+    assert call_kwargs["players"][1].idx == 1
+
+    # Verify novel players contain the agent output text
+    assert call_kwargs["players"][0].item == "novel output 1"
+    assert call_kwargs["players"][1].item == "novel output 2"
+
 
 @pytest.mark.asyncio
 async def test_bradley_terry_evaluation_skips_none_outputs(mocker: MockerFixture) -> None:
@@ -800,11 +919,13 @@ async def test_bradley_terry_evaluation_skips_none_outputs(mocker: MockerFixture
     mock_response1.output = None  # Should be skipped
     mock_response2 = mocker.MagicMock(spec=AgentRunResult)
     mock_response2.output = "valid output"
+    mock_response3 = mocker.MagicMock(spec=AgentRunResult)
+    mock_response3.output = None  # Also skipped
 
     mock_item = mocker.MagicMock(spec=Function)
     mock_item.funcargs = {"assay": AssayContext(dataset=dataset, path=Path("/tmp/test.json"), assay_mode="evaluate")}
     # Use the module's AGENT_RESPONSES_KEY
-    mock_item.stash = {deepresearcher2.plugin.AGENT_RESPONSES_KEY: [mock_response1, mock_response2]}
+    mock_item.stash = {deepresearcher2.plugin.AGENT_RESPONSES_KEY: [mock_response1, mock_response2, mock_response3]}
 
     mock_logger = mocker.patch("deepresearcher2.plugin.logger")
 
@@ -816,14 +937,150 @@ async def test_bradley_terry_evaluation_skips_none_outputs(mocker: MockerFixture
 
     await bradley_terry_evaluation(mock_item)
 
-    # Should log warning for None output
-    mock_logger.warning.assert_called_once()
-    assert "None output" in str(mock_logger.warning.call_args)
+    # Should log warning for each None output
+    assert mock_logger.warning.call_count == 2
+    warning_messages = [str(call) for call in mock_logger.warning.call_args_list]
+    assert any("Response #0" in msg and "None output" in msg for msg in warning_messages)
+    assert any("Response #2" in msg and "None output" in msg for msg in warning_messages)
 
-    # Only one player should be created
+    # Only one valid player should be created
     mock_tournament_class.assert_called_once()
     call_kwargs = mock_tournament_class.call_args.kwargs
     assert len(call_kwargs["players"]) == 1
+
+    # Verify the valid player has the correct data
+    assert call_kwargs["players"][0].item == "valid output"
+    # Index should be 1 (0 was skipped, 1 had valid output)
+    assert call_kwargs["players"][0].idx == 1
+
+
+# =============================================================================
+# Integration-style Tests (Realistic Workflows)
+# =============================================================================
+
+
+def test_full_assay_workflow_with_topic_generation(mocker: MockerFixture, tmp_path: Path) -> None:
+    """
+    Test a realistic assay workflow similar to test_curiosity.py.
+
+    This test verifies the complete flow:
+    1. Generator creates initial cases with topics
+    2. Setup injects AssayContext
+    3. Test can iterate cases and add queries
+    4. Teardown serializes updated dataset
+    """
+    dataset_path = tmp_path / "assays" / "test_curiosity" / "test_search_queries.json"
+
+    # Define topics like in test_curiosity.py
+    topics = ["pangolin trafficking networks", "molecular gastronomy", "dark kitchen economics"]
+
+    # Generator function (similar to generate_evaluation_cases)
+    def generate_cases() -> Dataset[dict[str, str], type[None], Any]:
+        cases: list[Case[dict[str, str], type[None], Any]] = []
+        for idx, topic in enumerate(topics):
+            case = Case(name=f"case_{idx:03d}", inputs={"topic": topic})
+            cases.append(case)
+        return Dataset[dict[str, str], type[None], Any](cases=cases)
+
+    # Setup: Create mock item with generator
+    mock_item = mocker.MagicMock(spec=Function)
+    mock_item.funcargs = {}
+    mock_marker = mocker.MagicMock()
+    mock_marker.kwargs = {"generator": generate_cases}
+    mock_item.get_closest_marker.return_value = mock_marker
+    mock_item.config.getoption.return_value = "new_baseline"
+
+    mocker.patch("deepresearcher2.plugin._is_assay", return_value=True)
+    mocker.patch("deepresearcher2.plugin._path", return_value=dataset_path)
+    mocker.patch("deepresearcher2.plugin.logger")
+
+    # Run setup
+    pytest_runtest_setup(mock_item)
+
+    # Verify setup injected correct context
+    assert "assay" in mock_item.funcargs
+    assay_ctx = mock_item.funcargs["assay"]
+    assert len(assay_ctx.dataset.cases) == 3
+    assert assay_ctx.assay_mode == "new_baseline"
+
+    # Simulate test body: iterate cases and add generated queries
+    cases_new: list[Case[dict[str, str], type[None], Any]] = []
+    for case in assay_ctx.dataset.cases:
+        topic = case.inputs["topic"]
+        # Simulate agent generating a query
+        generated_query = f"search for: {topic}"
+        case_new = Case(
+            name=case.name,
+            inputs={"topic": topic, "query": generated_query},
+        )
+        cases_new.append(case_new)
+
+    # Update dataset in place (as done in test_curiosity.py)
+    assay_ctx.dataset.cases.clear()
+    assay_ctx.dataset.cases.extend(cases_new)
+
+    # Verify dataset was updated
+    assert len(assay_ctx.dataset.cases) == 3
+    assert "query" in assay_ctx.dataset.cases[0].inputs
+    assert assay_ctx.dataset.cases[0].inputs["query"] == "search for: pangolin trafficking networks"
+
+    # Run teardown (should serialize in new_baseline mode)
+    pytest_runtest_teardown(mock_item)
+
+    # Verify file was created with updated data
+    assert dataset_path.exists()
+
+    # Reload and verify data integrity
+    reloaded = Dataset[dict[str, str], type[None], Any].from_file(dataset_path)
+    assert len(reloaded.cases) == 3
+
+    for idx, topic in enumerate(topics):
+        assert reloaded.cases[idx].name == f"case_{idx:03d}"
+        assert reloaded.cases[idx].inputs["topic"] == topic
+        assert reloaded.cases[idx].inputs["query"] == f"search for: {topic}"
+
+
+def test_response_capture_simulation(mocker: MockerFixture) -> None:
+    """
+    Test that the response capture mechanism correctly stores Agent outputs.
+
+    This simulates what happens during pytest_runtest_call when Agent.run() is called.
+    """
+    # Setup mock item with assay marker
+    mock_item = mocker.MagicMock(spec=Function)
+    mock_item.stash = {}
+    mock_marker = mocker.MagicMock()
+    mock_item.get_closest_marker.return_value = mock_marker
+
+    mocker.patch("deepresearcher2.plugin.logger")
+
+    # Run the hook to initialize stash
+    gen = pytest_runtest_call(mock_item)
+    next(gen)  # Run until yield
+
+    # Verify stash was initialized with empty list
+    assert deepresearcher2.plugin.AGENT_RESPONSES_KEY in mock_item.stash
+    responses = mock_item.stash[deepresearcher2.plugin.AGENT_RESPONSES_KEY]
+    assert responses == []
+
+    # Verify context var was set
+    assert deepresearcher2.plugin._current_item_var.get() == mock_item
+
+    # Simulate adding responses (normally done by wrapped Agent.run)
+    mock_response = mocker.MagicMock(spec=AgentRunResult)
+    mock_response.output = "test output"
+    responses.append(mock_response)
+
+    # Verify response was captured
+    assert len(mock_item.stash[deepresearcher2.plugin.AGENT_RESPONSES_KEY]) == 1
+    assert mock_item.stash[deepresearcher2.plugin.AGENT_RESPONSES_KEY][0].output == "test output"
+
+    # Clean up
+    with contextlib.suppress(StopIteration):
+        next(gen)
+
+    # Verify context var was reset
+    assert deepresearcher2.plugin._current_item_var.get() is None
 
 
 # =============================================================================

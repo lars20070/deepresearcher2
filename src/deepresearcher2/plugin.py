@@ -44,8 +44,7 @@ def pytest_addoption(parser: Parser) -> None:
     Args:
         parser: The pytest argument parser.
     """
-    group = parser.getgroup("recording")
-    group.addoption(
+    parser.addoption(
         "--assay-mode",
         action="store",
         default="evaluate",
