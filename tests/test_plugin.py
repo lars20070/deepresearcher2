@@ -166,7 +166,7 @@ def test_assay_context_with_cases() -> None:
 def test_path_computation(mocker: MockerFixture) -> None:
     """Test _path computes the correct assay file path."""
     mock_item = mocker.MagicMock(spec=Item)
-    mock_item.fspath = "/project/tests/test_example.py"
+    mock_item.path = Path("/project/tests/test_example.py")
     mock_item.name = "test_my_function"
 
     result = _path(mock_item)
@@ -187,7 +187,7 @@ def test_path_computation(mocker: MockerFixture) -> None:
 def test_path_computation_with_parametrized_test(mocker: MockerFixture) -> None:
     """Test _path strips parameter suffix from parametrized test names."""
     mock_item = mocker.MagicMock(spec=Item)
-    mock_item.fspath = "/project/tests/test_example.py"
+    mock_item.path = Path("/project/tests/test_example.py")
     mock_item.name = "test_my_function[param1-param2]"
 
     result = _path(mock_item)
@@ -200,7 +200,7 @@ def test_path_computation_with_parametrized_test(mocker: MockerFixture) -> None:
 def test_path_computation_nested_directory(mocker: MockerFixture) -> None:
     """Test _path with deeply nested test directories."""
     mock_item = mocker.MagicMock(spec=Item)
-    mock_item.fspath = "/project/tests/integration/api/test_endpoints.py"
+    mock_item.path = Path("/project/tests/integration/api/test_endpoints.py")
     mock_item.name = "test_get_user"
 
     result = _path(mock_item)

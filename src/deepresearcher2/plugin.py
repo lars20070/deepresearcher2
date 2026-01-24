@@ -120,7 +120,7 @@ def _path(item: Item) -> Path:
     Args:
         item: The pytest test item.
     """
-    path = Path(item.fspath)
+    path = item.path
     module_name = path.stem
     test_name = item.name.split("[")[0]
     return path.parent / "assays" / module_name / f"{test_name}.json"
