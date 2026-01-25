@@ -890,13 +890,15 @@ def test_bradley_terry_evaluator_init_defaults() -> None:
     evaluator = BradleyTerryEvaluator()
 
     assert evaluator.criterion == "Which of the two search queries shows more genuine curiosity and creativity, and is less formulaic?"
+    assert evaluator.max_standard_deviation == 2.0
 
 
 def test_bradley_terry_evaluator_init_custom() -> None:
-    """Test BradleyTerryEvaluator initializes with custom criterion."""
-    evaluator = BradleyTerryEvaluator(criterion="Custom criterion")
+    """Test BradleyTerryEvaluator initializes with custom values."""
+    evaluator = BradleyTerryEvaluator(criterion="Custom criterion", max_standard_deviation=1.5)
 
     assert evaluator.criterion == "Custom criterion"
+    assert evaluator.max_standard_deviation == 1.5
 
 
 @pytest.mark.asyncio
@@ -922,7 +924,7 @@ async def test_bradley_terry_evaluator_call_no_players(mocker: MockerFixture) ->
 @pytest.mark.asyncio
 async def test_bradley_terry_evaluator_call_with_players(mocker: MockerFixture) -> None:
     """Test BradleyTerryEvaluator.__call__ runs tournament with players."""
-    evaluator = BradleyTerryEvaluator(criterion="Test criterion")
+    evaluator = BradleyTerryEvaluator(criterion="Test criterion", max_standard_deviation=1.5)
 
     cases: list[Case[dict[str, str], type[None], Any]] = [
         Case(name="case_001", inputs={"query": "baseline query"}),
@@ -939,7 +941,6 @@ async def test_bradley_terry_evaluator_call_with_players(mocker: MockerFixture) 
     mocker.patch("deepresearcher2.plugin.logger")
 
     # Mock the tournament - use SimpleNamespace for players to allow formatting
-
     mock_tournament_class = mocker.patch("deepresearcher2.plugin.EvalTournament")
     mock_tournament = mocker.MagicMock()
     mock_player = SimpleNamespace(idx=0, score=0.75, item="baseline query")
@@ -961,10 +962,10 @@ async def test_bradley_terry_evaluator_call_with_players(mocker: MockerFixture) 
     call_kwargs = mock_tournament_class.call_args.kwargs
     assert call_kwargs["game"].criterion == "Test criterion"
 
-    # Verify tournament.run was called with hard-coded max_standard_deviation
+    # Verify tournament.run was called with configured max_standard_deviation
     mock_tournament.run.assert_called_once()
     run_kwargs = mock_tournament.run.call_args.kwargs
-    assert run_kwargs["max_standard_deviation"] == 2.0
+    assert run_kwargs["max_standard_deviation"] == 1.5
 
     # Verify result (use type name check due to module reload)
     assert type(result).__name__ == "Readout"

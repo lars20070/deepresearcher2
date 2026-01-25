@@ -350,13 +350,16 @@ class BradleyTerryEvaluator:
     def __init__(
         self,
         criterion: str = "Which of the two search queries shows more genuine curiosity and creativity, and is less formulaic?",
+        max_standard_deviation: float = 2.0,
     ) -> None:
         """Configure the evaluator.
 
         Args:
             criterion: The evaluation criterion for pairwise comparison.
+            max_standard_deviation: Convergence threshold for adaptive strategy.
         """
         self.criterion = criterion
+        self.max_standard_deviation = max_standard_deviation
 
     async def __call__(self, item: Item) -> Readout:
         """Run Bradley-Terry tournament on baseline and novel responses.
@@ -406,7 +409,7 @@ class BradleyTerryEvaluator:
             agent=EVALUATION_AGENT,
             model_settings=model_settings,
             strategy=adaptive_uncertainty_strategy,
-            max_standard_deviation=2.0,
+            max_standard_deviation=self.max_standard_deviation,
         )
 
         # Players sorted by score
