@@ -1,4 +1,10 @@
-# Deep Researcher 2
+<div align="center">
+  <a href="https://github.com/lars20070/deepresearcher2/">
+    <picture>
+      <img src=".github/images/banner_deepresearcher2.png" alt="Deep Researcher 2" width="60%">
+    </picture>
+  </a>
+</div>
 
 [![codecov](https://codecov.io/gh/lars20070/deepresearcher2/branch/master/graph/badge.svg)](https://codecov.io/gh/lars20070/deepresearcher2)
 [![Build](https://github.com/lars20070/deepresearcher2/actions/workflows/build.yaml/badge.svg)](https://github.com/lars20070/deepresearcher2/actions/workflows/build.yaml)
@@ -7,11 +13,9 @@
 [![License](https://img.shields.io/github/license/lars20070/deepresearcher2)](https://github.com/lars20070/deepresearcher2/blob/master/LICENSE)
 
 A fully local web research and report writing assistant that protects your privacy.
-The AI models run locally using Ollama, and web searches are performed locally with SearXNG.
-By default, no API keys are needed.
+The AI models run locally using [Ollama](https://ollama.com) or [LM Studio](https://lmstudio.ai), and web searches are performed locally with [SearXNG](https://searxng.org). By default, no API keys are required.
 
-**Note:** Steps 1 and 2 are optional. You can choose to run the models and web searches in the cloud instead.
-If you do, you must add the required API keys to the `.env` file.
+**Note:** Steps 1 and 2 are optional. You can instead run models and web searches in the cloud. To do so, add the required API keys to your `.env` file. Supported model providers include OpenRouter, Together AI, DeepInfra, and OpenAI. For web searches, Deep Researcher 2 supports Brave, DuckDuckGo, Perplexity, Serper and Tavily.
 
 
 ## Getting started
@@ -51,18 +55,5 @@ stateDiagram-v2
     FinalizeSummary --> [*]
 ```
 <br>*Deep Researcher 2 workflow*
-<br>
-<br>
-
-## UML diagrams
-
-![class diagram](./uml/classes.png "Deep Researcher 2 class structure")
-<br>*Deep Researcher 2 class structure*
-
-<br>
-
-![package diagram](./uml/packages.png "Deep Researcher 2 package structure")
-<br>*Deep Researcher 2 package structure*
-
 <br>
 <br>

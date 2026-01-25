@@ -19,9 +19,11 @@ Use Ruff for formatting and linting (configured in `pyproject.toml`):
 # Format code
 uvx ruff format .
 
-# Check linting
-uvx ruff check .
+# Check and fix linting issues (ALWAYS run with --fix)
+uvx ruff check --fix .
 ```
+
+**Important:** Always use `--fix` to automatically resolve fixable issues. Run this after any code changes.
 
 **Key rules enabled:**
 - `E`, `F` - pycodestyle, pyflakes (essential errors)
@@ -82,9 +84,11 @@ async def fetch_content(url: str) -> str:
 
 ### Type Checking
 ```bash
-# Run before committing
+# ALWAYS run after code changes
 uvx pyright .
 ```
+
+**Important:** Always run pyright to catch type errors. This must pass before committing any Python code.
 
 ### Modern Syntax
 Use Python 3.12+ type syntax:
@@ -252,7 +256,12 @@ AGENT_NAME = Agent(
 
 ## Docstrings
 
-Use Google-style docstrings:
+Use Google-style docstrings (not Sphinx style):
+
+### Formatting Rules
+- **No backticks**: Do not use backticks in docstrings. Write `--assay-mode` as --assay-mode, `None` as None, `True` as True, etc.
+- Google style uses plain text for parameter names, options, and values
+
 ```python
 def complex_function(param1: str, param2: int = 5) -> dict[str, Any]:
     """Short one-line description.
@@ -280,8 +289,8 @@ Run these checks:
 # 1. Format code
 uvx ruff format .
 
-# 2. Check linting
-uvx ruff check .
+# 2. Check and fix linting issues
+uvx ruff check --fix .
 
 # 3. Type checking
 uvx pyright .
@@ -289,3 +298,5 @@ uvx pyright .
 # 4. Run tests
 uv run pytest -n auto -m "not paid"
 ```
+
+**Note:** The `--fix` flag automatically resolves fixable linting issues. Always verify the changes it makes are appropriate.
