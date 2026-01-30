@@ -15,7 +15,8 @@ ENV DOCKER_BUILDKIT=1
 # hadolint ignore=DL3008
 RUN --mount=type=cache,target=/var/cache/apt \
   --mount=type=cache,target=/var/lib/apt/lists \
-  apt-get update \
+  rm -f /etc/apt/sources.list.d/yarn.list \
+  && apt-get update \
   && apt-get install -y --no-install-recommends \
   cmake \
   ninja-build \
