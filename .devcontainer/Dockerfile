@@ -12,6 +12,7 @@ ENV DOCKER_BUILDKIT=1
 
 # Install system dependencies with cache mount for faster rebuilds (latest versions)
 # Trixie is a testing distribution. Certain versions of packages might disappear from mirrors. Therefore we do not pin versions here.
+# Remove yarn source list for now (GPG key missing, causes apt-get update to fail)
 # hadolint ignore=DL3008
 RUN --mount=type=cache,target=/var/cache/apt \
   --mount=type=cache,target=/var/lib/apt/lists \
