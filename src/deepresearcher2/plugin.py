@@ -360,6 +360,8 @@ class BradleyTerryEvaluator:
         """
         self.criterion = criterion
         self.max_standard_deviation = max_standard_deviation
+        self.model_settings = ModelSettings(temperature=0.0, timeout=300)
+        self.agent = EVALUATION_AGENT
 
     async def __call__(self, item: Item) -> Readout:
         """Run Bradley-Terry tournament on baseline and novel responses.
@@ -397,17 +399,12 @@ class BradleyTerryEvaluator:
             logger.debug("No players to evaluate in tournament.")
             return Readout(passed=True, details={"message": "No players to evaluate"})
 
-        model_settings = ModelSettings(
-            temperature=0.0,
-            timeout=300,
-        )
-
         # Run the Bradley-Terry tournament to score both baseline and novel queries
         game = EvalGame(criterion=self.criterion)
         tournament = EvalTournament(players=players, game=game)
         players_scored = await tournament.run(
-            agent=EVALUATION_AGENT,
-            model_settings=model_settings,
+            agent=self.agent,
+            model_settings=self.model_settings,
             strategy=adaptive_uncertainty_strategy,
             max_standard_deviation=self.max_standard_deviation,
         )

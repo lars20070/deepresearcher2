@@ -924,7 +924,14 @@ async def test_bradley_terry_evaluator_call_no_players(mocker: MockerFixture) ->
 @pytest.mark.asyncio
 async def test_bradley_terry_evaluator_call_with_players(mocker: MockerFixture) -> None:
     """Test BradleyTerryEvaluator.__call__ runs tournament with players."""
+    # Mock ModelSettings before creating the evaluator (it's now called in __init__)
+    mock_model_settings = mocker.patch("deepresearcher2.plugin.ModelSettings")
+    mock_model_settings.return_value = mocker.MagicMock()
+
     evaluator = BradleyTerryEvaluator(criterion="Test criterion", max_standard_deviation=1.5)
+
+    # Verify ModelSettings was called with hard-coded values during __init__
+    mock_model_settings.assert_called_once_with(temperature=0.0, timeout=300)
 
     cases: list[Case[dict[str, str], type[None], Any]] = [
         Case(name="case_001", inputs={"query": "baseline query"}),
@@ -948,14 +955,7 @@ async def test_bradley_terry_evaluator_call_with_players(mocker: MockerFixture) 
     mock_tournament.get_player_by_idx = MagicMock(return_value=mock_player)
     mock_tournament_class.return_value = mock_tournament
 
-    # Mock ModelSettings to verify it uses hard-coded values
-    mock_model_settings = mocker.patch("deepresearcher2.plugin.ModelSettings")
-    mock_model_settings.return_value = mocker.MagicMock()
-
     result = await evaluator(mock_item)
-
-    # Verify ModelSettings was called with hard-coded values
-    mock_model_settings.assert_called_once_with(temperature=0.0, timeout=300)
 
     # Verify tournament was created with correct criterion
     mock_tournament_class.assert_called_once()
