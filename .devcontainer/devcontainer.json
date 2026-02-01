@@ -61,10 +61,11 @@
   // Use 'remoteEnv' to set environment variables for the remote workspace. Visible to VS Code background process only.
   "remoteEnv": {},
   // Use 'postCreateCommand' to run commands after the container is created.
+  // Note that the .venv in the Debian dev container might be incompatible to the one on the host machine. Hence, we recreate it here.
   "postCreateCommand": [
     "bash",
     "-c",
-    "uv sync"
+    "rm -rf .venv 2>/dev/null || true && uv sync"
   ],
   //"postStartCommand": "",
   // Configure tool-specific properties.

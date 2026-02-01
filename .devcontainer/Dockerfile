@@ -26,6 +26,7 @@ RUN --mount=type=cache,target=/var/cache/apt \
   ninja-build \
   libclang-dev \
   zstd \
+  graphviz \
   && apt-get clean -y \
   && rm -rf /var/lib/apt/lists/*
 
