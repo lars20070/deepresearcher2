@@ -64,7 +64,7 @@
   "postCreateCommand": [
     "bash",
     "-c",
-    "rm -rf .venv && uv sync"
+    "uv sync"
   ],
   //"postStartCommand": "",
   // Configure tool-specific properties.

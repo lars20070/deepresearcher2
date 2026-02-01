@@ -34,7 +34,10 @@ RUN --mount=type=cache,target=/var/cache/apt \
 RUN curl -fsSL https://ollama.com/install.sh | sh
 
 # Install Claude Code CLI
+# Must be installed as non-root user
+USER vscode
 RUN curl -fsSL https://claude.ai/install.sh | bash
+USER root
 
 # The vscode user already exists in the base image with UID 1000.
 USER vscode
