@@ -15,7 +15,8 @@ from pydantic_ai.settings import ModelSettings
 from pydantic_evals import Dataset
 from pytest import CallInfo, Config, Function, Item, Parser
 
-from .agents import EVALUATION_AGENT
+from .agents import create_model
+from .config import config
 from .evals.evals import (
     EvalGame,
     EvalPlayer,
@@ -23,6 +24,8 @@ from .evals.evals import (
     adaptive_uncertainty_strategy,
 )
 from .logger import logger
+from .models import GameResult
+from .prompts import EVALUATION_INSTRUCTIONS
 
 # Modes for the assay plugin. "evaluate" is the default mode.
 ASSAY_MODES = ("evaluate", "new_baseline")
@@ -360,8 +363,15 @@ class BradleyTerryEvaluator:
         """
         self.criterion = criterion
         self.max_standard_deviation = max_standard_deviation
+        self.model = create_model(config)
         self.model_settings = ModelSettings(temperature=0.0, timeout=300)
-        self.agent = EVALUATION_AGENT
+        self.agent = Agent(
+            model=self.model,
+            output_type=GameResult,
+            system_prompt=EVALUATION_INSTRUCTIONS,
+            retries=5,
+            instrument=True,
+        )
 
     async def __call__(self, item: Item) -> Readout:
         """Run Bradley-Terry tournament on baseline and novel responses.
