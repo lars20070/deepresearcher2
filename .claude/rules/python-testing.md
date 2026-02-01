@@ -1,0 +1,83 @@
+# Testing with Pytest
+
+## Testing Principles
+
+- **Reuse, Don't Replicate**: Tests should reuse as much functional code as possible. Avoid reimplementing application logic within a test. Import and call the actual functions and classes you intend to test.
+- **Mock Fundamental Processes**: When isolating code for a unit test, mock the most fundamental external interaction. For example, mock the `asyncio.create_subprocess_exec` call for a command-line tool, not a higher-level function that wraps it. This ensures you are testing your application's error handling and response parsing logic.
+- **Cover All Failure Modes**: Every test suite should cover not just the "happy path" but also all conceivable failure modes. Use `pytest.raises` to verify that your code correctly handles non-zero return codes, missing commands (`FileNotFoundError`), network errors, and other exceptional conditions.
+
+## Test Structure
+
+```python
+@pytest.mark.vcr()  # For tests using VCR cassettes
+@pytest.mark.asyncio  # For async tests
+async def test_feature() -> None:
+    """Test description."""
+    # Arrange
+    ...
+    
+    # Act
+    result = await some_function()
+    
+    # Assert
+    assert result is not None
+```
+
+## Running Tests
+
+```bash
+# Run all tests (excluding paid)
+uv run pytest -m "not paid"
+
+# Run tests with verbose output
+uv run pytest -v
+
+# Run specific test file
+uv run pytest tests/test_utils.py
+
+# Run specific test
+uv run pytest tests/test_utils.py::test_fetch_content -v
+
+# Run tests in parallel
+uv run pytest -n auto
+
+# Run tests with coverage report
+uv run pytest --cov=src/deepresearcher2 --cov-report=term-missing
+```
+
+## Markers
+
+- `@pytest.mark.paid` - Requires paid API keys (skipped in CI)
+- `@pytest.mark.ollama` - Requires local Ollama (skipped in CI)
+- `@pytest.mark.searxng` - Requires local SearXNG (skipped in CI)
+- `@pytest.mark.vcr()` - Uses VCR cassettes for HTTP recording
+
+## VCR Cassettes
+
+- Location: `tests/cassettes/`
+- Record mode: `'none'` (playback only by default)
+- Hostname normalization in `conftest.py` handles `host.docker.internal` → `localhost`
+- Deterministic tests: set `temperature=0.0` in `MODEL_SETTINGS`
+
+## Coverage Requirements
+
+**After writing or modifying tests**, verify coverage targets are met:
+
+1. **Read coverage targets** from `.codecov.yaml` to determine:
+   - `coverage.status.project.default.target` - minimum overall project coverage
+   - `coverage.status.project.default.threshold` - allowed coverage drop tolerance
+   - `coverage.status.patch.default.target` - minimum coverage for new/modified code
+
+2. **Run coverage report**:
+```bash
+# Full project coverage
+uv run pytest --cov=src/deepresearcher2 --cov-report=term-missing
+
+# Specific module coverage
+uv run pytest --cov=src/deepresearcher2/MODULE_NAME --cov-report=term-missing tests/test_MODULE_NAME.py
+```
+
+3. **Verify targets are met**:
+   - New code must meet the **patch target** from `.codecov.yaml`
+   - Overall coverage must not drop below **project target minus threshold**
+   - Focus coverage on critical paths: error handling, edge cases, and main functionality
