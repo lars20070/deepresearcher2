@@ -364,7 +364,10 @@ class BradleyTerryEvaluator:
         self.criterion = criterion
         self.max_standard_deviation = max_standard_deviation
         self.model = create_model(config)
-        self.model_settings = ModelSettings(temperature=0.0, timeout=300)
+        self.model_settings = ModelSettings(
+            temperature=0.0,
+            timeout=300,
+        )
         self.agent = Agent(
             model=self.model,
             output_type=GameResult,
