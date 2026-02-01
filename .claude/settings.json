@@ -11,14 +11,6 @@
     "typeChecker": "pyright",
     "maxLineLength": 150
   },
-  "mcpServers": {
-    "context7": {
-      "disabled": false
-    },
-    "github": {
-      "disabled": false
-    }
-  },
   "dependencies": {
     "runtime": [
       "pydantic-ai",
