@@ -56,7 +56,7 @@ evaluation_model = OpenAIChatModel(
                 ),
             )
 
-# @pytest.mark.skip(reason="Run only locally with DeepInfra cloud inference. PROVIDER='deepinfra' MODEL='Qwen/Qwen2.5-72B-Instruct'")
+@pytest.mark.skip(reason="Run only locally with DeepInfra cloud inference. PROVIDER='deepinfra' MODEL='Qwen/Qwen2.5-72B-Instruct'")
 @pytest.mark.assay(
     generator=generate_evaluation_cases,
     evaluator=PairwiseEvaluator(
