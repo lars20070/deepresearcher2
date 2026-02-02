@@ -2,9 +2,10 @@
 import asyncio
 import contextvars
 import json
+import textwrap
 from collections.abc import Coroutine, Generator
 from pathlib import Path
-from typing import Any, Protocol
+from typing import Any, Literal, Protocol
 
 import numpy as np
 import pytest
@@ -379,28 +380,19 @@ class PairwiseEvaluator:
             <QUESTION> Which of the two ice cream flavours below is more creative? </QUESTION>
             <A> Vanilla </A> 
             <B> Pickled Citrus Ribbon </B>
-            Expected output:
-            {
-                "response": "B",
-            }
+            Expected output: B
 
             Example 2:
             <QUESTION> Which search query shows more genuine curiosity? </QUESTION>
             <A> effect of ocean acidification feedback loops on Arctic methane release </A> 
             <B> climate change effects </B>
-            Expected output:
-            {
-                "response": "A",
-            }
+            Expected output: A
 
             Example 3:
             <QUESTION> Which reply is more insulting? </QUESTION>
             <A> Your argument lacks logical coherence and fails to address the core issue at hand. </A> 
             <B> That's an interesting perspective, though I see it differently. </B>
-            Expected output:
-            {
-                "response": "A",
-            }
+            Expected output: A
             </EXAMPLES>
 
             <REQUIREMENTS>
@@ -411,22 +403,14 @@ class PairwiseEvaluator:
             </REQUIREMENTS>
 
             <OUTPUT_FORMAT>
-            You must respond with valid JSON containing exactly one field called "response" with value "A" or "B":
+            Respond with exactly one letter: A or B
 
-            {
-                "response": "A",
-            }
-            or
-            {
-                "response": "B",
-            }
-
-            Do NOT include explanations, reasoning, or any other fields.
+            Do NOT include explanations, reasoning, quotes, or any other text.
             </OUTPUT_FORMAT>
             """
         self.agent = Agent(
             model=self.model,
-            output_type=GameResult,
+            output_type=Literal["A", "B"],
             system_prompt=self.system_prompt,
             retries=5,
             instrument=True,
@@ -445,23 +429,61 @@ class PairwiseEvaluator:
         logger.info("Running Pairwise evaluation on captured agent responses")
 
         # 1. Baseline responses from previously serialized assay dataset
+        responses_baseline: list[str] = []
         assay: AssayContext | None = item.funcargs.get("assay")  # type: ignore[attr-defined]
         if assay is not None:
             for idx, case in enumerate(assay.dataset.cases):
                 logger.debug(f"Baseline response #{idx}: {repr(case.inputs['query'])[:100]}")
+                responses_baseline.append(case.inputs["query"])
 
         # 2. Novel responses from current test run
+        responses_novel: list[str] = []
         responses = item.stash.get(AGENT_RESPONSES_KEY, [])
         for idx, response in enumerate(responses):
             if response.output is None:
                 logger.warning(f"Response #{idx} has None output.")
                 continue
             logger.debug(f"Novel response #{idx}: {repr(response.output)[:100]}")
+            responses_novel.append(response.output)
 
+        if len(responses_baseline) != len(responses_novel):
+            error_msg = f"Mismatch in response counts: {len(responses_baseline)} baseline vs {len(responses_novel)} novel"
+            logger.error(error_msg)
+            raise AssertionError(error_msg)
+
+        # 3. Loop over all response pairs and compare them
+        wins_novel = list[bool]()
+        for idx, (baseline, novel) in enumerate(zip(responses_baseline, responses_novel, strict=True)):
+            logger.info(f"Comparing response pair #{idx}")
+
+            prompt = textwrap.dedent(f"""
+                <QUESTION> {self.criterion} </QUESTION>
+                <A> {baseline} </A>
+                <B> {novel} </B>
+            """)
+            logger.debug(f"Pairwise comparison prompt for pair #{idx}:\n{prompt}")
+
+            async with self.agent:
+                result = await self.agent.run(
+                    user_prompt=prompt,
+                    model_settings=self.model_settings,
+                )
+            logger.debug(f"Pairwise comparison result for pair #{idx}: {result.output}")
+            
+            if result.output == "A":
+                wins_novel.append(False)
+            else:
+                wins_novel.append(True)
+
+        # 4. Generate readout
+        wins_count = sum(wins_novel)
+        losses_count = len(wins_novel) - wins_count
         return Readout(
-            passed=True,
+            passed=wins_count > losses_count,
             details={
-                "message": "PairwiseEvaluator not yet implemented."
+                "test_cases_count": len(responses_baseline),
+                "wins_baseline": [not win for win in wins_novel],
+                "wins_novel": wins_novel,
             }
         )
 
