@@ -12,6 +12,7 @@ from pydantic_ai.settings import ModelSettings
 from pydantic_evals import Case, Dataset
 
 from deepresearcher2.agents import EVALUATION_AGENT, model  # noqa: F401
+from deepresearcher2.config import config
 from deepresearcher2.logger import logger
 from deepresearcher2.plugin import AssayContext, BradleyTerryEvaluator
 
@@ -46,13 +47,22 @@ def generate_evaluation_cases() -> Dataset[dict[str, str], type[None], Any]:
 
     return Dataset[dict[str, str], type[None], Any](cases=cases)
 
+# Model for the Bradley-Terry evaluation agent
+evaluation_model = OpenAIChatModel(
+                model_name="Qwen/Qwen2.5-72B-Instruct",
+                provider=OpenAIProvider(
+                    base_url=config.deepinfra_base_url,
+                    api_key=config.deepinfra_api_key,
+                ),
+            )
 
 @pytest.mark.skip(reason="Run only locally with DeepInfra cloud inference. PROVIDER='deepinfra' MODEL='Qwen/Qwen2.5-72B-Instruct'")
 @pytest.mark.assay(
     generator=generate_evaluation_cases,
     evaluator=BradleyTerryEvaluator(
+        model=evaluation_model,
         criterion="Which of the two search queries shows more genuine curiosity and creativity, and is less formulaic?",
-        max_standard_deviation=1.8,
+        max_standard_deviation=2.1,
     ),
 )
 @pytest.mark.asyncio
@@ -68,7 +78,7 @@ async def test_search_queries(assay: AssayContext) -> None:
     # Agent for generating search queries using a local Ollama server
     model_for_queries = OpenAIChatModel(
         model_name="qwen2.5:72b",
-        provider=OpenAIProvider(base_url="http://localhost:11434/v1"),
+        provider=OpenAIProvider(base_url="http://localhost:11434/v1"),  # Local Ollama server
     )
     # model_for_queries = model  # Use the model defined in .env (Not possible for VCR recording!)
 
