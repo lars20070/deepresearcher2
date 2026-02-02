@@ -14,7 +14,7 @@ from pydantic_evals import Case, Dataset
 from deepresearcher2.agents import EVALUATION_AGENT, model  # noqa: F401
 from deepresearcher2.config import config
 from deepresearcher2.logger import logger
-from deepresearcher2.plugin import AssayContext, BradleyTerryEvaluator
+from deepresearcher2.plugin import AssayContext, PairwiseEvaluator
 
 
 def generate_evaluation_cases() -> Dataset[dict[str, str], type[None], Any]:
@@ -56,14 +56,18 @@ evaluation_model = OpenAIChatModel(
                 ),
             )
 
-@pytest.mark.skip(reason="Run only locally with DeepInfra cloud inference. PROVIDER='deepinfra' MODEL='Qwen/Qwen2.5-72B-Instruct'")
+# @pytest.mark.skip(reason="Run only locally with DeepInfra cloud inference. PROVIDER='deepinfra' MODEL='Qwen/Qwen2.5-72B-Instruct'")
 @pytest.mark.assay(
     generator=generate_evaluation_cases,
-    evaluator=BradleyTerryEvaluator(
+    evaluator=PairwiseEvaluator(
         model=evaluation_model,
         criterion="Which of the two search queries shows more genuine curiosity and creativity, and is less formulaic?",
-        max_standard_deviation=2.1,
     ),
+    # evaluator=BradleyTerryEvaluator(
+    #     model=evaluation_model,
+    #     criterion="Which of the two search queries shows more genuine curiosity and creativity, and is less formulaic?",
+    #     max_standard_deviation=2.1,
+    # ),
 )
 @pytest.mark.asyncio
 @pytest.mark.usefixtures("timer_for_tests")

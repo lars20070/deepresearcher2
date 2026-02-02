@@ -442,6 +442,22 @@ class PairwiseEvaluator:
         Returns:
             Readout with passed status and details.
         """
+        logger.info("Running Pairwise evaluation on captured agent responses")
+
+        # 1. Baseline responses from previously serialized assay dataset
+        assay: AssayContext | None = item.funcargs.get("assay")  # type: ignore[attr-defined]
+        if assay is not None:
+            for idx, case in enumerate(assay.dataset.cases):
+                logger.debug(f"Baseline response #{idx}: {repr(case.inputs['query'])[:100]}")
+
+        # 2. Novel responses from current test run
+        responses = item.stash.get(AGENT_RESPONSES_KEY, [])
+        for idx, response in enumerate(responses):
+            if response.output is None:
+                logger.warning(f"Response #{idx} has None output.")
+                continue
+            logger.debug(f"Novel response #{idx}: {repr(response.output)[:100]}")
+
         return Readout(
             passed=True,
             details={
@@ -553,6 +569,8 @@ class BradleyTerryEvaluator:
         Returns:
             Readout with passed status and details.
         """
+        logger.info("Running Bradley-Terry evaluation on captured agent responses")
+
         # Prepare the list of all players, baseline and novel
         players: list[EvalPlayer] = []
 
