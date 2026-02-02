@@ -22,6 +22,8 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 from pydantic_ai.agent import AgentRunResult
+from pydantic_ai.models.openai import OpenAIChatModel
+from pydantic_ai.providers.openai import OpenAIProvider
 from pydantic_evals import Case, Dataset
 from pytest import Function, Item
 
@@ -889,6 +891,20 @@ def test_bradley_terry_evaluator_init_defaults() -> None:
     """Test BradleyTerryEvaluator initializes with default values."""
     evaluator = BradleyTerryEvaluator()
 
+    # Default model: OpenAIChatModel with qwen3:8b on Ollama
+    assert evaluator.model is not None
+    assert isinstance(evaluator.model, OpenAIChatModel)
+    assert evaluator.model.model_name == "qwen3:8b"
+    # model_settings (TypedDict)
+    assert evaluator.model_settings.get("temperature") == 0.0
+    assert evaluator.model_settings.get("timeout") == 300
+    # system_prompt
+    assert evaluator.system_prompt is not None
+    assert "response" in evaluator.system_prompt
+    assert "A" in evaluator.system_prompt and "B" in evaluator.system_prompt
+    # agent
+    assert evaluator.agent is not None
+    # criterion and max_standard_deviation
     assert evaluator.criterion == "Which of the two search queries shows more genuine curiosity and creativity, and is less formulaic?"
     assert evaluator.max_standard_deviation == 2.0
 
@@ -899,6 +915,27 @@ def test_bradley_terry_evaluator_init_custom() -> None:
 
     assert evaluator.criterion == "Custom criterion"
     assert evaluator.max_standard_deviation == 1.5
+
+
+def test_bradley_terry_evaluator_init_with_custom_model(mocker: MockerFixture) -> None:
+    """Test BradleyTerryEvaluator uses custom model when provided."""
+    custom_model = OpenAIChatModel(
+        model_name="custom-model",
+        provider=OpenAIProvider(base_url="http://localhost:11434/v1"),
+    )
+    evaluator = BradleyTerryEvaluator(model=custom_model)
+
+    assert evaluator.model is custom_model
+    assert isinstance(evaluator.model, OpenAIChatModel)
+    assert evaluator.model.model_name == "custom-model"
+    assert evaluator.agent.model is custom_model
+
+
+def test_bradley_terry_evaluator_init_with_model_string() -> None:
+    """Test BradleyTerryEvaluator accepts model as string (e.g. for OpenAI default)."""
+    evaluator = BradleyTerryEvaluator(model="openai:gpt-4o-mini")
+
+    assert evaluator.model == "openai:gpt-4o-mini"
 
 
 @pytest.mark.asyncio
@@ -962,9 +999,10 @@ async def test_bradley_terry_evaluator_call_with_players(mocker: MockerFixture) 
     call_kwargs = mock_tournament_class.call_args.kwargs
     assert call_kwargs["game"].criterion == "Test criterion"
 
-    # Verify tournament.run was called with configured max_standard_deviation
+    # Verify tournament.run was called with model_settings and max_standard_deviation
     mock_tournament.run.assert_called_once()
     run_kwargs = mock_tournament.run.call_args.kwargs
+    assert "model_settings" in run_kwargs
     assert run_kwargs["max_standard_deviation"] == 1.5
 
     # Verify result (use type name check due to module reload)
@@ -977,9 +1015,6 @@ async def test_bradley_terry_evaluator_protocol_conformance() -> None:
     """Test BradleyTerryEvaluator conforms to Evaluator Protocol."""
     evaluator = BradleyTerryEvaluator()
     # Should be callable with Item and return Coroutine[Any, Any, Readout]
-    assert callable(evaluator)
-
-    # Type checker will verify Protocol conformance, but runtime check that it's callable
     assert callable(evaluator)
 
 
