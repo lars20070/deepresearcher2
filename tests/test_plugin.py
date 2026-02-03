@@ -493,9 +493,7 @@ def test_pytest_runtest_setup_baseline_stash_is_copy(mocker: MockerFixture, tmp_
 
     # Simulate test mutation (like test_curiosity.py)
     assay_ctx.dataset.cases.clear()
-    assay_ctx.dataset.cases.append(
-        Case(name="case_001", inputs={"topic": "topic A", "query": "novel query A"})
-    )
+    assay_ctx.dataset.cases.append(Case(name="case_001", inputs={"topic": "topic A", "query": "novel query A"}))
 
     # Stashed baseline must be unchanged
     assert len(baseline.cases) == 1
@@ -607,18 +605,27 @@ def test_pytest_runtest_teardown_evaluate_mode(mocker: MockerFixture, tmp_path: 
 
 
 def test_pytest_runtest_teardown_new_baseline_mode(mocker: MockerFixture, tmp_path: Path) -> None:
-    """Test pytest_runtest_teardown serializes dataset in new_baseline mode."""
+    """Test pytest_runtest_teardown merges captured responses and serializes dataset in new_baseline mode."""
     dataset_path = tmp_path / "assays" / "test.json"
 
-    # Create dataset with multiple cases (simulating test_curiosity.py workflow)
-    cases: list[Case[dict[str, str], type[None], Any]] = [
-        Case(name="case_000", inputs={"topic": "topic A", "query": "generated query A"}),
-        Case(name="case_001", inputs={"topic": "topic B", "query": "generated query B"}),
+    # Create dataset with cases that have empty expected_output (as generated)
+    cases: list[Case[dict[str, str], str, Any]] = [
+        Case(name="case_000", inputs={"topic": "topic A"}, expected_output=""),
+        Case(name="case_001", inputs={"topic": "topic B"}, expected_output=""),
     ]
-    dataset = Dataset[dict[str, str], type[None], Any](cases=cases)
+    dataset = Dataset[dict[str, str], str, Any](cases=cases)
+
+    # Create mock AgentRunResult responses (captured by pytest_runtest_call)
+    mock_response_a = mocker.MagicMock(spec=AgentRunResult)
+    mock_response_a.output = "generated query A"
+    mock_response_b = mocker.MagicMock(spec=AgentRunResult)
+    mock_response_b.output = "generated query B"
 
     mock_item = mocker.MagicMock(spec=Function)
     mock_item.funcargs = {"assay": AssayContext(dataset=dataset, path=dataset_path, assay_mode="new_baseline")}
+    mock_item.stash = {
+        deepresearcher2.plugin.AGENT_RESPONSES_KEY: [mock_response_a, mock_response_b],
+    }
 
     mocker.patch("deepresearcher2.plugin._is_assay", return_value=True)
     mocker.patch("deepresearcher2.plugin.logger")
@@ -630,17 +637,99 @@ def test_pytest_runtest_teardown_new_baseline_mode(mocker: MockerFixture, tmp_pa
     assert dataset_path.suffix == ".json"
 
     # Verify serialized content can be reloaded
-    reloaded = Dataset[dict[str, str], type[None], Any].from_file(dataset_path)
+    reloaded = Dataset[dict[str, str], str, Any].from_file(dataset_path)
     assert len(reloaded.cases) == 2
 
-    # Verify data integrity after serialization round-trip
+    # Verify expected_output was populated from captured responses
     assert reloaded.cases[0].name == "case_000"
     assert reloaded.cases[0].inputs["topic"] == "topic A"
-    assert reloaded.cases[0].inputs["query"] == "generated query A"
+    assert reloaded.cases[0].expected_output == "generated query A"
 
     assert reloaded.cases[1].name == "case_001"
     assert reloaded.cases[1].inputs["topic"] == "topic B"
-    assert reloaded.cases[1].inputs["query"] == "generated query B"
+    assert reloaded.cases[1].expected_output == "generated query B"
+
+
+def test_pytest_runtest_teardown_new_baseline_response_count_mismatch(mocker: MockerFixture, tmp_path: Path) -> None:
+    """Test pytest_runtest_teardown skips serialization when response count mismatches case count."""
+    dataset_path = tmp_path / "assays" / "test.json"
+
+    cases: list[Case[dict[str, str], str, Any]] = [
+        Case(name="case_000", inputs={"topic": "topic A"}, expected_output=""),
+        Case(name="case_001", inputs={"topic": "topic B"}, expected_output=""),
+    ]
+    dataset = Dataset[dict[str, str], str, Any](cases=cases)
+
+    # Only one response for two cases
+    mock_response = mocker.MagicMock(spec=AgentRunResult)
+    mock_response.output = "query A"
+
+    mock_item = mocker.MagicMock(spec=Function)
+    mock_item.funcargs = {"assay": AssayContext(dataset=dataset, path=dataset_path, assay_mode="new_baseline")}
+    mock_item.stash = {
+        deepresearcher2.plugin.AGENT_RESPONSES_KEY: [mock_response],
+    }
+
+    mocker.patch("deepresearcher2.plugin._is_assay", return_value=True)
+    mock_logger = mocker.patch("deepresearcher2.plugin.logger")
+
+    pytest_runtest_teardown(mock_item)
+
+    # File should NOT be created due to mismatch
+    assert not dataset_path.exists()
+    mock_logger.error.assert_called_once()
+    assert "Cannot merge responses" in str(mock_logger.error.call_args)
+
+
+def test_pytest_runtest_teardown_new_baseline_none_output(mocker: MockerFixture, tmp_path: Path) -> None:
+    """Test pytest_runtest_teardown uses empty string for None response output."""
+    dataset_path = tmp_path / "assays" / "test.json"
+
+    cases: list[Case[dict[str, str], str, Any]] = [
+        Case(name="case_000", inputs={"topic": "topic A"}, expected_output=""),
+    ]
+    dataset = Dataset[dict[str, str], str, Any](cases=cases)
+
+    mock_response = mocker.MagicMock(spec=AgentRunResult)
+    mock_response.output = None
+
+    mock_item = mocker.MagicMock(spec=Function)
+    mock_item.funcargs = {"assay": AssayContext(dataset=dataset, path=dataset_path, assay_mode="new_baseline")}
+    mock_item.stash = {
+        deepresearcher2.plugin.AGENT_RESPONSES_KEY: [mock_response],
+    }
+
+    mocker.patch("deepresearcher2.plugin._is_assay", return_value=True)
+    mocker.patch("deepresearcher2.plugin.logger")
+
+    pytest_runtest_teardown(mock_item)
+
+    assert dataset_path.exists()
+    reloaded = Dataset[dict[str, str], str, Any].from_file(dataset_path)
+    assert reloaded.cases[0].expected_output == ""
+
+
+def test_pytest_runtest_teardown_new_baseline_no_responses(mocker: MockerFixture, tmp_path: Path) -> None:
+    """Test pytest_runtest_teardown skips serialization when no responses captured but cases exist."""
+    dataset_path = tmp_path / "assays" / "test.json"
+
+    cases: list[Case[dict[str, str], str, Any]] = [
+        Case(name="case_000", inputs={"topic": "topic A"}, expected_output=""),
+    ]
+    dataset = Dataset[dict[str, str], str, Any](cases=cases)
+
+    mock_item = mocker.MagicMock(spec=Function)
+    mock_item.funcargs = {"assay": AssayContext(dataset=dataset, path=dataset_path, assay_mode="new_baseline")}
+    mock_item.stash = {}  # No AGENT_RESPONSES_KEY
+
+    mocker.patch("deepresearcher2.plugin._is_assay", return_value=True)
+    mock_logger = mocker.patch("deepresearcher2.plugin.logger")
+
+    pytest_runtest_teardown(mock_item)
+
+    # File should NOT be created (0 responses vs 1 case)
+    assert not dataset_path.exists()
+    mock_logger.error.assert_called_once()
 
 
 def test_pytest_runtest_teardown_no_assay_context(mocker: MockerFixture) -> None:
@@ -1186,9 +1275,7 @@ async def test_pairwise_evaluator_call_with_pairs(mocker: MockerFixture) -> None
     mock_response2.output = "novel output 2"
 
     mock_item = mocker.MagicMock(spec=Function)
-    mock_item.funcargs = {
-        "assay": AssayContext(dataset=dataset, path=Path("/tmp/test.json"), assay_mode="evaluate")
-    }
+    mock_item.funcargs = {"assay": AssayContext(dataset=dataset, path=Path("/tmp/test.json"), assay_mode="evaluate")}
     mock_item.stash = {
         deepresearcher2.plugin.AGENT_RESPONSES_KEY: [mock_response1, mock_response2],
         deepresearcher2.plugin.BASELINE_DATASET_KEY: dataset,
@@ -1226,9 +1313,7 @@ async def test_pairwise_evaluator_call_baseline_wins(mocker: MockerFixture) -> N
     mock_response.output = "novel output"
 
     mock_item = mocker.MagicMock(spec=Function)
-    mock_item.funcargs = {
-        "assay": AssayContext(dataset=dataset, path=Path("/tmp/test.json"), assay_mode="evaluate")
-    }
+    mock_item.funcargs = {"assay": AssayContext(dataset=dataset, path=Path("/tmp/test.json"), assay_mode="evaluate")}
     mock_item.stash = {
         deepresearcher2.plugin.AGENT_RESPONSES_KEY: [mock_response],
         deepresearcher2.plugin.BASELINE_DATASET_KEY: dataset,
@@ -1260,9 +1345,7 @@ async def test_pairwise_evaluator_call_mismatch_raises(mocker: MockerFixture) ->
     dataset = Dataset[dict[str, str], type[None], Any](cases=cases)
 
     mock_item = mocker.MagicMock(spec=Function)
-    mock_item.funcargs = {
-        "assay": AssayContext(dataset=dataset, path=Path("/tmp/test.json"), assay_mode="evaluate")
-    }
+    mock_item.funcargs = {"assay": AssayContext(dataset=dataset, path=Path("/tmp/test.json"), assay_mode="evaluate")}
     mock_item.stash = {
         deepresearcher2.plugin.AGENT_RESPONSES_KEY: [],  # No novel responses
         deepresearcher2.plugin.BASELINE_DATASET_KEY: dataset,
@@ -1294,8 +1377,8 @@ def test_full_assay_workflow_with_topic_generation(mocker: MockerFixture, tmp_pa
     This test verifies the complete flow:
     1. Generator creates initial cases with topics
     2. Setup injects AssayContext
-    3. Test can iterate cases and add queries
-    4. Teardown serializes updated dataset
+    3. Agent.run() responses are captured in AGENT_RESPONSES_KEY
+    4. Teardown merges responses into expected_output and serializes
     """
     dataset_path = tmp_path / "assays" / "test_curiosity" / "test_search_queries.json"
 
@@ -1303,12 +1386,12 @@ def test_full_assay_workflow_with_topic_generation(mocker: MockerFixture, tmp_pa
     topics = ["pangolin trafficking networks", "molecular gastronomy", "dark kitchen economics"]
 
     # Generator function (similar to generate_evaluation_cases)
-    def generate_cases() -> Dataset[dict[str, str], type[None], Any]:
-        cases: list[Case[dict[str, str], type[None], Any]] = []
+    def generate_cases() -> Dataset[dict[str, str], str, Any]:
+        cases: list[Case[dict[str, str], str, Any]] = []
         for idx, topic in enumerate(topics):
-            case = Case(name=f"case_{idx:03d}", inputs={"topic": topic})
+            case = Case(name=f"case_{idx:03d}", inputs={"topic": topic}, expected_output="")
             cases.append(case)
-        return Dataset[dict[str, str], type[None], Any](cases=cases)
+        return Dataset[dict[str, str], str, Any](cases=cases)
 
     # Setup: Create mock item with generator
     mock_item = mocker.MagicMock(spec=Function)
@@ -1332,41 +1415,28 @@ def test_full_assay_workflow_with_topic_generation(mocker: MockerFixture, tmp_pa
     assert len(assay_ctx.dataset.cases) == 3
     assert assay_ctx.assay_mode == "new_baseline"
 
-    # Simulate test body: iterate cases and add generated queries
-    cases_new: list[Case[dict[str, str], type[None], Any]] = []
-    for case in assay_ctx.dataset.cases:
-        topic = case.inputs["topic"]
-        # Simulate agent generating a query
-        generated_query = f"search for: {topic}"
-        case_new = Case(
-            name=case.name,
-            inputs={"topic": topic, "query": generated_query},
-        )
-        cases_new.append(case_new)
+    # Simulate captured Agent.run() responses (populated by pytest_runtest_call)
+    mock_responses = []
+    for topic in topics:
+        mock_response = mocker.MagicMock(spec=AgentRunResult)
+        mock_response.output = f"search for: {topic}"
+        mock_responses.append(mock_response)
+    mock_item.stash[deepresearcher2.plugin.AGENT_RESPONSES_KEY] = mock_responses
 
-    # Update dataset in place (as done in test_curiosity.py)
-    assay_ctx.dataset.cases.clear()
-    assay_ctx.dataset.cases.extend(cases_new)
-
-    # Verify dataset was updated
-    assert len(assay_ctx.dataset.cases) == 3
-    assert "query" in assay_ctx.dataset.cases[0].inputs
-    assert assay_ctx.dataset.cases[0].inputs["query"] == "search for: pangolin trafficking networks"
-
-    # Run teardown (should serialize in new_baseline mode)
+    # Run teardown (should merge responses and serialize in new_baseline mode)
     pytest_runtest_teardown(mock_item)
 
     # Verify file was created with updated data
     assert dataset_path.exists()
 
     # Reload and verify data integrity
-    reloaded = Dataset[dict[str, str], type[None], Any].from_file(dataset_path)
+    reloaded = Dataset[dict[str, str], str, Any].from_file(dataset_path)
     assert len(reloaded.cases) == 3
 
     for idx, topic in enumerate(topics):
         assert reloaded.cases[idx].name == f"case_{idx:03d}"
         assert reloaded.cases[idx].inputs["topic"] == topic
-        assert reloaded.cases[idx].inputs["query"] == f"search for: {topic}"
+        assert reloaded.cases[idx].expected_output == f"search for: {topic}"
 
 
 def test_response_capture_simulation(mocker: MockerFixture) -> None:

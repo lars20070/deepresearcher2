@@ -280,6 +280,9 @@ def pytest_runtest_teardown(item: Item) -> None:
     """
     Serialize the dataset to disk when in new_baseline mode.
 
+    In new_baseline mode, the plugin automatically updates each case's expected_output
+    from the corresponding captured Agent.run() response.
+
     Args:
         item: The pytest test item being torn down.
     """
@@ -290,6 +293,17 @@ def pytest_runtest_teardown(item: Item) -> None:
     assay: AssayContext | None = item.funcargs.get("assay")  # type: ignore[attr-defined]
     if assay is None or assay.assay_mode != "new_baseline":
         return
+
+    # Merge captured responses into dataset cases
+    responses = item.stash.get(AGENT_RESPONSES_KEY, [])
+    cases = assay.dataset.cases
+
+    if len(responses) != len(cases):
+        logger.error(f"Cannot merge responses: {len(responses)} responses vs {len(cases)} cases. Skipping serialization.")
+        return
+
+    for case, response in zip(cases, responses, strict=True):
+        case.expected_output = response.output if response.output is not None else ""
 
     logger.info(f"Serializing assay dataset to {assay.path}")
     assay.path.parent.mkdir(parents=True, exist_ok=True)
@@ -348,6 +362,7 @@ def pytest_runtest_makereport(item: Item, call: CallInfo) -> None:
 
     except Exception:
         logger.exception("Error during evaluation in pytest_runtest_makereport.")
+
 
 class PairwiseEvaluator:
     """Evaluates test outputs using pairwise comparison.
@@ -475,7 +490,7 @@ class PairwiseEvaluator:
                     model_settings=self.model_settings,
                 )
             logger.debug(f"Pairwise comparison result for pair #{idx}: {result.output}")
-            
+
             if result.output == "A":
                 wins_novel.append(False)
             else:
@@ -490,8 +505,9 @@ class PairwiseEvaluator:
                 "test_cases_count": len(responses_baseline),
                 "wins_baseline": [not win for win in wins_novel],
                 "wins_novel": wins_novel,
-            }
+            },
         )
+
 
 class BradleyTerryEvaluator:
     """Evaluates test outputs using Bradley-Terry tournament scoring.
@@ -644,7 +660,7 @@ class BradleyTerryEvaluator:
         # Average score for both baseline and novel queries
         scores_baseline = [tournament.get_player_by_idx(idx=i).score or 0.0 for i in range(len(players) // 2)]
         scores_novel = [tournament.get_player_by_idx(idx=i + len(players) // 2).score or 0.0 for i in range(len(players) // 2)]
-        
+
         if scores_baseline and scores_novel:
             avg_baseline = np.mean(scores_baseline)
             avg_novel = np.mean(scores_novel)
@@ -657,7 +673,7 @@ class BradleyTerryEvaluator:
         return Readout(
             passed=passed,
             details={
-                "test_cases_count": len(players)//2,  # test cases (baseline responses) + test cases (novel responses) = total players
+                "test_cases_count": len(players) // 2,  # test cases (baseline responses) + test cases (novel responses) = total players
                 "scores_baseline": scores_baseline,
                 "scores_novel": scores_novel,
             },

@@ -48,14 +48,16 @@ def generate_evaluation_cases() -> Dataset[dict[str, str], str, Any]:
 
     return Dataset[dict[str, str], str, Any](cases=cases)
 
+
 # Model for the Bradley-Terry evaluation agent
 evaluation_model = OpenAIChatModel(
-                model_name="Qwen/Qwen2.5-72B-Instruct",
-                provider=OpenAIProvider(
-                    base_url=config.deepinfra_base_url,
-                    api_key=config.deepinfra_api_key,
-                ),
-            )
+    model_name="Qwen/Qwen2.5-72B-Instruct",
+    provider=OpenAIProvider(
+        base_url=config.deepinfra_base_url,
+        api_key=config.deepinfra_api_key,
+    ),
+)
+
 
 @pytest.mark.skip(reason="Run only locally with DeepInfra cloud inference. PROVIDER='deepinfra' MODEL='Qwen/Qwen2.5-72B-Instruct'")
 @pytest.mark.assay(
@@ -99,9 +101,6 @@ async def test_search_queries(assay: AssayContext) -> None:
     logger.info("Use case for EvalTournament, EvalGame and EvalPlayer classes.")
 
     # Generate model outputs
-
-    cases_new: list[Case[dict[str, str], str, Any]] = []
-    logger.info("")
     for case in assay.dataset.cases:
         logger.info(f"Case {case.name} with topic: {case.inputs['topic']}")
 
@@ -121,16 +120,3 @@ async def test_search_queries(assay: AssayContext) -> None:
             )
 
         logger.debug(f"Generated query: {result.output}")
-        case_new = Case(
-            name=case.name,
-            inputs={"topic": case.inputs["topic"]},
-            expected_output=result.output,
-        )
-        cases_new.append(case_new)
-
-    assert cases_new is not None
-
-    # Update assay dataset in place
-    # Required for automatic serialisation in assay-mode 'new_baseline'
-    assay.dataset.cases.clear()
-    assay.dataset.cases.extend(cases_new)
