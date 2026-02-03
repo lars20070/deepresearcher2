@@ -4,101 +4,91 @@
     {
       "name": "case_000",
       "inputs": {
-        "topic": "pangolin trafficking networks",
-        "query": "pangolin smuggling rings deep dive"
+        "topic": "pangolin trafficking networks"
       },
       "metadata": null,
-      "expected_output": null,
+      "expected_output": "pangolin trafficking networks",
       "evaluators": []
     },
     {
       "name": "case_001",
       "inputs": {
-        "topic": "molecular gastronomy",
-        "query": "molecular gastronomy cutting edge techniques fusion cuisine avant garde culinary arts revolutionary food science innovations"
+        "topic": "molecular gastronomy"
       },
       "metadata": null,
-      "expected_output": null,
+      "expected_output": "molecular gastronomy",
       "evaluators": []
     },
     {
       "name": "case_002",
       "inputs": {
-        "topic": "dark kitchen economics",
-        "query": "exploring shadowy side of culinary commerce dark kitchens financial impacts"
+        "topic": "dark kitchen economics"
       },
       "metadata": null,
-      "expected_output": null,
+      "expected_output": "ghost kitchen economics business model profitability",
       "evaluators": []
     },
     {
       "name": "case_003",
       "inputs": {
-        "topic": "kintsugi philosophy",
-        "query": "exploring kintsugi mindset in modern resilience practices"
+        "topic": "kintsugi philosophy"
       },
       "metadata": null,
-      "expected_output": null,
+      "expected_output": "kintsugi philosophy meaning",
       "evaluators": []
     },
     {
       "name": "case_004",
       "inputs": {
-        "topic": "nano-medicine delivery systems",
-        "query": "nano needles piercing cell membranes drug delivery innovation"
+        "topic": "nano-medicine delivery systems"
       },
       "metadata": null,
-      "expected_output": null,
+      "expected_output": "nanomedicine drug delivery systems",
       "evaluators": []
     },
     {
       "name": "case_005",
       "inputs": {
-        "topic": "Streisand effect dynamics",
-        "query": "unraveling the paradox behind the Streisand effect how information suppression backfires"
+        "topic": "Streisand effect dynamics"
       },
       "metadata": null,
-      "expected_output": null,
+      "expected_output": "Streisand effect causes and consequences",
       "evaluators": []
     },
     {
       "name": "case_006",
       "inputs": {
-        "topic": "Anne Brorhilke",
-        "query": "Anne Brorhilke innovative contributions literary world"
+        "topic": "Anne Brorhilke"
       },
       "metadata": null,
-      "expected_output": null,
+      "expected_output": "Anne Brorhilke",
       "evaluators": []
     },
     {
       "name": "case_007",
       "inputs": {
-        "topic": "bioconcrete self-healing",
-        "query": "bioconcrete revolution cracking the code of self repair"
+        "topic": "bioconcrete self-healing"
       },
       "metadata": null,
-      "expected_output": null,
+      "expected_output": "bioconcrete self healing mechanism",
       "evaluators": []
     },
     {
       "name": "case_008",
       "inputs": {
-        "topic": "bacteriophage therapy revival",
-        "query": "bacteriophage therapy resurgence innovative approaches"
+        "topic": "bacteriophage therapy revival"
       },
       "metadata": null,
-      "expected_output": null,
+      "expected_output": "bacteriophage therapy revival history",
       "evaluators": []
     },
     {
       "name": "case_009",
       "inputs": {
-        "topic": "Habsburg jaw genetics",
-        "query": "Habsburg jaw genetic origins royal family facial features inheritance pattern"
+        "topic": "Habsburg jaw genetics"
       },
       "metadata": null,
-      "expected_output": null,
+      "expected_output": "Habsburg jaw genetics",
       "evaluators": []
     }
   ],

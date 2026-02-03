@@ -81,7 +81,7 @@ async def test_search_queries(assay: AssayContext) -> None:
 
     # Agent for generating search queries using a local Ollama server
     model_for_queries = OpenAIChatModel(
-        model_name="qwen2.5:72b",
+        model_name="glm-4.7-flash:latest",
         provider=OpenAIProvider(base_url="http://localhost:11434/v1"),  # Local Ollama server
     )
     # model_for_queries = model  # Use the model defined in .env (Not possible for VCR recording!)
@@ -99,12 +99,12 @@ async def test_search_queries(assay: AssayContext) -> None:
 
     # Generate model outputs
 
-    cases_new: list[Case[dict[str, str], type[None], Any]] = []
+    cases_new: list[Case[dict[str, str], str, Any]] = []
     logger.info("")
     for case in assay.dataset.cases:
         logger.info(f"Case {case.name} with topic: {case.inputs['topic']}")
 
-        # prompt = f"Please generate a query for the research topic: <TOPIC>{case.inputs['topic']}</TOPIC>"
+        # prompt = f"Please generate a useful search query for the following research topic: <TOPIC>{case.inputs['topic']}</TOPIC>"
         prompt = (
             f"Please generate a very creative search query for the research topic: <TOPIC>{case.inputs['topic']}</TOPIC>\n"
             "The query should show genuine originality and interest in the topic. AVOID any generic or formulaic phrases."
@@ -122,13 +122,14 @@ async def test_search_queries(assay: AssayContext) -> None:
         logger.debug(f"Generated query: {result.output}")
         case_new = Case(
             name=case.name,
-            inputs={"topic": case.inputs["topic"], "query": result.output},
+            inputs={"topic": case.inputs["topic"]},
+            expected_output=result.output,
         )
         cases_new.append(case_new)
 
     assert cases_new is not None
 
     # Update assay dataset in place
-    # Required for automatic serialisation by pytest-assay plugin
+    # Required for automatic serialisation in assay-mode 'new_baseline'
     assay.dataset.cases.clear()
     assay.dataset.cases.extend(cases_new)
