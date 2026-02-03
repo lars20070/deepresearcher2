@@ -167,7 +167,7 @@ def pytest_runtest_setup(item: Item) -> None:
     path = _path(item)
     if path.exists():
         logger.info(f"Loading assay dataset from {path}")
-        dataset = Dataset[dict[str, str], type[None], Any].from_file(path)
+        dataset = Dataset[dict[str, str], str, Any].from_file(path)
     elif generator is not None:
         logger.info("Generating new assay dataset using custom generator")
         dataset = generator()
@@ -180,7 +180,7 @@ def pytest_runtest_setup(item: Item) -> None:
         dataset.to_file(path, schema_path=None)
     else:
         logger.info("No existing assay dataset file or generator found; using empty dataset")
-        dataset = Dataset[dict[str, str], type[None], Any](cases=[])
+        dataset = Dataset[dict[str, str], str, Any](cases=[])
 
     # Store immutable baseline snapshot for later evaluation
     item.stash[BASELINE_DATASET_KEY] = dataset.model_copy(deep=True)
@@ -440,7 +440,7 @@ class PairwiseEvaluator:
         if baseline_dataset is not None:
             for idx, case in enumerate(baseline_dataset.cases):
                 logger.debug(f"Baseline response #{idx}: {repr(case.inputs['query'])[:100]}")
-                responses_baseline.append(case.inputs["query"])
+                responses_baseline.append(str(case.expected_output))
 
         # 2. Novel responses from current test run
         responses_novel: list[str] = []
@@ -607,7 +607,7 @@ class BradleyTerryEvaluator:
         baseline_case_count = 0
         if baseline_dataset is not None:
             for idx, case in enumerate(baseline_dataset.cases):
-                players.append(EvalPlayer(idx=idx, item=case.inputs["query"]))
+                players.append(EvalPlayer(idx=idx, item=str(case.expected_output)))
             baseline_case_count = len(baseline_dataset.cases)
 
         # 2. Novel players from current test run

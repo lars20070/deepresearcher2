@@ -17,7 +17,7 @@ from deepresearcher2.logger import logger
 from deepresearcher2.plugin import AssayContext, PairwiseEvaluator
 
 
-def generate_evaluation_cases() -> Dataset[dict[str, str], type[None], Any]:
+def generate_evaluation_cases() -> Dataset[dict[str, str], str, Any]:
     """
     Generate a list of Cases containing topics as input.
     """
@@ -36,16 +36,17 @@ def generate_evaluation_cases() -> Dataset[dict[str, str], type[None], Any]:
         "Habsburg jaw genetics",
     ]
 
-    cases: list[Case[dict[str, str], type[None], Any]] = []
+    cases: list[Case[dict[str, str], str, Any]] = []
     for idx, topic in enumerate(topics):
         logger.info(f"Case {idx + 1} / {len(topics)} with topic: {topic}")
         case = Case(
             name=f"case_{idx:03d}",
             inputs={"topic": topic},
+            expected_output="",
         )
         cases.append(case)
 
-    return Dataset[dict[str, str], type[None], Any](cases=cases)
+    return Dataset[dict[str, str], str, Any](cases=cases)
 
 # Model for the Bradley-Terry evaluation agent
 evaluation_model = OpenAIChatModel(
