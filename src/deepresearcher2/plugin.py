@@ -30,6 +30,9 @@ from .models import GameResult
 # Modes for the assay plugin. "evaluate" is the default mode.
 ASSAY_MODES = ("evaluate", "new_baseline")
 
+# Key to stash the baseline dataset from previous runs
+BASELINE_DATASET_KEY = pytest.StashKey[Dataset]()
+
 # Key to stash Agent responses during assay tests
 AGENT_RESPONSES_KEY = pytest.StashKey[list[AgentRunResult[Any]]]()
 
@@ -178,6 +181,9 @@ def pytest_runtest_setup(item: Item) -> None:
     else:
         logger.info("No existing assay dataset file or generator found; using empty dataset")
         dataset = Dataset[dict[str, str], type[None], Any](cases=[])
+
+    # Store immutable baseline snapshot for later evaluation
+    item.stash[BASELINE_DATASET_KEY] = dataset.model_copy(deep=True)
 
     # Inject assay context into the test function arguments
     item.funcargs["assay"] = AssayContext(  # type: ignore[attr-defined]
@@ -430,9 +436,9 @@ class PairwiseEvaluator:
 
         # 1. Baseline responses from previously serialized assay dataset
         responses_baseline: list[str] = []
-        assay: AssayContext | None = item.funcargs.get("assay")  # type: ignore[attr-defined]
-        if assay is not None:
-            for idx, case in enumerate(assay.dataset.cases):
+        baseline_dataset = item.stash.get(BASELINE_DATASET_KEY, None)
+        if baseline_dataset is not None:
+            for idx, case in enumerate(baseline_dataset.cases):
                 logger.debug(f"Baseline response #{idx}: {repr(case.inputs['query'])[:100]}")
                 responses_baseline.append(case.inputs["query"])
 
@@ -597,12 +603,12 @@ class BradleyTerryEvaluator:
         players: list[EvalPlayer] = []
 
         # 1. Baseline players from previously serialized assay dataset
-        assay: AssayContext | None = item.funcargs.get("assay")  # type: ignore[attr-defined]
+        baseline_dataset = item.stash.get(BASELINE_DATASET_KEY, None)
         baseline_case_count = 0
-        if assay is not None:
-            for idx, case in enumerate(assay.dataset.cases):
+        if baseline_dataset is not None:
+            for idx, case in enumerate(baseline_dataset.cases):
                 players.append(EvalPlayer(idx=idx, item=case.inputs["query"]))
-            baseline_case_count = len(assay.dataset.cases)
+            baseline_case_count = len(baseline_dataset.cases)
 
         # 2. Novel players from current test run
         responses = item.stash.get(AGENT_RESPONSES_KEY, [])

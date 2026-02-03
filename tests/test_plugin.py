@@ -30,6 +30,7 @@ from pytest import Function, Item
 import deepresearcher2.plugin
 from deepresearcher2.plugin import (
     ASSAY_MODES,
+    BASELINE_DATASET_KEY,
     AssayContext,
     BradleyTerryEvaluator,
     Readout,
@@ -309,6 +310,7 @@ def test_pytest_runtest_setup_with_existing_dataset(mocker: MockerFixture, tmp_p
     # Mock the item
     mock_item = mocker.MagicMock(spec=Function)
     mock_item.funcargs = {}
+    mock_item.stash = {}
     mock_marker = mocker.MagicMock()
     mock_marker.kwargs = {}
     mock_item.get_closest_marker.return_value = mock_marker
@@ -319,6 +321,12 @@ def test_pytest_runtest_setup_with_existing_dataset(mocker: MockerFixture, tmp_p
     mocker.patch("deepresearcher2.plugin.logger")
 
     pytest_runtest_setup(mock_item)
+
+    # Verify baseline dataset was stashed for evaluators
+    assert deepresearcher2.plugin.BASELINE_DATASET_KEY in mock_item.stash
+    baseline = mock_item.stash[deepresearcher2.plugin.BASELINE_DATASET_KEY]
+    assert len(baseline.cases) == 2
+    assert baseline.cases[0].inputs["query"] == "existing query"
 
     # Verify assay context was injected
     assert "assay" in mock_item.funcargs
@@ -363,6 +371,7 @@ def test_pytest_runtest_setup_with_generator(mocker: MockerFixture, tmp_path: Pa
     # Mock the item
     mock_item = mocker.MagicMock(spec=Function)
     mock_item.funcargs = {}
+    mock_item.stash = {}
     mock_marker = mocker.MagicMock()
     mock_marker.kwargs = {"generator": mock_generator}
     mock_item.get_closest_marker.return_value = mock_marker
@@ -373,6 +382,10 @@ def test_pytest_runtest_setup_with_generator(mocker: MockerFixture, tmp_path: Pa
     mocker.patch("deepresearcher2.plugin.logger")
 
     pytest_runtest_setup(mock_item)
+
+    # Verify baseline dataset was stashed
+    assert deepresearcher2.plugin.BASELINE_DATASET_KEY in mock_item.stash
+    assert len(mock_item.stash[deepresearcher2.plugin.BASELINE_DATASET_KEY].cases) == 3
 
     # Verify generator was called exactly once
     mock_generator.assert_called_once()
@@ -429,6 +442,7 @@ def test_pytest_runtest_setup_empty_dataset(mocker: MockerFixture, tmp_path: Pat
 
     mock_item = mocker.MagicMock(spec=Function)
     mock_item.funcargs = {}
+    mock_item.stash = {}
     mock_marker = mocker.MagicMock()
     mock_marker.kwargs = {}  # No generator
     mock_item.get_closest_marker.return_value = mock_marker
@@ -440,8 +454,51 @@ def test_pytest_runtest_setup_empty_dataset(mocker: MockerFixture, tmp_path: Pat
 
     pytest_runtest_setup(mock_item)
 
+    assert deepresearcher2.plugin.BASELINE_DATASET_KEY in mock_item.stash
+    assert len(mock_item.stash[deepresearcher2.plugin.BASELINE_DATASET_KEY].cases) == 0
+
     assay_ctx = mock_item.funcargs["assay"]
     assert len(assay_ctx.dataset.cases) == 0
+
+
+def test_pytest_runtest_setup_baseline_stash_is_copy(mocker: MockerFixture, tmp_path: Path) -> None:
+    """Test that mutating assay.dataset does not change the stashed baseline."""
+    dataset_path = tmp_path / "assays" / "test_module" / "test_func.json"
+    dataset_path.parent.mkdir(parents=True)
+    dataset = Dataset[dict[str, str], type[None], Any](
+        cases=[
+            Case(name="case_001", inputs={"topic": "topic A", "query": "baseline query A"}),
+        ]
+    )
+    dataset.to_file(dataset_path, schema_path=None)
+
+    mock_item = mocker.MagicMock(spec=Function)
+    mock_item.funcargs = {}
+    mock_item.stash = {}
+    mock_marker = mocker.MagicMock()
+    mock_marker.kwargs = {}
+    mock_item.get_closest_marker.return_value = mock_marker
+    mock_item.config.getoption.return_value = "evaluate"
+
+    mocker.patch("deepresearcher2.plugin._is_assay", return_value=True)
+    mocker.patch("deepresearcher2.plugin._path", return_value=dataset_path)
+    mocker.patch("deepresearcher2.plugin.logger")
+
+    pytest_runtest_setup(mock_item)
+
+    assay_ctx = mock_item.funcargs["assay"]
+    baseline = mock_item.stash[deepresearcher2.plugin.BASELINE_DATASET_KEY]
+
+    # Simulate test mutation (like test_curiosity.py)
+    assay_ctx.dataset.cases.clear()
+    assay_ctx.dataset.cases.append(
+        Case(name="case_001", inputs={"topic": "topic A", "query": "novel query A"})
+    )
+
+    # Stashed baseline must be unchanged
+    assert len(baseline.cases) == 1
+    assert baseline.cases[0].inputs["query"] == "baseline query A"
+    assert assay_ctx.dataset.cases[0].inputs["query"] == "novel query A"
 
 
 # =============================================================================
@@ -506,7 +563,7 @@ def test_pytest_runtest_call_sets_context_var(mocker: MockerFixture) -> None:
     gen = pytest_runtest_call(mock_item)
     next(gen)
 
-    # During the yield, context var should be set - use the module's instance
+    # During the yield, context var should be set
     assert deepresearcher2.plugin._current_item_var.get() == mock_item
 
     # Clean up and verify context var is reset
@@ -746,7 +803,10 @@ def test_pytest_runtest_makereport_uses_default_evaluator(mocker: MockerFixture)
     mock_item = mocker.MagicMock(spec=Function)
     mock_item.nodeid = "tests/test.py::test_func"
     mock_item.funcargs = {"assay": AssayContext(dataset=dataset, path=Path("/tmp/test.json"), assay_mode="evaluate")}
-    mock_item.stash = {deepresearcher2.plugin.AGENT_RESPONSES_KEY: []}
+    mock_item.stash = {
+        deepresearcher2.plugin.AGENT_RESPONSES_KEY: [],
+        BASELINE_DATASET_KEY: dataset,
+    }
     mock_marker = mocker.MagicMock()
     mock_marker.kwargs = {}  # No evaluator specified - should use default
     mock_item.get_closest_marker.return_value = mock_marker
@@ -944,7 +1004,10 @@ async def test_bradley_terry_evaluator_call_no_players(mocker: MockerFixture) ->
     evaluator = BradleyTerryEvaluator()
     mock_item = mocker.MagicMock(spec=Function)
     mock_item.funcargs = {"assay": None}
-    mock_item.stash = {deepresearcher2.plugin.AGENT_RESPONSES_KEY: []}
+    mock_item.stash = {
+        deepresearcher2.plugin.AGENT_RESPONSES_KEY: [],
+        BASELINE_DATASET_KEY: Dataset[dict[str, str], type[None], Any](cases=[]),
+    }
 
     mock_logger = mocker.patch("deepresearcher2.plugin.logger")
 
@@ -980,7 +1043,10 @@ async def test_bradley_terry_evaluator_call_with_players(mocker: MockerFixture) 
 
     mock_item = mocker.MagicMock(spec=Function)
     mock_item.funcargs = {"assay": AssayContext(dataset=dataset, path=Path("/tmp/test.json"), assay_mode="evaluate")}
-    mock_item.stash = {deepresearcher2.plugin.AGENT_RESPONSES_KEY: [mock_response]}
+    mock_item.stash = {
+        deepresearcher2.plugin.AGENT_RESPONSES_KEY: [mock_response],
+        BASELINE_DATASET_KEY: dataset,
+    }
 
     mocker.patch("deepresearcher2.plugin.logger")
 
@@ -1049,6 +1115,7 @@ def test_full_assay_workflow_with_topic_generation(mocker: MockerFixture, tmp_pa
     # Setup: Create mock item with generator
     mock_item = mocker.MagicMock(spec=Function)
     mock_item.funcargs = {}
+    mock_item.stash = {}
     mock_marker = mocker.MagicMock()
     mock_marker.kwargs = {"generator": generate_cases}
     mock_item.get_closest_marker.return_value = mock_marker
@@ -1144,7 +1211,7 @@ def test_response_capture_simulation(mocker: MockerFixture) -> None:
         next(gen)
 
     # Verify context var was reset
-    assert deepresearcher2.plugin._current_item_var.get() is None
+    assert _current_item_var.get() is None
 
 
 # =============================================================================
