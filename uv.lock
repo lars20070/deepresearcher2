@@ -620,7 +620,7 @@ requires-dist = [
     { name = "pytest-recording", specifier = ">=0.13.4" },
     { name = "pytest-xdist", specifier = ">=3.6.1" },
     { name = "python-dotenv", specifier = ">=1.1.0" },
-    { name = "ruff", specifier = ">=0.9.5" },
+    { name = "ruff", specifier = ">=0.13.3" },
     { name = "tavily-python", specifier = ">=0.5.1" },
     { name = "tenacity", specifier = ">=9.1.2" },
     { name = "wordcloud", specifier = ">=1.9.4" },
