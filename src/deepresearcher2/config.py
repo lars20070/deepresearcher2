@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from enum import Enum
+from enum import StrEnum
 
 from dotenv import load_dotenv
 from pydantic import Field
@@ -8,7 +8,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 load_dotenv()
 
 
-class SearchEngine(str, Enum):
+class SearchEngine(StrEnum):
     duckduckgo = "duckduckgo"
     tavily = "tavily"
     perplexity = "perplexity"
@@ -17,7 +17,7 @@ class SearchEngine(str, Enum):
     searxng = "searxng"
 
 
-class Provider(str, Enum):
+class Provider(StrEnum):
     ollama = "ollama"
     lmstudio = "lmstudio"
     openrouter = "openrouter"

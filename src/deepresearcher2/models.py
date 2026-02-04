@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import annotations as _annotations
 
-from enum import Enum
+from enum import StrEnum
 
 from pydantic import BaseModel, Field
 
@@ -61,6 +61,6 @@ class FinalSummary(BaseModel):
     summary: str = Field(..., description="summary of the topic for the final report")
 
 
-class GameResult(str, Enum):
+class GameResult(StrEnum):
     A = "A"
     B = "B"

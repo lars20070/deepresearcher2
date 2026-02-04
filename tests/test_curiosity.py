@@ -77,6 +77,9 @@ evaluation_model = OpenAIChatModel(
 async def test_search_queries(assay: AssayContext) -> None:
     """
     Run the agent workflow once.
+
+    Args:
+        assay: The assay context containing the evaluation dataset `assay.dataset`and other information.
     """
 
     logger.debug(f"assay path: {assay.path}")
