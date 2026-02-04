@@ -1524,7 +1524,12 @@ def test_current_item_var_set_and_get(mocker: MockerFixture) -> None:
 #
 # Two evaluator strategies are tested:
 # 1. PairwiseEvaluator: Compares baseline vs novel responses directly
-# 2. BradleyTerryEvaluator: Ranks responses using the Bradley-Terry model
+# 2. BradleyTerryEvaluator: Ranks all responses using the Bradley-Terry model
+#
+# The assays compare two different sets of generated search queries:
+# A. Some baseline results generated with BASIC_PROMPT in the assay-mode 'new_baseline'.
+#    These results have been pre-recorded and stored in the `assays/` subfolder.`
+# B. More creative results generated with CREATIVE_PROMPT in the (default) assay-mode 'evaluate'.
 # =============================================================================
 
 
