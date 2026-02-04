@@ -30,7 +30,7 @@ def generate_evaluation_cases() -> Dataset[dict[str, str], str, Any]:
         "kintsugi philosophy",
         "nano-medicine delivery systems",
         "Streisand effect dynamics",
-        "Anne Brorhilke",
+        "Anne Brorhilker",
         "bioconcrete self-healing",
         "bacteriophage therapy revival",
         "Habsburg jaw genetics",
@@ -87,7 +87,7 @@ async def test_search_queries(context: AssayContext) -> None:
 
     # Agent for generating search queries using a local Ollama server
     model_for_queries = OpenAIChatModel(
-        model_name="glm-4.7-flash:latest",
+        model_name="qwen3:14b",
         provider=OpenAIProvider(base_url="http://localhost:11434/v1"),  # Local Ollama server
     )
     # model_for_queries = model  # Use the model defined in .env (Not possible for VCR recording!)
@@ -110,7 +110,14 @@ async def test_search_queries(context: AssayContext) -> None:
         # prompt = f"Please generate a useful search query for the following research topic: <TOPIC>{case.inputs['topic']}</TOPIC>"
         prompt = (
             f"Please generate a very creative search query for the research topic: <TOPIC>{case.inputs['topic']}</TOPIC>\n"
-            "The query should show genuine originality and interest in the topic. AVOID any generic or formulaic phrases."
+            "The query should show genuine originality and interest in the topic. AVOID any generic or formulaic phrases.\n\n"
+            "Examples of formulaic queries for the topic 'molecular gastronomy' (BAD):\n"
+            "- 'Definition molecular gastronomy'\n"
+            "- 'Molecular gastronomy techniques and applications'\n"
+            "Examples of curious, creative queries for the topic 'molecular gastronomy' (GOOD):\n"
+            "- 'Use of liquid nitrogen instead of traditional freezing for food texture'\n"
+            "- 'Failed molecular gastronomy experiments that led to new dishes'\n\n"
+            f"Now generate one creative search query for: <TOPIC>{case.inputs['topic']}</TOPIC>"
         )
         async with query_agent:
             result = await query_agent.run(

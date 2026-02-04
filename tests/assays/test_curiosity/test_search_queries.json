@@ -58,10 +58,10 @@
     {
       "name": "case_006",
       "inputs": {
-        "topic": "Anne Brorhilke"
+        "topic": "Anne Brorhilker"
       },
       "metadata": null,
-      "expected_output": "Anne Brorhilke",
+      "expected_output": "Anne Brorhilker",
       "evaluators": []
     },
     {
