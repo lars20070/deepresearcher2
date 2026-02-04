@@ -2,7 +2,7 @@
 from __future__ import annotations as _annotations
 
 import json
-from enum import Enum
+from enum import StrEnum
 from pathlib import Path
 from typing import Any
 
@@ -46,7 +46,7 @@ def import_codenames(path: Path = Path("../BIG-bench")) -> None:
     dataset.to_file(out_path)
 
 
-class Response(str, Enum):
+class Response(StrEnum):
     joke = "joke"
     nojoke = "no joke"
 

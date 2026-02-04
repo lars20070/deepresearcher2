@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import annotations as _annotations
 
-from enum import Enum
+from enum import StrEnum
 
 from pydantic import BaseModel, Field
 
@@ -24,8 +24,8 @@ class WebSearchQuery(BaseModel):
 class WebSearchResult(BaseModel):
     title: str = Field(..., description="short descriptive title of the web search result")
     url: str = Field(..., description="URL of the web search result")
-    summary: str | None = Field(None, description="summary of the web search result")
-    content: str | None = Field(None, description="main content of the web search result in Markdown format")
+    summary: str | None = Field(default=None, description="summary of the web search result")
+    content: str | None = Field(default=None, description="main content of the web search result in Markdown format")
 
 
 class Reference(BaseModel):
@@ -36,7 +36,7 @@ class Reference(BaseModel):
 class WebSearchSummary(BaseModel):
     summary: str = Field(..., description="summary of multiple web search results")
     aspect: str = Field(..., description="aspect of the topic being summarized")
-    references: list[Reference] | None = Field(None, description="list of references for the summary")
+    references: list[Reference] | None = Field(default=None, description="list of references for the summary")
 
     # TODO: The model struggles with summaries that are too short. It seems the model does not understand the returned value error.
     # @field_validator("summary")
@@ -61,6 +61,6 @@ class FinalSummary(BaseModel):
     summary: str = Field(..., description="summary of the topic for the final report")
 
 
-class GameResult(str, Enum):
+class GameResult(StrEnum):
     A = "A"
     B = "B"

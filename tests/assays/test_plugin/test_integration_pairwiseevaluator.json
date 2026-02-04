@@ -1,0 +1,96 @@
+{
+  "name": null,
+  "cases": [
+    {
+      "name": "case_000",
+      "inputs": {
+        "topic": "pangolin trafficking networks"
+      },
+      "metadata": null,
+      "expected_output": "\"pangolin trafficking networks illegal wildlife trade analysis\"",
+      "evaluators": []
+    },
+    {
+      "name": "case_001",
+      "inputs": {
+        "topic": "molecular gastronomy"
+      },
+      "metadata": null,
+      "expected_output": "\"molecular gastronomy techniques and scientific principles in modern cuisine\"",
+      "evaluators": []
+    },
+    {
+      "name": "case_002",
+      "inputs": {
+        "topic": "dark kitchen economics"
+      },
+      "metadata": null,
+      "expected_output": "\"dark kitchen economics business model cost analysis profitability industry trends\"",
+      "evaluators": []
+    },
+    {
+      "name": "case_003",
+      "inputs": {
+        "topic": "kintsugi philosophy"
+      },
+      "metadata": null,
+      "expected_output": "\"kintsugi philosophy meaning symbolism Japanese culture\"",
+      "evaluators": []
+    },
+    {
+      "name": "case_004",
+      "inputs": {
+        "topic": "nano-medicine delivery systems"
+      },
+      "metadata": null,
+      "expected_output": "\"Nano-medicine delivery systems: applications, advancements, and challenges\"",
+      "evaluators": []
+    },
+    {
+      "name": "case_005",
+      "inputs": {
+        "topic": "Streisand effect dynamics"
+      },
+      "metadata": null,
+      "expected_output": "\"Streisand effect dynamics: mechanisms, examples, and implications in information suppression and online visibility\"",
+      "evaluators": []
+    },
+    {
+      "name": "case_006",
+      "inputs": {
+        "topic": "Anne Brorhilker"
+      },
+      "metadata": null,
+      "expected_output": "\"Anne Brorhilker U.S. Congress biography\"",
+      "evaluators": []
+    },
+    {
+      "name": "case_007",
+      "inputs": {
+        "topic": "bioconcrete self-healing"
+      },
+      "metadata": null,
+      "expected_output": "\"bioconcrete self-healing mechanism recent studies applications\"",
+      "evaluators": []
+    },
+    {
+      "name": "case_008",
+      "inputs": {
+        "topic": "bacteriophage therapy revival"
+      },
+      "metadata": null,
+      "expected_output": "\"bacteriophage therapy revival recent developments antibiotic resistance clinical trials\"",
+      "evaluators": []
+    },
+    {
+      "name": "case_009",
+      "inputs": {
+        "topic": "Habsburg jaw genetics"
+      },
+      "metadata": null,
+      "expected_output": "\"Genetics of Habsburg jaw: heritability, genetic factors, and historical lineage analysis\"",
+      "evaluators": []
+    }
+  ],
+  "evaluators": []
+}

@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 import glob
 import os
+import time
 from collections.abc import Generator
+from pathlib import Path
 from unittest.mock import MagicMock
 
 import pytest
@@ -159,3 +161,25 @@ def vcr_config() -> dict[str, object]:
         "decode_compressed_response": True,
         "before_record_request": uri_spoofing,
     }
+
+
+@pytest.fixture
+def timer_for_tests(request: pytest.FixtureRequest) -> Generator[None, None, None]:
+    """
+    Measure and log the duration of each test.
+    """
+    start = time.perf_counter()
+    yield
+    duration = time.perf_counter() - start
+    logger.info(f"{request.node.name} completed in {duration:.2f} seconds.")
+
+
+@pytest.fixture
+def assay_path(request: pytest.FixtureRequest) -> Path:
+    """
+    Compute the assay file path from test module and function name.
+    """
+    path = request.path
+    module_name = path.stem
+    test_name = request.node.name.split("[")[0]
+    return path.parent / "assays" / module_name / f"{test_name}.json"

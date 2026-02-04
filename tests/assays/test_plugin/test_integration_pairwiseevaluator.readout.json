@@ -1,0 +1,30 @@
+{
+  "passed": true,
+  "details": {
+    "test_cases_count": 10,
+    "wins_baseline": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ],
+    "wins_novel": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+    ]
+  }
+}

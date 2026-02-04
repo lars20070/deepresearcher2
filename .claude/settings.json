@@ -2,23 +2,31 @@
   "projectName": "DeepResearcher2",
   "description": "A fully local web research and report writing assistant using local LLM models via Ollama",
   "language": "python",
+  "pythonVersion": "3.12",
   "framework": "pydantic-ai + pydantic-graph",
   "testFramework": "pytest",
   "codeStyle": {
     "formatter": "ruff",
     "linter": "ruff",
-    "maxLineLength": 120
+    "typeChecker": "pyright",
+    "maxLineLength": 150
   },
   "dependencies": {
     "runtime": [
       "pydantic-ai",
       "pydantic-graph",
       "ollama",
-      "asyncio"
+      "asyncio",
+      "httpx",
+      "loguru"
     ],
     "dev": [
       "pytest",
+      "pytest-asyncio",
+      "pytest-vcr",
+      "pytest-cov",
       "ruff",
+      "pyright",
       "uv"
     ]
   },
@@ -36,9 +44,11 @@
   ],
   "conventions": {
     "asyncPatterns": "Use async/await for all LLM interactions and web searches",
-    "errorHandling": "Use tenacity for retries, proper logging for debugging",
-    "testMarkers": "Use pytest markers: 'paid', 'ollama', 'example'",
-    "docstrings": "Use concise docstrings for classes and complex functions"
+    "errorHandling": "Use tenacity for retries, loguru for logging",
+    "testMarkers": "Use pytest markers: 'paid', 'ollama', 'searxng', 'vcr'",
+    "docstrings": "Use Google-style docstrings without backticks",
+    "typeHints": "Required for all functions, use Python 3.12+ syntax",
+    "imports": "Standard library, then third-party, then local imports"
   },
   "architecture": {
     "pattern": "Directed graph workflow with specialized nodes",
@@ -55,5 +65,15 @@
       "Perplexity"
     ],
     "models": "Local via Ollama or cloud models"
+  },
+  "commands": {
+    "install": "uv sync",
+    "run": "uv run research",
+    "test": "uv run pytest -m \"not paid\"",
+    "testParallel": "uv run pytest -n auto -m \"not paid\"",
+    "coverage": "uv run pytest --cov=src/deepresearcher2 --cov-report=term-missing",
+    "format": "uvx ruff format .",
+    "lint": "uvx ruff check --fix .",
+    "typecheck": "uvx pyright ."
   }
 }

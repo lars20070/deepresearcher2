@@ -1,8 +1,4 @@
----
-description: Python-specific coding standards, type hints, testing, and async patterns
-globs: ["**/*.py"]
-alwaysApply: false
----
+# Python Coding Standards
 
 ## Python Version
 
@@ -259,7 +255,7 @@ AGENT_NAME = Agent(
 Use Google-style docstrings (not Sphinx style):
 
 ### Formatting Rules
-- **No backticks**: Do not use backticks in docstrings. Write `--assay-mode` as --assay-mode, `None` as None, `True` as True, etc.
+- **No backticks**: Do not use backticks in docstrings. Write --assay-mode as --assay-mode, None as None, True as True, etc.
 - Google style uses plain text for parameter names, options, and values
 
 ```python

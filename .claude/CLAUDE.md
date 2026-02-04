@@ -20,6 +20,9 @@ ollama pull qwen3:8b
 # Create environment file from template
 cp .env.example .env
 # (Edit .env to set your TOPIC and any API keys)
+
+# Install dependencies
+uv sync
 ```
 
 ### Running the Application
@@ -35,33 +38,55 @@ uv run uml
 ### Testing
 
 ```bash
-# Run all tests (excluding tests marked 'paid')
-pytest
+# Run all tests
+# Excluding tests marked 'paid'. See `addopts` in pyproject.toml for details.
+uv run pytest
 
 # Run tests with verbose output
-pytest -v
+uv run pytest -v
 
 # Run specific test file
-pytest tests/test_utils.py
+uv run pytest tests/test_utils.py
 
 # Run specific test
-pytest tests/test_utils.py::test_function_name
+uv run pytest tests/test_utils.py::test_duckduckgo_search
 
 # Run tests in parallel
-pytest -xvs -n auto
+uv run pytest -n auto
 
 # Run tests with coverage report
-pytest --cov
+uv run pytest --cov=src/deepresearcher2 --cov-report=term-missing
 ```
 
 ### Code Quality
 
 ```bash
-# Run linting with ruff
-ruff check .
+# Format code
+uvx ruff format .
 
-# Format code with ruff
-ruff format .
+# Check and fix linting issues (ALWAYS run with --fix)
+uvx ruff check --fix .
+
+# Type checking (ALWAYS run after code changes)
+uvx pyright .
+```
+
+### Before Committing
+
+Run these checks:
+
+```bash
+# 1. Format code
+uvx ruff format .
+
+# 2. Check and fix linting issues
+uvx ruff check --fix .
+
+# 3. Type checking
+uvx pyright .
+
+# 4. Run tests
+uv run pytest -n auto
 ```
 
 ## Architecture
@@ -94,12 +119,47 @@ The system can use:
 - Local models via Ollama (llama3.3, qwen3:8b, qwen3:32b)
 - Cloud models (OpenAI's gpt-4o, gpt-4o-mini)
 
-## Testing Guidelines
+## MCP Servers
 
-- Tests are organized with pytest markers:
-  - `paid`: Tests requiring paid API keys (skipped by default)
-  - `ollama`: Tests requiring a local Ollama instance 
-  - `example`: Examples not testing core functionality
+This project uses Model Context Protocol (MCP) servers to extend AI capabilities. These are automatically invoked when relevant.
 
-- When adding new features, create corresponding tests in the appropriate test file
-- Use fixtures in conftest.py for common testing scenarios
+### Context7 Documentation Server
+
+**When to use:**
+- Looking up library documentation (e.g., "How do I use pydantic-ai streaming?")
+- Checking API references for dependencies
+- Finding code examples from official docs
+- Verifying correct usage of third-party packages
+
+**Examples:**
+- "What's the latest pydantic-ai agent syntax?"
+- "Show me httpx async client examples"
+- "How do I configure pytest-asyncio?"
+
+### GitHub Repository Server
+
+**When to use:**
+- Checking open/closed issues in this repository
+- Reviewing pull requests and their status
+- Reading issue comments and discussions
+- Finding related issues or PRs
+- Understanding project history and decisions
+
+**Examples:**
+- "What are the open issues about curiosity?"
+- "Show me recent PRs related to PDF support"
+- "Are there any issues about MLX integration?"
+- "What's the status of issue #13?"
+
+### Best Practices
+
+- **Be specific:** "Check issue #15" is better than "check issues"
+- **Context first:** Read codebase before checking issues
+- **Combine sources:** Use Context7 for "how to use X" and GitHub for "what's our approach to X"
+
+## Coding Standards
+
+See the rules files for detailed coding standards:
+
+- `.claude/rules/python.md` - Python coding standards, type hints, async patterns
+- `.claude/rules/python-testing.md` - Testing conventions, markers, coverage requirements
