@@ -4,11 +4,9 @@ import os
 import time
 from collections.abc import Generator
 from pathlib import Path
-from typing import Any
 from unittest.mock import MagicMock
 
 import pytest
-from pydantic_evals import Case, Dataset
 from pytest_mock import MockerFixture
 from vcr.request import Request
 
