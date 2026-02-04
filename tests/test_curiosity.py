@@ -74,16 +74,16 @@ evaluation_model = OpenAIChatModel(
 )
 @pytest.mark.asyncio
 @pytest.mark.usefixtures("timer_for_tests")
-async def test_search_queries(assay: AssayContext) -> None:
+async def test_search_queries(context: AssayContext) -> None:
     """
     Run the agent workflow once.
 
     Args:
-        assay: The assay context containing the evaluation dataset `assay.dataset`and other information.
+        context: The assay context containing the evaluation dataset `context.dataset`and other information.
     """
 
-    logger.debug(f"assay path: {assay.path}")
-    logger.debug(f"assay dataset: {assay.dataset}")
+    logger.debug(f"assay path: {context.path}")
+    logger.debug(f"assay dataset: {context.dataset}")
 
     # Agent for generating search queries using a local Ollama server
     model_for_queries = OpenAIChatModel(
@@ -104,7 +104,7 @@ async def test_search_queries(assay: AssayContext) -> None:
     logger.info("Use case for EvalTournament, EvalGame and EvalPlayer classes.")
 
     # Generate model outputs
-    for case in assay.dataset.cases:
+    for case in context.dataset.cases:
         logger.info(f"Case {case.name} with topic: {case.inputs['topic']}")
 
         # prompt = f"Please generate a useful search query for the following research topic: <TOPIC>{case.inputs['topic']}</TOPIC>"

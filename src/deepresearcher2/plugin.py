@@ -186,7 +186,7 @@ def pytest_runtest_setup(item: Item) -> None:
     item.stash[BASELINE_DATASET_KEY] = dataset.model_copy(deep=True)
 
     # Inject assay context into the test function arguments
-    item.funcargs["assay"] = AssayContext(  # type: ignore[attr-defined]
+    item.funcargs["context"] = AssayContext(  # type: ignore[attr-defined]
         dataset=dataset,
         path=path,
         assay_mode=item.config.getoption("--assay-mode"),
@@ -290,7 +290,7 @@ def pytest_runtest_teardown(item: Item) -> None:
         return
 
     # Check whether to serialize the dataset
-    assay: AssayContext | None = item.funcargs.get("assay")  # type: ignore[attr-defined]
+    assay: AssayContext | None = item.funcargs.get("context")  # type: ignore[attr-defined]
     if assay is None or assay.assay_mode != "new_baseline":
         return
 
@@ -338,7 +338,7 @@ def pytest_runtest_makereport(item: Item, call: CallInfo) -> None:
     logger.info(f"Test Duration: {call.duration:.5f} seconds")
 
     # Check whether to run evaluation
-    assay: AssayContext | None = item.funcargs.get("assay")  # type: ignore[attr-defined]
+    assay: AssayContext | None = item.funcargs.get("context")  # type: ignore[attr-defined]
     if assay is None or assay.assay_mode != "evaluate":
         return
 
@@ -454,7 +454,7 @@ class PairwiseEvaluator:
         baseline_dataset = item.stash.get(BASELINE_DATASET_KEY, None)
         if baseline_dataset is not None:
             for idx, case in enumerate(baseline_dataset.cases):
-                logger.debug(f"Baseline response #{idx}: {repr(case.inputs['query'])[:100]}")
+                logger.debug(f"Baseline response #{idx}: {repr(case.expected_output)[:100]}")
                 responses_baseline.append(str(case.expected_output))
 
         # 2. Novel responses from current test run
