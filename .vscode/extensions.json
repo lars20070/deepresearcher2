@@ -14,9 +14,6 @@
     // Bash
     "timonwong.shellcheck",
     "mkhl.shfmt",
-    // LaTeX
-    "mathematic.vscode-latex",
-    "lgarcin.vscode-pweave",
     // git + GitHub Actions
     "ivanhofer.git-assistant",
     "GitHub.vscode-github-actions",
@@ -33,14 +30,14 @@
     "streetsidesoftware.code-spell-checker",
     // logging
     "berublan.vscode-log-viewer",
-    // mermaid 
+    // mermaid
     "bierner.markdown-mermaid",
     // Makefile
     "ms-vscode.makefile-tools",
     // container
-    "ms-vscode-remote.remote-containers",
+    "ms-vscode-remote.remote-containers"
   ],
   "unwantedRecommendations": [
-    "mechatroner.rainbow-csv",
+    "mechatroner.rainbow-csv"
   ]
 }

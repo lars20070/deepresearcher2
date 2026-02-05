@@ -40,7 +40,7 @@
     "src/deepresearcher2/agents.py",
     "src/deepresearcher2/models.py",
     "src/deepresearcher2/config.py",
-    "CLAUDE.md"
+    ".claude/CLAUDE.md"
   ],
   "conventions": {
     "asyncPatterns": "Use async/await for all LLM interactions and web searches",
