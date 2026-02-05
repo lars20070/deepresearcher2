@@ -3,6 +3,14 @@
     "allow": [
       "mcp__context7__query-docs",
       "mcp__context7__resolve-library-id",
+      "mcp__github__search_repositories",
+      "mcp__github__get_file_contents",
+      "mcp__github__search_code",
+      "mcp__github__list_issues",
+      "mcp__github__get_issue",
+      "mcp__github__create_issue",
+      "mcp__github__list_pull_requests",
+      "mcp__github__get_pull_request",
       "Bash(uv run:*)",
       "Bash(uv run pytest:*)",
       "Bash(uvx ruff format:*)",
@@ -12,6 +20,7 @@
   },
   "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
-    "context7"
+    "context7",
+    "github"
   ]
 }
