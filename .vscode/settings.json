@@ -1,6 +1,9 @@
 {
   "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
   "editor.formatOnSave": true,
+  "[markdown]": {
+    "editor.formatOnSave": false
+  },
   "editor.inlineSuggest.enabled": true,
   "python.languageServer": "Pylance",
   "python.testing.unittestEnabled": false,
@@ -9,12 +12,12 @@
   "python.testing.autoTestDiscoverOnSaveEnabled": false,
   "python.testing.pytestArgs": [
     "-n",
-    "auto",
+    "auto"
   ],
   "autoDocstring.docstringFormat": "google",
   "[python]": {
     "editor.tabSize": 4,
-    "editor.defaultFormatter": "charliermarsh.ruff",
+    "editor.defaultFormatter": "charliermarsh.ruff"
   },
   "github.copilot.enable": {
     "*": true,
@@ -23,7 +26,7 @@
     "toml": true,
     "python": true,
     "markdown": true,
-    "plaintext": false,
+    "plaintext": false
   },
   "chat.agent.enabled": true,
   "cSpell.enabled": true,
@@ -86,7 +89,7 @@
     "jlumbroso",
     "LMSTUDIO",
     "unsanitized",
-    "zstd",
+    "zstd"
   ],
   "cSpell.languageSettings": [
     {
@@ -105,13 +108,13 @@
   ],
   "shellcheck.ignorePatterns": {
     "**/.env.example": true,
-    "**/.env": true,
+    "**/.env": true
   },
   "logViewer.watch": [
     {
       "title": "deepresearcher2",
       "pattern": "deepresearcher2.log"
-    },
+    }
   ],
-  "nextflow.telemetry.enabled": false,
+  "nextflow.telemetry.enabled": false
 }
