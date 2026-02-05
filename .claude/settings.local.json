@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__context7__query-docs",
+      "mcp__context7__resolve-library-id",
+      "Bash(uv run:*)",
+      "Bash(uv run pytest:*)",
+      "Bash(uvx ruff format:*)",
+      "Bash(uvx ruff check:*)",
+      "Bash(uvx pyright:*)"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "context7"
+  ]
+}
