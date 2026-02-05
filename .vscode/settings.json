@@ -115,6 +115,5 @@
       "title": "deepresearcher2",
       "pattern": "deepresearcher2.log"
     }
-  ],
-  "nextflow.telemetry.enabled": false
+  ]
 }
