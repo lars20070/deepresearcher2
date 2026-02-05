@@ -36,6 +36,7 @@ reviews:
     - "!**/__pycache__/**"
     - "!.venv/**"
     - "!node_modules/**"
+    - "!.claude/plans/**"
     - "!.cursor/plans/**"
   path_instructions:
     - path: "**/*.py"
