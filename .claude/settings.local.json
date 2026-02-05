@@ -27,7 +27,8 @@
       "Bash(uv run pytest:*)",
       "Bash(uvx ruff format:*)",
       "Bash(uvx ruff check:*)",
-      "Bash(uvx pyright:*)"
+      "Bash(uvx pyright:*)",
+      "Bash(python3:*)"
     ]
   },
   "enableAllProjectMcpServers": true,
