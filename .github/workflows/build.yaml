@@ -47,18 +47,18 @@ jobs:
       - name: Create .env file
         # Define in GitHub repository: Settings -> Secrets and variables -> Actions -> New repository secret
         run: |
-          echo TAVILY_API_KEY=${{ secrets.TAVILY_API_KEY }} >> .env
-          echo GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }} >> .env
-          echo LOGFIRE_TOKEN=${{ secrets.LOGFIRE_TOKEN }} >> .env
-          echo OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} >> .env
-          echo WEATHER_API_KEY=${{ secrets.WEATHER_API_KEY }} >> .env
-          echo GEO_API_KEY=${{ secrets.GEO_API_KEY }} >> .env
-          echo BRAVE_API_KEY=${{ secrets.BRAVE_API_KEY }} >> .env
-          echo SERPER_API_KEY=${{ secrets.SERPER_API_KEY }} >> .env
-          echo CODECOV_TOKEN=${{ secrets.CODECOV_TOKEN }} >> .env
-          echo OPENROUTER_API_KEY=${{ secrets.OPENROUTER_API_KEY }} >> .env
-          echo DEEPINFRA_API_KEY=${{ secrets.DEEPINFRA_API_KEY }} >> .env
-          echo TOGETHER_API_KEY=${{ secrets.TOGETHER_API_KEY }} >> .env
+          echo "TAVILY_API_KEY=${{ secrets.TAVILY_API_KEY }}" >> .env
+          echo "GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}" >> .env
+          echo "LOGFIRE_TOKEN=${{ secrets.LOGFIRE_TOKEN }}" >> .env
+          echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> .env
+          echo "WEATHER_API_KEY=${{ secrets.WEATHER_API_KEY }}" >> .env
+          echo "GEO_API_KEY=${{ secrets.GEO_API_KEY }}" >> .env
+          echo "BRAVE_API_KEY=${{ secrets.BRAVE_API_KEY }}" >> .env
+          echo "SERPER_API_KEY=${{ secrets.SERPER_API_KEY }}" >> .env
+          echo "CODECOV_TOKEN=${{ secrets.CODECOV_TOKEN }}" >> .env
+          echo "OPENROUTER_API_KEY=${{ secrets.OPENROUTER_API_KEY }}" >> .env
+          echo "DEEPINFRA_API_KEY=${{ secrets.DEEPINFRA_API_KEY }}" >> .env
+          echo "TOGETHER_API_KEY=${{ secrets.TOGETHER_API_KEY }}" >> .env
       - name: Install uv package manager
         uses: astral-sh/setup-uv@v5.2.2
         with:
@@ -92,6 +92,7 @@ jobs:
           path: deepresearcher2.log
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5
+        if: always()
         with:
           files: ./coverage.xml
           fail_ci_if_error: false
