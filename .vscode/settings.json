@@ -19,6 +19,10 @@
     "editor.tabSize": 4,
     "editor.defaultFormatter": "charliermarsh.ruff"
   },
+  "[toml]": {
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true
+  },
   "github.copilot.enable": {
     "*": true,
     "bash": true,
