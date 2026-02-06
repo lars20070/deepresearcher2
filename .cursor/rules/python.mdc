@@ -17,10 +17,10 @@ Use Ruff for formatting and linting (configured in `pyproject.toml`):
 
 ```bash
 # Format code
-uvx ruff format .
+uv run ruff format .
 
 # Check and fix linting issues (ALWAYS run with --fix)
-uvx ruff check --fix .
+uv run ruff check --fix .
 ```
 
 **Important:** Always use `--fix` to automatically resolve fixable issues. Run this after any code changes.
@@ -85,7 +85,7 @@ async def fetch_content(url: str) -> str:
 ### Type Checking
 ```bash
 # ALWAYS run after code changes
-uvx pyright .
+uv run pyright .
 ```
 
 **Important:** Always run pyright to catch type errors. This must pass before committing any Python code.
@@ -287,13 +287,13 @@ def complex_function(param1: str, param2: int = 5) -> dict[str, Any]:
 Run these checks:
 ```bash
 # 1. Format code
-uvx ruff format .
+uv run ruff format .
 
 # 2. Check and fix linting issues
-uvx ruff check --fix .
+uv run ruff check --fix .
 
 # 3. Type checking
-uvx pyright .
+uv run pyright .
 
 # 4. Run tests
 uv run pytest -n auto -m "not paid"

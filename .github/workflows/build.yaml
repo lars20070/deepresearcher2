@@ -72,9 +72,9 @@ jobs:
       - name: Build the package
         run: uv build
       - name: Lint the package
-        run: uvx ruff check .
+        run: uv run ruff check .
       - name: Type check the package
-        run: uvx pyright .
+        run: uv run pyright .
       - name: Run unit tests
         # -v                verbose
         # -m "not paid"     skip tests requiring paid API keys
@@ -131,9 +131,8 @@ jobs:
             bash -c '
               set -o errexit -o pipefail -o nounset
               uv --version
-              uvx --version
               uv run python --version
-              uvx ruff check .
-              uvx pyright .
+              uv run ruff check .
+              uv run pyright .
               echo "Dev container built and run successfully"
             '

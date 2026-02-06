@@ -74,9 +74,9 @@ Currently hits Wikipedia live (slow, flaky). Mock `requests.get` to return canne
 ## Verification
 
 ```bash
-uvx ruff format .
-uvx ruff check --fix .
-uvx pyright .
+uv run ruff format .
+uv run ruff check --fix .
+uv run pyright .
 uv run pytest tests/test_utils.py -v
 uv run pytest -n auto
 ```
