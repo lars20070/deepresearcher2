@@ -1978,4 +1978,2221 @@ interactions:
     status:
       code: 200
       message: OK
+- request:
+    body: !!binary |
+      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
+      DwjjvPRfMxrBd+0mAAA=
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Length:
+      - '2636'
+      Content-Type:
+      - application/x-protobuf
+      User-Agent:
+      - OTel-OTLP-Exporter-Python/1.37.0
+    method: POST
+    uri: https://logfire-eu.pydantic.dev/v1/traces
+  response:
+    body:
+      string: ''
+    headers:
+      CF-RAY:
+      - 9c9b7ce1ab81931a-ZRH
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Date:
+      - Fri, 06 Feb 2026 14:55:19 GMT
+      Nel:
+      - '{"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}'
+      Report-To:
+      - '{"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=p8V742gnK6vHC8nDwFpV2FQchScI94PY0OqLGAa8mSL9%2FUgFD5skPyEBc2iyEOhGTymvf7CIe5DIHorj%2FFetMF5kHpAjpomTyrV%2F%2Fz7gelS%2Fu4nHZB0%3D"}]}'
+      Server:
+      - cloudflare
+      cf-cache-status:
+      - DYNAMIC
+      vary:
+      - origin, access-control-request-method, access-control-request-headers
+      via:
+      - 1.1 google
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"messages":[{"role":"system","content":"\nYou are presented with a question
+      and two possible answers A and B. Evaluate carefully whether answer A or answer
+      B is the better reply.\nYou have got only these two options. Your evaluations
+      contribute to Bradley-Terry scores across multiple items. Consistency and\nobjectivity
+      are critical for reliable rankings. Each comparison should be independent but
+      internally consistent.\n\n<EXAMPLES>\nExample 1:\n<QUESTION> Which of the two
+      ice cream flavours below is more creative? </QUESTION>\n<A> Vanilla </A> \n<B>
+      Pickled Citrus Ribbon </B>\nExpected output:\n{\n    \"response\": \"B\",\n}\n\nExample
+      2:\n<QUESTION> Which search query shows more genuine curiosity? </QUESTION>\n<A>
+      effect of ocean acidification feedback loops on Arctic methane release </A>
+      \n<B> climate change effects </B>\nExpected output:\n{\n    \"response\": \"A\",\n}\n\nExample
+      3:\n<QUESTION> Which reply is more insulting? </QUESTION>\n<A> Your argument
+      lacks logical coherence and fails to address the core issue at hand. </A> \n<B>
+      That''s an interesting perspective, though I see it differently. </B>\nExpected
+      output:\n{\n    \"response\": \"A\",\n}\n</EXAMPLES>\n\n<REQUIREMENTS>\n1. Consider
+      the question carefully. What aspects are important for the answer?\n2. Think
+      about answer A. Is it a good answer to the question? Why (not)?\n3. Think about
+      answer B. Is it a good answer to the question? Why (not)?\n4. Make a decision
+      based on your analysis.\n</REQUIREMENTS>\n\n<OUTPUT_FORMAT>\nYou must respond
+      with valid JSON containing exactly one field called \"response\" with value
+      \"A\" or \"B\":\n\n{\n    \"response\": \"A\",\n}\nor\n{\n    \"response\":
+      \"B\",\n}\n\nDo NOT include explanations, reasoning, or any other fields.\n</OUTPUT_FORMAT>\n"},{"role":"user","content":"\n<QUESTION>
+      Which of the two ice cream flavours A or B is more creative? </QUESTION>\n<A>
+      toasted rice & miso caramel ice cream </A>\n<B> peach </B>\n"}],"model":"qwen2.5:72b","stream":false,"temperature":0.0,"tool_choice":"required","tools":[{"type":"function","function":{"name":"final_result","description":"The
+      final response which ends this conversation","parameters":{"properties":{"response":{"$ref":"#/$defs/GameResult"}},"required":["response"],"type":"object","additionalProperties":false,"$defs":{"GameResult":{"enum":["A","B"],"type":"string"}}},"strict":true}}]}'
+    headers:
+      accept:
+      - application/json
+      accept-encoding:
+      - gzip, deflate, br
+      connection:
+      - keep-alive
+      content-length:
+      - '2380'
+      content-type:
+      - application/json
+      host:
+      - localhost:11434
+      user-agent:
+      - pydantic-ai/1.0.15
+      x-stainless-arch:
+      - arm64
+      x-stainless-async:
+      - async:asyncio
+      x-stainless-lang:
+      - python
+      x-stainless-os:
+      - MacOS
+      x-stainless-package-version:
+      - 2.1.0
+      x-stainless-read-timeout:
+      - '300'
+      x-stainless-retry-count:
+      - '1'
+      x-stainless-runtime:
+      - CPython
+      x-stainless-runtime-version:
+      - 3.12.8
+    method: POST
+    uri: http://localhost:11434/v1/chat/completions
+  response:
+    body:
+      string: '{"id":"chatcmpl-832","object":"chat.completion","created":1770389722,"model":"qwen2.5:72b","system_fingerprint":"fp_ollama","choices":[{"index":0,"message":{"role":"assistant","content":"{\n    \"response\":
+        \"A\"\n}"},"finish_reason":"stop"}],"usage":{"prompt_tokens":564,"completion_tokens":10,"total_tokens":574}}
+
+        '
+    headers:
+      Content-Length:
+      - '317'
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 06 Feb 2026 14:55:22 GMT
+    status:
+      code: 200
+      message: OK
+- request:
+    body: !!binary |
+      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
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Length:
+      - '2154'
+      Content-Type:
+      - application/x-protobuf
+      User-Agent:
+      - OTel-OTLP-Exporter-Python/1.37.0
+    method: POST
+    uri: https://logfire-eu.pydantic.dev/v1/traces
+  response:
+    body:
+      string: ''
+    headers:
+      CF-RAY:
+      - 9c9b7cf5be37bab9-ZRH
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Date:
+      - Fri, 06 Feb 2026 14:55:22 GMT
+      Nel:
+      - '{"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}'
+      Report-To:
+      - '{"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=otNAVApgL8HaJCRkdIJ2HFUUhLwquDWay5R0bHtb%2F7XWalpAqtreMKHUne3twO27myUQoRrs2DaICJa181MA7fY13IUJk08uwdYLGOE3759ZkUYf"}]}'
+      Server:
+      - cloudflare
+      cf-cache-status:
+      - DYNAMIC
+      vary:
+      - origin, access-control-request-method, access-control-request-headers
+      via:
+      - 1.1 google
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"messages":[{"role":"system","content":"\nYou are presented with a question
+      and two possible answers A and B. Evaluate carefully whether answer A or answer
+      B is the better reply.\nYou have got only these two options. Your evaluations
+      contribute to Bradley-Terry scores across multiple items. Consistency and\nobjectivity
+      are critical for reliable rankings. Each comparison should be independent but
+      internally consistent.\n\n<EXAMPLES>\nExample 1:\n<QUESTION> Which of the two
+      ice cream flavours below is more creative? </QUESTION>\n<A> Vanilla </A> \n<B>
+      Pickled Citrus Ribbon </B>\nExpected output:\n{\n    \"response\": \"B\",\n}\n\nExample
+      2:\n<QUESTION> Which search query shows more genuine curiosity? </QUESTION>\n<A>
+      effect of ocean acidification feedback loops on Arctic methane release </A>
+      \n<B> climate change effects </B>\nExpected output:\n{\n    \"response\": \"A\",\n}\n\nExample
+      3:\n<QUESTION> Which reply is more insulting? </QUESTION>\n<A> Your argument
+      lacks logical coherence and fails to address the core issue at hand. </A> \n<B>
+      That''s an interesting perspective, though I see it differently. </B>\nExpected
+      output:\n{\n    \"response\": \"A\",\n}\n</EXAMPLES>\n\n<REQUIREMENTS>\n1. Consider
+      the question carefully. What aspects are important for the answer?\n2. Think
+      about answer A. Is it a good answer to the question? Why (not)?\n3. Think about
+      answer B. Is it a good answer to the question? Why (not)?\n4. Make a decision
+      based on your analysis.\n</REQUIREMENTS>\n\n<OUTPUT_FORMAT>\nYou must respond
+      with valid JSON containing exactly one field called \"response\" with value
+      \"A\" or \"B\":\n\n{\n    \"response\": \"A\",\n}\nor\n{\n    \"response\":
+      \"B\",\n}\n\nDo NOT include explanations, reasoning, or any other fields.\n</OUTPUT_FORMAT>\n"},{"role":"user","content":"\n<QUESTION>
+      Which of the two ice cream flavours A or B is more creative? </QUESTION>\n<A>
+      toasted rice & miso caramel ice cream </A>\n<B> peach </B>\n"},{"role":"assistant","content":"{\n    \"response\":
+      \"A\"\n}"},{"role":"user","content":"Validation feedback:\nPlease include your
+      response in a tool call.\n\nFix the errors and try again."}],"model":"qwen2.5:72b","stream":false,"temperature":0.0,"tool_choice":"required","tools":[{"type":"function","function":{"name":"final_result","description":"The
+      final response which ends this conversation","parameters":{"properties":{"response":{"$ref":"#/$defs/GameResult"}},"required":["response"],"type":"object","additionalProperties":false,"$defs":{"GameResult":{"enum":["A","B"],"type":"string"}}},"strict":true}}]}'
+    headers:
+      accept:
+      - application/json
+      accept-encoding:
+      - gzip, deflate, br
+      connection:
+      - keep-alive
+      content-length:
+      - '2571'
+      content-type:
+      - application/json
+      host:
+      - localhost:11434
+      user-agent:
+      - pydantic-ai/1.0.15
+      x-stainless-arch:
+      - arm64
+      x-stainless-async:
+      - async:asyncio
+      x-stainless-lang:
+      - python
+      x-stainless-os:
+      - MacOS
+      x-stainless-package-version:
+      - 2.1.0
+      x-stainless-read-timeout:
+      - '300'
+      x-stainless-retry-count:
+      - '0'
+      x-stainless-runtime:
+      - CPython
+      x-stainless-runtime-version:
+      - 3.12.8
+    method: POST
+    uri: http://localhost:11434/v1/chat/completions
+  response:
+    body:
+      string: '{"id":"chatcmpl-152","object":"chat.completion","created":1770389727,"model":"qwen2.5:72b","system_fingerprint":"fp_ollama","choices":[{"index":0,"message":{"role":"assistant","content":"","tool_calls":[{"id":"call_4kua6r6j","index":0,"type":"function","function":{"name":"final_result","arguments":"{\"GameResult\":\"A\"}"}}]},"finish_reason":"tool_calls"}],"usage":{"prompt_tokens":602,"completion_tokens":21,"total_tokens":623}}
+
+        '
+    headers:
+      Content-Length:
+      - '432'
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 06 Feb 2026 14:55:27 GMT
+    status:
+      code: 200
+      message: OK
+- request:
+    body: !!binary |
+      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
+      ed8vN4qzJVkoLuSL3txeG96gL/0XTnU8RLIVAAA=
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Length:
+      - '2252'
+      Content-Type:
+      - application/x-protobuf
+      User-Agent:
+      - OTel-OTLP-Exporter-Python/1.37.0
+    method: POST
+    uri: https://logfire-eu.pydantic.dev/v1/traces
+  response:
+    body:
+      string: ''
+    headers:
+      CF-RAY:
+      - 9c9b7d133a1fbc56-ZRH
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Date:
+      - Fri, 06 Feb 2026 14:55:27 GMT
+      Nel:
+      - '{"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}'
+      Report-To:
+      - '{"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=pGefbgi0dSrzrVoPiBR32%2BtdrBu0HPsngvyPJ8s05P8zVtRRAMRLRZEMBVyCZsk08to6ni73Zm04v1ozcRz6RuZciYqJ%2Bi1xHKrxwEc4%2Bba3UikJ"}]}'
+      Server:
+      - cloudflare
+      cf-cache-status:
+      - DYNAMIC
+      vary:
+      - origin, access-control-request-method, access-control-request-headers
+      via:
+      - 1.1 google
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"messages":[{"role":"system","content":"\nYou are presented with a question
+      and two possible answers A and B. Evaluate carefully whether answer A or answer
+      B is the better reply.\nYou have got only these two options. Your evaluations
+      contribute to Bradley-Terry scores across multiple items. Consistency and\nobjectivity
+      are critical for reliable rankings. Each comparison should be independent but
+      internally consistent.\n\n<EXAMPLES>\nExample 1:\n<QUESTION> Which of the two
+      ice cream flavours below is more creative? </QUESTION>\n<A> Vanilla </A> \n<B>
+      Pickled Citrus Ribbon </B>\nExpected output:\n{\n    \"response\": \"B\",\n}\n\nExample
+      2:\n<QUESTION> Which search query shows more genuine curiosity? </QUESTION>\n<A>
+      effect of ocean acidification feedback loops on Arctic methane release </A>
+      \n<B> climate change effects </B>\nExpected output:\n{\n    \"response\": \"A\",\n}\n\nExample
+      3:\n<QUESTION> Which reply is more insulting? </QUESTION>\n<A> Your argument
+      lacks logical coherence and fails to address the core issue at hand. </A> \n<B>
+      That''s an interesting perspective, though I see it differently. </B>\nExpected
+      output:\n{\n    \"response\": \"A\",\n}\n</EXAMPLES>\n\n<REQUIREMENTS>\n1. Consider
+      the question carefully. What aspects are important for the answer?\n2. Think
+      about answer A. Is it a good answer to the question? Why (not)?\n3. Think about
+      answer B. Is it a good answer to the question? Why (not)?\n4. Make a decision
+      based on your analysis.\n</REQUIREMENTS>\n\n<OUTPUT_FORMAT>\nYou must respond
+      with valid JSON containing exactly one field called \"response\" with value
+      \"A\" or \"B\":\n\n{\n    \"response\": \"A\",\n}\nor\n{\n    \"response\":
+      \"B\",\n}\n\nDo NOT include explanations, reasoning, or any other fields.\n</OUTPUT_FORMAT>\n"},{"role":"user","content":"\n<QUESTION>
+      Which of the two ice cream flavours A or B is more creative? </QUESTION>\n<A>
+      toasted rice & miso caramel ice cream </A>\n<B> peach </B>\n"},{"role":"assistant","content":"{\n    \"response\":
+      \"A\"\n}"},{"role":"user","content":"Validation feedback:\nPlease include your
+      response in a tool call.\n\nFix the errors and try again."},{"role":"assistant","content":null,"tool_calls":[{"id":"call_4kua6r6j","type":"function","function":{"name":"final_result","arguments":"{\"GameResult\":\"A\"}"}}]},{"role":"tool","tool_call_id":"call_4kua6r6j","content":"1
+      validation errors: [\n  {\n    \"type\": \"missing\",\n    \"loc\": [\n      \"response\"\n    ],\n    \"msg\":
+      \"Field required\",\n    \"input\": {\n      \"GameResult\": \"A\"\n    }\n  }\n]\n\nFix
+      the errors and try again."}],"model":"qwen2.5:72b","stream":false,"temperature":0.0,"tool_choice":"required","tools":[{"type":"function","function":{"name":"final_result","description":"The
+      final response which ends this conversation","parameters":{"properties":{"response":{"$ref":"#/$defs/GameResult"}},"required":["response"],"type":"object","additionalProperties":false,"$defs":{"GameResult":{"enum":["A","B"],"type":"string"}}},"strict":true}}]}'
+    headers:
+      accept:
+      - application/json
+      accept-encoding:
+      - gzip, deflate, br
+      connection:
+      - keep-alive
+      content-length:
+      - '3023'
+      content-type:
+      - application/json
+      host:
+      - localhost:11434
+      user-agent:
+      - pydantic-ai/1.0.15
+      x-stainless-arch:
+      - arm64
+      x-stainless-async:
+      - async:asyncio
+      x-stainless-lang:
+      - python
+      x-stainless-os:
+      - MacOS
+      x-stainless-package-version:
+      - 2.1.0
+      x-stainless-read-timeout:
+      - '300'
+      x-stainless-retry-count:
+      - '0'
+      x-stainless-runtime:
+      - CPython
+      x-stainless-runtime-version:
+      - 3.12.8
+    method: POST
+    uri: http://localhost:11434/v1/chat/completions
+  response:
+    body:
+      string: '{"id":"chatcmpl-522","object":"chat.completion","created":1770389732,"model":"qwen2.5:72b","system_fingerprint":"fp_ollama","choices":[{"index":0,"message":{"role":"assistant","content":"","tool_calls":[{"id":"call_k1ftjmgq","index":0,"type":"function","function":{"name":"final_result","arguments":"{\"response\":\"A\"}"}}]},"finish_reason":"tool_calls"}],"usage":{"prompt_tokens":697,"completion_tokens":19,"total_tokens":716}}
+
+        '
+    headers:
+      Content-Length:
+      - '430'
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 06 Feb 2026 14:55:32 GMT
+    status:
+      code: 200
+      message: OK
+- request:
+    body: !!binary |
+      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
+      KxYGfTyY5qX/AocvmnbpJgAA
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Length:
+      - '2640'
+      Content-Type:
+      - application/x-protobuf
+      User-Agent:
+      - OTel-OTLP-Exporter-Python/1.37.0
+    method: POST
+    uri: https://logfire-eu.pydantic.dev/v1/traces
+  response:
+    body:
+      string: ''
+    headers:
+      CF-RAY:
+      - 9c9b7d3a2f5fbc44-ZRH
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Date:
+      - Fri, 06 Feb 2026 14:55:33 GMT
+      Nel:
+      - '{"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}'
+      Report-To:
+      - '{"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=hWrQXqHTZ58Rzthfa1V%2BDUB7Xy1j5n2bk0gK7z6wDvy%2BnQ1qeABXfzJgGP4%2FtQtraWzf1UJD%2FK7NigXvIzdL%2FBlx7kswXxVbDQeCxwNbgSqbr034"}]}'
+      Server:
+      - cloudflare
+      cf-cache-status:
+      - DYNAMIC
+      vary:
+      - origin, access-control-request-method, access-control-request-headers
+      via:
+      - 1.1 google
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"messages":[{"role":"system","content":"\nYou are presented with a question
+      and two possible answers A and B. Evaluate carefully whether answer A or answer
+      B is the better reply.\nYou have got only these two options. Your evaluations
+      contribute to Bradley-Terry scores across multiple items. Consistency and\nobjectivity
+      are critical for reliable rankings. Each comparison should be independent but
+      internally consistent.\n\n<EXAMPLES>\nExample 1:\n<QUESTION> Which of the two
+      ice cream flavours below is more creative? </QUESTION>\n<A> Vanilla </A> \n<B>
+      Pickled Citrus Ribbon </B>\nExpected output:\n{\n    \"response\": \"B\",\n}\n\nExample
+      2:\n<QUESTION> Which search query shows more genuine curiosity? </QUESTION>\n<A>
+      effect of ocean acidification feedback loops on Arctic methane release </A>
+      \n<B> climate change effects </B>\nExpected output:\n{\n    \"response\": \"A\",\n}\n\nExample
+      3:\n<QUESTION> Which reply is more insulting? </QUESTION>\n<A> Your argument
+      lacks logical coherence and fails to address the core issue at hand. </A> \n<B>
+      That''s an interesting perspective, though I see it differently. </B>\nExpected
+      output:\n{\n    \"response\": \"A\",\n}\n</EXAMPLES>\n\n<REQUIREMENTS>\n1. Consider
+      the question carefully. What aspects are important for the answer?\n2. Think
+      about answer A. Is it a good answer to the question? Why (not)?\n3. Think about
+      answer B. Is it a good answer to the question? Why (not)?\n4. Make a decision
+      based on your analysis.\n</REQUIREMENTS>\n\n<OUTPUT_FORMAT>\nYou must respond
+      with valid JSON containing exactly one field called \"response\" with value
+      \"A\" or \"B\":\n\n{\n    \"response\": \"A\",\n}\nor\n{\n    \"response\":
+      \"B\",\n}\n\nDo NOT include explanations, reasoning, or any other fields.\n</OUTPUT_FORMAT>\n"},{"role":"user","content":"\n<QUESTION>
+      Which of the two ice cream flavours A or B is more creative? </QUESTION>\n<A>
+      chocolate </A>\n<B> strawberry </B>\n"}],"model":"qwen2.5:72b","stream":false,"temperature":0.0,"tool_choice":"required","tools":[{"type":"function","function":{"name":"final_result","description":"The
+      final response which ends this conversation","parameters":{"properties":{"response":{"$ref":"#/$defs/GameResult"}},"required":["response"],"type":"object","additionalProperties":false,"$defs":{"GameResult":{"enum":["A","B"],"type":"string"}}},"strict":true}}]}'
+    headers:
+      accept:
+      - application/json
+      accept-encoding:
+      - gzip, deflate, br
+      connection:
+      - keep-alive
+      content-length:
+      - '2357'
+      content-type:
+      - application/json
+      host:
+      - localhost:11434
+      user-agent:
+      - pydantic-ai/1.0.15
+      x-stainless-arch:
+      - arm64
+      x-stainless-async:
+      - async:asyncio
+      x-stainless-lang:
+      - python
+      x-stainless-os:
+      - MacOS
+      x-stainless-package-version:
+      - 2.1.0
+      x-stainless-read-timeout:
+      - '300'
+      x-stainless-retry-count:
+      - '0'
+      x-stainless-runtime:
+      - CPython
+      x-stainless-runtime-version:
+      - 3.12.8
+    method: POST
+    uri: http://localhost:11434/v1/chat/completions
+  response:
+    body:
+      string: '{"id":"chatcmpl-493","object":"chat.completion","created":1770389735,"model":"qwen2.5:72b","system_fingerprint":"fp_ollama","choices":[{"index":0,"message":{"role":"assistant","content":"{\n    \"response\":
+        \"B\"\n}"},"finish_reason":"stop"}],"usage":{"prompt_tokens":557,"completion_tokens":10,"total_tokens":567}}
+
+        '
+    headers:
+      Content-Length:
+      - '317'
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 06 Feb 2026 14:55:35 GMT
+    status:
+      code: 200
+      message: OK
+- request:
+    body: !!binary |
+      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
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Length:
+      - '2148'
+      Content-Type:
+      - application/x-protobuf
+      User-Agent:
+      - OTel-OTLP-Exporter-Python/1.37.0
+    method: POST
+    uri: https://logfire-eu.pydantic.dev/v1/traces
+  response:
+    body:
+      string: ''
+    headers:
+      CF-RAY:
+      - 9c9b7d4b1f94bc08-ZRH
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Date:
+      - Fri, 06 Feb 2026 14:55:36 GMT
+      Nel:
+      - '{"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}'
+      Report-To:
+      - '{"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=dDzfqPbuaZwNCWMzX%2B%2FDVpJJz4PRbdd%2BU4RDnt9rGR%2Bp9LunG63tShqla%2FSvjhCy2Q%2FqCLfAU%2Bxt%2FFdb4r5ubAz7hVCdwWvpNyBMow%2BibRqLNG1E"}]}'
+      Server:
+      - cloudflare
+      cf-cache-status:
+      - DYNAMIC
+      vary:
+      - origin, access-control-request-method, access-control-request-headers
+      via:
+      - 1.1 google
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"messages":[{"role":"system","content":"\nYou are presented with a question
+      and two possible answers A and B. Evaluate carefully whether answer A or answer
+      B is the better reply.\nYou have got only these two options. Your evaluations
+      contribute to Bradley-Terry scores across multiple items. Consistency and\nobjectivity
+      are critical for reliable rankings. Each comparison should be independent but
+      internally consistent.\n\n<EXAMPLES>\nExample 1:\n<QUESTION> Which of the two
+      ice cream flavours below is more creative? </QUESTION>\n<A> Vanilla </A> \n<B>
+      Pickled Citrus Ribbon </B>\nExpected output:\n{\n    \"response\": \"B\",\n}\n\nExample
+      2:\n<QUESTION> Which search query shows more genuine curiosity? </QUESTION>\n<A>
+      effect of ocean acidification feedback loops on Arctic methane release </A>
+      \n<B> climate change effects </B>\nExpected output:\n{\n    \"response\": \"A\",\n}\n\nExample
+      3:\n<QUESTION> Which reply is more insulting? </QUESTION>\n<A> Your argument
+      lacks logical coherence and fails to address the core issue at hand. </A> \n<B>
+      That''s an interesting perspective, though I see it differently. </B>\nExpected
+      output:\n{\n    \"response\": \"A\",\n}\n</EXAMPLES>\n\n<REQUIREMENTS>\n1. Consider
+      the question carefully. What aspects are important for the answer?\n2. Think
+      about answer A. Is it a good answer to the question? Why (not)?\n3. Think about
+      answer B. Is it a good answer to the question? Why (not)?\n4. Make a decision
+      based on your analysis.\n</REQUIREMENTS>\n\n<OUTPUT_FORMAT>\nYou must respond
+      with valid JSON containing exactly one field called \"response\" with value
+      \"A\" or \"B\":\n\n{\n    \"response\": \"A\",\n}\nor\n{\n    \"response\":
+      \"B\",\n}\n\nDo NOT include explanations, reasoning, or any other fields.\n</OUTPUT_FORMAT>\n"},{"role":"user","content":"\n<QUESTION>
+      Which of the two ice cream flavours A or B is more creative? </QUESTION>\n<A>
+      chocolate </A>\n<B> strawberry </B>\n"},{"role":"assistant","content":"{\n    \"response\":
+      \"B\"\n}"},{"role":"user","content":"Validation feedback:\nPlease include your
+      response in a tool call.\n\nFix the errors and try again."}],"model":"qwen2.5:72b","stream":false,"temperature":0.0,"tool_choice":"required","tools":[{"type":"function","function":{"name":"final_result","description":"The
+      final response which ends this conversation","parameters":{"properties":{"response":{"$ref":"#/$defs/GameResult"}},"required":["response"],"type":"object","additionalProperties":false,"$defs":{"GameResult":{"enum":["A","B"],"type":"string"}}},"strict":true}}]}'
+    headers:
+      accept:
+      - application/json
+      accept-encoding:
+      - gzip, deflate, br
+      connection:
+      - keep-alive
+      content-length:
+      - '2548'
+      content-type:
+      - application/json
+      host:
+      - localhost:11434
+      user-agent:
+      - pydantic-ai/1.0.15
+      x-stainless-arch:
+      - arm64
+      x-stainless-async:
+      - async:asyncio
+      x-stainless-lang:
+      - python
+      x-stainless-os:
+      - MacOS
+      x-stainless-package-version:
+      - 2.1.0
+      x-stainless-read-timeout:
+      - '300'
+      x-stainless-retry-count:
+      - '0'
+      x-stainless-runtime:
+      - CPython
+      x-stainless-runtime-version:
+      - 3.12.8
+    method: POST
+    uri: http://localhost:11434/v1/chat/completions
+  response:
+    body:
+      string: '{"id":"chatcmpl-44","object":"chat.completion","created":1770389740,"model":"qwen2.5:72b","system_fingerprint":"fp_ollama","choices":[{"index":0,"message":{"role":"assistant","content":"","tool_calls":[{"id":"call_vgcozg3h","index":0,"type":"function","function":{"name":"final_result","arguments":"{\"response\":\"B\"}"}}]},"finish_reason":"tool_calls"}],"usage":{"prompt_tokens":595,"completion_tokens":20,"total_tokens":615}}
+
+        '
+    headers:
+      Content-Length:
+      - '429'
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 06 Feb 2026 14:55:40 GMT
+    status:
+      code: 200
+      message: OK
+- request:
+    body: !!binary |
+      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
+      EKm1pCIAAA==
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Length:
+      - '2515'
+      Content-Type:
+      - application/x-protobuf
+      User-Agent:
+      - OTel-OTLP-Exporter-Python/1.37.0
+    method: POST
+    uri: https://logfire-eu.pydantic.dev/v1/traces
+  response:
+    body:
+      string: ''
+    headers:
+      CF-RAY:
+      - 9c9b7d6bb9c2739d-ZRH
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Date:
+      - Fri, 06 Feb 2026 14:55:41 GMT
+      Nel:
+      - '{"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}'
+      Report-To:
+      - '{"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=q63jtSiq6k1y3CQzjdCOPTGfk5pEqjF6OkKMy1eThZBWvxi2myZe5p9gkvyoKmgRE3L%2B%2B%2BEmZjQ45BbBCYj9CiM1zvNr%2FNcKI7KQJZy%2BsfQJa%2FxiJtQ%3D"}]}'
+      Server:
+      - cloudflare
+      cf-cache-status:
+      - DYNAMIC
+      vary:
+      - origin, access-control-request-method, access-control-request-headers
+      via:
+      - 1.1 google
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"messages":[{"role":"system","content":"\nYou are presented with a question
+      and two possible answers A and B. Evaluate carefully whether answer A or answer
+      B is the better reply.\nYou have got only these two options. Your evaluations
+      contribute to Bradley-Terry scores across multiple items. Consistency and\nobjectivity
+      are critical for reliable rankings. Each comparison should be independent but
+      internally consistent.\n\n<EXAMPLES>\nExample 1:\n<QUESTION> Which of the two
+      ice cream flavours below is more creative? </QUESTION>\n<A> Vanilla </A> \n<B>
+      Pickled Citrus Ribbon </B>\nExpected output:\n{\n    \"response\": \"B\",\n}\n\nExample
+      2:\n<QUESTION> Which search query shows more genuine curiosity? </QUESTION>\n<A>
+      effect of ocean acidification feedback loops on Arctic methane release </A>
+      \n<B> climate change effects </B>\nExpected output:\n{\n    \"response\": \"A\",\n}\n\nExample
+      3:\n<QUESTION> Which reply is more insulting? </QUESTION>\n<A> Your argument
+      lacks logical coherence and fails to address the core issue at hand. </A> \n<B>
+      That''s an interesting perspective, though I see it differently. </B>\nExpected
+      output:\n{\n    \"response\": \"A\",\n}\n</EXAMPLES>\n\n<REQUIREMENTS>\n1. Consider
+      the question carefully. What aspects are important for the answer?\n2. Think
+      about answer A. Is it a good answer to the question? Why (not)?\n3. Think about
+      answer B. Is it a good answer to the question? Why (not)?\n4. Make a decision
+      based on your analysis.\n</REQUIREMENTS>\n\n<OUTPUT_FORMAT>\nYou must respond
+      with valid JSON containing exactly one field called \"response\" with value
+      \"A\" or \"B\":\n\n{\n    \"response\": \"A\",\n}\nor\n{\n    \"response\":
+      \"B\",\n}\n\nDo NOT include explanations, reasoning, or any other fields.\n</OUTPUT_FORMAT>\n"},{"role":"user","content":"\n<QUESTION>
+      Which of the two ice cream flavours A or B is more creative? </QUESTION>\n<A>
+      peach </A>\n<B> strawberry </B>\n"}],"model":"qwen2.5:72b","stream":false,"temperature":0.0,"tool_choice":"required","tools":[{"type":"function","function":{"name":"final_result","description":"The
+      final response which ends this conversation","parameters":{"properties":{"response":{"$ref":"#/$defs/GameResult"}},"required":["response"],"type":"object","additionalProperties":false,"$defs":{"GameResult":{"enum":["A","B"],"type":"string"}}},"strict":true}}]}'
+    headers:
+      accept:
+      - application/json
+      accept-encoding:
+      - gzip, deflate, br
+      connection:
+      - keep-alive
+      content-length:
+      - '2353'
+      content-type:
+      - application/json
+      host:
+      - localhost:11434
+      user-agent:
+      - pydantic-ai/1.0.15
+      x-stainless-arch:
+      - arm64
+      x-stainless-async:
+      - async:asyncio
+      x-stainless-lang:
+      - python
+      x-stainless-os:
+      - MacOS
+      x-stainless-package-version:
+      - 2.1.0
+      x-stainless-read-timeout:
+      - '300'
+      x-stainless-retry-count:
+      - '0'
+      x-stainless-runtime:
+      - CPython
+      x-stainless-runtime-version:
+      - 3.12.8
+    method: POST
+    uri: http://localhost:11434/v1/chat/completions
+  response:
+    body:
+      string: '{"id":"chatcmpl-271","object":"chat.completion","created":1770389743,"model":"qwen2.5:72b","system_fingerprint":"fp_ollama","choices":[{"index":0,"message":{"role":"assistant","content":"{\n    \"response\":
+        \"A\"\n}"},"finish_reason":"stop"}],"usage":{"prompt_tokens":557,"completion_tokens":10,"total_tokens":567}}
+
+        '
+    headers:
+      Content-Length:
+      - '317'
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 06 Feb 2026 14:55:43 GMT
+    status:
+      code: 200
+      message: OK
+- request:
+    body: !!binary |
+      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
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Length:
+      - '2146'
+      Content-Type:
+      - application/x-protobuf
+      User-Agent:
+      - OTel-OTLP-Exporter-Python/1.37.0
+    method: POST
+    uri: https://logfire-eu.pydantic.dev/v1/traces
+  response:
+    body:
+      string: ''
+    headers:
+      CF-RAY:
+      - 9c9b7d7cac50bb0c-ZRH
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Date:
+      - Fri, 06 Feb 2026 14:55:44 GMT
+      Nel:
+      - '{"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}'
+      Report-To:
+      - '{"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=RV9FWWV7ZltSU1Ag7jVFZiamWhHo6ygujW59wsm9Sk7qQCl5tkc3ztioXbK2SEOLEO%2B5f%2Fu70tKxmlibMj7YZp6dj%2Fre6LkICkg7Ou6NDzo8b5OH"}]}'
+      Server:
+      - cloudflare
+      cf-cache-status:
+      - DYNAMIC
+      vary:
+      - origin, access-control-request-method, access-control-request-headers
+      via:
+      - 1.1 google
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"messages":[{"role":"system","content":"\nYou are presented with a question
+      and two possible answers A and B. Evaluate carefully whether answer A or answer
+      B is the better reply.\nYou have got only these two options. Your evaluations
+      contribute to Bradley-Terry scores across multiple items. Consistency and\nobjectivity
+      are critical for reliable rankings. Each comparison should be independent but
+      internally consistent.\n\n<EXAMPLES>\nExample 1:\n<QUESTION> Which of the two
+      ice cream flavours below is more creative? </QUESTION>\n<A> Vanilla </A> \n<B>
+      Pickled Citrus Ribbon </B>\nExpected output:\n{\n    \"response\": \"B\",\n}\n\nExample
+      2:\n<QUESTION> Which search query shows more genuine curiosity? </QUESTION>\n<A>
+      effect of ocean acidification feedback loops on Arctic methane release </A>
+      \n<B> climate change effects </B>\nExpected output:\n{\n    \"response\": \"A\",\n}\n\nExample
+      3:\n<QUESTION> Which reply is more insulting? </QUESTION>\n<A> Your argument
+      lacks logical coherence and fails to address the core issue at hand. </A> \n<B>
+      That''s an interesting perspective, though I see it differently. </B>\nExpected
+      output:\n{\n    \"response\": \"A\",\n}\n</EXAMPLES>\n\n<REQUIREMENTS>\n1. Consider
+      the question carefully. What aspects are important for the answer?\n2. Think
+      about answer A. Is it a good answer to the question? Why (not)?\n3. Think about
+      answer B. Is it a good answer to the question? Why (not)?\n4. Make a decision
+      based on your analysis.\n</REQUIREMENTS>\n\n<OUTPUT_FORMAT>\nYou must respond
+      with valid JSON containing exactly one field called \"response\" with value
+      \"A\" or \"B\":\n\n{\n    \"response\": \"A\",\n}\nor\n{\n    \"response\":
+      \"B\",\n}\n\nDo NOT include explanations, reasoning, or any other fields.\n</OUTPUT_FORMAT>\n"},{"role":"user","content":"\n<QUESTION>
+      Which of the two ice cream flavours A or B is more creative? </QUESTION>\n<A>
+      peach </A>\n<B> strawberry </B>\n"},{"role":"assistant","content":"{\n    \"response\":
+      \"A\"\n}"},{"role":"user","content":"Validation feedback:\nPlease include your
+      response in a tool call.\n\nFix the errors and try again."}],"model":"qwen2.5:72b","stream":false,"temperature":0.0,"tool_choice":"required","tools":[{"type":"function","function":{"name":"final_result","description":"The
+      final response which ends this conversation","parameters":{"properties":{"response":{"$ref":"#/$defs/GameResult"}},"required":["response"],"type":"object","additionalProperties":false,"$defs":{"GameResult":{"enum":["A","B"],"type":"string"}}},"strict":true}}]}'
+    headers:
+      accept:
+      - application/json
+      accept-encoding:
+      - gzip, deflate, br
+      connection:
+      - keep-alive
+      content-length:
+      - '2544'
+      content-type:
+      - application/json
+      host:
+      - localhost:11434
+      user-agent:
+      - pydantic-ai/1.0.15
+      x-stainless-arch:
+      - arm64
+      x-stainless-async:
+      - async:asyncio
+      x-stainless-lang:
+      - python
+      x-stainless-os:
+      - MacOS
+      x-stainless-package-version:
+      - 2.1.0
+      x-stainless-read-timeout:
+      - '300'
+      x-stainless-retry-count:
+      - '0'
+      x-stainless-runtime:
+      - CPython
+      x-stainless-runtime-version:
+      - 3.12.8
+    method: POST
+    uri: http://localhost:11434/v1/chat/completions
+  response:
+    body:
+      string: '{"id":"chatcmpl-153","object":"chat.completion","created":1770389748,"model":"qwen2.5:72b","system_fingerprint":"fp_ollama","choices":[{"index":0,"message":{"role":"assistant","content":"","tool_calls":[{"id":"call_wp4c1dpc","index":0,"type":"function","function":{"name":"final_result","arguments":"{\"response\":\"A\"}"}}]},"finish_reason":"tool_calls"}],"usage":{"prompt_tokens":595,"completion_tokens":20,"total_tokens":615}}
+
+        '
+    headers:
+      Content-Length:
+      - '430'
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 06 Feb 2026 14:55:48 GMT
+    status:
+      code: 200
+      message: OK
+- request:
+    body: !!binary |
+      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
+      IgAA
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Length:
+      - '2511'
+      Content-Type:
+      - application/x-protobuf
+      User-Agent:
+      - OTel-OTLP-Exporter-Python/1.37.0
+    method: POST
+    uri: https://logfire-eu.pydantic.dev/v1/traces
+  response:
+    body:
+      string: ''
+    headers:
+      CF-RAY:
+      - 9c9b7d9a39e4c115-ZRH
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Date:
+      - Fri, 06 Feb 2026 14:55:48 GMT
+      Nel:
+      - '{"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}'
+      Report-To:
+      - '{"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=cLwhOVo8%2Fl5CptE39R4RrpPgpBeJzHLYK6YiJkCN9VA21Bto54pcttkodJsxidBsnUoAUolO%2FmAD2Fbk2xZ9hgk%2BbgDUFjeVBF8rFNhiPYulkaxA0Kg%3D"}]}'
+      Server:
+      - cloudflare
+      cf-cache-status:
+      - DYNAMIC
+      vary:
+      - origin, access-control-request-method, access-control-request-headers
+      via:
+      - 1.1 google
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"messages":[{"role":"system","content":"\nYou are presented with a question
+      and two possible answers A and B. Evaluate carefully whether answer A or answer
+      B is the better reply.\nYou have got only these two options. Your evaluations
+      contribute to Bradley-Terry scores across multiple items. Consistency and\nobjectivity
+      are critical for reliable rankings. Each comparison should be independent but
+      internally consistent.\n\n<EXAMPLES>\nExample 1:\n<QUESTION> Which of the two
+      ice cream flavours below is more creative? </QUESTION>\n<A> Vanilla </A> \n<B>
+      Pickled Citrus Ribbon </B>\nExpected output:\n{\n    \"response\": \"B\",\n}\n\nExample
+      2:\n<QUESTION> Which search query shows more genuine curiosity? </QUESTION>\n<A>
+      effect of ocean acidification feedback loops on Arctic methane release </A>
+      \n<B> climate change effects </B>\nExpected output:\n{\n    \"response\": \"A\",\n}\n\nExample
+      3:\n<QUESTION> Which reply is more insulting? </QUESTION>\n<A> Your argument
+      lacks logical coherence and fails to address the core issue at hand. </A> \n<B>
+      That''s an interesting perspective, though I see it differently. </B>\nExpected
+      output:\n{\n    \"response\": \"A\",\n}\n</EXAMPLES>\n\n<REQUIREMENTS>\n1. Consider
+      the question carefully. What aspects are important for the answer?\n2. Think
+      about answer A. Is it a good answer to the question? Why (not)?\n3. Think about
+      answer B. Is it a good answer to the question? Why (not)?\n4. Make a decision
+      based on your analysis.\n</REQUIREMENTS>\n\n<OUTPUT_FORMAT>\nYou must respond
+      with valid JSON containing exactly one field called \"response\" with value
+      \"A\" or \"B\":\n\n{\n    \"response\": \"A\",\n}\nor\n{\n    \"response\":
+      \"B\",\n}\n\nDo NOT include explanations, reasoning, or any other fields.\n</OUTPUT_FORMAT>\n"},{"role":"user","content":"\n<QUESTION>
+      Which of the two ice cream flavours A or B is more creative? </QUESTION>\n<A>
+      chocolate </A>\n<B> vanilla </B>\n"}],"model":"qwen2.5:72b","stream":false,"temperature":0.0,"tool_choice":"required","tools":[{"type":"function","function":{"name":"final_result","description":"The
+      final response which ends this conversation","parameters":{"properties":{"response":{"$ref":"#/$defs/GameResult"}},"required":["response"],"type":"object","additionalProperties":false,"$defs":{"GameResult":{"enum":["A","B"],"type":"string"}}},"strict":true}}]}'
+    headers:
+      accept:
+      - application/json
+      accept-encoding:
+      - gzip, deflate, br
+      connection:
+      - keep-alive
+      content-length:
+      - '2354'
+      content-type:
+      - application/json
+      host:
+      - localhost:11434
+      user-agent:
+      - pydantic-ai/1.0.15
+      x-stainless-arch:
+      - arm64
+      x-stainless-async:
+      - async:asyncio
+      x-stainless-lang:
+      - python
+      x-stainless-os:
+      - MacOS
+      x-stainless-package-version:
+      - 2.1.0
+      x-stainless-read-timeout:
+      - '300'
+      x-stainless-retry-count:
+      - '0'
+      x-stainless-runtime:
+      - CPython
+      x-stainless-runtime-version:
+      - 3.12.8
+    method: POST
+    uri: http://localhost:11434/v1/chat/completions
+  response:
+    body:
+      string: '{"id":"chatcmpl-116","object":"chat.completion","created":1770389751,"model":"qwen2.5:72b","system_fingerprint":"fp_ollama","choices":[{"index":0,"message":{"role":"assistant","content":"{\n    \"response\":
+        \"B\"\n}"},"finish_reason":"stop"}],"usage":{"prompt_tokens":557,"completion_tokens":10,"total_tokens":567}}
+
+        '
+    headers:
+      Content-Length:
+      - '317'
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 06 Feb 2026 14:55:51 GMT
+    status:
+      code: 200
+      message: OK
+- request:
+    body: !!binary |
+      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
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Length:
+      - '2145'
+      Content-Type:
+      - application/x-protobuf
+      User-Agent:
+      - OTel-OTLP-Exporter-Python/1.37.0
+    method: POST
+    uri: https://logfire-eu.pydantic.dev/v1/traces
+  response:
+    body:
+      string: ''
+    headers:
+      CF-RAY:
+      - 9c9b7dab1ecfcb74-ZRH
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Date:
+      - Fri, 06 Feb 2026 14:55:51 GMT
+      Nel:
+      - '{"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}'
+      Report-To:
+      - '{"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=VLO2jerOKTjKutrMHlKnkfeJXHD6Khu6LUulYvyGbNXoGwmVQ6v2ax1UVK68NdW3zt1qIa35I4fIrNRB26i7zGbWXjgGi6H28tKbIW0VSBFnlOmBRr4%3D"}]}'
+      Server:
+      - cloudflare
+      cf-cache-status:
+      - DYNAMIC
+      vary:
+      - origin, access-control-request-method, access-control-request-headers
+      via:
+      - 1.1 google
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"messages":[{"role":"system","content":"\nYou are presented with a question
+      and two possible answers A and B. Evaluate carefully whether answer A or answer
+      B is the better reply.\nYou have got only these two options. Your evaluations
+      contribute to Bradley-Terry scores across multiple items. Consistency and\nobjectivity
+      are critical for reliable rankings. Each comparison should be independent but
+      internally consistent.\n\n<EXAMPLES>\nExample 1:\n<QUESTION> Which of the two
+      ice cream flavours below is more creative? </QUESTION>\n<A> Vanilla </A> \n<B>
+      Pickled Citrus Ribbon </B>\nExpected output:\n{\n    \"response\": \"B\",\n}\n\nExample
+      2:\n<QUESTION> Which search query shows more genuine curiosity? </QUESTION>\n<A>
+      effect of ocean acidification feedback loops on Arctic methane release </A>
+      \n<B> climate change effects </B>\nExpected output:\n{\n    \"response\": \"A\",\n}\n\nExample
+      3:\n<QUESTION> Which reply is more insulting? </QUESTION>\n<A> Your argument
+      lacks logical coherence and fails to address the core issue at hand. </A> \n<B>
+      That''s an interesting perspective, though I see it differently. </B>\nExpected
+      output:\n{\n    \"response\": \"A\",\n}\n</EXAMPLES>\n\n<REQUIREMENTS>\n1. Consider
+      the question carefully. What aspects are important for the answer?\n2. Think
+      about answer A. Is it a good answer to the question? Why (not)?\n3. Think about
+      answer B. Is it a good answer to the question? Why (not)?\n4. Make a decision
+      based on your analysis.\n</REQUIREMENTS>\n\n<OUTPUT_FORMAT>\nYou must respond
+      with valid JSON containing exactly one field called \"response\" with value
+      \"A\" or \"B\":\n\n{\n    \"response\": \"A\",\n}\nor\n{\n    \"response\":
+      \"B\",\n}\n\nDo NOT include explanations, reasoning, or any other fields.\n</OUTPUT_FORMAT>\n"},{"role":"user","content":"\n<QUESTION>
+      Which of the two ice cream flavours A or B is more creative? </QUESTION>\n<A>
+      chocolate </A>\n<B> vanilla </B>\n"},{"role":"assistant","content":"{\n    \"response\":
+      \"B\"\n}"},{"role":"user","content":"Validation feedback:\nPlease include your
+      response in a tool call.\n\nFix the errors and try again."}],"model":"qwen2.5:72b","stream":false,"temperature":0.0,"tool_choice":"required","tools":[{"type":"function","function":{"name":"final_result","description":"The
+      final response which ends this conversation","parameters":{"properties":{"response":{"$ref":"#/$defs/GameResult"}},"required":["response"],"type":"object","additionalProperties":false,"$defs":{"GameResult":{"enum":["A","B"],"type":"string"}}},"strict":true}}]}'
+    headers:
+      accept:
+      - application/json
+      accept-encoding:
+      - gzip, deflate, br
+      connection:
+      - keep-alive
+      content-length:
+      - '2545'
+      content-type:
+      - application/json
+      host:
+      - localhost:11434
+      user-agent:
+      - pydantic-ai/1.0.15
+      x-stainless-arch:
+      - arm64
+      x-stainless-async:
+      - async:asyncio
+      x-stainless-lang:
+      - python
+      x-stainless-os:
+      - MacOS
+      x-stainless-package-version:
+      - 2.1.0
+      x-stainless-read-timeout:
+      - '300'
+      x-stainless-retry-count:
+      - '0'
+      x-stainless-runtime:
+      - CPython
+      x-stainless-runtime-version:
+      - 3.12.8
+    method: POST
+    uri: http://localhost:11434/v1/chat/completions
+  response:
+    body:
+      string: '{"id":"chatcmpl-785","object":"chat.completion","created":1770389756,"model":"qwen2.5:72b","system_fingerprint":"fp_ollama","choices":[{"index":0,"message":{"role":"assistant","content":"","tool_calls":[{"id":"call_dcfzfy5g","index":0,"type":"function","function":{"name":"final_result","arguments":"{\"response\":\"B\"}"}}]},"finish_reason":"tool_calls"}],"usage":{"prompt_tokens":595,"completion_tokens":20,"total_tokens":615}}
+
+        '
+    headers:
+      Content-Length:
+      - '430'
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 06 Feb 2026 14:55:56 GMT
+    status:
+      code: 200
+      message: OK
+- request:
+    body: !!binary |
+      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
+      w58iAAA=
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Length:
+      - '2513'
+      Content-Type:
+      - application/x-protobuf
+      User-Agent:
+      - OTel-OTLP-Exporter-Python/1.37.0
+    method: POST
+    uri: https://logfire-eu.pydantic.dev/v1/traces
+  response:
+    body:
+      string: ''
+    headers:
+      CF-RAY:
+      - 9c9b7dcbdb3203a3-ZRH
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Date:
+      - Fri, 06 Feb 2026 14:55:56 GMT
+      Nel:
+      - '{"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}'
+      Report-To:
+      - '{"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=0RH8Y77rM8BJKwKlSomX2grSQsjuZPlWoFZ2YsEhK8hj19wRxZA5x3j7lTBdi6oRQX0qYqfDjZVYhCClMPKbAhCGUToCyZDaPDwdEC7pO2Uin1P4LCU%3D"}]}'
+      Server:
+      - cloudflare
+      cf-cache-status:
+      - DYNAMIC
+      vary:
+      - origin, access-control-request-method, access-control-request-headers
+      via:
+      - 1.1 google
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"messages":[{"role":"system","content":"\nYou are presented with a question
+      and two possible answers A and B. Evaluate carefully whether answer A or answer
+      B is the better reply.\nYou have got only these two options. Your evaluations
+      contribute to Bradley-Terry scores across multiple items. Consistency and\nobjectivity
+      are critical for reliable rankings. Each comparison should be independent but
+      internally consistent.\n\n<EXAMPLES>\nExample 1:\n<QUESTION> Which of the two
+      ice cream flavours below is more creative? </QUESTION>\n<A> Vanilla </A> \n<B>
+      Pickled Citrus Ribbon </B>\nExpected output:\n{\n    \"response\": \"B\",\n}\n\nExample
+      2:\n<QUESTION> Which search query shows more genuine curiosity? </QUESTION>\n<A>
+      effect of ocean acidification feedback loops on Arctic methane release </A>
+      \n<B> climate change effects </B>\nExpected output:\n{\n    \"response\": \"A\",\n}\n\nExample
+      3:\n<QUESTION> Which reply is more insulting? </QUESTION>\n<A> Your argument
+      lacks logical coherence and fails to address the core issue at hand. </A> \n<B>
+      That''s an interesting perspective, though I see it differently. </B>\nExpected
+      output:\n{\n    \"response\": \"A\",\n}\n</EXAMPLES>\n\n<REQUIREMENTS>\n1. Consider
+      the question carefully. What aspects are important for the answer?\n2. Think
+      about answer A. Is it a good answer to the question? Why (not)?\n3. Think about
+      answer B. Is it a good answer to the question? Why (not)?\n4. Make a decision
+      based on your analysis.\n</REQUIREMENTS>\n\n<OUTPUT_FORMAT>\nYou must respond
+      with valid JSON containing exactly one field called \"response\" with value
+      \"A\" or \"B\":\n\n{\n    \"response\": \"A\",\n}\nor\n{\n    \"response\":
+      \"B\",\n}\n\nDo NOT include explanations, reasoning, or any other fields.\n</OUTPUT_FORMAT>\n"},{"role":"user","content":"\n<QUESTION>
+      Which of the two ice cream flavours A or B is more creative? </QUESTION>\n<A>
+      strawberry </A>\n<B> chocolate </B>\n"}],"model":"qwen2.5:72b","stream":false,"temperature":0.0,"tool_choice":"required","tools":[{"type":"function","function":{"name":"final_result","description":"The
+      final response which ends this conversation","parameters":{"properties":{"response":{"$ref":"#/$defs/GameResult"}},"required":["response"],"type":"object","additionalProperties":false,"$defs":{"GameResult":{"enum":["A","B"],"type":"string"}}},"strict":true}}]}'
+    headers:
+      accept:
+      - application/json
+      accept-encoding:
+      - gzip, deflate, br
+      connection:
+      - keep-alive
+      content-length:
+      - '2357'
+      content-type:
+      - application/json
+      host:
+      - localhost:11434
+      user-agent:
+      - pydantic-ai/1.0.15
+      x-stainless-arch:
+      - arm64
+      x-stainless-async:
+      - async:asyncio
+      x-stainless-lang:
+      - python
+      x-stainless-os:
+      - MacOS
+      x-stainless-package-version:
+      - 2.1.0
+      x-stainless-read-timeout:
+      - '300'
+      x-stainless-retry-count:
+      - '0'
+      x-stainless-runtime:
+      - CPython
+      x-stainless-runtime-version:
+      - 3.12.8
+    method: POST
+    uri: http://localhost:11434/v1/chat/completions
+  response:
+    body:
+      string: '{"id":"chatcmpl-355","object":"chat.completion","created":1770389758,"model":"qwen2.5:72b","system_fingerprint":"fp_ollama","choices":[{"index":0,"message":{"role":"assistant","content":"{\n    \"response\":
+        \"A\"\n}"},"finish_reason":"stop"}],"usage":{"prompt_tokens":557,"completion_tokens":10,"total_tokens":567}}
+
+        '
+    headers:
+      Content-Length:
+      - '317'
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 06 Feb 2026 14:55:58 GMT
+    status:
+      code: 200
+      message: OK
+- request:
+    body: !!binary |
+      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
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Length:
+      - '2142'
+      Content-Type:
+      - application/x-protobuf
+      User-Agent:
+      - OTel-OTLP-Exporter-Python/1.37.0
+    method: POST
+    uri: https://logfire-eu.pydantic.dev/v1/traces
+  response:
+    body:
+      string: ''
+    headers:
+      CF-RAY:
+      - 9c9b7ddcae2070cb-ZRH
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Date:
+      - Fri, 06 Feb 2026 14:55:59 GMT
+      Nel:
+      - '{"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}'
+      Report-To:
+      - '{"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=HYJbI2%2BQ%2Br6aQMZ386h6D2Dyu280Y3RS7Tw6SIkXT6GMa5WXM3TT%2FvK5RWNCHUOKn5mwz0N3%2FZIc6fLBWaDTS1NsNDN6xBCO%2Bf1peFNoi1r2qZxdMdo%3D"}]}'
+      Server:
+      - cloudflare
+      cf-cache-status:
+      - DYNAMIC
+      vary:
+      - origin, access-control-request-method, access-control-request-headers
+      via:
+      - 1.1 google
+    status:
+      code: 200
+      message: OK
+- request:
+    body: !!binary |
+      H4sIAAEBhmkC/82UW0wcVRjHd7ks28Ntd5bLLkgcKFZo6Lizl2EGo5L6YCVpLa3WiiEwu3MWJrBn
+      lrkAG1NDE0sT762RFEPahrRN2sa4xodC8R4jjVdsolmDSWmfNLbqg1ESrXV2ZpcdavXEJz0Pk7Pf
+      /M5//t93Nn/wRxV4pxBwwKNAeVSMQkpEisqjzEYgmgAZYMMsx7E0E6TZUKg9xnKRSEwQGJYLhqKx
+      CA+aQI0Kh2EcqnKSUoQhaphHAxo/AAkncCSS6qCEwB2AWM8gPg6JSlAuJSBaewMaQfV6bBTKiiih
+      jBJNBdspv46U5YwaGm5QqaEhJI2hvmwdeEBpQpaiUFGohN5Dkff5E8X6uapcUdaQKsaz5zeAkmjW
+      5EZQezNi+X6QogMUCx4B9TdDAlSisphQMyADQiZItsR5EbWRXTwi6RAZ8AfCbWQg2BFkOsJsK/n4
+      /ZkpkTRH0RRD9oJ7QGWurdw3N4OWKMuxPOvnGX8wwoWD7QwNaZaOcQEmzAmsIPgZP8PF6Agx7wbV
+      etdJgdctRbfwIqHPy0/RYeKYG/gGIOrjRSo6LOrDplRpCCJKUzI3dNd2yCuaDBUSafEIlEkpRooo
+      oakkjwRS0tTM1jigkJoChbqSJ4xf+3YtusALTuAD5VlxJamoMJ4ZVOZKeRHcDqqzr/SCzGemY07c
+      AYqig7yq/yeqsoAMRzSoqFRcEuAwUQ5KR8YgClDhjvZABGxa09FtJiSkwFtztwF3ljMbVJMJSJSA
+      YqMdd0tk52J56pDXt/rtcx/V65vGCpu5Wo3nA+92+l1bJ+3Ot5uJCXuRXimw/XX9XR2//t2prkLC
+      buuh3BO+hbMVutkm5/a7v6t5ue/kymaXfSYo//KKduPj8tAVZ/2NAL07q63zF2Y/3VFp8GWnR1+9
+      s3v3ewaveMb39Cx/Gbx+7eAn5+hQnh//ESkuHN+T549MbfzMjePn83zq7FNPEwbfm37DcaXd84HJ
+      b9Nmfppf/f6hetX7hdXP3gL3aQ+Ot/h5MflhaTWOt/hJH7t03uSPyhcfPvjro0dM/sn45df2nNtQ
+      PH3G4aa35PnVE65vanC8Zf79rVcnaw3+q9GGpdlLh6ZNfma5dqY1rT4ozV8OWfWd1L1nvDjeoj+3
+      fL7bZ/Al3sbDoyvjPpNfaLYTzzy7i1ltWJi26q/8dnikDsdb9He2yb56g++6xu/7uXC2zuTTv5dd
+      3T/1dXf/5++Ta/q88Rzc3ykamwsHOkHqf5UIDbdKhIwdI9awkTAx1Omv2HrK7rzoII7bHbb/YhWs
+      i55/SpJcZMz1vomPjCrb2pUvwSV8ZIA8v9ebwEdGdZ4//tgmfGR48vx4+gA+Mix++ncQ+Miw+Jmb
+      WsRHhsXPttdX8JFh8bN61I2PDMv805M/4CPDos+S9+Ejw6KfGnsLHxkW/dT1l/CRYdEfnFbxkZHT
+      NyPD1pyNDFu402X/E1+n+bKBCgAA
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Length:
+      - '1104'
+      Content-Type:
+      - application/x-protobuf
+      User-Agent:
+      - OTel-OTLP-Exporter-Python/1.37.0
+    method: POST
+    uri: https://logfire-eu.pydantic.dev/v1/metrics
+  response:
+    body:
+      string: "\n\0"
+    headers:
+      CF-RAY:
+      - 9c9b7ded3a440200-ZRH
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '2'
+      Date:
+      - Fri, 06 Feb 2026 14:56:02 GMT
+      Nel:
+      - '{"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}'
+      Report-To:
+      - '{"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=l1gcmF3HIaIibXYOWkqNe9MneJ0WwaGK5ylRL%2FtgaisRWWhKcty2KxT3HMMLBZyHwQJCkAKsmFcI%2FTWTmKNzQS6kimJv5aEqOFSiF9VWXf25XzSn"}]}'
+      Server:
+      - cloudflare
+      cf-cache-status:
+      - DYNAMIC
+      vary:
+      - origin, access-control-request-method, access-control-request-headers
+      via:
+      - 1.1 google
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"messages":[{"role":"system","content":"\nYou are presented with a question
+      and two possible answers A and B. Evaluate carefully whether answer A or answer
+      B is the better reply.\nYou have got only these two options. Your evaluations
+      contribute to Bradley-Terry scores across multiple items. Consistency and\nobjectivity
+      are critical for reliable rankings. Each comparison should be independent but
+      internally consistent.\n\n<EXAMPLES>\nExample 1:\n<QUESTION> Which of the two
+      ice cream flavours below is more creative? </QUESTION>\n<A> Vanilla </A> \n<B>
+      Pickled Citrus Ribbon </B>\nExpected output:\n{\n    \"response\": \"B\",\n}\n\nExample
+      2:\n<QUESTION> Which search query shows more genuine curiosity? </QUESTION>\n<A>
+      effect of ocean acidification feedback loops on Arctic methane release </A>
+      \n<B> climate change effects </B>\nExpected output:\n{\n    \"response\": \"A\",\n}\n\nExample
+      3:\n<QUESTION> Which reply is more insulting? </QUESTION>\n<A> Your argument
+      lacks logical coherence and fails to address the core issue at hand. </A> \n<B>
+      That''s an interesting perspective, though I see it differently. </B>\nExpected
+      output:\n{\n    \"response\": \"A\",\n}\n</EXAMPLES>\n\n<REQUIREMENTS>\n1. Consider
+      the question carefully. What aspects are important for the answer?\n2. Think
+      about answer A. Is it a good answer to the question? Why (not)?\n3. Think about
+      answer B. Is it a good answer to the question? Why (not)?\n4. Make a decision
+      based on your analysis.\n</REQUIREMENTS>\n\n<OUTPUT_FORMAT>\nYou must respond
+      with valid JSON containing exactly one field called \"response\" with value
+      \"A\" or \"B\":\n\n{\n    \"response\": \"A\",\n}\nor\n{\n    \"response\":
+      \"B\",\n}\n\nDo NOT include explanations, reasoning, or any other fields.\n</OUTPUT_FORMAT>\n"},{"role":"user","content":"\n<QUESTION>
+      Which of the two ice cream flavours A or B is more creative? </QUESTION>\n<A>
+      strawberry </A>\n<B> chocolate </B>\n"},{"role":"assistant","content":"{\n    \"response\":
+      \"A\"\n}"},{"role":"user","content":"Validation feedback:\nPlease include your
+      response in a tool call.\n\nFix the errors and try again."}],"model":"qwen2.5:72b","stream":false,"temperature":0.0,"tool_choice":"required","tools":[{"type":"function","function":{"name":"final_result","description":"The
+      final response which ends this conversation","parameters":{"properties":{"response":{"$ref":"#/$defs/GameResult"}},"required":["response"],"type":"object","additionalProperties":false,"$defs":{"GameResult":{"enum":["A","B"],"type":"string"}}},"strict":true}}]}'
+    headers:
+      accept:
+      - application/json
+      accept-encoding:
+      - gzip, deflate, br
+      connection:
+      - keep-alive
+      content-length:
+      - '2548'
+      content-type:
+      - application/json
+      host:
+      - localhost:11434
+      user-agent:
+      - pydantic-ai/1.0.15
+      x-stainless-arch:
+      - arm64
+      x-stainless-async:
+      - async:asyncio
+      x-stainless-lang:
+      - python
+      x-stainless-os:
+      - MacOS
+      x-stainless-package-version:
+      - 2.1.0
+      x-stainless-read-timeout:
+      - '300'
+      x-stainless-retry-count:
+      - '0'
+      x-stainless-runtime:
+      - CPython
+      x-stainless-runtime-version:
+      - 3.12.8
+    method: POST
+    uri: http://localhost:11434/v1/chat/completions
+  response:
+    body:
+      string: '{"id":"chatcmpl-532","object":"chat.completion","created":1770389763,"model":"qwen2.5:72b","system_fingerprint":"fp_ollama","choices":[{"index":0,"message":{"role":"assistant","content":"","tool_calls":[{"id":"call_8nogs9x3","index":0,"type":"function","function":{"name":"final_result","arguments":"{\"response\":\"A\"}"}}]},"finish_reason":"tool_calls"}],"usage":{"prompt_tokens":595,"completion_tokens":20,"total_tokens":615}}
+
+        '
+    headers:
+      Content-Length:
+      - '430'
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 06 Feb 2026 14:56:03 GMT
+    status:
+      code: 200
+      message: OK
+- request:
+    body: !!binary |
+      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
+      +heUAPOqpSIAAA==
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Length:
+      - '2518'
+      Content-Type:
+      - application/x-protobuf
+      User-Agent:
+      - OTel-OTLP-Exporter-Python/1.37.0
+    method: POST
+    uri: https://logfire-eu.pydantic.dev/v1/traces
+  response:
+    body:
+      string: ''
+    headers:
+      CF-RAY:
+      - 9c9b7dfa6b2a03a3-ZRH
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Date:
+      - Fri, 06 Feb 2026 14:56:04 GMT
+      Nel:
+      - '{"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}'
+      Report-To:
+      - '{"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=%2B%2BKeVsjLK7d4EI1nHnQhNpJkVuYihgTDYQ9gKMGtniDtUYrwo%2BaLXmg4hpH76etu143s34fu%2BtipJWbsDU3NdcjpqhXe4Pm8zR9F9XGtJiCkZXtWmWo%3D"}]}'
+      Server:
+      - cloudflare
+      cf-cache-status:
+      - DYNAMIC
+      vary:
+      - origin, access-control-request-method, access-control-request-headers
+      via:
+      - 1.1 google
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"messages":[{"role":"system","content":"\nYou are presented with a question
+      and two possible answers A and B. Evaluate carefully whether answer A or answer
+      B is the better reply.\nYou have got only these two options. Your evaluations
+      contribute to Bradley-Terry scores across multiple items. Consistency and\nobjectivity
+      are critical for reliable rankings. Each comparison should be independent but
+      internally consistent.\n\n<EXAMPLES>\nExample 1:\n<QUESTION> Which of the two
+      ice cream flavours below is more creative? </QUESTION>\n<A> Vanilla </A> \n<B>
+      Pickled Citrus Ribbon </B>\nExpected output:\n{\n    \"response\": \"B\",\n}\n\nExample
+      2:\n<QUESTION> Which search query shows more genuine curiosity? </QUESTION>\n<A>
+      effect of ocean acidification feedback loops on Arctic methane release </A>
+      \n<B> climate change effects </B>\nExpected output:\n{\n    \"response\": \"A\",\n}\n\nExample
+      3:\n<QUESTION> Which reply is more insulting? </QUESTION>\n<A> Your argument
+      lacks logical coherence and fails to address the core issue at hand. </A> \n<B>
+      That''s an interesting perspective, though I see it differently. </B>\nExpected
+      output:\n{\n    \"response\": \"A\",\n}\n</EXAMPLES>\n\n<REQUIREMENTS>\n1. Consider
+      the question carefully. What aspects are important for the answer?\n2. Think
+      about answer A. Is it a good answer to the question? Why (not)?\n3. Think about
+      answer B. Is it a good answer to the question? Why (not)?\n4. Make a decision
+      based on your analysis.\n</REQUIREMENTS>\n\n<OUTPUT_FORMAT>\nYou must respond
+      with valid JSON containing exactly one field called \"response\" with value
+      \"A\" or \"B\":\n\n{\n    \"response\": \"A\",\n}\nor\n{\n    \"response\":
+      \"B\",\n}\n\nDo NOT include explanations, reasoning, or any other fields.\n</OUTPUT_FORMAT>\n"},{"role":"user","content":"\n<QUESTION>
+      Which of the two ice cream flavours A or B is more creative? </QUESTION>\n<A>
+      peach </A>\n<B> chocolate </B>\n"}],"model":"qwen2.5:72b","stream":false,"temperature":0.0,"tool_choice":"required","tools":[{"type":"function","function":{"name":"final_result","description":"The
+      final response which ends this conversation","parameters":{"properties":{"response":{"$ref":"#/$defs/GameResult"}},"required":["response"],"type":"object","additionalProperties":false,"$defs":{"GameResult":{"enum":["A","B"],"type":"string"}}},"strict":true}}]}'
+    headers:
+      accept:
+      - application/json
+      accept-encoding:
+      - gzip, deflate, br
+      connection:
+      - keep-alive
+      content-length:
+      - '2352'
+      content-type:
+      - application/json
+      host:
+      - localhost:11434
+      user-agent:
+      - pydantic-ai/1.0.15
+      x-stainless-arch:
+      - arm64
+      x-stainless-async:
+      - async:asyncio
+      x-stainless-lang:
+      - python
+      x-stainless-os:
+      - MacOS
+      x-stainless-package-version:
+      - 2.1.0
+      x-stainless-read-timeout:
+      - '300'
+      x-stainless-retry-count:
+      - '0'
+      x-stainless-runtime:
+      - CPython
+      x-stainless-runtime-version:
+      - 3.12.8
+    method: POST
+    uri: http://localhost:11434/v1/chat/completions
+  response:
+    body:
+      string: '{"id":"chatcmpl-834","object":"chat.completion","created":1770389766,"model":"qwen2.5:72b","system_fingerprint":"fp_ollama","choices":[{"index":0,"message":{"role":"assistant","content":"{\n    \"response\":
+        \"A\"\n}"},"finish_reason":"stop"}],"usage":{"prompt_tokens":557,"completion_tokens":10,"total_tokens":567}}
+
+        '
+    headers:
+      Content-Length:
+      - '317'
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 06 Feb 2026 14:56:06 GMT
+    status:
+      code: 200
+      message: OK
+- request:
+    body: !!binary |
+      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
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Length:
+      - '2139'
+      Content-Type:
+      - application/x-protobuf
+      User-Agent:
+      - OTel-OTLP-Exporter-Python/1.37.0
+    method: POST
+    uri: https://logfire-eu.pydantic.dev/v1/traces
+  response:
+    body:
+      string: ''
+    headers:
+      CF-RAY:
+      - 9c9b7e0b8843ef5b-ZRH
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Date:
+      - Fri, 06 Feb 2026 14:56:06 GMT
+      Nel:
+      - '{"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}'
+      Report-To:
+      - '{"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=5IlwvcMWCviMC1%2B8Y3o9%2Bx50RaDyq6buT9f2%2FaJvRT03syGo5lyvgIEP0U7uIAZNqO31nCmMffypyKP0FyQ57NHpsnGqBL%2BshV056PeJEoWDNZIjJtY%3D"}]}'
+      Server:
+      - cloudflare
+      cf-cache-status:
+      - DYNAMIC
+      vary:
+      - origin, access-control-request-method, access-control-request-headers
+      via:
+      - 1.1 google
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"messages":[{"role":"system","content":"\nYou are presented with a question
+      and two possible answers A and B. Evaluate carefully whether answer A or answer
+      B is the better reply.\nYou have got only these two options. Your evaluations
+      contribute to Bradley-Terry scores across multiple items. Consistency and\nobjectivity
+      are critical for reliable rankings. Each comparison should be independent but
+      internally consistent.\n\n<EXAMPLES>\nExample 1:\n<QUESTION> Which of the two
+      ice cream flavours below is more creative? </QUESTION>\n<A> Vanilla </A> \n<B>
+      Pickled Citrus Ribbon </B>\nExpected output:\n{\n    \"response\": \"B\",\n}\n\nExample
+      2:\n<QUESTION> Which search query shows more genuine curiosity? </QUESTION>\n<A>
+      effect of ocean acidification feedback loops on Arctic methane release </A>
+      \n<B> climate change effects </B>\nExpected output:\n{\n    \"response\": \"A\",\n}\n\nExample
+      3:\n<QUESTION> Which reply is more insulting? </QUESTION>\n<A> Your argument
+      lacks logical coherence and fails to address the core issue at hand. </A> \n<B>
+      That''s an interesting perspective, though I see it differently. </B>\nExpected
+      output:\n{\n    \"response\": \"A\",\n}\n</EXAMPLES>\n\n<REQUIREMENTS>\n1. Consider
+      the question carefully. What aspects are important for the answer?\n2. Think
+      about answer A. Is it a good answer to the question? Why (not)?\n3. Think about
+      answer B. Is it a good answer to the question? Why (not)?\n4. Make a decision
+      based on your analysis.\n</REQUIREMENTS>\n\n<OUTPUT_FORMAT>\nYou must respond
+      with valid JSON containing exactly one field called \"response\" with value
+      \"A\" or \"B\":\n\n{\n    \"response\": \"A\",\n}\nor\n{\n    \"response\":
+      \"B\",\n}\n\nDo NOT include explanations, reasoning, or any other fields.\n</OUTPUT_FORMAT>\n"},{"role":"user","content":"\n<QUESTION>
+      Which of the two ice cream flavours A or B is more creative? </QUESTION>\n<A>
+      peach </A>\n<B> chocolate </B>\n"},{"role":"assistant","content":"{\n    \"response\":
+      \"A\"\n}"},{"role":"user","content":"Validation feedback:\nPlease include your
+      response in a tool call.\n\nFix the errors and try again."}],"model":"qwen2.5:72b","stream":false,"temperature":0.0,"tool_choice":"required","tools":[{"type":"function","function":{"name":"final_result","description":"The
+      final response which ends this conversation","parameters":{"properties":{"response":{"$ref":"#/$defs/GameResult"}},"required":["response"],"type":"object","additionalProperties":false,"$defs":{"GameResult":{"enum":["A","B"],"type":"string"}}},"strict":true}}]}'
+    headers:
+      accept:
+      - application/json
+      accept-encoding:
+      - gzip, deflate, br
+      connection:
+      - keep-alive
+      content-length:
+      - '2543'
+      content-type:
+      - application/json
+      host:
+      - localhost:11434
+      user-agent:
+      - pydantic-ai/1.0.15
+      x-stainless-arch:
+      - arm64
+      x-stainless-async:
+      - async:asyncio
+      x-stainless-lang:
+      - python
+      x-stainless-os:
+      - MacOS
+      x-stainless-package-version:
+      - 2.1.0
+      x-stainless-read-timeout:
+      - '300'
+      x-stainless-retry-count:
+      - '0'
+      x-stainless-runtime:
+      - CPython
+      x-stainless-runtime-version:
+      - 3.12.8
+    method: POST
+    uri: http://localhost:11434/v1/chat/completions
+  response:
+    body:
+      string: '{"id":"chatcmpl-614","object":"chat.completion","created":1770389771,"model":"qwen2.5:72b","system_fingerprint":"fp_ollama","choices":[{"index":0,"message":{"role":"assistant","content":"","tool_calls":[{"id":"call_3dmiywxn","index":0,"type":"function","function":{"name":"final_result","arguments":"{\"response\":\"A\"}"}}]},"finish_reason":"tool_calls"}],"usage":{"prompt_tokens":595,"completion_tokens":20,"total_tokens":615}}
+
+        '
+    headers:
+      Content-Length:
+      - '430'
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 06 Feb 2026 14:56:11 GMT
+    status:
+      code: 200
+      message: OK
 version: 1
