@@ -16,7 +16,6 @@
       "pydantic-ai",
       "pydantic-graph",
       "ollama",
-      "asyncio",
       "httpx",
       "loguru"
     ],
