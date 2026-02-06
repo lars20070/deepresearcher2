@@ -200,6 +200,7 @@ async def test_adaptive_uncertainty_strategy(ice_cream_players: list[EvalPlayer]
         logger.debug(f"Player {player.idx} score: {player.score}")
 
 
+@pytest.mark.skip(reason="Will be moved to `assays` repo soon anyhow.")
 @pytest.mark.vcr()
 @pytest.mark.asyncio
 @pytest.mark.usefixtures("timer_for_tests")
