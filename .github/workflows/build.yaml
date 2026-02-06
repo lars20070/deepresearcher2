@@ -83,7 +83,7 @@ jobs:
         # -m "not paid"     skip tests requiring paid API keys
         # -p no:warnings    ignore warnings
         # -n auto           run tests in parallel
-        run: uv run pytest -v -m "not paid" -p no:warnings --cov=deepresearcher2 --cov-report=xml
+        run: uv run pytest -v -m "not paid" -n auto -p no:warnings --cov=deepresearcher2 --cov-report=xml
       - name: Upload logs
         uses: actions/upload-artifact@v4
         if: always()
