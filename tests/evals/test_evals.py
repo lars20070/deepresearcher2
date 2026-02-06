@@ -251,7 +251,7 @@ async def test_evaltournament_usecase(tmp_path: Path) -> None:
         "kintsugi philosophy",
         "nano-medicine delivery systems",
         "Streisand effect dynamics",
-        "Anne Brorhilke",
+        "Anne Brorhilker",
         "bioconcrete self-healing",
         "bacteriophage therapy revival",
         "Habsburg jaw genetics",
