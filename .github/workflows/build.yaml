@@ -16,7 +16,7 @@ jobs:
   ci:
     strategy:
       matrix:
-        python-version: ["3.11"]
+        python-version: ["3.12"]
         uv-version: ["latest"]
         # Only run CI on Linux. Windows and macOS cost 2x and 10x more respectively.
         os: [ubuntu-latest]
