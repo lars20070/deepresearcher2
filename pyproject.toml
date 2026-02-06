@@ -42,7 +42,6 @@ chat = "deepresearcher2.examples:basic_chat"
 mcpserver = "deepresearcher2.examples:mcp_server"
 mcpserver_stdio = "deepresearcher2.examples:mcp_server_stdio"
 date_server = "deepresearcher2.mcp.date_server:date_server"
-wolframscript_server = "deepresearcher2.mcp.wolframscript_server:wolframscript_server"
 research = "deepresearcher2.graph:main"
 import = "deepresearcher2.evals.import_bigbench:main"
 generate = "deepresearcher2.evals.generate:main"
@@ -121,7 +120,6 @@ markers = [
   "ollama: tests requiring a local Ollama instance",
   "lmstudio: tests requiring a local LM Studio instance",
   "searxng: tests requiring a local SearXNG instance",
-  "wolframscript: tests requiring a local WolframScript installation",
   "example: examples which are not testing deepresearcher2 functionality",
 ]
 
@@ -136,7 +134,6 @@ omit = [
   "src/deepresearcher2/examples.py",
   "src/deepresearcher2/evals/generate.py",
   "src/deepresearcher2/evals/import_bigbench.py",
-  "src/deepresearcher2/mcp/wolframscript_server.py",
 ]
 
 [tool.coverage.report]
