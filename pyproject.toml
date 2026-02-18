@@ -10,7 +10,6 @@ dependencies = [
   "tavily-python>=0.5.1",
   "pydantic>=2.10.6",
   "pypandoc>=1.15",
-  "pydantic-ai[examples]>=0.0.40",
   "pydantic-ai[examples]>=1.56.0",
   "logfire[httpx]>=3.10.0",
   "python-dotenv>=1.1.0",
