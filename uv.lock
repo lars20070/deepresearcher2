@@ -601,6 +601,7 @@ dependencies = [
     { name = "pydantic-evals", extra = ["logfire"] },
     { name = "pydantic-settings" },
     { name = "pypandoc" },
+    { name = "pytest-assay" },
     { name = "python-dotenv" },
     { name = "tavily-python" },
     { name = "tenacity" },
@@ -632,12 +633,12 @@ requires-dist = [
     { name = "markdownify", specifier = ">=1.1.0" },
     { name = "numpy", specifier = ">=2.3.3" },
     { name = "pydantic", specifier = ">=2.10.6" },
-    { name = "pydantic-ai", extras = ["examples"], specifier = ">=0.0.40" },
     { name = "pydantic-ai", extras = ["examples"], specifier = ">=1.56.0" },
     { name = "pydantic-ai-slim", extras = ["mcp"], specifier = ">=0.0.40" },
     { name = "pydantic-evals", extras = ["logfire"], specifier = ">=0.0.51" },
     { name = "pydantic-settings", specifier = ">=2.8.1" },
     { name = "pypandoc", specifier = ">=1.15" },
+    { name = "pytest-assay", specifier = ">=0.1.2" },
     { name = "python-dotenv", specifier = ">=1.1.0" },
     { name = "tavily-python", specifier = ">=0.5.1" },
     { name = "tenacity", specifier = ">=9.1.2" },
@@ -2693,6 +2694,28 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/a3/5c/00a0e072241553e1a7496d638deababa67c5058571567b92a7eaa258397c/pytest-8.4.2.tar.gz", hash = "sha256:86c0d0b93306b961d58d62a4db4879f27fe25513d4b969df351abdddb3c30e01", size = 1519618, upload-time = "2025-09-04T14:34:22.711Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/a8/a4/20da314d277121d6534b3a980b29035dcd51e6744bd79075a6ce8fa4eb8d/pytest-8.4.2-py3-none-any.whl", hash = "sha256:872f880de3fc3a5bdc88a11b39c9710c3497a547cfa9320bc3c5e62fbf272e79", size = 365750, upload-time = "2025-09-04T14:34:20.226Z" },
+]
+
+[[package]]
+name = "pytest-assay"
+version = "0.1.2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "choix" },
+    { name = "fastmcp" },
+    { name = "logfire", extra = ["httpx"] },
+    { name = "loguru" },
+    { name = "numpy" },
+    { name = "pydantic" },
+    { name = "pydantic-ai", extra = ["examples"] },
+    { name = "pydantic-ai-slim", extra = ["mcp"] },
+    { name = "pydantic-evals", extra = ["logfire"] },
+    { name = "pydantic-settings" },
+    { name = "python-dotenv" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/9d/11/4872665669898a97a7bc1553ce6bc7dc02cbea856066f0beb13be974461f/pytest_assay-0.1.2.tar.gz", hash = "sha256:9be8e3af0bb25c514dc2ca129d2f1005215951b5e465d364ed242f599765940a", size = 1445968, upload-time = "2026-03-02T17:26:43.791Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/96/d6/5f0e7415c6302e918a0b70a97d3322d2913550006795506f1c119f67d7ae/pytest_assay-0.1.2-py3-none-any.whl", hash = "sha256:7788f2b332ad1f3f47882b457de6dd637fc3f774c41ec485d73904d4dfc7cc60", size = 19580, upload-time = "2026-03-02T17:26:42.72Z" },
 ]
 
 [[package]]
