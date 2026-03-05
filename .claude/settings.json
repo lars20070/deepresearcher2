@@ -16,7 +16,6 @@
       "pydantic-ai",
       "pydantic-graph",
       "ollama",
-      "asyncio",
       "httpx",
       "loguru"
     ],
@@ -40,7 +39,7 @@
     "src/deepresearcher2/agents.py",
     "src/deepresearcher2/models.py",
     "src/deepresearcher2/config.py",
-    "CLAUDE.md"
+    ".claude/CLAUDE.md"
   ],
   "conventions": {
     "asyncPatterns": "Use async/await for all LLM interactions and web searches",
@@ -72,8 +71,8 @@
     "test": "uv run pytest -m \"not paid\"",
     "testParallel": "uv run pytest -n auto -m \"not paid\"",
     "coverage": "uv run pytest --cov=src/deepresearcher2 --cov-report=term-missing",
-    "format": "uvx ruff format .",
-    "lint": "uvx ruff check --fix .",
-    "typecheck": "uvx pyright ."
+    "format": "uv run ruff format .",
+    "lint": "uv run ruff check --fix .",
+    "typecheck": "uv run pyright ."
   }
 }

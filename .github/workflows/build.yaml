@@ -1,22 +1,24 @@
 name: CI
 on:
-  push
-  # pull_request:
-  #   branches:
-  #     - main
-  # push:
-  #   branches:
-  #     - main
+  push:
+    branches:
+      - master
+    paths-ignore:
+      - "**/*.md"
+      - "**/*.mdc"
+  pull_request:
+    paths-ignore:
+      - "**/*.md"
+      - "**/*.mdc"
 
 permissions:
   contents: read
-  packages: write
 
 jobs:
   ci:
     strategy:
       matrix:
-        python-version: ["3.11"]
+        python-version: ["3.12"]
         uv-version: ["latest"]
         # Only run CI on Linux. Windows and macOS cost 2x and 10x more respectively.
         os: [ubuntu-latest]
@@ -29,58 +31,46 @@ jobs:
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v4.2.0
-      - name: Free Disk Space on GitHub Actions runner
-        # Runners come with many preinstalled tools that we don't need for our build.
-        # This action removes them to free up disk space for the following steps, such as the heavy devcontainer build.
-        uses: jlumbroso/free-disk-space@v1.3.1
-        with:
-          tool-cache: false
-          android: true
-          dotnet: true
-          haskell: true
-          large-packages: true
-          docker-images: true
-          swap-storage: true
       - name: Create .env file
         # Define in GitHub repository: Settings -> Secrets and variables -> Actions -> New repository secret
         run: |
-          echo TAVILY_API_KEY=${{ secrets.TAVILY_API_KEY }} >> .env
-          echo GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }} >> .env
-          echo LOGFIRE_TOKEN=${{ secrets.LOGFIRE_TOKEN }} >> .env
-          echo OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} >> .env
-          echo WEATHER_API_KEY=${{ secrets.WEATHER_API_KEY }} >> .env
-          echo GEO_API_KEY=${{ secrets.GEO_API_KEY }} >> .env
-          echo BRAVE_API_KEY=${{ secrets.BRAVE_API_KEY }} >> .env
-          echo SERPER_API_KEY=${{ secrets.SERPER_API_KEY }} >> .env
-          echo CODECOV_TOKEN=${{ secrets.CODECOV_TOKEN }} >> .env
-          echo OPENROUTER_API_KEY=${{ secrets.OPENROUTER_API_KEY }} >> .env
-          echo DEEPINFRA_API_KEY=${{ secrets.DEEPINFRA_API_KEY }} >> .env
-          echo TOGETHER_API_KEY=${{ secrets.TOGETHER_API_KEY }} >> .env
+          echo "TAVILY_API_KEY=${{ secrets.TAVILY_API_KEY }}" >> .env
+          echo "GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}" >> .env
+          echo "LOGFIRE_TOKEN=${{ secrets.LOGFIRE_TOKEN }}" >> .env
+          echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> .env
+          echo "WEATHER_API_KEY=${{ secrets.WEATHER_API_KEY }}" >> .env
+          echo "GEO_API_KEY=${{ secrets.GEO_API_KEY }}" >> .env
+          echo "BRAVE_API_KEY=${{ secrets.BRAVE_API_KEY }}" >> .env
+          echo "SERPER_API_KEY=${{ secrets.SERPER_API_KEY }}" >> .env
+          echo "CODECOV_TOKEN=${{ secrets.CODECOV_TOKEN }}" >> .env
+          echo "OPENROUTER_API_KEY=${{ secrets.OPENROUTER_API_KEY }}" >> .env
+          echo "DEEPINFRA_API_KEY=${{ secrets.DEEPINFRA_API_KEY }}" >> .env
+          echo "TOGETHER_API_KEY=${{ secrets.TOGETHER_API_KEY }}" >> .env
       - name: Install uv package manager
         uses: astral-sh/setup-uv@v5.2.2
         with:
           version: ${{ matrix.uv-version }}
+          python-version: ${{ matrix.python-version }}
           enable-cache: true
-      - name: Check uv version
-        run: uv --version
       - name: Install dependencies
         run: uv sync
       - name: Check installed dependencies
         run: |
+          uv --version
           uv run python --version
           uv tree
       - name: Build the package
         run: uv build
       - name: Lint the package
-        run: uvx ruff check .
+        run: uv run ruff check .
       - name: Type check the package
-        run: uvx pyright .
+        run: uv run pyright .
       - name: Run unit tests
         # -v                verbose
         # -m "not paid"     skip tests requiring paid API keys
         # -p no:warnings    ignore warnings
         # -n auto           run tests in parallel
-        run: uv run pytest -v -m "not paid" -p no:warnings -n auto --cov=deepresearcher2 --cov-report=xml
+        run: uv run pytest -v -m "not paid" -n auto -p no:warnings --cov=deepresearcher2 --cov-report=xml
       - name: Upload logs
         uses: actions/upload-artifact@v4
         if: always()
@@ -88,9 +78,10 @@ jobs:
           name: deepresearcher2-pytest-logs
           path: deepresearcher2.log
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
+        if: always()
         with:
-          file: ./coverage.xml
+          files: ./coverage.xml
           fail_ci_if_error: false
           token: ${{ secrets.CODECOV_TOKEN }}
       - name: Install Graphviz for UML diagrams
@@ -114,26 +105,52 @@ jobs:
         with:
           name: deepresearcher2-uml-packages
           path: uml/packages.png
+
+  build-devcontainer:
+    runs-on: ubuntu-latest
+    needs: [ci]
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v4.2.0
+      - name: Free Disk Space on GitHub Actions runner
+        # Runners come with many preinstalled tools that we don't need for our build.
+        # This action removes them to free up disk space for the following steps, such as the heavy devcontainer build.
+        uses: jlumbroso/free-disk-space@v1.3.1
+        with:
+          tool-cache: false
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          docker-images: false
+          swap-storage: true
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Set up QEMU for multi-platform builds
+        # The GitHub Actions runner is an AMD64 machine. To build ARM64 images, we need to set up QEMU emulation.
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        # Buildx replaces 'docker build' with a more powerful builder that supports multi-platform builds.
+        uses: docker/setup-buildx-action@v3
       - name: Build and run dev container task
         uses: devcontainers/ci@v0.3
         with:
           imageName: ghcr.io/lars20070/deepresearcher2-devcontainer
           cacheFrom: ghcr.io/lars20070/deepresearcher2-devcontainer
           imageTag: latest,${{ github.sha }}
-          push: always
+          push: filter
+          refFilterForPush: refs/heads/master
           runCmd: |
             bash -c '
               set -o errexit -o pipefail -o nounset
               uv --version
-              uvx --version
               uv run python --version
-              uvx ruff check .
-              uvx pyright .
               echo "Dev container built and run successfully"
             '

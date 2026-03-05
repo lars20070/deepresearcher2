@@ -3,7 +3,6 @@ import glob
 import os
 import time
 from collections.abc import Generator
-from pathlib import Path
 from unittest.mock import MagicMock
 
 import pytest
@@ -11,7 +10,6 @@ from pytest_mock import MockerFixture
 from vcr.request import Request
 
 from deepresearcher2.config import SearchEngine, config
-from deepresearcher2.evals.evals import EvalGame, EvalPlayer
 from deepresearcher2.logger import logger
 
 
@@ -20,7 +18,6 @@ def pytest_configure(config: pytest.Config) -> None:
     config.addinivalue_line("markers", "ollama: tests requiring a local Ollama instance")
     config.addinivalue_line("markers", "lmstudio: tests requiring a local LM Studio instance")
     config.addinivalue_line("markers", "searxng: tests requiring a local SearXNG instance")
-    config.addinivalue_line("markers", "wolframscript: tests requiring a local WolframScript installation")
     config.addinivalue_line("markers", "example: examples which are not testing deepresearcher2 functionality")
 
 
@@ -54,16 +51,6 @@ def skip_searxng_tests(request: pytest.FixtureRequest) -> None:
         pytest.skip("Tests requiring SearXNG skipped in CI environment")
 
 
-@pytest.fixture(autouse=True)
-def skip_wolframscript_tests(request: pytest.FixtureRequest) -> None:
-    """
-    Skip tests marked with 'wolframscript' when running in CI environment.
-    Run these tests only locally.
-    """
-    if request.node.get_closest_marker("wolframscript") and os.getenv("GITHUB_ACTIONS") == "true":
-        pytest.skip("Tests requiring WolframScript skipped in CI environment")
-
-
 @pytest.fixture
 def topic() -> str:
     """
@@ -81,7 +68,7 @@ def config_for_testing(monkeypatch: pytest.MonkeyPatch) -> Generator[None, None,
     monkeypatch.setattr(config, "max_research_loops", 3)
     monkeypatch.setattr(config, "max_web_search_results", 2)
     monkeypatch.setattr(config, "search_engine", SearchEngine.serper)
-    monkeypatch.setattr(config, "model", "llama3.3")
+    monkeypatch.setattr(config, "model", "qwen2.5:14b")
     monkeypatch.setattr(config, "model_timeout", 600)
     monkeypatch.setattr(config, "reports_folder", "tests/reports/")
     monkeypatch.setattr(config, "logs2logfire", False)
@@ -101,28 +88,6 @@ def cleanup_reports_folder(config_for_testing: Generator[None, None, None]) -> N
                 logger.debug(f"Removed file {f}")
             except OSError as e:
                 logger.error(f"Error removing file {f}: {e}")
-
-
-@pytest.fixture
-def ice_cream_players() -> list[EvalPlayer]:
-    """
-    Provide a list of EvalPlayer instances with ice cream flavours.
-    """
-    return [
-        EvalPlayer(idx=0, item="vanilla"),
-        EvalPlayer(idx=1, item="chocolate"),
-        EvalPlayer(idx=2, item="strawberry"),
-        EvalPlayer(idx=3, item="peach"),
-        EvalPlayer(idx=4, item="toasted rice & miso caramel ice cream"),
-    ]
-
-
-@pytest.fixture
-def ice_cream_game() -> EvalGame:
-    """
-    Provide an EvalGame instance for ice cream flavour comparison.
-    """
-    return EvalGame(criterion="Which of the two ice cream flavours A or B is more creative?")
 
 
 @pytest.fixture
@@ -172,14 +137,3 @@ def timer_for_tests(request: pytest.FixtureRequest) -> Generator[None, None, Non
     yield
     duration = time.perf_counter() - start
     logger.info(f"{request.node.name} completed in {duration:.2f} seconds.")
-
-
-@pytest.fixture
-def assay_path(request: pytest.FixtureRequest) -> Path:
-    """
-    Compute the assay file path from test module and function name.
-    """
-    path = request.path
-    module_name = path.stem
-    test_name = request.node.name.split("[")[0]
-    return path.parent / "assays" / module_name / f"{test_name}.json"

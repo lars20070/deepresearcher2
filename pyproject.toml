@@ -1,22 +1,16 @@
 [project]
 name = "deepresearcher2"
-version = "0.1.9"
+version = "0.1.10"
 description = "fully local web research and report writing assistant"
 readme = "README.md"
 authors = [{ name = "Lars Nilse", email = "l.nilse@dunelm.org.uk" }]
 requires-python = ">=3.12,<3.13"
 dependencies = [
   "loguru>=0.7.3",
-  "pytest>=8.3.4",
-  "ruff>=0.13.3",
-  "pylint>=3.3.4",
-  "pytest-xdist>=3.6.1",
   "tavily-python>=0.5.1",
-  "pytest-cov>=6.0.0",
   "pydantic>=2.10.6",
-  "pytest-asyncio>=0.25.3",
   "pypandoc>=1.15",
-  "pydantic-ai[cli,examples,mcp]>=0.0.40",
+  "pydantic-ai[examples]>=1.56.0",
   "logfire[httpx]>=3.10.0",
   "python-dotenv>=1.1.0",
   "pydantic-evals[logfire]>=0.0.51",
@@ -27,13 +21,24 @@ dependencies = [
   "brotli>=1.1.0",
   "markdownify>=1.1.0",
   "pydantic-settings>=2.8.1",
-  "pyright>=1.1.404",
   "choix>=0.4.1",
   "numpy>=2.3.3",
-  "pytest-recording>=0.13.4",
-  "pytest-mock>=3.15.1",
   "ddgs>=9.6.1",
   "fastmcp>=2.13.0.1",
+  "pytest-assay>=0.1.2",
+]
+
+[dependency-groups]
+dev = [
+  "pytest>=8.3.4",
+  "pytest-xdist>=3.6.1",
+  "pytest-cov>=6.0.0",
+  "pytest-asyncio>=0.25.3",
+  "pytest-recording>=0.13.4",
+  "pytest-mock>=3.15.1",
+  "ruff>=0.13.3",
+  "pyright>=1.1.404",
+  "pylint>=3.3.4",
 ]
 
 [project.scripts]
@@ -42,7 +47,6 @@ chat = "deepresearcher2.examples:basic_chat"
 mcpserver = "deepresearcher2.examples:mcp_server"
 mcpserver_stdio = "deepresearcher2.examples:mcp_server_stdio"
 date_server = "deepresearcher2.mcp.date_server:date_server"
-wolframscript_server = "deepresearcher2.mcp.wolframscript_server:wolframscript_server"
 research = "deepresearcher2.graph:main"
 import = "deepresearcher2.evals.import_bigbench:main"
 generate = "deepresearcher2.evals.generate:main"
@@ -51,9 +55,6 @@ eval = "deepresearcher2.evals.evals:main"
 [project.urls]
 "Source Code" = "https://github.com/lars20070/deepresearcher2"
 "Bug Tracker" = "https://github.com/lars20070/deepresearcher2/issues"
-
-[project.entry-points.pytest11]
-assays = "deepresearcher2.plugin"
 
 [tool.ruff]
 line-length = 150
@@ -121,7 +122,6 @@ markers = [
   "ollama: tests requiring a local Ollama instance",
   "lmstudio: tests requiring a local LM Studio instance",
   "searxng: tests requiring a local SearXNG instance",
-  "wolframscript: tests requiring a local WolframScript installation",
   "example: examples which are not testing deepresearcher2 functionality",
 ]
 
@@ -136,7 +136,6 @@ omit = [
   "src/deepresearcher2/examples.py",
   "src/deepresearcher2/evals/generate.py",
   "src/deepresearcher2/evals/import_bigbench.py",
-  "src/deepresearcher2/mcp/wolframscript_server.py",
 ]
 
 [tool.coverage.report]
@@ -145,10 +144,10 @@ skip_covered = false # Show all files, including those with full coverage
 skip_empty = true    # Skip files with no statements
 precision = 1        # Show coverage to 1 decimal place
 exclude_lines = [
-    "pragma: no cover",            # Don't count lines marked to be excluded
-    "raise NotImplementedError",   # Don't count abstract methods
-    "if __name__ == .__main__.:",  # Don't count main entry points
-    "if TYPE_CHECKING:",           # Don't count type checking blocks
+  "pragma: no cover",            # Don't count lines marked to be excluded
+  "raise NotImplementedError",   # Don't count abstract methods
+  "if __name__ == .__main__.:",  # Don't count main entry points
+  "if TYPE_CHECKING:",           # Don't count type checking blocks
 ]
 
 [tool.coverage.html]

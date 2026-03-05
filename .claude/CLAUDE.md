@@ -62,13 +62,13 @@ uv run pytest --cov=src/deepresearcher2 --cov-report=term-missing
 
 ```bash
 # Format code
-uvx ruff format .
+uv run ruff format .
 
 # Check and fix linting issues (ALWAYS run with --fix)
-uvx ruff check --fix .
+uv run ruff check --fix .
 
 # Type checking (ALWAYS run after code changes)
-uvx pyright .
+uv run pyright .
 ```
 
 ### Before Committing
@@ -77,13 +77,13 @@ Run these checks:
 
 ```bash
 # 1. Format code
-uvx ruff format .
+uv run ruff format .
 
 # 2. Check and fix linting issues
-uvx ruff check --fix .
+uv run ruff check --fix .
 
 # 3. Type checking
-uvx pyright .
+uv run pyright .
 
 # 4. Run tests
 uv run pytest -n auto
@@ -116,7 +116,7 @@ DeepResearcher2 supports multiple search engines:
 ### LLM Model Options
 
 The system can use:
-- Local models via Ollama (llama3.3, qwen3:8b, qwen3:32b)
+- Local models via Ollama (qwen2.5:14b, qwen3:8b, qwen3:32b)
 - Cloud models (OpenAI's gpt-4o, gpt-4o-mini)
 
 ## MCP Servers

@@ -429,4 +429,376 @@ interactions:
     status:
       code: 200
       message: OK
+- request:
+    body: !!binary |
+      H4sIANH3hWkC/41UzW/cRBRPSBSSt02TOA1NiBCuo0BYBbNrZ78iEESIAhatqpIeqiqyxvZ4d7re
+      sesZNyyrPSJx5YiEVAlxQnDiUikHDghxQyoFqRf+AG4IDhyKBDNeO9lY4cOn8Xu/ee83v/cBHy/A
+      11PQgmWG47vExTqhjCMqD56igWo6XrXRMlsurns7Dqo5Ndw0fMfYaeBWw/A90OApjgPcwzzu68zr
+      6gGi7QS1sTILM1Gfd0IKm6CcxlDUw8oCzIcRpsceuAQrp2F3ccxISGWkqm429IqAnMuJpjGWYCGh
+      XRoeUjuzwzKUojh0MWN6JN4wvfrd91Pi3oXcGCeUk152fw6edDOSG3CxCBnLb+pVQ2/CDVgvgjzM
+      3JhEXALrsDMCqls9ROi2aiGqVndUo2LUtlXD3DXru7XmC+qt16VKarWlV/W6egCvwEL+rDxnGbZq
+      uOGgJnKqbt2p+LUd5FSQ1/Rqpl81Ub1pNiutKka+q/xYghXx6r6HBCX3RUQUoVdFr9aUoydgcfIT
+      89rM5jeBZbJP24/3u8rsL78deeWfzJe12a+Cjcbg3sMfynOiYpSr4lGVydaj+98++OPLj1b38oO1
+      DtALPRzYqWrzULpziKmh13YbhmNtAKS3R84VWL789tW9d+x3b1y5snf9pr335htX960yLAmMjYie
+      YvV/w25BKQjbPomx3mNtZQ0unoGSXEXqpRzJIkRt3o+wch7Oib7yCG3b0mi9BGs5KLdHKJaERX8o
+      sFgpfO9PfDA5MTkxofw5e5Z6lz9s4Af88Wfa7L31wf5fX/xeLi+6HcTVMU2EiG+99vNIxPxgPQsr
+      mQSi72MkO2YkwwxMywDWGsxnANZnHPdk48kRQcTahAuZK8Z3Esy4ntajWIpn4LxsJBzryPNi0aZK
+      CeaC0EVBJ2TcUqCUuaMw5srU6uc3rUfTsDqqbRZZiiNYcdGIytE03J8eaH5CXUnX5mEYMG1XvXWw
+      rWpOQgJOCsYw4VHCbRlRmDTp007MoXMbu1w4aBIEJ+bjCANNCiIv+oQiSYklAZcBTkjZt5lgwtwO
+      7iGBHGhiIoWenGCW/rKk10NxPz2PDacMmrnU0Fd5B6s8jIir+mGc/qUZ1RhLaWRG2UvpJR6LltGG
+      Q2GTEok+8iTX40QHY+DsgcIiCkBkXhRcG+fno4BhGapAbX+MAYtCyrB62CFuRxUdywQ/wlQ3pHI7
+      pI2TaYrjtOU92yMut7u4fyKtpJ1KzeMEy39ZXbEfUJCzEMYuoV5KO62DDCo0Rh7iKAs0lI9DQRAe
+      2hy/Jwo4Ap5EGPlIT0x1wTm0urCcD95YzZR9uD44Q7BCGf+pJ1Nn4fZwOLSeh6cLEyImKJ2zJBaL
+      /tJE+v366v/bGZdOryCxJYoj/p9rxTHrrmGajYbT8j3TM6znjuc/L/GZQ5yvn78BU81maJwHAAA=
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Length:
+      - '1082'
+      Content-Type:
+      - application/x-protobuf
+      User-Agent:
+      - OTel-OTLP-Exporter-Python/1.37.0
+    method: POST
+    uri: https://logfire-eu.pydantic.dev/v1/traces
+  response:
+    body:
+      string: ''
+    headers:
+      CF-RAY:
+      - 9c9b447cda07be70-ZRH
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Date:
+      - Fri, 06 Feb 2026 14:16:49 GMT
+      Nel:
+      - '{"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}'
+      Report-To:
+      - '{"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=%2BPFmYsmAOD2zX1vKmiYUwJMWt%2FNcKiUL2rl4jUhQC%2BAbw2fjWe0z4%2FhpxSznEWebcDC64FOUFcyV%2BU20adscywoa071g5CcHPufBS0QDtbZU9dYP"}]}'
+      Server:
+      - cloudflare
+      cf-cache-status:
+      - DYNAMIC
+      vary:
+      - origin, access-control-request-method, access-control-request-headers
+      via:
+      - 1.1 google
+    status:
+      code: 200
+      message: OK
+- request:
+    body: !!binary |
+      H4sIAPX3hWkC/82Sz2vUUBDHd227u05d2027tdWKrxVLW+ozPzb7oyCUerKggtCDitSXZHYbdvcl
+      zUtaFhG86EkPBUEUKT15UhG8eOtNb+JV0H9CBPEgmOxuSlsKvZpDmMz7zvfNfCbwNwM7PVCBIYHe
+      um0itbnwGY8CS5oEohmWUqpoFROLVsFguqFjWa0aaqGElZJatWASRnxsYBN9r0WFVacNxmsBq6GU
+      gZTb8lcdDhdA2q/hrInSAGQdF/nuCUxAfr9sHT1hOzxyUqhWonIoORE32vbIwUDA69zZ4CvdPAxB
+      v+s5JgpB3XCG3tHPX3rCuuE46QXct5vd+uOQNrtNnodTByV77teootIyLMOZgyILhenZrh8Ji1Do
+      CMl0k9l8jiwxTpQCUWVVnyOqNq8V5/XyDLlzJaJElApVaJHchcswEI8V3zkL0zqWDFZmhmIWDbmq
+      F5ghM6ts6VpV0VixrJXlioKsakof+yAfTt2yWNiSeZHZUshLpooubfXBWA35CrOp2bBD2NR36shp
+      IKINXbqGTAQeCsKDpoEecarE5m7gE8Yt4gR+FLYLBAkEWqfT99tfD25+6oWtYzAG2a65aAkfmxGo
+      aKXMhnOQ7x6FCY9FdDrEU9BrrjI//CeGuwIP1wIUPm06FjakLPSvbSBXqT5fUg2Y2vUJ23QdLvBw
+      3TjkurrOgH7LRSkNfe1xcqs7y87Pt5ujY4la1k+82xydSCY6z0z7/fDFgnxyMZV5k5eSyaUeKZm4
+      TXPvb8hff4dFk5nn36duvf5QhdnB5Cvt+vizRztPx399e/JYspV7qY4Pi33sOIDt/wrQ2cMARe20
+      t3wkoe36gjyymM68/JPcg4hc1Y9G9COxF1FoZMfBYPIf3BNsZYAEAAA=
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Length:
+      - '668'
+      Content-Type:
+      - application/x-protobuf
+      User-Agent:
+      - OTel-OTLP-Exporter-Python/1.37.0
+    method: POST
+    uri: https://logfire-eu.pydantic.dev/v1/metrics
+  response:
+    body:
+      string: "\n\0"
+    headers:
+      CF-RAY:
+      - 9c9b455f8a59bc05-ZRH
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '2'
+      Date:
+      - Fri, 06 Feb 2026 14:17:25 GMT
+      Nel:
+      - '{"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}'
+      Report-To:
+      - '{"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=4mzZtihlNyxUBjrOrnYDXP7ggzS7eXiRbIQdkDJzUJCQkJdn0FXcXrmg3CYjoCpSRekf1VPT0msXKqrBbce4r5vk5bLH8BSz%2BJLzOJe3bEWTo%2BvA"}]}'
+      Server:
+      - cloudflare
+      cf-cache-status:
+      - DYNAMIC
+      vary:
+      - origin, access-control-request-method, access-control-request-headers
+      via:
+      - 1.1 google
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"messages":[{"role":"system","content":"\nYou are a precise information
+      compiler that transforms web search summaries into comprehensive reports. Follow
+      these instructions carefully.\n\n<INPUT_FORMAT>\nYou will receive web search
+      summaries in XML with `<WebSearchSummary>` tags containing:\n- `<summary>`:
+      Summary of the search result as text\n- `<aspect>`: Specific aspect discussed
+      in the summary\n</INPUT_FORMAT>\n\n<REQUIREMENTS>\n1. Extract and consolidate
+      all relevant information from the provided summaries\n2. Create a coherent,
+      well-structured report that flows logically\n3. Focus on delivering comprehensive
+      information relevant to the implied topic\n4. When search results contain conflicting
+      information, present both perspectives and indicate the discrepancy\n5. Structure
+      your report into 3-5 paragraphs of reasonable length (150-300 words each)\n6.
+      Avoid redundancy while ensuring all important information is included\n</REQUIREMENTS>\n\n<OUTPUT_FORMAT>\nRespond
+      with a JSON object containing:\n- \"summary\": The comprehensive report, starting
+      directly with the information without preamble.\n</OUTPUT_FORMAT>\n\n<EXAMPLE_OUTPUT>\n```json\n{\n    \"summary\":
+      \"Your comprehensive report here. Start directly with the information without
+      preamble.\n    Write multiple cohesive paragraphs with logical flow.\"\n}\n```\n</EXAMPLE_OUTPUT>\n\nThe
+      JSON response must be properly formatted with quotes escaped within the summary
+      value. Do not include any text outside the JSON object.\n"},{"role":"system","content":"List
+      of search summaries:\n<search_summaries>\n  <WebSearchSummary>\n    <summary>Petrichor
+      refers to the earthy scent produced when rain falls on dry soil or ground, often
+      experienced as a pleasant smell. It is characterized by its distinct aroma,
+      which is typically associated with the smell of rain on dry earth. The term
+      was coined in 1964 by two Australian researchers, who discovered that the smell
+      was caused by oils released from plants and soil during rainfall. These oils
+      can come from roots, leaves, and other organic matter, and are carried into
+      the air by the rain, creating a distinctive and often refreshing scent. Petrichor
+      is not only a fascinating natural phenomenon but also has cultural and historical
+      significance, with many people around the world associating it with feelings
+      of calmness and serenity. Furthermore, petrichor has been a subject of interest
+      in fields such as geology, biology, and psychology, where researchers study
+      its composition, effects on human behavior, and role in shaping our perceptions
+      of natural environments. The study of petrichor also involves understanding
+      the complex interactions between soil, plants, and microorganisms, which contribute
+      to the production of this unique scent. In addition, petrichor has been used
+      as a term in literature and poetry to describe the smell of rain on dry earth,
+      evoking feelings of nostalgia and wonder. Overall, petrichor is a captivating
+      topic that continues to inspire scientific investigation, cultural appreciation,
+      and personal reflection, offering insights into the intricate relationships
+      between our environment, our senses, and our emotional experiences. The significance
+      of petrichor extends beyond its definition as a scent, representing a connection
+      to nature, a symbol of renewal, and a reminder of the beauty and complexity
+      of the world around us. As research on petrichor progresses, it is likely that
+      new discoveries will be made, shedding more light on this intriguing phenomenon
+      and its place in our understanding of the natural world. Petrichor''s impact
+      on human experience is also an area of ongoing study, with potential applications
+      in fields such as environmental psychology, conservation, and sustainable development.
+      By exploring the many facets of petrichor, we can gain a deeper appreciation
+      for the interconnectedness of our planet and the importance of preserving its
+      natural wonders for future generations. In conclusion, the study of petrichor
+      offers a unique opportunity to explore the intersections of science, culture,
+      and personal experience, providing a rich and nuanced understanding of this
+      captivating phenomenon and its significance in our lives.</summary>\n    <aspect>definition
+      and meaning</aspect>\n    <references>\n      <Reference>\n        <title>Petrichor
+      - Wikipedia</title>\n        <url>https://en.wikipedia.org/wiki/Petrichor</url>\n      </Reference>\n      <Reference>\n        <title>The
+      Science of Petrichor</title>\n        <url>https://www.scientificamerican.com/article/the-science-of-petrichor/</url>\n      </Reference>\n      <Reference>\n        <title>Petrichor:
+      The Smell of Rain</title>\n        <url>https://www.smithsonianmag.com/science-nature/petrichor-smell-rain-180976421/</url>\n      </Reference>\n      <Reference>\n        <title>The
+      Cultural Significance of Petrichor</title>\n        <url>https://www.theatlantic.com/health/archive/2019/07/petrichor-smell-rain/593954/</url>\n      </Reference>\n    </references>\n  </WebSearchSummary>\n</search_summaries>"},{"role":"user","content":"Please
+      summarize all web search summaries for the topic <TOPIC>petrichor</TOPIC>."}],"model":"qwen2.5:72b","stream":false,"temperature":1.0,"tool_choice":"required","tools":[{"type":"function","function":{"name":"final_result","description":"The
+      final response which ends this conversation","parameters":{"properties":{"summary":{"description":"summary
+      of the topic for the final report","type":"string"}},"required":["summary"],"type":"object","additionalProperties":false},"strict":true}}]}'
+    headers:
+      accept:
+      - application/json
+      accept-encoding:
+      - gzip, deflate, br
+      connection:
+      - keep-alive
+      content-length:
+      - '5578'
+      content-type:
+      - application/json
+      host:
+      - localhost:11434
+      user-agent:
+      - pydantic-ai/1.0.15
+      x-stainless-arch:
+      - arm64
+      x-stainless-async:
+      - async:asyncio
+      x-stainless-lang:
+      - python
+      x-stainless-os:
+      - MacOS
+      x-stainless-package-version:
+      - 2.1.0
+      x-stainless-read-timeout:
+      - '600'
+      x-stainless-retry-count:
+      - '1'
+      x-stainless-runtime:
+      - CPython
+      x-stainless-runtime-version:
+      - 3.12.8
+    method: POST
+    uri: http://localhost:11434/v1/chat/completions
+  response:
+    body:
+      string: '{"id":"chatcmpl-232","object":"chat.completion","created":1770387512,"model":"qwen2.5:72b","system_fingerprint":"fp_ollama","choices":[{"index":0,"message":{"role":"assistant","content":"","tool_calls":[{"id":"call_jny2cie0","index":0,"type":"function","function":{"name":"final_result","arguments":"{\"summary\":\"Petrichor
+        refers to the earthy scent produced when rain falls on dry soil or ground,
+        often experienced as a pleasant smell. This term was coined in 1964 by two
+        Australian researchers who discovered that the smell is caused by oils released
+        from plants and soil during rainfall. These oils can come from roots, leaves,
+        and other organic matter, and are carried into the air by the rain, creating
+        a distinctive and often refreshing scent.\\n\\nBeyond its scientific explanation,
+        petrichor has cultural and historical significance. Many people around the
+        world associate it with feelings of calmness and serenity. The study of petrichor
+        spans multiple fields, including geology, biology, and psychology. Researchers
+        explore its composition, effects on human behavior, and role in shaping perceptions
+        of natural environments. It also involves understanding the complex interactions
+        between soil, plants, and microorganisms that contribute to the production
+        of this unique scent.\\n\\nIn literature and poetry, petrichor is used to
+        describe the smell of rain on dry earth, evoking feelings of nostalgia and
+        wonder. The significance of petrichor extends beyond its definition as a scent,
+        representing a connection to nature, a symbol of renewal, and a reminder of
+        the beauty and complexity of the world around us. As research on petrichor
+        progresses, new discoveries are likely to shed more light on this intriguing
+        phenomenon and its place in our understanding of the natural world.\\n\\nThe
+        impact of petrichor on human experience is an area of ongoing study, with
+        potential applications in fields such as environmental psychology, conservation,
+        and sustainable development. By exploring the many facets of petrichor, we
+        can gain a deeper appreciation for the interconnectedness of our planet and
+        the importance of preserving its natural wonders for future generations.\"}"}}]},"finish_reason":"tool_calls"}],"usage":{"prompt_tokens":1172,"completion_tokens":372,"total_tokens":1544}}
+
+        '
+    headers:
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 06 Feb 2026 14:18:32 GMT
+      Transfer-Encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
+    body: !!binary |
+      H4sIADj4hWkC/+1cTYwcx3XmRoQiNi1RGlk2FSFJaxTFFLHbs//LJTZMaIZKOOBfuEvIgocY1nTX
+      zJS2p6rV1b2jEbGXAMnJCGTAxwAGcsyPL7kYSAAfgji3IHEQwDnkGiCAgQT5QYDkkHzvVfdMz3CW
+      oiwLRuwRBGinqrrq/Xzve+91F+T99jeWvO884+16L1uZHqlQBkrbTGj6I6rVPX+jE63t7G7shnI7
+      2uyIrc6WvLTe7axv7sjdnfVu5NW9L2QylgOZpaPARodBLHQvFz1Ze857NhllfaO9N73a9BotBrJ2
+      znveJFKPZ7zXvVemlx3J1Cqjaae1YGMnWMWSz5WC8h4veedyfajNULeLce9l72ySmlBaGyTQ4fT5
+      v/rrZ/Dc58vBNNeZGhTPn/F+NiyEfMP74uySyvkbwdp6cMm77702uyiSNkxVktHCbW/TLfQvDITS
+      y35TaH9t019fXd9a9tc3Lm9sX9669Jb/1WtkJX9tN1gLtv0H3q9450q1yjMvehe25E5HXBKdtXC7
+      s9rd2hSdVRFdirY2umsbYvvSxqXV3TUpumHtzz9a8l6B2qNIQKZwRagaDLYarG3V/uGa9+LS72/c
+      ffbNv4ibG/YPev9zcFh77puvPTr43z/+94v15/40fmPn0Tf/7nsXXwz7IvPfH0q9Hmxd3lnvrC7t
+      /uav/ePf/teffP381Y++9p1nX/zW1883f9F7pSd1W6gArksFKe0M+ax3mjZovuo9XyywI5vJAdmO
+      vCxU803v88VUKt/Ppc2CgYlkXHveO1s5tvnz3gtkC5kGIopSWLp21jsTm1DEfWOzZs07W0wnJs1q
+      z5z/w3eb3z/tnee92sXO7USkkCqDLWt/dtr79ulH9W6uQxK3nRkT2/pl/6sPlv16J1dxpmYGTZ4l
+      edamHTFUp7n6ZNh03pNhhgmdx/FkeLzDozoZhB7sKi1IJJvHGW0wEar9noUkNuzLgcDKR3WACvbM
+      lLT80+aDgUhH/HcFX7RpMeWbrp/1pZ+ZRIV+16T8i0/0U0mmoROzUcKS2CxVulc/PsYYmUilMiJZ
+      xwc9qCwuFMQIHKDoXBHfrcrXFbGVtNWMaAcVCWxitJX+sK/Cvi91ZCGfsn5oNAGcgVPYVKZtOjlq
+      RyrM2odyNDEtic2mztJc0m/yLhAu4lIKDB4qHbHY7AfaFDYWkchEsdExKSfi2AzbmfwADnQLJzu4
+      OTUAac1MHje/5P3cDGgBaoZ+noI+Xj/F//zrrzZf816KTa8LywY2EZp1oqigH83XvbPl5MD2ajXv
+      sWhr/u5b49BSGiIEA0AfEtnaDy54/3wBsEpN7JzJgVUAKiswVzqPNKQpGDqDqWiopd81uS9S6Qs/
+      SWWo4BelAZkBuwE+GSQqloQgyJSlQluatP5QdnwrRQoPOpzA/XgyM/xIKvtSW3UkC7zZwH/bkCUJ
+      iXwE3JdzzMHvOL4LX4yClm7pvRu3794/aL99596tqwdXnHxDFRNuQkk7nnCy/5VbN7Ew6/sP996R
+      nX1ese8gfOWhn4keIywD9QLul1t6BQttOX/Z35+OneIEF6C+AERhPPeQsAligJ/BH6qLGHNDfqRs
+      mFsrI5KHd3GbQqvGjFoYunf9t+7fuHf91vXbB/sYWQv86x/AwthH6IhktSZWwCp8w+rH8ggUPuWe
+      bmoGfBA44khFOHhskhbQ419LJT+P3foyhc+XYb44XnHWB0qjwkHOv114yPpAowKjxhB7g/wGlXyc
+      BQqF+YkrZlxcFWgsJYBAcqlBEiucwlTU0puB/w4em7bu2C/0326MqKYzKrsuEzQtpPc7Bv5FhLG5
+      cbZlUyHIITD0pBPJB9AJZQrk3wr8/VJVf2TytFSXkbqxsuUT7/ZSkfQteR7mAvmKTiz9WOoeDruw
+      trW6srG66g9NCqKSIuy/1dLbgX/1yCiyXpTriA4jOsNjsEnONiKfQXscNus0RXAN4xzuImDMwABD
+      d+4fTGHlHjNm5NAt/Ob+ndu+I+JZRLdK0m4huIly5wXjso8qLmUjR2CdMItHbmt2WEVQGgTnkfXF
+      ADYJSNxZ4TB2/StXb929eb3tpjD28OFDSmIt/ailffwzJVar/i45Yp5kPoGUXAbxPrlsdNI7qQIO
+      BkCVSmLJsOf9K27m7QqMM+KDFmjwmKUmBR/TpqXJkmz1ce4a5BZo5LgDHCGkkyyThZfez00GdCIH
+      iqQYm6YE/0jEOXT9deNrk5WAAJxHzDQ+dLMIaH6k4nCoWUd2fSKn31SQDWCeJUkgZM+NtcdjV8hs
+      j/OlM+aYHu9KSrZ9Q+HTRfSV0Y1nsv7ItyHFJkwR5SEpSxGeUjwjT8aOO6CwNSr2sUUvNQiZZUgI
+      gX35AeynpKYHwbLIQjFikELGDsBUgX8jo4BBSiRmxNIPsbAz8hVoA6EOFBNfggbFclFQYDWM4xgM
+      W1oTKjH2C3uANuZoJxkL6ViVgGMGpwz8oSBaUtpx+dru9iadmg2NfxWuT0WsBLGdsydMQqcbJh8D
+      kiTG44Q5Po73E7l10sMUlrlS0ACzeIKqP3N8xpaKHI2QjGRGFg3A4ydDwZlZuidTYzKcj81AiMu8
+      A2gSOdukPaGRnRiYqZuhVI+EmypWrPCjUClrhz9Tbk1CyhvMYmMjUxTx1uw24ADK92kJez/wJxiB
+      AwjSRpP9gQEbou7j3TRVRoi6BAiB+Bq27yCGUU0Zv08GQtzyAjoIJWFmUo5Sq3qa8iz1nsvOkQOK
+      lEQainLBiGLxwdJxNPY655HMPdCVyF+6xzSPPQcaJZSzNiVGlY2Q6vKU7DYwKU5JxvqQZB0JpQVi
+      ydEu9oDx8KCl0EVhK2MkB5sDfljckwb8Mlr2O6r4g85J7Ajbud9DIroqfEDJeeRQTcRorHKJT3a7
+      OI9jqJ9DZwjSF0fKFN6kso8EsH2RkLJErIinUCautIKcpc2lPlKp0bA6VWOEc3cklkxUZU8ofWRi
+      yq0wKkRD/opo76xIJ7H8wCkvivqtI7MhmYdgu1zg2Ik3UCHAySi0A1sGKFFVquB4WfKIow7mdS6/
+      FJ2tUFKX4LoB4xf9xlzPcFwxfXDwwiKxyopC3Bnf0IsDOs/1JR35MVQA0x+ZQ9K7ChyNLlPEPSV4
+      06EhAwX+HUS8oKYkqcYAii4BNxw5GLpejEmB9Fca/QKJg0o4QaKDooq6FyomYX/gSvWK2mcSFAlX
+      6MUwawX3GNdTdWMZugkDyKSugkLc9DM7iXNFhudKCdzD+yCEk4kHCT4VnCzzAAovO+YVWjAwru+r
+      cHeJqEqcTgMLWYobvY4cUSXD7C3RD7JLnefY1ctUCbhiz9EPjKWdZmQtBjOCE6tHg45xrpNaDkVc
+      0Bt+DhS5pSzkO1Lk2agoqRm9iPVysqALxx85tLhqx1FJcJgoAIj26IUDWUJxSorVoYxHzqWQYMz9
+      1I5wwwKMDUQEaW1fRhxCxCx4Dk6hzRnn7JJeTrMVVhSFjRBMIQc4GX46HAsNyvBmTSos/CVL1Sc1
+      E2PqmLiL4UmhjlEkBEGbGd0zTOfECgXJJiZzLTVhLybkcMA/zngV0BC9V5iO2hiZHlVAa5E/EW1c
+      ZEfySMYmGXCQf3lEIsYmLdmGOb4LC2R2Ck3UxHAO7FHUIkVJCc2m4mP81oOZqgCRjJj0SVniSRCV
+      dL1W0alwrV4gl1CQHrkEYitWZh/w7t2c2QV9efGyyzJP4SyUcpbVzeazLEcoQb4gOZPQ0TklIQK5
+      M4KciG9lOKZz5gnKgo4W5AwRTHy8XPSELozoZF6pc8G11hwwUZlVYaw5cJyK7wKV1BTaYK9hp0vH
+      okmuBjklBCmoV9lrFNPFYq4qmUeKEYzdK8fGQxjMVBbLSjm64r+jDhUqbCX2Gm6ysjpP4yv9LEvs
+      5UZD6mBYLg2Qkhr0qzHeaa9Bi8eHNx4//UkCEfftO8eQKSu7PlGm4XAYTHhfDCSRsw5AUw3qz8JY
+      NoCBlcLlK6a7MsZQ49MJPJbQdYn7ZRq8h4B6GqEHYAcADjXwQPRY4FJIx9CNsaArnGJXKL+urF1a
+      3d3Z3lxfa3x6c18rs+L+TM75JMaHdUUW83txVgI/46zfIPYHqhvrq2u7jdWduco0tnY3drc2P1aT
+      vcYMuPcac7othM9sY1Y/fsCNXvlmDyVO+vTv9e5ya1H2fh+6V0hz35yVROkKlL2DO3dvXLuSTIzo
+      BgIS50Hzoxe9L5Tv+Pll6ORN5H+e8/7tXOVNJGpwRfySnSS0MXGbmjSaV/yWln6139OjdWBplYZP
+      elku0l7OhSxNPqq+XWjVf5y96gFx6A/VPn5M96h+spvHVkvj3y9PasNKNUzZUGgxr/R/mnYx8G89
+      TacoP0mfeELzRG/z7eTdkyuRlotXO6Tsx/WFgX+vgoiyDPi0PeFT9YM3ss+295t0Pp+s83PIuHFC
+      PzfTcXGAfDYt3k9RdzPbywjuWVyvY7iX+ez7GOf2A1eWC/fCpVI/n9DRLJqZH2Uz06of1/nzKAHZ
+      9tvu28h06kZJ8N0l7+Xy+2Xly3XtW0veHy09mvPheOZz9tzvmjxTPoqEI0b01rs+v/Q4YfFJH/2n
+      lhdiHR8fN33v1WL/nLZ1ErUzcyi1rT1z/htnmq+Pv/e6FeOv+8WS//iZ5i+PP9SWnwrmX2T4Ja82
+      u05FtRe8z9G33xCBvLK+sd5c835hdtWUM2zt3EVs7J0Ze+TDU7+zdGrp1Knad2/Ou9sxvtFxBvKj
+      bklzvbq0+/1v/6W7yvE31/7bXeV4zfOc+fj+xozsb3geP+0mX/FefvvG7as32/v3b926eu/d9tXf
+      uH77oHnRe6kQndcGT1p7YfoL+KveF+esIlmf/CH9n2C+aqVY+/sXvO+9UL0wsSgO/z8Wh3pRGi5K
+      wzmloV4Uhj99haFelIU/3rKw/iOqlL522TtfXkrlMiGO2+OXSf+y6/1gd3GtbXGtbXGtbXGtbXGt
+      bXGtbXGtbXGtbXGtbXGtbXGtbXGtbXGtbXGtbXGtbXGtbXGtbXGtbXGtbXGt7dNea6uKs7i1tvgw
+      ubi1tvg0ubi1tvg4ubi19pN6a+1pC5DyiXb5gvyHyPrFX5h5u/zfn9Cnt+L/FCSj4mb9751wjW7o
+      5U9xie6kD6knXI2bknH+dbjyItn/AdElJjgGSgAA
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Length:
+      - '3849'
+      Content-Type:
+      - application/x-protobuf
+      User-Agent:
+      - OTel-OTLP-Exporter-Python/1.37.0
+    method: POST
+    uri: https://logfire-eu.pydantic.dev/v1/traces
+  response:
+    body:
+      string: ''
+    headers:
+      CF-RAY:
+      - 9c9b47039d6e3d61-ZRH
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Date:
+      - Fri, 06 Feb 2026 14:18:32 GMT
+      Nel:
+      - '{"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}'
+      Report-To:
+      - '{"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=c%2BPaEWyGRLaJRzD9CpDLiXMzPbff4Ij9WfDZTQJuTl7EduPuNIX2agPStLDenrxMJ7q0nKXoJOP7mZW7vHK%2FeDoceZNsptsQkpZ467tGl%2B%2BhhunJdEQ%3D"}]}'
+      Server:
+      - cloudflare
+      cf-cache-status:
+      - DYNAMIC
+      vary:
+      - origin, access-control-request-method, access-control-request-headers
+      via:
+      - 1.1 google
+    status:
+      code: 200
+      message: OK
 version: 1

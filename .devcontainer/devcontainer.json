@@ -79,9 +79,32 @@
         // Python
         "ms-python.python",
         "charliermarsh.ruff",
+        "njpwerner.autodocstring",
+        "ms-python.vscode-pylance",
         // yaml + toml
         "redhat.vscode-yaml",
-        "tamasfe.even-better-toml"
+        "tamasfe.even-better-toml",
+        // Bash
+        "timonwong.shellcheck",
+        "mkhl.shfmt",
+        // git + GitHub Actions
+        "ivanhofer.git-assistant",
+        "GitHub.vscode-github-actions",
+        "me-dutour-mathieu.vscode-github-actions",
+        "GitHub.vscode-pull-request-github",
+        // Copilot
+        "GitHub.copilot-chat",
+        "ms-vscode.vscode-copilot-data-analysis",
+        "AutomataLabs.copilot-mcp",
+        "CodeRabbit.coderabbit-vscode",
+        // Spell checker
+        "streetsidesoftware.code-spell-checker",
+        // logging
+        "berublan.vscode-log-viewer",
+        // mermaid
+        "bierner.markdown-mermaid",
+        // Makefile
+        "ms-vscode.makefile-tools"
       ]
     },
     "cursor": {
