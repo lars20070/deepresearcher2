@@ -3,7 +3,6 @@ import glob
 import os
 import time
 from collections.abc import Generator
-from pathlib import Path
 from unittest.mock import MagicMock
 
 import pytest
@@ -11,7 +10,6 @@ from pytest_mock import MockerFixture
 from vcr.request import Request
 
 from deepresearcher2.config import SearchEngine, config
-from deepresearcher2.evals.evals import EvalGame, EvalPlayer
 from deepresearcher2.logger import logger
 
 
@@ -93,28 +91,6 @@ def cleanup_reports_folder(config_for_testing: Generator[None, None, None]) -> N
 
 
 @pytest.fixture
-def ice_cream_players() -> list[EvalPlayer]:
-    """
-    Provide a list of EvalPlayer instances with ice cream flavours.
-    """
-    return [
-        EvalPlayer(idx=0, item="vanilla"),
-        EvalPlayer(idx=1, item="chocolate"),
-        EvalPlayer(idx=2, item="strawberry"),
-        EvalPlayer(idx=3, item="peach"),
-        EvalPlayer(idx=4, item="toasted rice & miso caramel ice cream"),
-    ]
-
-
-@pytest.fixture
-def ice_cream_game() -> EvalGame:
-    """
-    Provide an EvalGame instance for ice cream flavour comparison.
-    """
-    return EvalGame(criterion="Which of the two ice cream flavours A or B is more creative?")
-
-
-@pytest.fixture
 def mock_fetch_full_page_content(mocker: MockerFixture) -> MagicMock:
     """
     Mocks the fetch_full_page_content function.
@@ -161,14 +137,3 @@ def timer_for_tests(request: pytest.FixtureRequest) -> Generator[None, None, Non
     yield
     duration = time.perf_counter() - start
     logger.info(f"{request.node.name} completed in {duration:.2f} seconds.")
-
-
-@pytest.fixture
-def assay_path(request: pytest.FixtureRequest) -> Path:
-    """
-    Compute the assay file path from test module and function name.
-    """
-    path = request.path
-    module_name = path.stem
-    test_name = request.node.name.split("[")[0]
-    return path.parent / "assays" / module_name / f"{test_name}.json"
