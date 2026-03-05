@@ -116,7 +116,7 @@ DeepResearcher2 supports multiple search engines:
 ### LLM Model Options
 
 The system can use:
-- Local models via Ollama (llama3.3, qwen3:8b, qwen3:32b)
+- Local models via Ollama (qwen2.5:14b, qwen3:8b, qwen3:32b)
 - Cloud models (OpenAI's gpt-4o, gpt-4o-mini)
 
 ## MCP Servers

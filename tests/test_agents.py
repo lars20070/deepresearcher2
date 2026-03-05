@@ -37,7 +37,7 @@ async def test_create_model() -> None:
 
     # We test each provider with a different model.
     models_for_testing = {
-        Provider.ollama: "llama3.3",
+        Provider.ollama: "qwen2.5:14b",
         Provider.lmstudio: "qwen/qwen3-8b",
         Provider.openrouter: "meta-llama/llama-3.3-70b-instruct",
         Provider.openai: "gpt-4o",

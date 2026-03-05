@@ -100,7 +100,7 @@ async def eval_darkhurmordetection(model: str = "qwen2.5:72b", max_cases: int | 
     Runs evaluation for dark humor detection.
 
     Tested with the following models:
-    * llama3.3
+    * qwen2.5:14b
     * qwq:32b  # Not reliable. Does not respond with conform JSON. Let the model respond with free form `str` instead.
     * qwen2.5:72b
     * qwen3:30b
@@ -290,7 +290,7 @@ def main() -> None:
     Main function running evaluations.
     """
     logger.info("Run evaluation.")
-    # model = "llama3.3"
+    # model = "qwen2.5:14b"
     # asyncio.run(eval_codenames(model=model, max_cases=None))
     # asyncio.run(eval_darkhurmordetection(model=model, max_cases=None))
     # asyncio.run(eval_rephrase(model=model, max_cases=None))

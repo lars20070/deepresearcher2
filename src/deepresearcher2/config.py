@@ -42,7 +42,7 @@ class Config(BaseSettings):
     openrouter_base_url: str = Field(default="https://openrouter.ai/api/v1", description="OpenRouter base URL")
     searxng_host: str = Field(default="http://localhost:8080", description="SearXNG host URL")
     provider: Provider = Field(default=Provider.ollama, description="Provider hosting the model (either local or cloud)")
-    model: str = Field(default="llama3.3", description="Model to be used by all agents")
+    model: str = Field(default="qwen2.5:14b", description="Model to be used by all agents")
     model_timeout: int = Field(default=600, description="Timeout in seconds for the model requests")
     reports_folder: str = Field(default="reports/", description="Output directory for the final reports")
     logs2logfire: bool = Field(default=False, description="Post all logs to Logfire. If false, some logs are written to a local log file.")

@@ -27,7 +27,7 @@ def basic_chat() -> None:
 
     logfire.info("Starting basic chat.")
 
-    model = "llama3.3"
+    model = "qwen2.5:14b"
     # model = "qwen2.5:72b"
     # model = "qwq:32b"
     ollama_model = OpenAIChatModel(

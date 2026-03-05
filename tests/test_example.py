@@ -81,7 +81,7 @@ async def test_pydanticai_ollama() -> None:
         city: str
         country: str
 
-    model = "llama3.3"
+    model = "qwen2.5:14b"
     # model = "qwq:32b"
     # model = "qwen2.5:72b"
     ollama_model = OpenAIChatModel(
@@ -124,7 +124,7 @@ async def test_pydanticai_temperature() -> None:
     """
     logger.info("Testing PydanticAI Agent() class with a local Ollama model with different temperatures.")
 
-    model = "llama3.3"
+    model = "qwen2.5:14b"
     # model = "gpt-oss"  # Really good answers.
     ollama_model = OpenAIChatModel(
         model_name=model,
@@ -306,7 +306,7 @@ async def test_weather_agent() -> None:
     # Model response is <|python_tag|>get_lat_lng(args=["Zurich"])
     # Maybe look into this issue. https://github.com/pydantic/pydantic-ai/issues/437
     # ollama_model = OpenAIChatModel(
-    #     model_name="llama3.3",
+    #     model_name="qwen2.5:14b",
     #     provider=OpenAIProvider(base_url=f"{config.ollama_host}/v1"),
     # )
 
@@ -445,7 +445,7 @@ async def test_agent_delegation() -> None:
     https://ai.pydantic.dev/multi-agent-applications/#agent-delegation-and-dependencies
     """
 
-    # model = "llama3.3"
+    # model = "qwen2.5:14b"
     # ollama_model = OpenAIChatModel(
     #     model_name=model,
     #     provider=OpenAIProvider(
@@ -453,7 +453,7 @@ async def test_agent_delegation() -> None:
     #     ),
     # )
 
-    # TODO: The agents cannot use the Ollama Llama3.3 model. Why?
+    # TODO: The agents cannot use the Ollama qwen2.5:14b model. Why?
     joke_selection_agent = Agent(
         model="openai:gpt-4o",
         # model=ollama_model,
@@ -590,7 +590,7 @@ async def test_pydantic_evals_llmjudge(tmp_path: Path) -> None:
         steps: list[str]
 
     # Model for both recipe and judge
-    model = "llama3.3"
+    model = "qwen2.5:14b"
     # model = "qwq:32b"
     # model = "qwen2.5:72b"
     ollama_model = OpenAIChatModel(
@@ -706,7 +706,7 @@ async def test_mcp_sse_client() -> None:
     deno run -N -R=node_modules -W=node_modules --node-modules-dir=auto jsr:@pydantic/mcp-run-python sse
     """
 
-    # model = "llama3.3"
+    # model = "qwen2.5:14b"
     # ollama_model = OpenAIChatModel(
     #     model_name=model,
     #     provider=OpenAIProvider(base_url=f"{config.ollama_host}/v1"),
@@ -743,7 +743,7 @@ async def test_mcp_stdio_client() -> None:
     Note that unlike in the SSE mode, the MCP server starts up automatically.
     """
 
-    # model = "llama3.3"
+    # model = "qwen2.5:14b"
     # ollama_model = OpenAIChatModel(
     #     model_name=model,
     #     provider=OpenAIProvider(base_url=f"{config.ollama_host}/v1"),
@@ -1027,7 +1027,7 @@ async def test_email() -> None:
 
     # Agents
     ollama_model = OpenAIChatModel(
-        model_name="llama3.3",
+        model_name="qwen2.5:14b",
         provider=OpenAIProvider(base_url=f"{config.ollama_host}/v1"),
     )
 
@@ -1128,7 +1128,7 @@ async def test_structured_input() -> None:
         greeting: str
 
     ollama_model = OpenAIChatModel(
-        model_name="llama3.3",
+        model_name="qwen2.5:14b",
         provider=OpenAIProvider(base_url=f"{config.ollama_host}/v1"),
     )
 
