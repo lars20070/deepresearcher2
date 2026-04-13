@@ -23,7 +23,7 @@ dependencies = [
   "pydantic-settings>=2.8.1",
   "choix>=0.4.1",
   "numpy>=2.3.3",
-  "ddgs>=9.6.1",
+  "ddgs>=9.13.0",
   "fastmcp>=2.13.0.1",
   "pytest-assay>=0.1.2",
 ]
